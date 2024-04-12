@@ -6,6 +6,7 @@ const EditPhone = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleAdd = () => {
+    // Add logic to add the edited phone number
     console.log('Country Code:', countryCode);
     console.log('Phone Number:', phoneNumber);
   };
