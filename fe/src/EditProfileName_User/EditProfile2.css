@@ -1,0 +1,178 @@
+/* EditProfile specific CSS */
+.edit-profile-body {
+  background-color: #f4f8fa;
+}
+
+.edit-profile-container {
+  display: flex;
+  height: 100vh;
+}
+
+.edit-sidebar {
+  width: 80px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  display: flex;
+  flex-direction: column;
+  width: 10%;
+  margin-top: 1%;
+}
+
+.edit-sidebar-item {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-top: 10%;
+}
+
+.edit-sidebar-item:hover {
+  background-color: #007bff;
+}
+
+.edit-sidebar-icon {
+  margin-right: 10px;
+  font-size: 1.5rem;
+}
+
+.edit-sidebar-text {
+  color: black;
+  transition: color 0.3s;
+}
+
+.edit-sidebar-item:hover .edit-sidebar-text {
+  color: white;
+}
+
+.edit-content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.edit-section {
+  margin-bottom: 20px;
+}
+
+.edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.edit-detail-container {
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.edit-detail-container:hover {
+  background-color: #fff; /* Change background color on hover */
+}
+
+.edit-detail-label {
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.edit-edit-text {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.edit-section-header {
+  font-weight: 400;
+}
+
+.edit-button {
+  background-color: #eee;
+  border: none;
+  padding: 1rem;
+  font-size: 1rem;
+  width: 10em;
+  border-radius: 1rem;
+  color: #007bff; /* Blue text color for buttons */
+  box-shadow: 0 0.2rem rgba(0, 123, 255, 0.3); /* Reduce button shadow */
+  cursor: pointer;
+}
+
+.edit-button:active {
+  color: white;
+  box-shadow: 0 0.1rem rgba(0, 123, 255, 0.3); /* Reduce button shadow on active */
+}
+
+.edit-button:hover:not(:disabled) {
+  background: #007bff; /* Blue background color on hover */
+  color: white;
+  text-shadow: none; /* Remove text shadow */
+}
+
+.edit-button:disabled {
+  cursor: auto;
+  color: grey;
+}
+
+/* EditName specific CSS */
+.edit-name-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align EditName to the left */
+  margin-bottom: 20px;
+}
+
+.edit-name-input-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.edit-name-label {
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.edit-name-input-wrapper {
+  display: flex;
+  align-items: center; /* Align icon and input vertically */
+}
+
+.edit-name-input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #007bff; /* Blue stroke for input box */
+  border-radius: 8px;
+  margin-right: 10px; /* Add margin between input and icon */
+  box-shadow: none; /* Remove box shadow */
+}
+
+.edit-name-input:focus {
+  outline: none;
+  border-color: #007bff; /* Blue border color on focus */
+}
+
+.edit-name-icon {
+  font-size: 1.5rem;
+  color: #007bff; /* Set icon color */
+}
+
+.edit-name-buttons {
+  display: flex;
+  justify-content: flex-start; /* Align buttons to the left */
+}
+
+.cancel-button {
+  background-color: #eee;
+  color: #007bff; /* Blue text color for cancel button */
+  margin-right: 10px;
+}
+
+.save-button {
+  background-color: #007bff; /* Blue background color for save button */
+  color: white; /* White text color for save button */
+}
