@@ -27,6 +27,8 @@
 .flex-column > label {
   color: #151717;
   font-weight: 600;
+  text-align: left;
+  
 }
 
 .inputForm {
