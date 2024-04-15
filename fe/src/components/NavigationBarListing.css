@@ -1,0 +1,50 @@
+/* Navbar */
+body {
+    margin: 0; /* Remove default margin */
+  }
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff; /* Change as needed */
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(16, 10, 10, 0.1); /* Adding shadow */
+  }
+  
+  /* Text Links */
+  .navbar-text {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    
+  }
+  
+  .navbar-text a {
+    margin-left: 20px;
+    color: #333333; /* Change as needed */
+    text-decoration: none;
+    color: #1780CB
+  }
+  
+  /* Sign In Button */
+  .sign-in {
+    background-color: #F9CC41; /* Yellow background */
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: #ffffff;
+    border: none; /* Remove border */
+    margin-left: 20px; /* Add space between links and button */
+  }
+  .property-listing {
+    background-color: #2a06f5; /* Yellow background */
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: #ffffff;
+    border: none; /* Remove border */
+    margin-left: 20px; /* Add space between links and button */
+  }
+  /* Logo */
+  .logo img {
+    height: 40px; /* Adjust the height as needed */
+  }
+  
