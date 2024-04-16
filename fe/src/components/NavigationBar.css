@@ -1,4 +1,7 @@
 /* Navbar */
+body {
+  margin: 0; /* Remove default margin */
+}
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -32,7 +35,14 @@
   border: none; /* Remove border */
   margin-left: 20px; /* Add space between links and button */
 }
-
+.property-listing {
+  background-color: #2a06f5; /* Yellow background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  border: none; /* Remove border */
+  margin-left: 20px; /* Add space between links and button */
+}
 /* Logo */
 .logo img {
   height: 40px; /* Adjust the height as needed */

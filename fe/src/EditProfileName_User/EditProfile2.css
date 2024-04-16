@@ -6,42 +6,7 @@
 .edit-profile-container {
   display: flex;
   height: 100vh;
-}
-
-.edit-sidebar {
-  width: 80px;
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-  display: flex;
-  flex-direction: column;
-  width: 10%;
-  margin-top: 1%;
-}
-
-.edit-sidebar-item {
-  padding: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  margin-top: 10%;
-}
-
-.edit-sidebar-item:hover {
-  background-color: #007bff;
-}
-
-.edit-sidebar-icon {
-  margin-right: 10px;
-  font-size: 1.5rem;
-}
-
-.edit-sidebar-text {
-  color: black;
-  transition: color 0.3s;
-}
-
-.edit-sidebar-item:hover .edit-sidebar-text {
-  color: white;
+  margin-bottom: 0; /* Remove default margin */
 }
 
 .edit-content {
@@ -69,13 +34,10 @@
   position: relative;
 }
 
-.edit-detail-container:hover {
-  background-color: #fff; /* Change background color on hover */
-}
-
 .edit-detail-label {
   font-weight: 400;
   margin-bottom: 5px;
+  text-align: left;
 }
 
 .edit-edit-text {
@@ -88,6 +50,7 @@
 
 .edit-section-header {
   font-weight: 400;
+  text-align: left;
 }
 
 .edit-button {
