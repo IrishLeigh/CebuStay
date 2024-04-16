@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="App">
       <NavigationBar/>
-      <Form/>
+      <ForgotPassword/>
     </div>  
   );
 }
