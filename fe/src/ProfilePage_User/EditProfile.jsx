@@ -6,6 +6,8 @@ import './EditProfile.css';
 import axios from 'axios';
 import { useUser } from "../components/UserProvider";
 
+import axios from 'axios';
+
 const EditProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +33,8 @@ const EditProfile = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
+
+  console.log("Profile of Mine", profile);
   return (
     <div className="edit-profile-container">
       <div className="edit-sidebar">
