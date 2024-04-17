@@ -8,6 +8,8 @@ import { useUser } from "../components/UserProvider";
 
 import axios from 'axios';
 
+import axios from 'axios';
+
 const EditProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -274,6 +274,11 @@ const ForgotPassword = () => {
           </button>
         </div>
       )}
+      {!showVerification && !showResetPassword && (
+        <button type="button" className="send-btn" onClick={handleSendLink}>
+          Send Link
+        </button>
+      )}
     </form>
   );
 }
