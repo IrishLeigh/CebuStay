@@ -8,6 +8,7 @@ import EditProfile from './ProfilePage_User/EditProfile';
 import EditName from './components/EditName';
 import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
+
 function App() {
   return (
     <div className="App">

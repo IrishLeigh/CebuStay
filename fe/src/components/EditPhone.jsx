@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
 import './EditPhone.css';
+import axios from 'axios';
 
 const EditPhone = () => {
   const [countryCode, setCountryCode] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-
-  const handleAdd = () => {
-    console.log('Country Code:', countryCode);
-    console.log('Phone Number:', phoneNumber);
-  };
+  const [cellphone_number, set_cellphone_number] = useState('');
 
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
 
-  const handlePhoneNumberChange = (e) => {
-    setPhoneNumber(e.target.value);
-  };
+
+  const hanndleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put('http://localhost/api/updateProfile.php', {
+        userid: 1,
+        cellphone_number
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div className="edit-phone-container">
@@ -40,15 +46,15 @@ const EditPhone = () => {
         <div className="edit-phone-label">Phone Number</div>
         <input style={{ width: '23%', marginBottom: '10px' }}
           type="text"
-          value={phoneNumber}
-          onChange={handlePhoneNumberChange}
+          value={cellphone_number}
+          onChange={(e) => set_cellphone_number(e.target.value)}
           className="edit-phone-input"
           placeholder="eg. 999-999-999"
         />
       </div>
       <div className="edit-phone-buttons">
         <button className="edit-button cancel-button">Cancel</button>
-        <button className="edit-button add-button" onClick={handleAdd}>Add</button>
+        <button className="edit-button add-button" onClick={hanndleSubmit}>Add</button>
       </div>
     </div>
   );
