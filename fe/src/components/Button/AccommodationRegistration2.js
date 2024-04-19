@@ -35,8 +35,8 @@ export default function AccommodationRegistration2() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center", // Center horizontally
-        height: "90vh",
         textAlign: "left",
+        height: "100vh",
       }}
     >
       <Typography
@@ -45,133 +45,143 @@ export default function AccommodationRegistration2() {
           fontWeight: "bold",
           mb: 2,
           textAlign: "left",
-          marginLeft: "20px",
-          display: "flex",
+          marginLeft: "150px",
         }}
       >
         Property Type
       </Typography>
-      <Typography sx={{ fontSize: 18, mb: 2, marginLeft: "20px" }}>
+      <Typography sx={{ fontSize: 18, mb: 2, marginLeft: "150px" }}>
         What can guests book?
       </Typography>
-      <Box
-        flexDirection="column"
-        alignItems="center"
-        boxShadow={4}
-        p={4}
-        borderRadius={4}
-        width={800}
+      <Container
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center", // Center horizontally
+          justifyContent: "center", // Center horizontally
+          textAlign: "left",
+        }}
       >
-        <Box mb={5}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor:
-                clickedButton === "EntirePlace" ? "#16B4DD" : "white",
-              color: clickedButton === "EntirePlace" ? "white" : "black",
-              fontFamily: "Poppins, sans-serif",
-              height: 100,
-              pt: 5,
-              pb: 5,
-              "&:hover": {
-                backgroundColor: "#16B4DD",
-                color: "white",
-                "& img": {
-                  filter: "invert(100%)",
-                },
-              },
-            }}
-            startIcon={
-              <img
-                src="rooms.png"
-                alt="Rooms"
-                style={{
-                  marginLeft: "20px",
-                  width: "60px",
-                  height: "60px",
-                }}
-              />
-            }
-            onClick={() => handleClick("EntirePlace")}
-          >
-            <Typography
+        <Box
+          flexDirection="column"
+          alignItems="center"
+          display="flex"
+          boxShadow={4}
+          p={4}
+          borderRadius={4}
+          width={800}
+        >
+          <Box mb={5}>
+            <Button
+              variant="contained"
               sx={{
-                fontWeight: "bold",
-                fontSize: 18,
-                m: 2,
-                textTransform: "none",
-              }}
-            >
-              Entire Place
-            </Typography>
-            <span>&nbsp;</span>
-            <p
-              style={{
-                ...styles.paragraph,
-                textAlign: "left",
-                fontSize: "16px",
-              }}
-            >
-              Guests are able to use the entire place and do not have to share
-              this with the host or other guests.
-            </p>
-          </Button>
-        </Box>
-        <Box width={800} mb={2}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor:
-                clickedButton === "PrivateRoom" ? "#16B4DD" : "white",
-              color: clickedButton === "PrivateRoom" ? "white" : "black",
-              fontFamily: "Poppins, sans-serif",
-              width: 800,
-              height: 100,
-              "&:hover": {
-                backgroundColor: "#16B4DD",
-                color: "white",
-                "& img": {
-                  filter: "invert(100%)",
+                backgroundColor:
+                  clickedButton === "EntirePlace" ? "#16B4DD" : "white",
+                color: clickedButton === "EntirePlace" ? "white" : "black",
+                fontFamily: "Poppins, sans-serif",
+                height: 100,
+                pt: 5,
+                pb: 5,
+                "&:hover": {
+                  backgroundColor: "#16B4DD",
+                  color: "white",
+                  "& img": {
+                    filter: "invert(100%)",
+                  },
                 },
-              },
-            }}
-            startIcon={
-              <img
-                src="rooms.png"
-                alt="Rooms"
-                style={{
-                  marginLeft: "20px",
-                  width: "60px",
-                  height: "60px",
+              }}
+              startIcon={
+                <img
+                  src="rooms.png"
+                  alt="Rooms"
+                  style={{
+                    marginLeft: "20px",
+                    width: "60px",
+                    height: "60px",
+                  }}
+                />
+              }
+              onClick={() => handleClick("EntirePlace")}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  m: 2,
+                  textTransform: "none",
                 }}
-              />
-            }
-            onClick={() => handleClick("PrivateRoom")}
-          >
-            <Typography
+              >
+                Entire Place
+              </Typography>
+              <span>&nbsp;</span>
+              <p
+                style={{
+                  ...styles.paragraph,
+                  textAlign: "left",
+                  fontSize: "16px",
+                }}
+              >
+                Guests are able to use the entire place and do not have to share
+                this with the host or other guests.
+              </p>
+            </Button>
+          </Box>
+          <Box width={800} mb={2}>
+            <Button
+              variant="contained"
               sx={{
-                fontWeight: "bold",
-                fontSize: 18,
-                m: 2,
-                textTransform: "none",
+                backgroundColor:
+                  clickedButton === "PrivateRoom" ? "#16B4DD" : "white",
+                color: clickedButton === "PrivateRoom" ? "white" : "black",
+                fontFamily: "Poppins, sans-serif",
+                width: 800,
+                height: 100,
+                "&:hover": {
+                  backgroundColor: "#16B4DD",
+                  color: "white",
+                  "& img": {
+                    filter: "invert(100%)",
+                  },
+                },
               }}
+              startIcon={
+                <img
+                  src="rooms.png"
+                  alt="Rooms"
+                  style={{
+                    marginLeft: "20px",
+                    width: "60px",
+                    height: "60px",
+                  }}
+                />
+              }
+              onClick={() => handleClick("PrivateRoom")}
             >
-              Private Room
-            </Typography>
-            <span>&nbsp;</span>
-            <p
-              style={{
-                ...styles.paragraph,
-                textAlign: "left",
-                fontSize: "16px",
-              }}
-            >
-              Guests rent a room within the property. There are common areas
-              that are either shared with the host or other guests.
-            </p>
-          </Button>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  m: 2,
+                  textTransform: "none",
+                }}
+              >
+                Private Room
+              </Typography>
+              <span>&nbsp;</span>
+              <p
+                style={{
+                  ...styles.paragraph,
+                  textAlign: "left",
+                  fontSize: "16px",
+                }}
+              >
+                Guests rent a room within the property. There are common areas
+                that are either shared with the host or other guests.
+              </p>
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </Container>
     </Container>
   );
 }
