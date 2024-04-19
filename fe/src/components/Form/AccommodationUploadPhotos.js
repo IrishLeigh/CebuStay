@@ -5,7 +5,7 @@ import { ImageList, ImageListItem } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-const ImageUpload = () => {
+const AccommodationUploadPhotos = () => {
   const [selectedImages, setSelectedImages] = useState([]);
 
   const handleImageChange = (event) => {
@@ -109,4 +109,4 @@ const ImageUpload = () => {
   );
 };
 
-export default ImageUpload;
+export default AccommodationUploadPhotos;

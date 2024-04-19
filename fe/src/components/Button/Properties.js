@@ -28,7 +28,7 @@ const propertyTypes = [
   },
 ];
 
-export default function PropertyTypeSelection() {
+export default function Properties() {
   const [selectedType, setSelectedType] = useState(null);
 
   const handleClick = (button) => {
@@ -48,14 +48,25 @@ export default function PropertyTypeSelection() {
         }}
       >
         <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "left" }}>
-          Unlock the door to hosting with CebuStay! List your property and open
-          your doors to guests effortlessly!
+          <div>
+            Unlock the door to hosting with CebuStay! List your property and
+            open your
+          </div>
+          <div> doors to guests effortlessly!</div>
         </Typography>
         <Typography sx={{ fontSize: 18, textAlign: "left", mb: 2 }}>
-          Ready to dive in? Kickstart your hosting journey by selecting the
-          perfect property type to list on CebuStay?
+          <div>
+            Ready to dive in? Kickstart your hosting journey by selecting the
+            perfect property type to list on CebuStay?
+          </div>
         </Typography>
-        <Paper elevation={3} sx={{ boxShadow: "none" }}>
+
+        <Paper
+          elevation={3}
+          sx={{
+            boxShadow: "none",
+          }}
+        >
           {propertyTypes.map((type, index) => (
             <Box key={index} width={800} mb={2}>
               <Button
@@ -84,12 +95,26 @@ export default function PropertyTypeSelection() {
                 }
                 onClick={() => handleClick(type.name)}
               >
-                <Typography sx={{ fontWeight: "bold", fontSize: 18 }}>
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: 18,
+                    textTransform: "initial",
+                    width: "250px",
+                  }}
+                >
                   {type.name}
                 </Typography>
-                <p style={{ margin: 0, textAlign: "left", fontSize: "16px" }}>
+                <Typography
+                  sx={{
+                    textAlign: "left",
+                    fontSize: "16px",
+                    textTransform: "initial",
+                    width: "100%",
+                  }}
+                >
                   {type.description}
-                </p>
+                </Typography>
               </Button>
             </Box>
           ))}

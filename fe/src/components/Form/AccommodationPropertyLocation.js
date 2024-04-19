@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button"; // Import Button component
 import Typography from "@mui/material/Typography"; // Import for labels
 import Container from "@mui/material/Container";
 
@@ -41,23 +42,23 @@ export default function AddressForm() {
   };
 
   return (
-    <Container maxWidth="lg">
-      <div style={{ textAlign: "center", paddingBottom: "20px" }}>
-        <Typography variant="h3">Property Location</Typography>
-        {/* Your lorem ipsum content */}
-        <Typography variant="body1">loreeemmm ipssuummm</Typography>
-      </div>
-      {/* Flex container for centering the form */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column", // Added for vertical alignment
-        }}
-      >
+    <Container
+      maxWidth="lg"
+      style={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Box>
+        <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "left" }}>
+          Property Location
+        </Typography>
+        <Typography sx={{ fontSize: 18, mb: 2, textAlign: "left" }}>
+          Fill the form
+        </Typography>
         <Paper elevation={3} sx={{ p: 2, width: 400 }}>
-          {/* Address form fields */}
           <TextField
             select
             label="Country"
@@ -68,7 +69,6 @@ export default function AddressForm() {
             fullWidth
             sx={{ mb: 2 }}
           >
-            {/* Replace with your actual list of countries */}
             <MenuItem value="PH">Philippines</MenuItem>
             <MenuItem value="US">United States</MenuItem>
             <MenuItem value="CA">Canada</MenuItem>
@@ -108,6 +108,13 @@ export default function AddressForm() {
             fullWidth
             sx={{ mb: 2 }}
           />
+          <Box textAlign="center">
+            {" "}
+            {/* Center the button */}
+            <Button variant="contained" color="primary">
+              Next
+            </Button>
+          </Box>
         </Paper>
       </Box>
     </Container>

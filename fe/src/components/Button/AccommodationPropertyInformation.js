@@ -119,7 +119,7 @@ function CategorySection({ category, label }) {
   );
 }
 
-function App() {
+function AccommodationPropertyInformation() {
   return (
     <>
       <div style={{ margin: "20vh" }}>
@@ -137,4 +137,4 @@ function App() {
   );
 }
 
-export default App;
+export default AccommodationPropertyInformation;
