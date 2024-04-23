@@ -3,12 +3,14 @@ import axios from "axios";
 import './Form.css';
 import { Link, BrowserRouter as Router } from 'react-router-dom';
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import {useNavigate} from 'react-router-dom';
 
 const Form = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
@@ -16,34 +18,27 @@ const Form = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(email, password);
     try {
-        // Send POST request to login.php endpoint
-        const response = await axios.post("http://localhost/API/login.php", {
-            email,
-            password,
-        });
-        console.log(response.data);
-        // Check if login was successful
-        if (response.data["userid"] !== 0) {
-            // Login successful
-            console.log("Login successful");
-            console.log(response.data["userid"]);
-            // Redirect or perform other actions for logged-in user
-        } else {
-            // Login failed
-            console.log("Login failed");
-            // Display error alert message
-            alert("Invalid email or password");
-        }
+      const response = await axios.post("http://localhost/API/loginBeta.php", {
+        email,
+        password,
+      });
+      if (response.data["status"] === "success") {
+        const token = response.data["token"];
+        // Store the JWT token in localStorage
+        localStorage.setItem("auth_token", token);
+        console.log(response.data["message"]);
+        console.log("Login successful!");
+        // Redirect to a protected route or display a success message
+        navigate("/landing");
+      } else {
+        console.log(response.data["message"]);
+        console.log("Login failed");
+      }
     } catch (error) {
-        console.error("Error logging in:", error);
-        // Display error alert message
-        alert("An error occurred while logging in");
+      console.error("Error logging in:", error);
     }
-  
-  
-};
+  };
 
 
   return (

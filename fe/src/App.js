@@ -8,17 +8,22 @@ import EditProfile from './ProfilePage_User/EditProfile';
 import EditName from './components/EditName';
 import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
-import Properties from './components/Button/Properties';
-import AccommodationRegistration2 from './components/Button/AccommodationRegistration2';
-import AccommodationPropertyInformation from './components/Button/AccommodationPropertyInformation';
-import AccommodationPropertyType from './components/Button/AccommodationPropertyType';
-import AccommodationPropertyMap from './components/Form/AccommodationPropertyMap';
+import LandingPage from './Landing_Page/landing';
+import { BrowserRouter as Router, Route, Switch, Routes } from "react-router-dom";
+
+
 function App() {
   return (
-    <div>
-      <AccommodationPropertyInformation/>
-      <AccommodationPropertyMap/>
-    </div>  
+    <div className="App">
+      
+        <NavigationBar />
+        <Routes>
+          <Route path="/login"  element={<Form/>}/>  {/* Login page */}
+          <Route path="/landing"  element={<LandingPage/>}/>  {/* Login page */}
+          <Route path="/register"  element={<Registration/>}/>        
+        </Routes>
+      
+    </div>
   );
 }
 
