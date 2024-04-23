@@ -8,13 +8,22 @@ import EditProfile from './ProfilePage_User/EditProfile';
 import EditName from './components/EditName';
 import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
+import LandingPage from './Landing_Page/landing';
+import { BrowserRouter as Router, Route, Switch, Routes } from "react-router-dom";
+
 
 function App() {
   return (
     <div className="App">
-      <NavigationBar/>
-      <ForgotPassword/>
-    </div>  
+      
+        <NavigationBar />
+        <Routes>
+          <Route path="/login"  element={<Form/>}/>  {/* Login page */}
+          <Route path="/landing"  element={<LandingPage/>}/>  {/* Login page */}
+          <Route path="/register"  element={<Registration/>}/>        
+        </Routes>
+      
+    </div>
   );
 }
 
