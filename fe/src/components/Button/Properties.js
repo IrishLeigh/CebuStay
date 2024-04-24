@@ -30,7 +30,6 @@ const propertyTypes = [
 
 export default function Properties() {
   const [selectedType, setSelectedType] = useState(null);
-
   const handleClick = (button) => {
     setSelectedType(selectedType === button ? null : button);
   };

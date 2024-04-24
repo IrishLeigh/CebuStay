@@ -40,18 +40,19 @@ export default function AccommodationRegistration2() {
       }}
     >
       <Typography
-        variant="h5"
+        
         sx={{
           fontWeight: "bold",
           mb: 2,
+          fontSize:'2rem',
           textAlign: "left",
-          marginLeft: "150px",
+          marginLeft: {xs: 0, md: "150px"}, // Responsive margin
         }}
       >
         Property Type
       </Typography>
-      <Typography sx={{ fontSize: 18, mb: 2, marginLeft: "150px" }}>
-        What can guests book?
+      <Typography sx={{ fontSize: "1.5rem", mb: 2, marginLeft: {xs: 0, md: "150px"} }}> {/* Responsive margin */}
+        What guests can book?
       </Typography>
       <Container
         style={{
@@ -69,7 +70,8 @@ export default function AccommodationRegistration2() {
           boxShadow={4}
           p={4}
           borderRadius={4}
-          width={800}
+          width={{xs: "100%", md: 800}} // Responsive width
+          mx={{xs: 2, md: 0}} // Responsive margin
         >
           <Box mb={5}>
             <Button
@@ -126,7 +128,7 @@ export default function AccommodationRegistration2() {
               </p>
             </Button>
           </Box>
-          <Box width={800} mb={2}>
+          <Box width="100%" mb={2}>
             <Button
               variant="contained"
               sx={{
@@ -134,7 +136,7 @@ export default function AccommodationRegistration2() {
                   clickedButton === "PrivateRoom" ? "#16B4DD" : "white",
                 color: clickedButton === "PrivateRoom" ? "white" : "black",
                 fontFamily: "Poppins, sans-serif",
-                width: 800,
+                width: "100%",
                 height: 100,
                 "&:hover": {
                   backgroundColor: "#16B4DD",
@@ -160,7 +162,7 @@ export default function AccommodationRegistration2() {
               <Typography
                 sx={{
                   fontWeight: "bold",
-                  fontSize: 18,
+                  fontSize: "1.125rem",
                   m: 2,
                   textTransform: "none",
                 }}
@@ -172,7 +174,7 @@ export default function AccommodationRegistration2() {
                 style={{
                   ...styles.paragraph,
                   textAlign: "left",
-                  fontSize: "16px",
+                  fontSize: "1rem",
                 }}
               >
                 Guests rent a room within the property. There are common areas

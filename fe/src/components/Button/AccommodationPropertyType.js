@@ -32,10 +32,10 @@ const AccommodationPropertyType = () => {
       }}
     >
       <Box mt={25}>
-        <Typography variant="h5" fontWeight="bold">
+        <Typography sx={{fontSize:'2rem'}} fontWeight="bold">
           Property Type
         </Typography>
-        <Typography fontSize={18} mb={2}>
+        <Typography sx={{fontSize:'1.5rem'}} mb={2}>
           Please click on the button you want to choose
         </Typography>
         <Grid container spacing={2}>

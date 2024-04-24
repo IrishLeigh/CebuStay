@@ -47,7 +47,7 @@ function AmenityButton({ icon, text }) {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        margin: "10px",
+        marginTop: "1rem",
       }}
     >
       <Button
@@ -122,17 +122,28 @@ function CategorySection({ category, label }) {
 function AccommodationPropertyInformation() {
   return (
     <>
-      <div style={{ margin: "20vh" }}>
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+      <Container
+      maxWidth="lg"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center", // Center horizontally
+        textAlign: "left",
+        height: "100vh",
+        marginTop:'28rem',
+        ml:''
+      }}
+    >
+        <Typography  sx={{ fontWeight: "bold", fontSize:'2rem' }}>
           Property Information
         </Typography>
-        <Typography sx={{ fontSize: 18, mb: 2 }}>
+        <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
           Please click the button you choose.
         </Typography>
         <CategorySection category="basicAmenities" label={"Basic Amenities"} />
         <CategorySection category="basicServices" label={"Basic Services"} />
         <CategorySection category="facilities" label={"Facilities"} />
-      </div>
+      </Container>
     </>
   );
 }
