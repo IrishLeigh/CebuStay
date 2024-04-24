@@ -4,36 +4,35 @@ import { motion } from "framer-motion"; // Import motion for animation
 
 const data = {
   basicAmenities: [
+    { icon: "toiletries.png", text: "Toiletries" },
+    { icon: "aircon.png", text: "Air Conditioning" },
     { icon: "wifi.png", text: "Wi-Fi" },
-    { icon: "parking.png", text: "Parking" },
     { icon: "minibar.png", text: "Mini Bar" },
-    // Add more amenities as needed
-    { icon: "pool.png", text: "Pool" },
-    { icon: "gym.png", text: "Gym" },
-    { icon: "restaurant.png", text: "Restaurant" },
-    { icon: "spa.png", text: "Spa" },
-    { icon: "concierge.png", text: "Concierge" },
-  ],
-  basicServices: [
     { icon: "workspace.png", text: "Workspace" },
-    { icon: "bathroom.png", text: "Bathroom" },
     { icon: "tv.png", text: "Television" },
-    // Add more services as needed
-    { icon: "roomservice.png", text: "Room Service" },
-    { icon: "cleaning.png", text: "Cleaning" },
-    { icon: "security.png", text: "Security" },
-    { icon: "bellboy.png", text: "Bellboy" },
-    { icon: "valet.png", text: "Valet Parking" },
-    { icon: "wake-up.png", text: "Wake-up Service" },
-    { icon: "shuttle.png", text: "Shuttle Service" },
-  ],
-  facilities: [
-    { icon: "laundry.png", text: "Laundry" },
     { icon: "refrigerator.png", text: "Refrigerator" },
     { icon: "microwave.png", text: "Microwave" },
-    // Add more facilities as needed
-    { icon: "sauna.png", text: "Sauna" },
-    { icon: "conference.png", text: "Conference Room" },
+  ],
+  basicServices: [
+    { icon: "housekeeping.png", text: "House Keeping" },
+    { icon: "breakfast.png", text: "Breakfast" },
+    { icon: "shuttle.png", text: "Shuttle Service" },
+    { icon: "carrental.png", text: "Car Rental" },
+    { icon: "frontdesk.png", text: "24hours Front Desk" },
+    { icon: "concierge.png", text: "Concierge" },
+    { icon: "laundry.png", text: "Laundry" },
+    { icon: "petfriendly.png", text: "Pet Friendly" },
+    { icon: "roomservice.png", text: "Room Service" },
+    { icon: "cleaningservice.png", text: "Cleaning Service" },
+    { icon: "wakeupcall.png", text: "Wake-up Call Service" },
+  ],
+  facilities: [
+    { icon: "swimmingpool.png", text: "Swimming Pool" },
+    { icon: "gym.png", text: "Gym" },
+    { icon: "wellness.png", text: "Wellness Facilities" },
+    { icon: "gameroom.png", text: "Game Room" },
+    { icon: "sports.png", text: "Sports Facilities" },
+    { icon: "parking.png", text: "Parking" },
     { icon: "businesscenter.png", text: "Business Center" },
   ],
 };
@@ -123,18 +122,18 @@ function AccommodationPropertyInformation() {
   return (
     <>
       <Container
-      maxWidth="lg"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center", // Center horizontally
-        textAlign: "left",
-        height: "100vh",
-        marginTop:'28rem',
-        ml:''
-      }}
-    >
-        <Typography  sx={{ fontWeight: "bold", fontSize:'2rem' }}>
+        maxWidth="lg"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center", // Center horizontally
+          textAlign: "left",
+          height: "100vh",
+          marginTop: "28rem",
+          ml: "",
+        }}
+      >
+        <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
           Property Information
         </Typography>
         <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
