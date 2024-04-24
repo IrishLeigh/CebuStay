@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Paper, Typography } from "@mui/material";
 import { ImageList, ImageListItem } from "@mui/material";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
 
 const AccommodationUploadPhotos = () => {
   const [selectedImages, setSelectedImages] = useState([]);
@@ -38,74 +38,72 @@ const AccommodationUploadPhotos = () => {
   });
 
   return (
-    <Box
+    <Container
+      maxWidth="lg"
+      spacing={2}
       sx={{
         height: "90vh",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          height: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Grid item xs={6} sx={{ textAlign: "left" }}>
-          <Typography variant="h4">Upload your photos</Typography>
-          <Typography variant="body1" sx={{ fontSize: 18 }}>
-            Upload at least 5 photos of your property. The more you upload, the
-            more likely you are to get bookings. You can add more later.
-          </Typography>
-          <Paper elevation={3} sx={{ height: "500px", padding: 3 }}>
-            <div
-              {...getRootProps()}
-              style={{
-                border: "2px dashed #ccc",
-                padding: "30px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "calc(100% - 60px)",
-                height: "30%",
-              }}
-            >
-              {selectedImages.length === 0 && (
-                <>
-                  <input
-                    {...getInputProps()}
-                    onChange={handleImageChange}
-                    multiple
-                    style={{ display: "none" }}
-                  />
-                  <Typography variant="body1" align="center">
-                    <img
-                      src="upload.png"
-                      alt="Drag & drop or browse"
-                      style={{ width: "40px", height: "50px" }}
-                    />
-                    <br />
-                    Drag & drop images here, or click to select
-                  </Typography>
-                </>
-              )}
-            </div>
-            <ImageList sx={{ paddingTop: 0 }} rowHeight={160} cols={4} gap={1}>
-              {selectedImages.map((image, index) => (
-                <ImageListItem key={index}>
+      <Grid item xs={6} sx={{ textAlign: "left", paddingTop: "8rem" }}>
+        <Typography variant="h4">Upload your photos</Typography>
+        <Typography variant="body1" sx={{ fontSize: 18 }}>
+          Upload at least 5 photos of your property. The more you upload, the
+          more likely you are to get bookings. You can add more later.
+        </Typography>
+        <Paper elevation={3} sx={{ height: "500px", padding: 3 }}>
+          <div
+            {...getRootProps()}
+            style={{
+              border: "2px dashed #ccc",
+              padding: "30px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "calc(100% - 60px)",
+              height: "30%",
+            }}
+          >
+            {selectedImages.length === 0 ? (
+              <>
+                <input
+                  {...getInputProps()}
+                  onChange={handleImageChange}
+                  multiple
+                  style={{ display: "none" }}
+                />
+                <Typography variant="body1" align="center">
                   <img
-                    src={URL.createObjectURL(image)}
-                    alt={`Selected ${index + 1}`}
-                    style={{ width: "80%" }}
+                    src="upload.png"
+                    alt="Drag & drop or browse"
+                    style={{ width: "50px", height: "50px" }}
                   />
-                </ImageListItem>
-              ))}
-            </ImageList>
-          </Paper>
-        </Grid>
+                  <br />
+                  Drag & drop images here, or click to select
+                </Typography>
+              </>
+            ) : (
+              <Typography variant="body1" align="center">
+                Selected images:
+              </Typography>
+            )}
+          </div>
+          <ImageList sx={{ paddingTop: 0 }} rowHeight={160} cols={4} gap={1}>
+            {selectedImages.map((image, index) => (
+              <ImageListItem key={index}>
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={`Selected ${index + 1}`}
+                  style={{ width: "80%" }}
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        </Paper>
       </Grid>
-    </Box>
+    </Container>
   );
 };
 
