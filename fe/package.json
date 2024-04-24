@@ -15,6 +15,8 @@
     "cors": "^2.8.5",
     "dayjs": "^1.11.10",
     "framer-motion": "^11.1.7",
+    "google-maps": "^4.3.3",
+    "google-maps-react": "^2.0.6",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",

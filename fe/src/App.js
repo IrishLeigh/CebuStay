@@ -12,10 +12,12 @@ import Properties from './components/Button/Properties';
 import AccommodationRegistration2 from './components/Button/AccommodationRegistration2';
 import AccommodationPropertyInformation from './components/Button/AccommodationPropertyInformation';
 import AccommodationPropertyType from './components/Button/AccommodationPropertyType';
+import AccommodationPropertyMap from './components/Form/AccommodationPropertyMap';
 function App() {
   return (
     <div>
       <AccommodationPropertyInformation/>
+      <AccommodationPropertyMap/>
     </div>  
   );
 }
