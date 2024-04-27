@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { Grid } from "@mui/material";
 
 const propertyTypes = [
   {
@@ -37,7 +37,7 @@ export default function Properties() {
   return (
     <Box>
       <Container
-        maxWidth="lg"
+        maxWidth="md"
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -46,78 +46,80 @@ export default function Properties() {
           minHeight: "100vh",
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "left" }}>
-          <div>
-            Unlock the door to hosting with CebuStay! List your property and
-            open your
-          </div>
-          <div> doors to guests effortlessly!</div>
-        </Typography>
-        <Typography sx={{ fontSize: 18, textAlign: "left", mb: 2 }}>
-          <div>
-            Ready to dive in? Kickstart your hosting journey by selecting the
-            perfect property type to list on CebuStay?
-          </div>
-        </Typography>
-
-        <Paper
-          elevation={3}
+        <Typography
           sx={{
-            boxShadow: "none",
+            fontWeight: "bold",
+            fontSize: "1.5rem",
+            textAlign: "left",
           }}
         >
+          Unlock the door to hosting with CebuStay! List your property and open
+          your doors to guests effortlessly!
+        </Typography>
+
+        <Typography
+          sx={{
+            fontSize: "1.1rem",
+            textAlign: "left",
+            marginBottom: 4,
+          }}
+        >
+          Ready to dive in? Kickstart your hosting journey by selecting the
+          perfect property type to list on CebuStay?
+        </Typography>
+
+        <Grid container spacing={2} justifyContent="center">
           {propertyTypes.map((type, index) => (
-            <Box key={index} width={800} mb={2}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor:
-                    selectedType === type.name ? "#1780CB" : "white",
-                  color: selectedType === type.name ? "white" : "black",
-                  fontFamily: "Poppins, sans-serif",
-                  width: "100%",
-                  height: 80,
-                  pt: 5,
-                  pb: 5,
-                  "&:hover": { backgroundColor: "#16B4DD", color: "white" },
-                }}
-                startIcon={
-                  <img
-                    src={`${type.name.toLowerCase()}.png`}
-                    alt={type.name}
-                    style={{
-                      marginRight: "10px",
-                      width: "60px",
-                      height: "60px",
-                    }}
-                  />
-                }
-                onClick={() => handleClick(type.name)}
-              >
-                <Typography
+            <Grid item xs={12} key={index}>
+              <Box>
+                <Button
+                  variant="contained"
                   sx={{
-                    fontWeight: "bold",
-                    fontSize: 18,
-                    textTransform: "initial",
-                    width: "250px",
-                  }}
-                >
-                  {type.name}
-                </Typography>
-                <Typography
-                  sx={{
-                    textAlign: "left",
-                    fontSize: "16px",
-                    textTransform: "initial",
+                    backgroundColor:
+                      selectedType === type.name ? "#1780CB" : "white",
+                    color: selectedType === type.name ? "white" : "black",
+                    fontFamily: "Poppins, sans-serif",
                     width: "100%",
+                    height: 80,
+                    "&:hover": { backgroundColor: "#16B4DD", color: "white" },
                   }}
+                  startIcon={
+                    <img
+                      src={`${type.name.toLowerCase()}.png`}
+                      alt={type.name}
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                      }}
+                    />
+                  }
+                  onClick={() => handleClick(type.name)}
                 >
-                  {type.description}
-                </Typography>
-              </Button>
-            </Box>
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "1.125rem",
+                      textTransform: "initial",
+                      width: "250px",
+                    }}
+                  >
+                    {type.name}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      width: "100%",
+                      fontSize: { xs: "0.65rem", sm: "1rem" },
+                      textTransform: "initial",
+                      textAlign: "left",
+                    }}
+                  >
+                    {type.description}
+                  </Typography>
+                </Button>
+              </Box>
+            </Grid>
           ))}
-        </Paper>
+        </Grid>
       </Container>
     </Box>
   );
