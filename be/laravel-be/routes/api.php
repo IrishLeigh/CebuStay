@@ -14,7 +14,7 @@ Route::get('/getusers/{userId}', [UserController::class, 'getUserById']);
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
+//Routes for register user
 Route::post('/registeruser', 'App\Http\Controllers\RegisterUserController@register');
 
 Route::post('/verifytoken', 'App\Http\Controllers\RegisterUserController@verifyToken');
@@ -28,4 +28,8 @@ Route::put('/forgotPass/{email}', [UserForgotPassController::class, 'changePass'
 Route::post('/additionalInfo', [EditUserProfileController::class, 'createAdditionalInfo']);
 Route::get('/additionalInfo/{additionalInfoId}', [EditUserProfileController::class, 'getAdditionalInfoById']);
 Route::put('/additionalInfo/{additionalInfoId}', [EditUserProfileController::class, 'updateAdditionalInfo']);
-Route::put( '/updateProfile/{userid}', [EditUserProfileController::class, 'updateProfile']);
+Route::put('/updateProfile/{userid}', [EditUserProfileController::class, 'updateProfile']);
+
+//Routes for login
+Route::post('/login', 'App\Http\Controllers\LoginUserController@login');
+Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToken');
