@@ -16,10 +16,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 //Routes for register user
 Route::post('/registeruser', 'App\Http\Controllers\RegisterUserController@register');
-
 Route::post('/verifytoken', 'App\Http\Controllers\RegisterUserController@verifyToken');
+Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendEmailCode');
 
-Route::post('/registerstudent', 'App\Http\Controllers\StudentController@create');
 
 // Route for updating password based on email
 Route::put('/forgotPass/{email}', [UserForgotPassController::class, 'changePass']);

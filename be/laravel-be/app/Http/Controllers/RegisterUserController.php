@@ -49,6 +49,18 @@ class RegisterUserController extends Controller
             return 0; // Error occurred while sending email
         }
     }
+    public function resendEmailCode(Request $request)
+    {
+        $email = $request->input('email');
+        $user = UserModel::where('email', $email)->first();
+        $verify_token = md5(rand());
+        $user->verificationtoken = $verify_token;
+        $tokenExpiration = Carbon::now()->addMinutes(5);
+        $user->verification_token_expires_at = $tokenExpiration;
+        $this->sendEmail($user->firstname, $user->lastname, $user->email, $verify_token);
+        $user->save();
+        return response()->json(['message' => 'Verification Code Resent.', 'status' => 'success']);
+    }
     public function register(Request $request)
     {
         $this->enableCors($request);
