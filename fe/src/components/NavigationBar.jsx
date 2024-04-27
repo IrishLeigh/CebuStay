@@ -12,7 +12,9 @@ const NavigationBar = () => {
         <a href="#">About Us</a>
         <a href="#">Popular Destinations</a>
         <a href="#">Our Packages</a>
-        <button className="sign-in">Sign In</button>
+        <a href="/login"> {/* Link to your login page */}
+          <button className="sign-in">Sign In</button>
+        </a>
       </div>
     </nav>
   );
