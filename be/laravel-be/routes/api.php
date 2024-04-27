@@ -24,7 +24,7 @@ Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendE
 Route::put('/forgotPass/{email}', [UserForgotPassController::class, 'changePass']);
 
 // Routes for additional info
-Route::post('/additionalInfo', [EditUserProfileController::class, 'createAdditionalInfo']);
+Route::post('/additionalInfo/{userId}', [EditUserProfileController::class, 'createAdditionalInfo']);
 Route::get('/additionalInfo/{additionalInfoId}', [EditUserProfileController::class, 'getAdditionalInfoById']);
 Route::put('/additionalInfo/{additionalInfoId}', [EditUserProfileController::class, 'updateAdditionalInfo']);
 Route::put('/updateProfile/{userid}', [EditUserProfileController::class, 'updateProfile']);

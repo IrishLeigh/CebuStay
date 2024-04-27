@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class EditUserProfile extends Model
 {
     protected $table = 'additional_info';
+    protected $primaryKey = 'addid';
 
     protected $fillable = [
         'cellphone_number',

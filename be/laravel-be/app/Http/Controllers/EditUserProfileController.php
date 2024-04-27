@@ -15,7 +15,7 @@ class EditUserProfileController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-     // UPDATE method User firstname, lastname, email
+    // UPDATE method User firstname, lastname, email
     public function updateProfile(Request $request, $userId)
     {
         $user = UserModel::find($userId);
@@ -23,30 +23,51 @@ class EditUserProfileController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
-    
+
         $user->firstname = $request->input('firstname', $user->firstname);
         $user->lastname = $request->input('lastname', $user->lastname);
         $user->email = $request->input('email', $user->email);
-    
+
         $user->save();
-        
-        return response()->json($user);
+
+        // return response()->json($user);
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'user' => $user,
+        ]);
     }
 
     // POST method for additional info
-    public function createAdditionalInfo(Request $request)
+    public function createAdditionalInfo(Request $request, $userId)
     {
-        $additionalInfo = new EditUserProfile();
-
-        $additionalInfo->cellphone_number = $request->input('cellphone_number');
-        $additionalInfo->e_wallet_account = $request->input('e_wallet_account');
-        $additionalInfo->payment_method_type = $request->input('payment_method_type');
-        $additionalInfo->mastercard_number = $request->input('mastercard_number');
-        $additionalInfo->mastercard_expiration_month = $request->input('mastercard_expiration_month');
-        $additionalInfo->mastercard_expiration_year = $request->input('mastercard_expiration_year');
-
+        // Find the user by user ID
+        $user = UserModel::find($userId);
+    
+        // Find the additional info record associated with the user ID
+        $additionalInfo = EditUserProfile::where('userid', $userId)->first();
+    
+        // If additional info record doesn't exist, create a new one
+        if (!$additionalInfo) {
+            $additionalInfo = new EditUserProfile();
+            $additionalInfo->userid = $userId;
+        }
+    
+        // Assign data from the request to the additional info record
+        $additionalInfo->cellphone_number = $request->input('cellphone_number', $additionalInfo->cellphone_number);
+        $additionalInfo->e_wallet_account = $request->input('e_wallet_account', $additionalInfo->e_wallet_account);
+        $additionalInfo->payment_method_type = $request->input('payment_method_type', $additionalInfo->payment_method_type);
+        $additionalInfo->mastercard_number = $request->input('mastercard_number', $additionalInfo->mastercard_number);
+        $additionalInfo->mastercard_expiration_month = $request->input('mastercard_expiration_month', $additionalInfo->mastercard_expiration_month);
+        $additionalInfo->mastercard_expiration_year = $request->input('mastercard_expiration_year', $additionalInfo->mastercard_expiration_year);
+    
+        // Save the additional info record
         $additionalInfo->save();
-        return response()->json($additionalInfo);
+    
+        // Return the saved additional info record as JSON response
+        return response()->json([
+            'message' => 'Profile added successfully.',
+            'additional_info' => $additionalInfo,
+        ]);
     }
 
     //GET method for additional info
@@ -58,9 +79,14 @@ class EditUserProfileController extends Controller
             return response()->json(['message' => 'Additional info not found.'], 404);
         }
 
-        return response()->json($additionalInfo);
+        // return response()->json($additionalInfo);
+        return response()->json([
+            'message' => 'Profile successfully retrieved.',
+            'additional_info' => $additionalInfo,
+        ]);
     }
 
+    // PUT method for additional info
     public function updateAdditionalInfo(Request $request, $additionalInfoId)
     {
         $additionalInfo = EditUserProfile::find($additionalInfoId);
@@ -77,8 +103,12 @@ class EditUserProfileController extends Controller
         $additionalInfo->mastercard_expiration_year = $request->input('mastercard_expiration_year', $additionalInfo->mastercard_expiration_year);
 
         $additionalInfo->save();
-        
-        return response()->json($additionalInfo);
+
+        // return response()->json($additionalInfo);
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'additional_info' => $additionalInfo,
+        ]);
     }
 
 }
