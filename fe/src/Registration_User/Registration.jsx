@@ -68,7 +68,6 @@ const Registration = () => {
         setError("Passwords do not match"); // Set error message
         return;
       }
-
       // Continue with registration if all validations pass
       const account_type = "tourist";
       const is_verified = false;
@@ -80,7 +79,6 @@ const Registration = () => {
       const minutes = String(currentDate.getMinutes()).padStart(2, "0");
       const seconds = String(currentDate.getSeconds()).padStart(2, "0");
       const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
       // Send registration request
       const res = await axios.post("http://127.0.0.1:8000/api/registeruser", {
         firstname,
@@ -104,6 +102,7 @@ const Registration = () => {
       console.error("Error occurred while submitting data:", error);
     }
   };
+  
 
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
