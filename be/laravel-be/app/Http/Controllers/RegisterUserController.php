@@ -12,6 +12,22 @@ use Carbon\Carbon;
 
 class RegisterUserController extends Controller
 {
+    public function enableCors($request)
+    {
+        $response = response()->json([], 200);
+        $response->header('Access-Control-Allow-Origin', '*');
+        $response->header('Access-Control-Allow-Credentials', 'true');
+
+        // Access-Control headers are received during OPTIONS requests
+        if ($request->isMethod('options')) {
+            $response->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
+            if ($request->header('Access-Control-Request-Headers')) {
+                $response->header('Access-Control-Allow-Headers', $request->header('Access-Control-Request-Headers'));
+            }
+            return $response;
+        }
+    }
     public function sendEmail($firstname, $lastname, $email, $verify_token)
     {
         $mail = new PHPMailer(true);
@@ -50,6 +66,7 @@ class RegisterUserController extends Controller
     }
     public function register(Request $request)
     {
+        $this->enableCors($request);
         // Check if email already exists
         $existingUser = UserModel::where('email', $request->input('email'))->first();
 
@@ -67,7 +84,7 @@ class RegisterUserController extends Controller
                 $existingUser->verificationtoken = $verify_token;
 
                 // Set token expiration time (e.g., 24 hours from now)
-                $tokenExpiration = Carbon::now()->addMinutes(1);
+                $tokenExpiration = Carbon::now()->addMinutes(5);
                 $existingUser->verification_token_expires_at = $tokenExpiration;
 
                 $this->sendEmail($existingUser->firstname, $existingUser->lastname, $existingUser->email, $verify_token);
@@ -87,18 +104,20 @@ class RegisterUserController extends Controller
         $user->verificationtoken = $verify_token;
 
         // Set token expiration time (e.g., 24 hours from now)
-        $tokenExpiration = Carbon::now()->addMinutes(1);
+        $tokenExpiration = Carbon::now()->addMinutes(5);
         $user->verification_token_expires_at = $tokenExpiration;
 
         $this->sendEmail($user->firstname, $user->lastname, $user->email, $verify_token);
         $user->save();
 
-        return response()->json(['message' => 'User created successfully.', 'status' => 'success']);
+        return response()->json(['message' => 'Account Created, Please verify your email with the code sent.', 'status' => 'success']);
     }
 
     public function verifyToken(Request $request)
     {
-        $verificationToken = $request->input('verificationtoken');
+        $this->enableCors($request);
+
+        $verificationToken = $request->input('token');
         $email = $request->input('email');
 
         // Find the user by verification token and email
