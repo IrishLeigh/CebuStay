@@ -19,37 +19,47 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      if (!firstname|| !lastname|| !email || !password || !confirmpassword) {
+      if (!firstname || !lastname || !email || !password || !confirmpassword) {
         alert("Please fill in all the required fields");
         return;
-    }
-
-      if(password.length <8)
-      {
+      }
+  
+      if (password.length < 8) {
         alert('Password must be at least 8 characters long');
         return;
       }
-    var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
-    if (!passwordRegex.test(password)) {
+  
+      // Check if email already exists
+      const emailCheckResponse = await axios.post("http://localhost/API/register.php", {
+        action: "check_email",
+        email,
+      });
+  
+      if (emailCheckResponse.data.exists) {
+        alert("This email already exists. Please use a different email.");
+        return; 
+      }
+  
+      var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
+      if (!passwordRegex.test(password)) {
         alert("Password must contain at least one symbol or a capital letter");
         return;
-    }
-    
-
-    var emailRegex = /^[a-zA-Z0-9._-]+@gmail\.com$/;
-    if (!emailRegex.test(email)) {
+      }
+  
+      var emailRegex = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+      if (!emailRegex.test(email)) {
         alert("Please enter a valid email address");
         return;
-    }
-
-    
-
+      }
+  
       if (password !== confirmpassword) {
         alert("Passwords do not match");
         return;
       }
+  
+      // Continue with registration if all validations pass
       const account_type = "tourist";
       const is_verified = false;
       const currentDate = new Date();
@@ -60,8 +70,7 @@ const Registration = () => {
       const minutes = String(currentDate.getMinutes()).padStart(2, "0");
       const seconds = String(currentDate.getSeconds()).padStart(2, "0");
       const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      console.log(firstname, lastname, email, password, account_type, account_created, is_verified);
-
+  
       // Send registration request
       const res = await axios.post("http://localhost/API/register.php", {
         firstname,
@@ -73,7 +82,7 @@ const Registration = () => {
         is_verified,
       });
       console.log(res.data);
-
+  
       // If registration successful, set verificationSent to true
       setVerificationSent(true);
     } catch (error) {
@@ -81,6 +90,7 @@ const Registration = () => {
       console.error("Error occurred while submitting data:", error);
     }
   };
+  
 
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
@@ -209,7 +219,7 @@ const Registration = () => {
           )}
 
           <p className="p">
-            Already have an account? <Link to="/components/Form" className="span">Sign In</Link>
+            Already have an account? <Link to="/login" className="span">Sign In</Link>
           </p>
         </form>
       </div>

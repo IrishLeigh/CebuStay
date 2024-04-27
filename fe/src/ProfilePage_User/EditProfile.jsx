@@ -16,7 +16,7 @@ const EditProfile = () => {
       try {
         const response = await axios.get("http://localhost/API/loadProfile.php", {
           params: {
-            userid: 1// Replace with the logged in user's id
+            userid: 14// Replace with the logged in user's id
           }
         });
         console.log("Response Data:", response.data); // Log the entire response object
@@ -60,7 +60,7 @@ const EditProfile = () => {
             <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
               <div className="edit-detail-label">Name</div>
               <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.firstname} {profile.lastname} </div>
-              <Link to="/EditProfileName_User/EditProfile2">
+              <Link to="/EditName">
                 <span className="edit-edit-text">Edit</span>
               </Link>
             </div>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import './ForgotPassword.css';
 import axios from "axios";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+
 
 const ForgotPassword = () => {
   const [showVerification, setShowVerification] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [instructionText, setInstructionText] = useState('Please Select Option To Reset Password');
@@ -15,6 +18,18 @@ const ForgotPassword = () => {
   const [verificationSent, setVerificationSent] = useState(false);
   const [token, setToken] = useState("");
   const [profile, setProfile] = useState(null);
+  const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState(false);
+  const [confirmpassword, setConfirmpassword] = useState("");
+
+
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisibility(!confirmPasswordVisibility);
+  };
+  
+  const togglePasswordVisibility = () => {
+    setPasswordVisibility(!passwordVisibility);
+  };
 
   const handleResetOptionClick = (option) => {
     setSelectedOption(option);
@@ -47,7 +62,7 @@ const ForgotPassword = () => {
 
       const profileResponse = await axios.get("http://localhost/API/loadProfile.php", {
           params: {
-            userid: 14 // Replace with the logged in user's id
+            userid: 18 // Replace with the logged in user's id
           }
         });
         setProfile(profileResponse.data);
@@ -76,7 +91,7 @@ const ForgotPassword = () => {
 
       const profileResponse = await axios.get("http://localhost/API/loadProfile.php", {
           params: {
-            userid: 14 // Replace with the logged in user's id
+            userid: 18 // Replace with the logged in user's id
           }
         });
 
@@ -101,7 +116,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     try {
       const response = await axios.put('http://localhost/api/updateProfile.php', {
-        userid: 14,
+        userid: 18,
         password
       });
       console.log(response.data);
@@ -194,20 +209,51 @@ const ForgotPassword = () => {
       )}
       {showResetPassword && (
         <div className="reset-password">
-          <input
-            type="password"
-            placeholder="Enter New Password"
-            // value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ marginTop: '10px', padding: '10px', marginRight: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
-          />
-          <input
-            type="password"
-            placeholder="Confirm New Password"
-            // value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            style={{ marginTop: '10px', padding: '10px', marginRight: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
-          />
+       <div style={{ position: 'relative', marginTop: '10px' }}>
+  <input
+    type={passwordVisibility ? "text" : "password"}
+    placeholder="New Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '5px', width: 'calc(100% - 30px)' }}
+  />
+  {passwordVisibility ? (
+    <MdVisibilityOff
+      onClick={togglePasswordVisibility}
+      style={{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+    />
+  ) : (
+    <MdVisibility
+      onClick={togglePasswordVisibility}
+      style={{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+    />
+  )}
+</div>
+
+<div style={{ position: 'relative', marginTop: '10px' }}>
+  <input
+    type={confirmPasswordVisibility ? "text" : "password"}
+    placeholder="Confirm Password"
+    value={confirmPassword}
+    onChange={(e) => setConfirmPassword(e.target.value)}
+    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '5px', width: 'calc(100% - 30px)' }}
+  />
+  {confirmPasswordVisibility ? (
+    <MdVisibilityOff
+      onClick={toggleConfirmPasswordVisibility}
+      style={{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+    />
+  ) : (
+    <MdVisibility
+      onClick={toggleConfirmPasswordVisibility}
+      style={{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', cursor: 'pointer' }}
+    />
+  )}
+</div>
+
+
+
+          
           <button
             type="button"
             className="reset-password-btn"

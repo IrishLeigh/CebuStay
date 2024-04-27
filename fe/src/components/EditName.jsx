@@ -4,32 +4,23 @@ import './EditName.css';
 import axios from 'axios';
 
 const EditName = () => {
-  const [firstname, setfirstname] = useState('');
-  const [lastname, setlastname] = useState('');
-  // const [profile, setProfile] = useState(null);
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleSave = () => {
-    // Add logic to save the edited name
-    console.log('First Name:', firstname);
-    console.log('Last Name:', lastname);
-  };
-
-  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get("http://localhost/api/loadProfile.php", {
           params: {
-            userid: 1 // Replace with the logged in user's id
+            userid: 14 // Replace with the logged in user's id
           }
         });
-        console.log("Response Data:", response.data); // Log the entire response object
-        console.log("Response Data Email:", response.data.userid); // Log the entire response object
-        // setProfile(response.data);
-        setfirstname(response.data.firstname);
-        setlastname(response.data.lastname);
+        console.log("Response Data:", response.data);
+        setFirstname(response.data.firstname);
+        setLastname(response.data.lastname);
         setLoading(false);
       } catch (error) {
         setError("Error fetching profile data.");
@@ -41,7 +32,7 @@ const EditName = () => {
     fetchProfile();
   }, []);
 
-  const hanndleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put('http://localhost/api/updateProfile.php', {
@@ -50,10 +41,12 @@ const EditName = () => {
         lastname
       });
       console.log(response.data);
+      setSuccessMessage('Data updated successfully!');
     } catch (error) {
       console.error(error);
+      setError('Failed to update data. Please try again later.');
     }
-  }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -67,7 +60,7 @@ const EditName = () => {
           <input
             type="text"
             value={firstname}
-            onChange={(e) => setfirstname(e.target.value)}
+            onChange={(e) => setFirstname(e.target.value)}
             className="edit-name-input"
             placeholder="RHADIEL MARI"
           />
@@ -80,7 +73,7 @@ const EditName = () => {
           <input
             type="text"
             value={lastname}
-            onChange={(e) => setlastname(e.target.value)}
+            onChange={(e) => setLastname(e.target.value)}
             className="edit-name-input"
             placeholder="ESCARIO"
           />
@@ -88,8 +81,9 @@ const EditName = () => {
       </div>
       <div className="edit-name-buttons">
         <button className="edit-button cancel-button" style={{ color: '#007bff', backgroundColor: 'white' }} onMouseEnter={(e) => { e.target.style.color = 'white'; e.target.style.backgroundColor = '#007bff' }} onMouseLeave={(e) => { e.target.style.color = '#007bff'; e.target.style.backgroundColor = 'white' }}>Cancel</button>
-        <button className="edit-button save-button" style={{ backgroundColor: '#007bff', color: 'white' }} onClick={hanndleSubmit}>Save</button>
+        <button className="edit-button save-button" style={{ backgroundColor: '#007bff', color: 'white' }} onClick={handleSubmit}>Save</button>
       </div>
+      {successMessage && <p className="success-message">{successMessage}</p>}
     </div>
   );
 }

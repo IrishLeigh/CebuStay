@@ -10,6 +10,7 @@ import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
 import LandingPage from './Landing_Page/landing';
 import { BrowserRouter as Router, Route, Switch, Routes } from "react-router-dom";
+import SearchAndFilterView from './SearchAndFilterView/SearchAndFilterView';
 
 
 function App() {
@@ -20,7 +21,12 @@ function App() {
         <Routes>
           <Route path="/login"  element={<Form/>}/>  {/* Login page */}
           <Route path="/landing"  element={<LandingPage/>}/>  {/* Login page */}
-          <Route path="/register"  element={<Registration/>}/>        
+          <Route path="/login/register"  element={<Registration/>}/>       
+          <Route path="/login/ForgotPassword"  element={<ForgotPassword/>}/>   
+ 
+          <Route path="/EditName"  element={<EditProfile2/>}/>   
+
+           
         </Routes>
       
     </div>
