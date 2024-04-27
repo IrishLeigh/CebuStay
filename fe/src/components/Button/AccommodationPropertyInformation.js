@@ -1,6 +1,6 @@
-import React from "react";
-import { Button, Box, Typography, Grid, Container } from "@mui/material"; // Import necessary MUI components
-import { motion } from "framer-motion"; // Import motion for animation
+import React, { useState } from "react";
+import { Button, Typography, Grid, Container } from "@mui/material";
+import { motion } from "framer-motion";
 
 const data = {
   basicAmenities: [
@@ -37,7 +37,9 @@ const data = {
   ],
 };
 
-function AmenityButton({ icon, text }) {
+function AmenityButton({ icon, text, isSelected, onClick }) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <Container
       maxWidth="lg"
@@ -52,17 +54,24 @@ function AmenityButton({ icon, text }) {
       <Button
         variant="contained"
         sx={{
-          backgroundColor: "white",
-          color: "black",
+          backgroundColor: isSelected ? "#1780CB" : "white",
+          color: isSelected ? "white" : "black",
           fontFamily: "Poppins, sans-serif",
           width: 200,
           height: 80,
           "&:hover": {
-            backgroundColor: "#16B4DD",
-            color: "white",
-            "& img": {
-              filter: "invert(100%)",
-            },
+            backgroundColor:
+              isHovered && !isSelected
+                ? "#16B4DD"
+                : isSelected
+                ? "#1780CB"
+                : "white",
+            color:
+              isHovered && !isSelected
+                ? "white"
+                : isSelected
+                ? "white"
+                : "black",
           },
         }}
         startIcon={
@@ -73,6 +82,9 @@ function AmenityButton({ icon, text }) {
             whileHover={{ scale: 1.2 }}
           />
         }
+        onClick={onClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <Typography
@@ -92,6 +104,16 @@ function AmenityButton({ icon, text }) {
 }
 
 function CategorySection({ category, label }) {
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  const toggleItemSelection = (itemText) => {
+    if (selectedItems.includes(itemText)) {
+      setSelectedItems(selectedItems.filter((item) => item !== itemText));
+    } else {
+      setSelectedItems([...selectedItems, itemText]);
+    }
+  };
+
   return (
     <>
       <Typography
@@ -109,7 +131,12 @@ function CategorySection({ category, label }) {
         <Grid container spacing={1} sx={{ maxWidth: 800 }}>
           {data[category].map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <AmenityButton icon={item.icon} text={item.text} />
+              <AmenityButton
+                icon={item.icon}
+                text={item.text}
+                isSelected={selectedItems.includes(item.text)}
+                onClick={() => toggleItemSelection(item.text)}
+              />
             </Grid>
           ))}
         </Grid>
@@ -126,18 +153,16 @@ function AccommodationPropertyInformation() {
         style={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center", // Center horizontally
+          justifyContent: "center",
           textAlign: "left",
-          height: "100vh",
-          marginTop: "28rem",
-          ml: "",
+          marginTop: "5rem",
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
           Property Information
         </Typography>
         <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
-          Please click the button you choose.
+          Please click the buttons you choose.
         </Typography>
         <CategorySection category="basicAmenities" label={"Basic Amenities"} />
         <CategorySection category="basicServices" label={"Basic Services"} />

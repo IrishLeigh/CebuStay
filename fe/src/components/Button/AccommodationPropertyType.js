@@ -26,33 +26,40 @@ const AccommodationPropertyType = () => {
 
   return (
     <Container
+      maxWidth="md"
       style={{
-        maxWidth: "100vh",
-        textAlign: "initial",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "90vh",
       }}
     >
-      <Box mt={25}>
-        <Typography sx={{fontSize:'2rem'}} fontWeight="bold">
+      <Box mt={5}>
+        <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
           Property Type
         </Typography>
-        <Typography sx={{fontSize:'1.5rem'}} mb={2}>
+        <Typography sx={{ fontSize: "1.5rem" }} mb={2}>
           Please click on the button you want to choose
         </Typography>
         <Grid container spacing={2}>
           {buttonsData.map((button, index) => (
-            <Grid item xs={4} key={index} style={{ margin: "0 auto" }}>
+            <Grid item xs={6} sm={4} md={3} key={index}>
               <Button
                 variant="contained"
                 sx={{
                   backgroundColor: selectedButtons.includes(button.label)
-                    ? "#16B4DD"
+                    ? "#1780CB" // Color when clicked
                     : "white",
                   color: selectedButtons.includes(button.label)
                     ? "white"
                     : "black",
                   fontFamily: "Poppins, sans-serif",
-                  width: 200,
+                  width: "100%",
                   height: 80,
+                  "&:hover": {
+                    backgroundColor: "#16B4DD", // Color on hover
+                    color: "white",
+                  },
                 }}
                 startIcon={
                   <img
