@@ -23,10 +23,7 @@ function App() {
           <Route path="/landing"  element={<LandingPage/>}/>  {/* Login page */}
           <Route path="/login/register"  element={<Registration/>}/>       
           <Route path="/login/ForgotPassword"  element={<ForgotPassword/>}/>   
- 
-          <Route path="/EditName"  element={<EditProfile2/>}/>   
-
-           
+          <Route path="/EditName"  element={<EditProfile2/>}/>
         </Routes>
       
     </div>
