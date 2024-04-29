@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UnitDetails;
 use App\Models\UnitRooms;
+use App\Models\BedroomType;
 
 class UnitDetailsController extends Controller
 {
-    public function InsertUnitDetails(Request $request)
+    public function insertUnitDetails(Request $request)
     {
         $this->enableCors($request);
         $unit = new UnitDetails();
@@ -33,5 +34,28 @@ class UnitDetailsController extends Controller
             $room->quantity = $unitroom['quantity'];
             $room->save();
         }
+    }
+
+    public function insertBedTypes(Request $request)
+    {
+        $this->enableCors($request);
+        $unitid = $request->input('unitid');
+        $bedroomDetails = $request->input('bedroomDetailsData');
+        $unitroomidref = UnitRooms::where('unitid', $unitid)
+            ->where('roomname', 'Bedroom')
+            ->first();
+
+        foreach ($bedroomDetails as $bedroom) {
+            $bedtype = new BedroomType();
+            $bedtype->unitroomid = $unitroomidref->unitroomid;
+            $bedtype->bedroomnum = $bedroom['bedroomNo'];
+            $bedtype->singlebed = $bedroom['singleBed'];
+            $bedtype->bunkbed = $bedroom['doubleBed'];
+            $bedtype->largebed = $bedroom['largeBed'];
+            $bedtype->superlargebed = $bedroom['superlargeBed'];
+            $bedtype->save();
+        }
+
+        return response()->json(["status" => 'success', "message" => "Bedroom Details inserted successfully"]);
     }
 }
