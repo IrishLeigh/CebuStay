@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use Illuminate\Http\Request;
+use App\Models\Home;
 
 class PropertyController extends Controller
 {
@@ -21,7 +22,13 @@ class PropertyController extends Controller
 
         $property->save();
         $propertyid = $property->propertyid;
-
-        return response()->json(["status" => 'success', "message" => "Data inserted successfully", "propertyid" => $propertyid]);
+        if ($property->property_type == "Home") {
+            $home = new Home();
+            $home->propertyid = $propertyid;
+            $home->total_unit = $property->number_unit;
+            $home->unit_type = $property->unit_type;
+            $home->save();
+        }
+        return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid]);
     }
 }
