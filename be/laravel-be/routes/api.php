@@ -32,3 +32,6 @@ Route::put('/updateProfile/{userid}', [EditUserProfileController::class, 'update
 //Routes for login
 Route::post('/login', 'App\Http\Controllers\LoginUserController@login');
 Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToken');
+
+//Routes for property
+Route::post('/propertyinfo', 'App\Http\Controllers\PropertyController@InsertPropertyInfo');
