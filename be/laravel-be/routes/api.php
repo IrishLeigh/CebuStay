@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EditUserProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserForgotPassController;
+use App\Http\Controllers\AmenityController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\FacilitiesController;
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
 Route::post('/users', [UserController::class, 'create']);
@@ -18,6 +21,15 @@ Route::get('/user', function (Request $request) {
 Route::post('/registeruser', 'App\Http\Controllers\RegisterUserController@register');
 Route::post('/verifytoken', 'App\Http\Controllers\RegisterUserController@verifyToken');
 Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendEmailCode');
+
+// Routes for amenity
+Route::post('/amenities/{propertyId}', [AmenityController::class, 'create']);
+
+// Routes for service
+Route::post('/services/{propertyId}', [ServiceController::class, 'create']);
+
+// Routes for facilities
+Route::post('/facilities/{propertyId}', [FacilitiesController::class, 'create']);
 
 
 // Route for updating password based on email
