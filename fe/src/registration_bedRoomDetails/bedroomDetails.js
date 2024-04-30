@@ -26,7 +26,7 @@ export default function BedroomDetails() {
 
   // Update bedroomDetailsData whenever bedrooms change
   React.useEffect(() => {
-    initializeBedrooms(2);
+    initializeBedrooms(1);
   }, []);
 
   React.useEffect(() => {
