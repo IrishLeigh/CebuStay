@@ -149,7 +149,7 @@ const Form = () => {
             </div>
 
             <div className="forgotpassword" style={{ textAlign: 'right' }}>
-              <Link to="/login/ForgotPassword">
+              <Link to="/login/ForgotPass">
                 <span className="span">Forgot password?</span>
               </Link>
             </div>
