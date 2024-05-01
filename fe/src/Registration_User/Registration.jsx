@@ -90,7 +90,6 @@ const Registration = () => {
       console.error("Error occurred while submitting data:", error);
     }
   };
-  
 
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
