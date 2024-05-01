@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
-import './Registration.css';
-import { Link } from 'react-router-dom';
-import { MdEmail, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md";
+import "./Registration.css";
+import { Link } from "react-router-dom";
+import {
+  MdEmail,
+  MdLock,
+  MdPerson,
+  MdVisibility,
+  MdVisibilityOff,
+} from "react-icons/md";
 import OTP from "../components/OTP"; // Adjust the path according to your project structure
 
 const Registration = () => {
@@ -13,50 +19,57 @@ const Registration = () => {
   const [confirmpassword, setConfirmpassword] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
-  const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState(false);
+  const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
+    useState(false);
+  const [error, setError] = useState(""); // State for error message
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       if (!firstname || !lastname || !email || !password || !confirmpassword) {
-        alert("Please fill in all the required fields");
+        setError("Please fill in all the required fields"); // Set error message
         return;
       }
-  
+
       if (password.length < 8) {
-        alert('Password must be at least 8 characters long');
+        setError("Password must be at least 8 characters long"); // Set error message
         return;
       }
-  
+
       // Check if email already exists
-      const emailCheckResponse = await axios.post("http://localhost/API/register.php", {
-        action: "check_email",
-        email,
-      });
-  
+      const emailCheckResponse = await axios.post(
+        "http://localhost/API/register.php",
+        {
+          action: "check_email",
+          email,
+        }
+      );
+
       if (emailCheckResponse.data.exists) {
-        alert("This email already exists. Please use a different email.");
-        return; 
+        setError("This email already exists. Please use a different email."); // Set error message
+        return;
       }
-  
+
       var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
       if (!passwordRegex.test(password)) {
-        alert("Password must contain at least one symbol or a capital letter");
+        setError(
+          "Password must contain at least one symbol or a capital letter"
+        ); // Set error message
         return;
       }
-  
+
       var emailRegex = /^[a-zA-Z0-9._-]+@gmail\.com$/;
       if (!emailRegex.test(email)) {
-        alert("Please enter a valid email address");
+        setError("Please enter a valid email address"); // Set error message
         return;
       }
-  
+
       if (password !== confirmpassword) {
-        alert("Passwords do not match");
+        setError("Passwords do not match"); // Set error message
         return;
       }
-  
+
       // Continue with registration if all validations pass
       const account_type = "tourist";
       const is_verified = false;
@@ -68,7 +81,7 @@ const Registration = () => {
       const minutes = String(currentDate.getMinutes()).padStart(2, "0");
       const seconds = String(currentDate.getSeconds()).padStart(2, "0");
       const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  
+
       // Send registration request
       const res = await axios.post("http://localhost/API/register.php", {
         firstname,
@@ -79,7 +92,7 @@ const Registration = () => {
         account_created,
         is_verified,
       });
-  
+
       // If registration successful, set verificationSent to true
       setVerificationSent(true);
     } catch (error) {
@@ -95,38 +108,70 @@ const Registration = () => {
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisibility(!confirmPasswordVisibility);
   };
-  
+
   return (
-    <div className="container">
-      <div className="form-container">
-        <div style={{ textAlign: 'Left' }}>
-          <h2 style={{ fontSize: '30px', fontWeight: '600', fontFamily: 'Open Sans', textAlign: 'center', color: '#1780CB' }}>Create Account</h2>
-          <p style={{ fontSize: '18px', color: '#7f7f7f', textAlign: 'center' }}>Follow the instructions to make it easier to register and you will be able to explore inside.</p>
-        </div>
-        {!verificationSent ? (
+    <div className="center-container">
+      {!verificationSent && (
+        <div className="form-container">
+          <div style={{ textAlign: "Left" }}>
+            <h2
+              style={{
+                fontSize: "30px",
+                fontWeight: "600",
+                fontFamily: "Open Sans",
+                textAlign: "center",
+                color: "#1780CB",
+              }}
+            >
+              Create Account
+            </h2>
+            <p
+              style={{
+                fontSize: "18px",
+                color: "#7f7f7f",
+                textAlign: "center",
+              }}
+            >
+            </p>
+          </div>
           <form className="form">
-            <div className="flex-column"></div>
-            <div className="inputForm">
-              <MdPerson />
-              <input type="First Name" className="input" placeholder="First Name"
-                onChange={(e) => setFirstname(e.target.value)} />
+            <div className="flex-row">
+              <div className="flex-column">
+                <div className="inputForm">
+                  <MdPerson />
+                  <input
+                    type="First Name"
+                    className="input"
+                    placeholder="First Name"
+                    onChange={(e) => setFirstname(e.target.value)}
+                    style={{ width: "7rem" }}
+                  />
+                </div>
+              </div>
+              <div className="flex-column">
+                <div className="inputForm">
+                  <MdPerson />
+                  <input
+                    type="Last Name"
+                    className="input"
+                    placeholder="Last Name"
+                    onChange={(e) => setLastname(e.target.value)}
+                    style={{ width: "7rem" }}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="flex-column"></div>
-            <div className="inputForm">
-              <MdPerson />
-              <input type="Last Name" className="input" placeholder="Last Name"
-                onChange={(e) => setLastname(e.target.value)} />
-            </div>
-
-            <div className="flex-column"></div>
             <div className="inputForm">
               <MdEmail />
-              <input type="Email" className="input" placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)} />
+              <input
+                type="Email"
+                className="input"
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
 
-            <div className="flex-column"></div>
             <div className="inputForm">
               <MdLock />
               <input
@@ -138,13 +183,18 @@ const Registration = () => {
                 style={{ paddingRight: "30px" }}
               />
               {passwordVisibility ? (
-                <MdVisibility onClick={togglePasswordVisibility} style={{ paddingRight: "20px" }} />
+                <MdVisibility
+                  onClick={togglePasswordVisibility}
+                  style={{ paddingRight: "20px" }}
+                />
               ) : (
-                <MdVisibilityOff onClick={togglePasswordVisibility} style={{ paddingRight: "20px" }} />
+                <MdVisibilityOff
+                  onClick={togglePasswordVisibility}
+                  style={{ paddingRight: "20px" }}
+                />
               )}
             </div>
-          
-            <div className="flex-column"></div>
+
             <div className="inputForm">
               <MdLock />
               <input
@@ -156,23 +206,42 @@ const Registration = () => {
                 style={{ paddingRight: "30px" }}
               />
               {confirmPasswordVisibility ? (
-                <MdVisibility onClick={toggleConfirmPasswordVisibility} style={{ paddingRight: "20px" }} />
+                <MdVisibility
+                  onClick={toggleConfirmPasswordVisibility}
+                  style={{ paddingRight: "20px" }}
+                />
               ) : (
-                <MdVisibilityOff onClick={toggleConfirmPasswordVisibility} style={{ paddingRight: "20px" }} />
+                <MdVisibilityOff
+                  onClick={toggleConfirmPasswordVisibility}
+                  style={{ paddingRight: "20px" }}
+                />
               )}
             </div>
 
-            <button className="button-submit" style={{ background: '#1780CB' }} onClick={handleSubmit}>Create Account</button>
+            {/* Display error message in red color */}
+            {error && (
+              <p style={{ color: "red", textAlign: "center", margin: "5px",fontSize:'15px' }}>
+                {error}
+              </p>
+            )}
+
+            <button
+              className="button-submit"
+              style={{ background: "#1780CB" }}
+              onClick={handleSubmit}
+            >
+              Create Account
+            </button>
           </form>
-        ) : (
-          <OTP />
-        )}
-        {!verificationSent && (
           <p className="p">
-            Already have an account? <Link to="/login" className="span">Sign In</Link>
+            Already have an account?{" "}
+            <Link to="/login" className="span">
+              Sign In
+            </Link>
           </p>
-        )}
-      </div>
+        </div>
+      )}
+      {verificationSent && <OTP />}
     </div>
   );
 };
