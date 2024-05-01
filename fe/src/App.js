@@ -10,10 +10,9 @@ import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
 import LandingPage from './Landing_Page/landing';
 import { BrowserRouter as Router, Route, Switch, Routes } from "react-router-dom";
-import SearchAndFilterView from './SearchAndFilterView/SearchAndFilterView';
 import OTP from './components/OTP';
 import ForgotPass from './ForgotPassword_User/ForgotPass';
-
+import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
   return (
     <div className="App">
