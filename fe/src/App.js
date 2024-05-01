@@ -11,7 +11,8 @@ import EditPhone from './components/EditPhone';
 import LandingPage from './Landing_Page/landing';
 import { BrowserRouter as Router, Route, Switch, Routes } from "react-router-dom";
 import SearchAndFilterView from './SearchAndFilterView/SearchAndFilterView';
-
+import OTP from './components/OTP';
+import ForgotPass from './ForgotPassword_User/ForgotPass';
 
 function App() {
   return (
@@ -22,8 +23,12 @@ function App() {
           <Route path="/login"  element={<Form/>}/>  {/* Login page */}
           <Route path="/landing"  element={<LandingPage/>}/>  {/* Login page */}
           <Route path="/login/register"  element={<Registration/>}/>       
-          <Route path="/login/ForgotPassword"  element={<ForgotPassword/>}/>   
+          <Route path="/login/ForgotPass"  element={<ForgotPass/>}/>   
           <Route path="/EditName"  element={<EditProfile2/>}/>
+          <Route path="/ForgotPass/register"  element={<Registration/>}/>   
+          <Route path="/ForgotPass/OTP"  element={<OTP/>}/>       
+    
+
         </Routes>
       
     </div>
