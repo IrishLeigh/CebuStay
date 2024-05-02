@@ -15,6 +15,7 @@ class ServiceController extends Controller
      */
     public function create(Request $request, $propertyId)
     {
+        $this->enableCors($request);
         $service = new Service();
         $service->propertyid = $propertyId;
         $service->service_name = $request->input('service_name');

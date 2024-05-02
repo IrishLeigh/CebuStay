@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('facilities', function (Blueprint $table) {
             $table->increments('facilitiesid');
             $table->unsignedInteger('propertyid');
-            $table->foreign('propertyid')->references('propertyid')->on('properties');
+            $table->foreign('propertyid')->references('propertyid')->on('property');
             $table->string('facilities_name');
             $table->timestamps();
         });

@@ -15,6 +15,7 @@ class FacilitiesController extends Controller
      */
     public function create(Request $request, $propertyId)
     {
+        $this->enableCors($request);
         $facilities = new Facilities();
         $facilities->propertyid = $propertyId;
         $facilities->facilities_name = $request->input('facilities_name');

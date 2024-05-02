@@ -15,6 +15,7 @@ class AmenityController extends Controller
      */
     public function create(Request $request, $propertyId)
     {
+        $this->enableCors($request);
         $amenity = new Amenity();
         $amenity->propertyid = $propertyId;
         $amenity->amenity_name = $request->input('amenity_name');

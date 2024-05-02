@@ -4,17 +4,22 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
-            $table->increments('serviceid');
+        Schema::create('location', function (Blueprint $table) {
+            $table->increments('locationid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
-            $table->string('service_name');
+            $table->string('country');
+            $table->string('city');
+            $table->string('address');
+            $table->string('zipcode');
+            $table->string('pinloc');
             $table->timestamps();
         });
     }
@@ -24,6 +29,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('location');
     }
 };

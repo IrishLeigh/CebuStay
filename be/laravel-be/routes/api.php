@@ -8,6 +8,9 @@ use App\Http\Controllers\UserForgotPassController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\FacilitiesController;
+use App\Http\Controllers\HouseRuleController;
+use App\Http\Controllers\LocationController;
+
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
 Route::post('/users', [UserController::class, 'create']);
@@ -31,6 +34,11 @@ Route::post('/services/{propertyId}', [ServiceController::class, 'create']);
 // Routes for facilities
 Route::post('/facilities/{propertyId}', [FacilitiesController::class, 'create']);
 
+// Routes for house rule
+Route::post('/house-rules/{propertyId}', [HouseRuleController::class, 'create']);
+
+// Routes for location
+Route::post('/location/{propertyId}', [LocationController::class, 'create']);
 
 // Route for updating password based on email
 Route::put('/forgotPass/{email}', [UserForgotPassController::class, 'changePass']);
