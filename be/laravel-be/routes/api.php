@@ -59,3 +59,11 @@ Route::post('/propertyinfo', 'App\Http\Controllers\PropertyController@InsertProp
 //Routes for unitdetails
 Route::post('/unitdetails', 'App\Http\Controllers\UnitDetailsController@insertUnitDetails');
 Route::post('/bedroomtype', 'App\Http\Controllers\UnitDetailsController@insertBedTypes');
+
+//UPLOAD IMG
+//UPLOAD ONE IMAGE
+Route::post('/uploadimage', 'App\Http\Controllers\FileController@store');
+//UPLOAD MULTIPLE IMAGES
+Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
+
+Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty');
