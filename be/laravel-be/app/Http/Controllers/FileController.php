@@ -123,7 +123,7 @@ class FileController extends Controller
 
         $uploadedFiles = $this->uploadMultipleFiles($files, $folderId, $propertyid);
         // Process the uploaded files as needed
-        return response()->json(['uploaded_files' => $uploadedFiles]);
+        return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
     }
 
 
@@ -197,7 +197,7 @@ class FileController extends Controller
             }
         }
 
-        return $uploadedFiles;
+        return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
     }
 
     public function getImgByProperty($propertyid)

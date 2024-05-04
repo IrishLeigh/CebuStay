@@ -44,16 +44,21 @@ class UnitDetailsController extends Controller
         $unitroomidref = UnitRooms::where('unitid', $unitid)
             ->where('roomname', 'Bedroom')
             ->first();
-
+        $counter = 0;
+        if (!$unitroomidref) {
+            return response()->json(["status" => 'error', "message" => "Unit room not found"]);
+        }
         foreach ($bedroomDetails as $bedroom) {
             $bedtype = new BedroomType();
             $bedtype->unitroomid = $unitroomidref->unitroomid;
-            $bedtype->bedroomnum = $bedroom['bedroomNo'];
+            $bedtype->bedroomnum = $counter + 1;
             $bedtype->singlebed = $bedroom['singleBed'];
             $bedtype->bunkbed = $bedroom['doubleBed'];
             $bedtype->largebed = $bedroom['largeBed'];
-            $bedtype->superlargebed = $bedroom['superlargeBed'];
+            $bedtype->superlargebed = $bedroom['superLargeBed'];
             $bedtype->save();
+
+            $counter++;
         }
 
         return response()->json(["status" => 'success', "message" => "Bedroom Details inserted successfully"]);
