@@ -1,8 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 import TextField from '@mui/material/TextField';
 
 export default function TextFieldOutlineShort(props) {
-  const { width, label, value } = props; // Destructure width, label, and value from props
+  const { width, label, value, onDaysChange } = props; // Destructure props and onDaysChange callback
+
+  const handleDaysChange = (event) => {
+    const newValue = event.target.value;
+    onDaysChange(newValue); // Call the callback with the new value
+  };
 
   return (
     <form noValidate autoComplete="off">
@@ -10,11 +15,12 @@ export default function TextFieldOutlineShort(props) {
         required
         type="number"
         id="outlined-basic"
-        placeholder={value} // Use value prop for placeholder
-        label={label} // Use label prop for the TextField label
+        placeholder={value}
+        label={label}
         variant="outlined"
-        fullWidth // Add fullWidth prop to TextField to make it span the full width
-        sx={{  width: `${width}px` }} // Set the width style for the TextField using string interpolation
+        fullWidth
+        sx={{ width: `${width}px` }}
+        onChange={handleDaysChange} // Call handleDaysChange when the value changes
       />
     </form>
   );

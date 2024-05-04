@@ -5,37 +5,37 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import DynamicSelect from "../components/select";
-import TextFieldOutlineShort from "../components/textfield_short_withOutline";
+import TextFieldOutlineShort from "../../textfield_short_withOutline";
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 
 
-export default function Policies() {
-  const [selectedOption, setSelectedOption] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState({
+export default function Policies({ onPoliciesDataChange }) {
+  const [policiesData, setPoliciesData] = useState({
     standardCancellation: false,
     nonRefundableRate: false,
     modificationPlan: false,
-    offerDiscounts: false
+    offerDiscounts: false,
+    cancellationDays: ''
   });
-  const [selectedCancellationDays, setSelectedCancellationDays] = useState('');
-  const handleCancellationDaysChange = (newValue) => {
-    setSelectedCancellationDays(newValue);
-  };
-  const handleCheckboxChange = (event) => {
-    setSelectedOptions({
-      ...selectedOptions,
-      [event.target.name]: event.target.checked
-    });
-    document.body.focus();
+  
+  const handleDaysChange = (newValue) => {
+    setPoliciesData(prevData => ({
+      ...prevData,
+      cancellationDays: newValue // Update cancellationDays in policiesData
+    }));
   };
 
- 
+  const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    setPoliciesData(prevData => ({
+      ...prevData,
+      [name]: checked
+    }));
+    onPoliciesDataChange({ ...policiesData, [name]: checked });
+  };
 
   return (
-    <Box
-     
-    >
+    <Box>
       <Grid
         container
         spacing={2}
@@ -66,20 +66,25 @@ export default function Policies() {
 
                 <Checkbox
                   name="standardCancellation"
-                  checked={selectedOptions.standardCancellation}
+                  checked={policiesData.standardCancellation}
                   onChange={handleCheckboxChange}
                   color="secondary"
                 /> Standard Cancellation Plan
 
                 <br />
-                {selectedOptions.standardCancellation && (
+                {policiesData.standardCancellation && (
                  <Box sx={{ border: '1px dotted black', p: 2, width:'500px', m:2 , height: 'auto' }}>
                     {/* Details of Cancellation Plan */}
                       <Typography >
                       Within how many days prior to their arrival can guests cancel their booking without any charges?
                       </Typography>
                       <br />
-                      <TextFieldOutlineShort width="150" label="Number of Days"/>
+                      <TextFieldOutlineShort
+                        width="150"
+                        label="Number of Days"
+                        value={policiesData.cancellationDays}
+                        onDaysChange={handleDaysChange} // Pass the handleDaysChange callback
+                      />
                       <br/>
                       <Typography sx={{ fontSize: '14px', display: 'flex', alignItems: 'center' ,justifyContent: 'left'}}>
                         <LightbulbTwoToneIcon sx={{ fontSize: '14px', color: 'orange' }} />
@@ -90,36 +95,37 @@ export default function Policies() {
                 )}
                 <Checkbox
                   name="nonRefundableRate"
-                  checked={selectedOptions.nonRefundableRate}
+                  checked={policiesData.nonRefundableRate}
                   onChange={handleCheckboxChange}
                   color="secondary"
                 /> Non-refundable Rate Plan
                 <br />
-                {selectedOptions.nonRefundableRate && (
+                {policiesData.nonRefundableRate && (
                   <Box sx={{ border: '1px dotted black', p: '8', width:'600px', m:2 , height: 'auto' }}>
                     {/* Details of Non-refundable plan */}
                   </Box>
                 )}
                 <Checkbox
                   name="modificationPlan"
-                  checked={selectedOptions.modificationPlan}
+                  checked={policiesData.modificationPlan}
                   onChange={handleCheckboxChange}
                   color="secondary"
                 /> Modification Plan
                 <br />
-                {selectedOptions.modificationPlan && (
-                  <Box sx={{ border: '1px dotted black', p: '8', width:'600px', m:2 , height: 'auto' }}>
+
+                {policiesData.modificationPlan && (
+                <Box sx={{ border: '1px dotted black', p: '8', width:'600px', m:2 , height: 'auto' }}>
                   {/* Details of Modification Plan */}
                 </Box>
                 )}
                 <Checkbox
                   name="offerDiscounts"
-                  checked={selectedOptions.offerDiscounts}
+                  checked={policiesData.offerDiscounts}
                   onChange={handleCheckboxChange}
                   color="secondary"
                 /> Offer Discounts
                 <br />
-                {selectedOptions.offerDiscounts && (
+                {policiesData.offerDiscounts && (
                   <Box sx={{ border: '1px dotted black', p: '8', width:'600px', m:2 , height: 'auto' }}>
                     {/* Details of Offer Discounts */}
                   </Box>

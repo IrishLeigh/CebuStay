@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { Paper, Typography, IconButton, Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -6,7 +6,7 @@ import Container from "@mui/material/Container";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
 
-const AccommodationUploadPhotos = () => {
+const AccommodationUploadPhotos = ({ onImagesChange }) => {
   const [selectedImages, setSelectedImages] = useState([]);
 
   const handleImageChange = (event) => {
@@ -15,27 +15,22 @@ const AccommodationUploadPhotos = () => {
 
     // Basic image size validation (optional)
     const oversizedImages = [];
-    for (let i = 0; i < imageFiles.length; i++) {
-      if (imageFiles[i].size > 1000 * 1000) {
-        oversizedImages.push(imageFiles[i].name);
+    const newImages = Array.from(imageFiles).map((file) => {
+      if (file.size > 1000 * 1000) {
+        oversizedImages.push(file.name);
+        return null;
       }
-    }
+      return file;
+    });
     if (oversizedImages.length > 0) {
       alert(`Image(s) ${oversizedImages.join(", ")} size cannot exceed 5MB`);
-      return;
     }
 
-    // Limit upload to 5 images
-    const newImages = Array.from(imageFiles).slice(
-      0,
-      5 - selectedImages.length
-    );
+    // Filter out null values (oversized images)
+    const filteredImages = newImages.filter((image) => image !== null);
 
-    // Filter out already selected images with the same name
-    const uniqueImages = newImages.filter(
-      (file) =>
-        !selectedImages.some((selectedFile) => selectedFile.name === file.name)
-    );
+    // Limit upload to 5 images
+    const uniqueImages = filteredImages.slice(0, 5 - selectedImages.length);
 
     setSelectedImages([...selectedImages, ...uniqueImages]);
   };
@@ -68,44 +63,37 @@ const AccommodationUploadPhotos = () => {
     onDrop,
   });
 
-  const handleUpload = () => {
-    // Handle upload functionality here
-    console.log("Upload clicked");
-  };
+  // Call the onImagesChange callback with selected images whenever it changes
+  useEffect(() => {
+    onImagesChange(selectedImages);
+  }, [selectedImages, onImagesChange]);
 
-  return (
-    <Container
-      maxWidth="md"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        marginTop: "2rem",
-      }}
-    >
-      <Typography
-        sx={{
-          fontWeight: "bold",
-          fontSize: "2rem",
-          textAlign: "left",
-          marginTop: "2rem",
-        }}
-      >
-        Upload your photos
-      </Typography>
-      <Typography sx={{ fontSize: "1.3rem", textAlign: "left" }}>
-        Upload at most 5 photos of your property. The more you upload, the more
-        likely you are to get bookings. You can add more later.
-      </Typography>
-      <Grid container spacing={2}>
+console.log(selectedImages);
+
+return (
+  <Container maxWidth="lg" sx={{ marginTop: "2rem" }}>
+    <Grid container spacing={2} justifyContent="center">
+      <Grid item xs={12} md={6}>
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: "bold",
+            marginBottom: "1rem",
+          }}
+        >
+          Upload your photos
+        </Typography>
+        <Typography>
+          Upload at most 5 photos of your property. The more you upload, the more
+          likely you are to get bookings. You can add more later.
+        </Typography>
         <Paper
           elevation={3}
           sx={{
-            height: "540px",
-            width: "100%",
+            height: "auto",
             padding: 3,
             marginTop: "2rem",
             position: "relative",
-            marginLeft: "1rem",
           }}
         >
           <div
@@ -140,9 +128,8 @@ const AccommodationUploadPhotos = () => {
               </Typography>
             )}
           </div>
-
           <>
-            <Typography align="left">Uploaded Files:</Typography>
+            <Typography variant="h6">Uploaded Files:</Typography>
             <ul
               style={{
                 overflowY: "auto",
@@ -176,24 +163,11 @@ const AccommodationUploadPhotos = () => {
               ))}
             </ul>
           </>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpload}
-            style={{ marginTop: "5px" }}
-            sx={{
-              position: "absolute",
-              bottom: "10px",
-              right: "10px",
-              marginRight: "17px",
-            }}
-          >
-            Upload
-          </Button>
         </Paper>
       </Grid>
-    </Container>
-  );
+    </Grid>
+  </Container>
+);
 };
 
 export default AccommodationUploadPhotos;

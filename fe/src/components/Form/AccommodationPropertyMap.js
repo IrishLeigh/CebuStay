@@ -1,29 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { Container, Button, Typography, Paper } from "@mui/material";
+import { useData } from "../registration_unit/registration_location/contextAddressData";
 
-const MapForm = ({ google }) => {
-  const [position, setPosition] = useState(null);
-  const [mapVal, setMapVal] = useState("");
+const MapForm = ({ google, location}) => {
+
+  const {location2} = useData();
+  const [position, setPosition] = useState(location);
+  const [ mapVal, setMapVal ] = useState(); // Use the useData hook to access mapVal
+
+  useEffect(() => {
+    // When location prop changes, update the position
+    setPosition(location);
+  }, [location]);
 
   const onMapClick = (mapProps, map, clickEvent) => {
     const { latLng } = clickEvent;
     setPosition(latLng);
-
+  
     // Extract latitude and longitude from latLng object
     const latitude = latLng.lat();
     const longitude = latLng.lng();
-
-    setMapVal(latitude + ", " + longitude);
+  
+    const newMapVal = `${latitude}, ${longitude}`;
     console.log("Latitude:", latitude);
     console.log("Longitude:", longitude);
+  
+    // Update mapVal in the context
+    setMapVal(newMapVal);
+    
+    
   };
 
   const resetPosition = () => {
     setPosition(null);
   };
 
-  console.log("Map", mapVal);
+  const saveLocation = () => {
+    if (position) {
+      setMapVal(position.lat + ", " + position.lng);
+      location2(position);
+
+      console.log("Location saved:", position.lat, position.lng);
+    } else {
+      console.log("No location to save");
+    }
+  };
+
+  // console.log("Map", maploVal);
 
   return (
     <Container
@@ -65,19 +89,13 @@ const MapForm = ({ google }) => {
               borderRadius: "1rem",
             }}
             initialCenter={{
-              lat: 10.3157,
-              lng: 123.8854,
+              lat: position.lat,
+              lng: position.lng,
             }}
             onClick={onMapClick}
             mapTypeId={"terrain"}
           >
-            {position && (
-              <Marker
-                position={position}
-                draggable={true}
-                onDragend={(t, map, coords) => setPosition(coords.latLng)}
-              />
-            )}
+            {position && <Marker position={position} draggable={true} onDragend={(t, map, coords) => setPosition(coords.latLng)} />}
           </Map>
           <Button
             variant="contained"
@@ -87,6 +105,15 @@ const MapForm = ({ google }) => {
             {" "}
             {/* Adjusted fontSize */}
             Reset
+          </Button>
+          <Button
+            variant="contained"
+            onClick={saveLocation}
+            style={{ fontSize: "1rem", marginTop: "1rem" }}
+          >
+            {" "}
+            {/* Adjusted fontSize */}
+            Save Location
           </Button>
         </Paper>
       </div>
