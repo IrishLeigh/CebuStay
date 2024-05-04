@@ -1,26 +1,43 @@
-import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+<<<<<<< HEAD
 import Grid from '@mui/material/Grid';
 import FormPropsTextFields from '../../textfield';
 import TextField from '@mui/material/TextField';
 import '../../../components/Button/NextButton.css'
 
 export default function SimplePaper({ onPropertyInformationChange }) {
+=======
+import Grid from "@mui/material/Grid";
+import FormPropsTextFields from "../../textfield";
+import TextField from "@mui/material/TextField";
+
+export default function SimplePaper({ onPropertyDataChange }) {
+>>>>>>> b13dcc5 (BERT IT IS UP TO YOU NOW)
   const [propertyData, setPropertyData] = useState({
-    propertyName: '',
-    propertyDescription: '',
-    numberOfUnits: '',
-    gettingToProperty: ''
+    propertyName: "",
+    propertyDescription: "",
+    numberOfUnits: "",
+    gettingToProperty: "",
   });
 
   const handleChange = (newValue, field) => {
-    setPropertyData(prevState => ({
+    setPropertyData((prevState) => ({
       ...prevState,
-      [field]: newValue
+      [field]: newValue,
     }));
+<<<<<<< HEAD
+=======
+
+    // Call the onPropertyDataChange callback with updated propertyData
+    if (typeof onPropertyDataChange === "function") {
+      onPropertyDataChange({ ...propertyData, [field]: newValue });
+      onPropertyDataChange({ ...propertyData });
+    }
+>>>>>>> b13dcc5 (BERT IT IS UP TO YOU NOW)
   };
 
   const handleSave = () => {
@@ -42,22 +59,34 @@ export default function SimplePaper({ onPropertyInformationChange }) {
               display: "flex",
               flexDirection: "column",
               textAlign: "left",
+<<<<<<< HEAD
               mt: 15,
               mb: 15
+=======
+              mt: 12,
+              mb: 12,
+>>>>>>> b13dcc5 (BERT IT IS UP TO YOU NOW)
             }}
           >
              <Typography sx={{ fontSize: "2rem" }} fontWeight="bold" mb={2}>
               Property Information
             </Typography>
+<<<<<<< HEAD
         
             <Typography sx={{ fontSize: "1rem" }} mb={2}>
               Describe your property in detail. Highlight its unique features, amenities, and any additional information potential tenants or buyers should know
+=======
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              Describe your property in detail. Highlight its unique features,
+              amenities, and any additional information potential tenants or
+              buyers should know
+>>>>>>> b13dcc5 (BERT IT IS UP TO YOU NOW)
             </Typography>
-            <Paper elevation={3} sx={{ p: "2rem" ,maxWidth:'32rem'}}>
+            <Paper elevation={3} sx={{ p: "2rem", maxWidth: "32rem" }}>
               <Box
                 component="form"
                 sx={{
-                  '& > :not(style)': { my: 1, width: "100%" } // Set width of children to 100%
+                  "& > :not(style)": { my: 1, width: "100%" }, // Set width of children to 100%
                 }}
                 noValidate
                 autoComplete="off"
@@ -66,33 +95,37 @@ export default function SimplePaper({ onPropertyInformationChange }) {
                   name="Property Name"
                   width="100%"
                   value={propertyData.propertyName}
-                  onChange={(value) => handleChange(value, 'propertyName')}
+                  onChange={(value) => handleChange(value, "propertyName")}
                 />
                 <TextField
                   id="property-description"
                   label="Property Description"
                   multiline
                   rows={6}
-                  sx={{ width: '100%' }} // Set width to 100%
-                  placeholder="Say Something about your listing here.." 
+                  sx={{ width: "100%" }} // Set width to 100%
+                  placeholder="Say Something about your listing here.."
                   value={propertyData.propertyDescription} // Add value prop here
-                  onChange={(e) => handleChange(e.target.value, 'propertyDescription')}
+                  onChange={(e) =>
+                    handleChange(e.target.value, "propertyDescription")
+                  }
                 />
                 <FormPropsTextFields
                   name="Number of Units"
                   width="100%"
                   value={propertyData.numberOfUnits} // Add value prop here
-                  onChange={(value) => handleChange(value, 'numberOfUnits')}
+                  onChange={(value) => handleChange(value, "numberOfUnits")}
                 />
                 <TextField
                   id="getting-to-property"
                   label="Getting to Your Property"
                   multiline
                   rows={6}
-                  sx={{ width: '100%' }} // Set width to 100%
-                  placeholder="Please let guests know the best ways to reach your property" 
+                  sx={{ width: "100%" }} // Set width to 100%
+                  placeholder="Please let guests know the best ways to reach your property"
                   value={propertyData.gettingToProperty} // Add value prop here
-                  onChange={(e) => handleChange(e.target.value, 'gettingToProperty')}
+                  onChange={(e) =>
+                    handleChange(e.target.value, "gettingToProperty")
+                  }
                 />
                  <div className='button-container'>
                   <button className="button" onClick={handleSave} style={{ color: '#007BFF' }}>Next</button>

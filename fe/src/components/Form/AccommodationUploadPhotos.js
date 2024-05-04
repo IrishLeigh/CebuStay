@@ -68,106 +68,106 @@ const AccommodationUploadPhotos = ({ onImagesChange }) => {
     onImagesChange(selectedImages);
   }, [selectedImages, onImagesChange]);
 
-console.log(selectedImages);
+  // console.log(selectedImages);
 
-return (
-  <Container maxWidth="lg" sx={{ marginTop: "2rem" }}>
-    <Grid container spacing={2} justifyContent="center">
-      <Grid item xs={12} md={6}>
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: "bold",
-            marginBottom: "1rem",
-          }}
-        >
-          Upload your photos
-        </Typography>
-        <Typography>
-          Upload at most 5 photos of your property. The more you upload, the more
-          likely you are to get bookings. You can add more later.
-        </Typography>
-        <Paper
-          elevation={3}
-          sx={{
-            height: "auto",
-            padding: 3,
-            marginTop: "2rem",
-            position: "relative",
-          }}
-        >
-          <div
-            {...getRootProps()}
-            style={{
-              border: "2px dashed #ccc",
-              padding: "30px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "calc(100% - 60px)",
-              height: "30%",
+  return (
+    <Container maxWidth="lg" sx={{ marginTop: "2rem" }}>
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} md={6}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              marginBottom: "1rem",
             }}
           >
-            {selectedImages.length === 0 ? (
-              <>
-                <input
-                  {...getInputProps()}
-                  onChange={handleImageChange}
-                  multiple
-                  style={{ display: "none" }}
-                />
-                <Typography variant="body1" align="center">
-                  <ImageIcon sx={{ fontSize: 50 }} />
-                  <br />
-                  Drag & drop images here, or click to select
-                </Typography>
-              </>
-            ) : (
-              <Typography variant="body1" align="center">
-                Drag & drop images here, or click to select
-              </Typography>
-            )}
-          </div>
-          <>
-            <Typography variant="h6">Uploaded Files:</Typography>
-            <ul
+            Upload your photos
+          </Typography>
+          <Typography>
+            Upload at most 5 photos of your property. The more you upload, the
+            more likely you are to get bookings. You can add more later.
+          </Typography>
+          <Paper
+            elevation={3}
+            sx={{
+              height: "auto",
+              padding: 3,
+              marginTop: "2rem",
+              position: "relative",
+            }}
+          >
+            <div
+              {...getRootProps()}
               style={{
-                overflowY: "auto",
-                maxHeight: "calc(100% - 150px)",
-                listStyleType: "none",
-                padding: 0,
+                border: "2px dashed #ccc",
+                padding: "30px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "calc(100% - 60px)",
+                height: "30%",
               }}
             >
-              {selectedImages.map((image, index) => (
-                <li
-                  key={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <ImageIcon sx={{ fontSize: 20, paddingRight: 2 }} />
-                  <Typography>{image.name}</Typography>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => handleDeleteImage(index)}
-                    sx={{
-                      marginLeft: "auto",
-                      color: "red",
+              {selectedImages.length === 0 ? (
+                <>
+                  <input
+                    {...getInputProps()}
+                    onChange={handleImageChange}
+                    multiple
+                    style={{ display: "none" }}
+                  />
+                  <Typography variant="body1" align="center">
+                    <ImageIcon sx={{ fontSize: 50 }} />
+                    <br />
+                    Drag & drop images here, or click to select
+                  </Typography>
+                </>
+              ) : (
+                <Typography variant="body1" align="center">
+                  Drag & drop images here, or click to select
+                </Typography>
+              )}
+            </div>
+            <>
+              <Typography variant="h6">Uploaded Files:</Typography>
+              <ul
+                style={{
+                  overflowY: "auto",
+                  maxHeight: "calc(100% - 150px)",
+                  listStyleType: "none",
+                  padding: 0,
+                }}
+              >
+                {selectedImages.map((image, index) => (
+                  <li
+                    key={index}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "0.5rem",
                     }}
                   >
-                    <DeleteIcon />
-                  </IconButton>
-                </li>
-              ))}
-            </ul>
-          </>
-        </Paper>
+                    <ImageIcon sx={{ fontSize: 20, paddingRight: 2 }} />
+                    <Typography>{image.name}</Typography>
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => handleDeleteImage(index)}
+                      sx={{
+                        marginLeft: "auto",
+                        color: "red",
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </li>
+                ))}
+              </ul>
+            </>
+          </Paper>
+        </Grid>
       </Grid>
-    </Grid>
-  </Container>
-);
+    </Container>
+  );
 };
 
 export default AccommodationUploadPhotos;
