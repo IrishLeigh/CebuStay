@@ -1,17 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { DataProvider } from './components/registration_unit/registration_location/contextAddressData';
-
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router } from "react-router-dom";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 
 // const link = document.createElement('link');
 // link.rel = 'stylesheet';
 // link.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
 // document.head.appendChild(link);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <DataProvider>
