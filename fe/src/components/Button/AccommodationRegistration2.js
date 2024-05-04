@@ -18,11 +18,13 @@ const propertyTypes = [
   },
 ];
 
-export default function Properties() {
-  const [selectedType, setSelectedType] = useState(null);
+export default function PropertyType({ onSelectedPropertyTypeChange }) {
+  const [selectedPropertyType, setSelectedPropertyType] = useState(null);
   const handleClick = (button) => {
-    setSelectedType(selectedType === button ? null : button);
+    setSelectedPropertyType(selectedPropertyType === button ? null : button);
+    onSelectedPropertyTypeChange(selectedPropertyType === button ? null : button); // Propagate selectedPropertyType to parent
   };
+
 
   return (
     <Box>
@@ -64,8 +66,8 @@ export default function Properties() {
                   variant="contained"
                   sx={{
                     backgroundColor:
-                      selectedType === type.name ? "#1780CB" : "white",
-                    color: selectedType === type.name ? "white" : "black",
+                      selectedPropertyType === type.name ? "#1780CB" : "white",
+                    color: selectedPropertyType === type.name ? "white" : "black",
                     fontFamily: "Poppins, sans-serif",
                     width: "100%",
                     height: 80,

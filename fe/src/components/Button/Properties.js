@@ -28,10 +28,11 @@ const propertyTypes = [
   },
 ];
 
-export default function Properties() {
+export default function Properties({ onSelectedTypeChange }) {
   const [selectedType, setSelectedType] = useState(null);
   const handleClick = (button) => {
     setSelectedType(selectedType === button ? null : button);
+    onSelectedTypeChange(selectedType === button ? null : button); // Propagate selectedType to parent
   };
 
   return (

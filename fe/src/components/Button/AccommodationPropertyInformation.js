@@ -103,15 +103,16 @@ function AmenityButton({ icon, text, isSelected, onClick }) {
   );
 }
 
-function CategorySection({ category, label }) {
-  const [selectedItems, setSelectedItems] = useState([]);
+function CategorySection({ category, label, onItemsChange }) {
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const toggleItemSelection = (itemText) => {
-    if (selectedItems.includes(itemText)) {
-      setSelectedItems(selectedItems.filter((item) => item !== itemText));
+    if (selectedAmenities.includes(itemText)) {
+      setSelectedAmenities(selectedAmenities.filter((item) => item !== itemText));
     } else {
-      setSelectedItems([...selectedItems, itemText]);
+      setSelectedAmenities([...selectedAmenities, itemText]);
     }
+    onItemsChange(category, selectedAmenities); // Notify parent component about the updated selected items
   };
 
   return (
@@ -134,7 +135,7 @@ function CategorySection({ category, label }) {
               <AmenityButton
                 icon={item.icon}
                 text={item.text}
-                isSelected={selectedItems.includes(item.text)}
+                isSelected={selectedAmenities.includes(item.text)}
                 onClick={() => toggleItemSelection(item.text)}
               />
             </Grid>
@@ -145,7 +146,23 @@ function CategorySection({ category, label }) {
   );
 }
 
-function AccommodationPropertyInformation() {
+function AccommodationPropertyInformation({ onAmenitiesChange }) {
+  const [selectedAmenities, setSelectedAmenities] = useState({
+    basicAmenities: [],
+    basicServices: [],
+    facilities: [],
+  });
+
+  const handleItemsChange = (category, items) => {
+    setSelectedAmenities((prevSelectedAmenities) => ({
+      ...prevSelectedAmenities,
+      [category]: items,
+    }));
+    onAmenitiesChange(category, items); // Notify parent component about the updated selected items
+  };
+  
+  
+
   return (
     <>
       <Container
@@ -164,9 +181,34 @@ function AccommodationPropertyInformation() {
         <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
           Please click the buttons you choose.
         </Typography>
-        <CategorySection category="basicAmenities" label={"Basic Amenities"} />
-        <CategorySection category="basicServices" label={"Basic Services"} />
-        <CategorySection category="facilities" label={"Facilities"} />
+        <CategorySection
+          category="basicAmenities"
+          label={"Basic Amenities"}
+          onItemsChange={handleItemsChange}
+        />
+        <CategorySection
+          category="basicServices"
+          label={"Basic Services"}
+          onItemsChange={handleItemsChange}
+        />
+        <CategorySection
+          category="facilities"
+          label={"Facilities"}
+          onItemsChange={handleItemsChange}
+        />
+        {/* Display selected items for each category */}
+        <Typography variant="h6" sx={{ mt: 4 }}>
+          Selected Amenities:
+        </Typography>
+        <Typography variant="body1">
+          Basic Amenities: {selectedAmenities.basicAmenities.join(", ")}
+        </Typography>
+        <Typography variant="body1">
+          Basic Services: {selectedAmenities.basicServices.join(", ")}
+        </Typography>
+        <Typography variant="body1">
+          Facilities: {selectedAmenities.facilities.join(", ")}
+        </Typography>
       </Container>
     </>
   );
