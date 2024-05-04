@@ -30,7 +30,7 @@ class UnitDetailsController extends Controller
         foreach ($unitrooms as $unitroom) {
             $room = new UnitRooms();
             $room->unitid = $unitid;
-            $room->roomname = $unitroom['roomname'];
+            $room->roomname = $unitroom['roomType'];
             $room->quantity = $unitroom['quantity'];
             $room->save();
         }
