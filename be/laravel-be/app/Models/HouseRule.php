@@ -13,6 +13,7 @@ class HouseRule extends Model
     protected $primaryKey = 'houserulesid'; // Primary key field
 
     protected $fillable = [
+        'houserulesid',
         'propertyid',
         'smoking_allowed',
         'pets_allowed',

@@ -13,11 +13,11 @@ class FacilitiesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request, $propertyId)
+    public function create(Request $request)
     {
         $this->enableCors($request);
         $facilities = new Facilities();
-        $facilities->propertyid = $propertyId;
+        $facilities->propertyid = $request->input('propertyid');
         $facilities->facilities_name = $request->input('facilities_name');
         $facilities->save();
 

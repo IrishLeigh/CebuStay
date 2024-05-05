@@ -13,11 +13,11 @@ class ServiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request, $propertyId)
+    public function create(Request $request)
     {
         $this->enableCors($request);
         $service = new Service();
-        $service->propertyid = $propertyId;
+        $service->propertyid = $request->input('propertyid');
         $service->service_name = $request->input('service_name');
         $service->save();
 

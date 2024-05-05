@@ -11,11 +11,11 @@ class Location extends Model
     protected $primaryKey = 'locationid';
 
     protected $fillable = [
+        'locationid',
         'propertyid',
-        'country',
-        'city',
         'address',
         'zipcode',
-        'pinloc',
+        'latitude',
+        'longitude',
     ];
 }

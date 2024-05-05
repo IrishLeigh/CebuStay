@@ -26,19 +26,20 @@ Route::post('/verifytoken', 'App\Http\Controllers\RegisterUserController@verifyT
 Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendEmailCode');
 
 // Routes for amenity
-Route::post('/amenities/{propertyId}', [AmenityController::class, 'create']);
+Route::post('/amenities', 'App\Http\Controllers\AmenityController@create');
 
 // Routes for service
-Route::post('/services/{propertyId}', [ServiceController::class, 'create']);
+Route::post('/services', 'App\Http\Controllers\ServiceController@create');
 
 // Routes for facilities
-Route::post('/facilities/{propertyId}', [FacilitiesController::class, 'create']);
+Route::post('/facilities', 'App\Http\Controllers\FacilitiesController@create');
 
 // Routes for house rule
-Route::post('/house-rules/{propertyId}', [HouseRuleController::class, 'create']);
+Route::post('/houseRules', 'App\Http\Controllers\HouseruleController@create');
 
 // Routes for location
-Route::post('/location/{propertyId}', [LocationController::class, 'create']);
+// Route::post('/location', [LocationController::class, 'create']);
+Route::post('/location', 'App\Http\Controllers\LocationController@create');
 
 // Route for updating password based on email
 Route::put('/forgotPass/{email}', [UserForgotPassController::class, 'changePass']);

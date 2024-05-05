@@ -15,11 +15,10 @@ return new class extends Migration
             $table->increments('locationid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
-            $table->string('country');
-            $table->string('city');
             $table->string('address');
             $table->string('zipcode');
-            $table->string('pinloc');
+            $table->string('latitude');
+            $table->string('longitude');
             $table->timestamps();
         });
     }

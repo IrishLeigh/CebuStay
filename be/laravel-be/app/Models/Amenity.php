@@ -11,6 +11,7 @@ class Amenity extends Model
     protected $primaryKey = 'amenityid';
 
     protected $fillable = [
+        'amenityid',
         'propertyid',
         'amenity_name',
     ];

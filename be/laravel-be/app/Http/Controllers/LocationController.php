@@ -7,22 +7,22 @@ use App\Models\Location;
 
 class LocationController extends Controller
 {
-    /**
-     * Create a new amenity for a property.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function create(Request $request, $propertyId)
+    // /**
+    //  * Create a new amenity for a property.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @return \Illuminate\Http\JsonResponse
+    //  */
+    public function create(Request $request)
     {
         $this->enableCors($request);
         $location = new Location();
-        $location->propertyid = $propertyId;
-        $location->country = $request->input('country');
-        $location->city = $request->input('city');
+        // $location->propertyid = $propertyId;
+        $location->propertyid = $request->input('propertyid');
         $location->address = $request->input('address');
         $location->zipcode = $request->input('zipcode');
-        $location->pinloc = $request->input('pinloc');
+        $location->latitude = $request->input('latitude');
+        $location->longitude = $request->input('longitude');
         $location->save();
 
         return response()->json($location);

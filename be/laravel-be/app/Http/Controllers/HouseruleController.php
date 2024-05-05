@@ -14,11 +14,11 @@ class HouseRuleController extends Controller
      * @param int $propertyId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request, $propertyId)
+    public function create(Request $request)
     {
         $this->enableCors($request);
         $houseRule = new HouseRule();
-        $houseRule->propertyid = $propertyId;
+        
 
         if (!$houseRule) {
             return response()->json(['message' => 'House rule not found for the given property id.'], 404);
@@ -36,17 +36,17 @@ class HouseRuleController extends Controller
         // Join lines back with new lines
         $houseRule->custom_rules = implode("\n", $customRulesArray);
 
-        // Set other properties
-        $houseRule->smoking_allowed = $request->input('smoking_allowed', $houseRule->smoking_allowed);
-        $houseRule->pets_allowed = $request->input('pets_allowed', $houseRule->pets_allowed);
-        $houseRule->parties_events_allowed = $request->input('parties_events_allowed', $houseRule->parties_events_allowed);
-        $houseRule->noise_restrictions = $request->input('noise_restrictions', $houseRule->noise_restrictions);
-        $houseRule->quiet_hours_start = $request->input('quiet_hours_start', $houseRule->quiet_hours_start);
-        $houseRule->quiet_hours_end = $request->input('quiet_hours_end', $houseRule->quiet_hours_end);
-        $houseRule->check_in_from = $request->input('check_in_from', $houseRule->check_in_from);
-        $houseRule->check_in_until = $request->input('check_in_until', $houseRule->check_in_until);
-        $houseRule->check_out_from = $request->input('check_out_from', $houseRule->check_out_from);
-        $houseRule->check_out_until = $request->input('check_out_until', $houseRule->check_out_until);
+        $houseRule->propertyid = $request->input('propertyid');
+        $houseRule->smoking_allowed = $request->input('smoking_allowed');
+        $houseRule->pets_allowed = $request->input('pets_allowed');
+        $houseRule->parties_events_allowed = $request->input('parties_events_allowed');
+        $houseRule->noise_restrictions = $request->input('noise_restrictions');
+        $houseRule->quiet_hours_start = $request->input('quiet_hours_start');
+        $houseRule->quiet_hours_end = $request->input('quiet_hours_end');
+        $houseRule->check_in_from = $request->input('check_in_from');
+        $houseRule->check_in_until = $request->input('check_in_until');
+        $houseRule->check_out_from = $request->input('check_out_from');
+        $houseRule->check_out_until = $request->input('check_out_until');
 
         $houseRule->save();
 

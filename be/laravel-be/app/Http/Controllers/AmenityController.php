@@ -13,11 +13,11 @@ class AmenityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request, $propertyId)
+    public function create(Request $request)
     {
         $this->enableCors($request);
         $amenity = new Amenity();
-        $amenity->propertyid = $propertyId;
+        $amenity->propertyid = $request->input('propertyid');
         $amenity->amenity_name = $request->input('amenity_name');
         $amenity->save();
 
