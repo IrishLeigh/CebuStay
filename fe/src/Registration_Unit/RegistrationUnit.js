@@ -114,6 +114,7 @@ export default function RegistrationUnit() {
         }
       );
       //BERT ANG PROPERTY ID KAY resPropertid.data.propertyid
+      const propertyId = resPropertid.data.propertyid;
       if (resPropertid.data.propertyid) {
         const resUnitid = await axios.post(
           "http://127.0.0.1:8000/api/unitdetails",
@@ -146,8 +147,94 @@ export default function RegistrationUnit() {
                 },
               }
             );
-            if (resImgUpload.data.status === "success") {
+            // if (resImgUpload.data.status === "success") {
+            if (resPropertid.data.propertyid) {
               //ari padayun bert
+              const street = locationDetails.addressData.street;
+              const postalCode = locationDetails.addressData.postalCode;
+              const pinloc = locationDetails.mapVal;
+              console.log('propertyId pinloc:', pinloc);
+              const propertyLoc = await axios.post(
+                "http://127.0.0.1:8000/api/location",
+                {
+                  propertyid: resPropertid.data.propertyid,
+                  address: street,
+                  zipcode: postalCode,
+                  latitude: pinloc.lat,
+                  longitude: pinloc.lng,
+                }
+              )
+              if (propertyLoc.data.locationid) {
+                console.log('Amenities:', selectedAmenities);
+                for (const amenity of selectedAmenities['basicAmenities']) {
+                  // Make a POST request for each amenity
+                  const resAmenity = await axios.post(
+                    "http://127.0.0.1:8000/api/amenities",
+                    {
+                      propertyid: resPropertid.data.propertyid,
+                      amenity_name: amenity,
+                    }
+                  );
+                }
+              }
+              if (propertyLoc.data.locationid) {
+                for (const service of selectedAmenities['basicServices']) {
+                  // Make a POST request for each amenity
+                  const resService = await axios.post(
+                    "http://127.0.0.1:8000/api/services",
+                    {
+                      propertyid: resPropertid.data.propertyid,
+                      service_name: service,
+                    }
+                  );
+                }
+              }
+
+              if (propertyLoc.data.locationid) {
+                for (const facilities of selectedAmenities['facilities']) {
+                  // Make a POST request for each amenity
+                  const resFacilities = await axios.post(
+                    "http://127.0.0.1:8000/api/facilities",
+                    {
+                      propertyid: resPropertid.data.propertyid,
+                      facilities_name: facilities,
+                    }
+                  );
+                }
+              }
+              if (propertyLoc.data.locationid) {
+                const checkInFrom = houseRulesData.checkInFrom;
+                const checkInUntil = houseRulesData.checkInUntil;
+                const checkOutFrom = houseRulesData.checkOutFrom;
+                const checkOutUntil = houseRulesData.checkOutUntil;
+                const quietHoursStart = houseRulesData.quietHoursStart;
+                const quietHoursEnd = houseRulesData.quietHoursEnd;
+                const customRules = houseRulesData.customRules;
+                const smokingAllowed = houseRulesData.smokingAllowed;
+                const petsAllowed = houseRulesData.petsAllowed;
+                const partiesAllowed = houseRulesData.partiesAllowed;
+                const noiseRestrictions = houseRulesData.noiseRestrictions;
+
+                console.log('HouseRules', houseRulesData);
+                const houseRules = await axios.post(
+                  "http://127.0.0.1:8000/api/houseRules",
+                  {
+                    propertyid: resPropertid.data.propertyid,
+                    smoking_allowed: smokingAllowed,
+                    pets_allowed: petsAllowed,
+                    parties_events_allowed: partiesAllowed,
+                    noise_restrictions: noiseRestrictions,
+                    quiet_hours_start: quietHoursStart,
+                    quiet_hours_end: quietHoursEnd,
+                    custom_rules: customRules,
+                    check_in_from: checkInFrom,
+                    check_in_until: checkInUntil,
+                    check_out_from: checkOutFrom,
+                    check_out_until: checkOutUntil,
+                  }
+                )
+                console.log('houseRules: ', houseRules);
+              }
             }
           }
         }

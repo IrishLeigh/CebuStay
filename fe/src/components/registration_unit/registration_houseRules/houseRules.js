@@ -14,9 +14,9 @@ export default function HouseRules({ onHouseRulesDataChange }) {
 
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [houseRulesData, setHouseRulesData] = useState({
-    smokingAllowed: true,
-    petsAllowed: true,
-    partiesAllowed: true,
+    smokingAllowed: false,
+    petsAllowed: false,
+    partiesAllowed: false,
     noiseRestrictions: false,
     quietHoursStart: '22:00',
     quietHoursEnd: '12:00',

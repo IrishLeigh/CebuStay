@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { Container, Button, Typography, Paper } from "@mui/material";
 import { useData } from "../registration_unit/registration_location/contextAddressData";
@@ -7,29 +7,25 @@ const MapForm = ({ google, location}) => {
 
   const {location2} = useData();
   const [position, setPosition] = useState(location);
+  const [mapPos, setMapPos] = useState(location);
   const [ mapVal, setMapVal ] = useState(); // Use the useData hook to access mapVal
+  const mapRef = useRef(null);
 
   useEffect(() => {
     // When location prop changes, update the position
     setPosition(location);
+    setMapPos(location);
   }, [location]);
 
   const onMapClick = (mapProps, map, clickEvent) => {
     const { latLng } = clickEvent;
     setPosition(latLng);
-  
-    // Extract latitude and longitude from latLng object
     const latitude = latLng.lat();
     const longitude = latLng.lng();
+    setMapPos({ lat: latitude, lng: longitude });
   
     const newMapVal = `${latitude}, ${longitude}`;
-    console.log("Latitude:", latitude);
-    console.log("Longitude:", longitude);
-  
-    // Update mapVal in the context
     setMapVal(newMapVal);
-    
-    
   };
 
   const resetPosition = () => {
@@ -39,7 +35,7 @@ const MapForm = ({ google, location}) => {
   const saveLocation = () => {
     if (position) {
       setMapVal(position.lat + ", " + position.lng);
-      location2(position);
+      location2(mapPos);
 
       console.log("Location saved:", position.lat, position.lng);
     } else {
@@ -47,7 +43,12 @@ const MapForm = ({ google, location}) => {
     }
   };
 
-  // console.log("Map", maploVal);
+  useEffect(() => {
+    if (mapRef.current && position) {
+      // Update the center of the map when position changes
+      mapRef.current.map.setCenter(location);
+    }
+  }, [location]);
 
   return (
     <Container
@@ -89,11 +90,12 @@ const MapForm = ({ google, location}) => {
               borderRadius: "1rem",
             }}
             initialCenter={{
-              lat: position.lat,
-              lng: position.lng,
+              lat: position ? position.lat : 0,
+              lng: position ? position.lng : 0,
             }}
             onClick={onMapClick}
             mapTypeId={"terrain"}
+            ref={mapRef}
           >
             {position && <Marker position={position} draggable={true} onDragend={(t, map, coords) => setPosition(coords.latLng)} />}
           </Map>
