@@ -39,7 +39,7 @@ const Registration = () => {
 
       // Check if email already exists
       const emailCheckResponse = await axios.post(
-        "http://localhost/API/register.php",
+        "http://127.0.0.1:8000/registeruser",
         {
           action: "check_email",
           email,
@@ -83,7 +83,7 @@ const Registration = () => {
       const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
       // Send registration request
-      const res = await axios.post("http://localhost/API/register.php", {
+      const res = await axios.post("http://127.0.0.1:8000/registeruser", {
         firstname,
         lastname,
         email,
@@ -112,7 +112,7 @@ const Registration = () => {
   return (
     <div className="center-container">
       {!verificationSent && (
-        <div className="form-container">
+        <div className="registration-container">
           <div style={{ textAlign: "Left" }}>
             <h2
               style={{
@@ -144,7 +144,7 @@ const Registration = () => {
                     className="input"
                     placeholder="First Name"
                     onChange={(e) => setFirstname(e.target.value)}
-                    style={{ width: "7rem" }}
+                    style={{ width: "9.8rem" }}
                   />
                 </div>
               </div>
@@ -156,7 +156,7 @@ const Registration = () => {
                     className="input"
                     placeholder="Last Name"
                     onChange={(e) => setLastname(e.target.value)}
-                    style={{ width: "7rem" }}
+                    style={{ width: "9.8rem" }}
                   />
                 </div>
               </div>

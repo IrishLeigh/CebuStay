@@ -3,8 +3,7 @@ import axios from "axios";
 import './Form.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+
 
 const Form = () => {
   const [email, setEmail] = useState("");
@@ -12,8 +11,8 @@ const Form = () => {
   const [loginError, setLoginError] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [emptyFields, setEmptyFields] = useState(false);
+  const [emptyEmail, setEmptyEmail] = useState(false);
+  const [emptyPassword, setEmptyPassword] = useState(false);
   const navigate = useNavigate(); // Use useNavigate for navigation
 
   const togglePasswordVisibility = () => {
@@ -26,28 +25,49 @@ const Form = () => {
     localStorage.setItem("remember_me", !rememberMe);
   };
 
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnackbar(false);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!email || !password) {
-      setEmptyFields(true);
+    
+    if (!email && !password) {
+      setEmptyEmail(true);
+      setEmptyPassword(true);
+      setTimeout(() => {
+        setEmptyEmail(false);
+        setEmptyPassword(false);
+      }, 3000);
       return;
+    } else if (!email) {
+      setEmptyEmail(true);
+      setEmptyPassword(false);
+      setLoginError("Please fill in all the required fields");
+      setTimeout(() => {
+        setEmptyEmail(false);
+        setLoginError("");
+      }, 3000);
+      return;
+    } else if (!password) {
+      setEmptyEmail(false);
+      setEmptyPassword(true);
+      setLoginError("Please fill in all the required fields");
+      setTimeout(() => {
+        setEmptyPassword(false);
+        setLoginError("");
+      }, 3000);
+      return;
+  
+
+    
     }
+
     try {
-      const response = await axios.post("http://localhost/API/loginBeta.php", {
+      const response = await axios.post("http://127.0.0.1:8000/login", {
         email,
         password,
       });
       if (response.data["status"] === "success") {
         const token = response.data["token"];
         localStorage.setItem("auth_token", token);
-
+  
         if (rememberMe) {
           localStorage.setItem("remembered_email", email);
           localStorage.setItem("remembered_password", password);
@@ -55,21 +75,25 @@ const Form = () => {
           localStorage.removeItem("remembered_email");
           localStorage.removeItem("remembered_password");
         }
-
+  
         console.log(response.data["message"]);
         console.log("Login successful!");
-        setOpenSnackbar(true); // Open Snackbar
         navigate("/landing"); // Correct usage of navigate function
       } else {
-        setLoginError("Invalid credentials");
+        setLoginError("Invalid credentials"); // Update error message for invalid credentials
         console.log(response.data["message"]);
         console.log("Login failed");
       }
     } catch (error) {
       console.error("Error logging in:", error);
     }
-  };
 
+    // Clear the login error after 2 seconds
+    setTimeout(() => {
+      setLoginError("");
+    }, 3000);
+  };
+  
   useEffect(() => {
     // Check if there are remembered credentials in local storage and fill in the fields
     const rememberedEmail = localStorage.getItem("remembered_email");
@@ -97,7 +121,7 @@ const Form = () => {
         <form className="form">
           {/* Email Input */}
           <div className="email">
-            <label style={{ marginRight: '85%', fontWeight: '10px' }}>Email{emptyFields && !email && <span style={{ color: 'red' }}> *</span>}</label>
+            <label style={{ marginRight: '85%', fontWeight: '10px' }}>Email</label>
           </div>
           <div className="inputForm">
             <svg height="20" viewBox="0 0 32 32" width="20" xmlns="http://www.w3.org/2000/svg">
@@ -116,7 +140,7 @@ const Form = () => {
 
           {/* Password Input */}
           <div className="password">
-            <label style={{ marginRight: '79%', fontWeight: '20px' }}>Password{emptyFields && !password && <span style={{ color: 'red' }}> *</span>}</label>
+            <label style={{ marginRight: '79%', fontWeight: '20px' }}>Password</label>
           </div>
           <div className="inputForm">
             <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg">
@@ -138,6 +162,11 @@ const Form = () => {
             )}
           </div>
 
+          <div style={{ color: 'red', textAlign: 'center' }}>
+            {(emptyEmail || emptyPassword) && "Please fill in all the required fields"}
+            {loginError && !emptyEmail && !emptyPassword && loginError}
+          </div>
+
           <div className="remember-forgot" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className="remember" style={{ textAlign: 'left' }}>
               <input
@@ -154,8 +183,6 @@ const Form = () => {
               </Link>
             </div>
           </div>
-
-          {loginError && <div style={{ color: 'red', textAlign: 'center' }}>{loginError}</div>}
 
           <button className="button-submit" style={{ background: "#1780CB" }} onClick={handleSubmit}>Login to Continue</button>
 
@@ -234,21 +261,7 @@ const Form = () => {
           </div>
         </form>
 
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            onClose={handleCloseSnackbar}
-            severity="success"
-          >
-            Login successful!
-          </MuiAlert>
-        </Snackbar>
+        
       </div>
     </div>
   );
