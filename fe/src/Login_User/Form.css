@@ -2,8 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); /* Adding drop shadow */
+  height: 100vh; /* Adjusted height */
 }
 
 .form-container {
@@ -11,8 +10,11 @@
   padding: 30px;
   width: 450px;
   border-radius: 20px;
-  box-shadow: 0px 10px 20px rgba(6, 32, 231, 0.1); /* Adding shadow effect */
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Adding shadow effect */
+  margin-top: 1rem; /* Adjusted margin */
+  margin-bottom: 15px; /* Added margin bottom */
 }
+
 
 .form {
   display: flex;

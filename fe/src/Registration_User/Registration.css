@@ -5,13 +5,13 @@
   height: 100vh; /* Adjusted height */
 }
 
-.form-container {
+.registration-container {
   background-color: #ffffff;
   padding: 30px;
   width: 450px;
   border-radius: 20px;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Adding shadow effect */
-  margin-top: 15%;
+  margin-top: 10rem;
 }
 
 .form {
