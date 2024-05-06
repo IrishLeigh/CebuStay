@@ -69,7 +69,7 @@ const Form = () => {
       if (response.data["status"] === "success") {
         const token = response.data["token"];
         localStorage.setItem("auth_token", token);
-
+  
         if (rememberMe) {
           localStorage.setItem("remembered_email", email);
           localStorage.setItem("remembered_password", password);
@@ -142,7 +142,7 @@ const Form = () => {
 
           {/* Password Input */}
           <div className="password">
-            <label style={{ marginRight: '79%', fontWeight: '20px' }}>Password{emptyFields && !password && <span style={{ color: 'red' }}> *</span>}</label>
+            <label style={{ marginRight: '79%', fontWeight: '20px' }}>Password</label>
           </div>
           <div className="inputForm">
             <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg">
