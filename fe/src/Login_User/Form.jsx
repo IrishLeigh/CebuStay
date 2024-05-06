@@ -69,7 +69,7 @@ const Form = () => {
       if (response.data["status"] === "success") {
         const token = response.data["token"];
         localStorage.setItem("auth_token", token);
-
+  
         if (rememberMe) {
           localStorage.setItem("remembered_email", email);
           localStorage.setItem("remembered_password", password);
