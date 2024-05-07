@@ -123,7 +123,7 @@ class RegisterUserController extends Controller
             ->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Email not found.', 'status' => 'error']);
+            return response()->json(['message' => 'Incorrect code', 'status' => 'error']);
         }
 
         // Check if token is expired
