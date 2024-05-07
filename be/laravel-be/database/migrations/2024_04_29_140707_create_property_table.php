@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->string('property_desc');
             $table->string('property_directions');
             $table->string('unit_type');
-            $table->integer('number_unit');
             $table->timestamps();
         });
     }

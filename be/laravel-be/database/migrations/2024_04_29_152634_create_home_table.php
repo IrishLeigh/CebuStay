@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->increments('homeid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
-            $table->integer('total_unit');
             $table->string('unit_type');
             $table->timestamps();
         });

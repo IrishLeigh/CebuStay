@@ -18,14 +18,12 @@ class PropertyController extends Controller
         $property->property_desc = $request->input('property_desc');
         $property->property_directions = $request->input('property_directions');
         $property->unit_type = $request->input('unit_type');
-        $property->number_unit = $request->input('number_unit');
 
         $property->save();
         $propertyid = $property->propertyid;
         if ($property->property_type == "Home") {
             $home = new Home();
             $home->propertyid = $propertyid;
-            $home->total_unit = $property->number_unit;
             $home->unit_type = $property->unit_type;
             $home->save();
         }

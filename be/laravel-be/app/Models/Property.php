@@ -9,5 +9,5 @@ class Property extends Model
 {
     protected $table = 'property';
     protected $primaryKey = 'propertyid';
-    protected $guarded = ['propertyid', 'userid', 'property_name', 'property_type', 'property_desc', 'property_directions', 'unit_type', 'number_unit'];
+    protected $guarded = ['propertyid', 'userid', 'property_name', 'property_type', 'property_desc', 'property_directions', 'unit_type'];
 }
