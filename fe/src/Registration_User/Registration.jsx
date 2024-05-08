@@ -9,8 +9,7 @@ import {
   MdVisibility,
   MdVisibilityOff,
 } from "react-icons/md";
-import OTP from "../components/OTP"; // Adjust the path according to your project structure
-
+import OTPRegistration from "../components/OTP_Registration";
 const Registration = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -25,7 +24,7 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     try {
       if (!firstname || !lastname || !email || !password || !confirmpassword) {
         setError("Please fill in all the required fields"); // Set error message
@@ -34,20 +33,6 @@ const Registration = () => {
 
       if (password.length < 8) {
         setError("Password must be at least 8 characters long"); // Set error message
-        return;
-      }
-
-      // Check if email already exists
-      const emailCheckResponse = await axios.post(
-        "http://127.0.0.1:8000/registeruser",
-        {
-          action: "check_email",
-          email,
-        }
-      );
-
-      if (emailCheckResponse.data.exists) {
-        setError("This email already exists. Please use a different email."); // Set error message
         return;
       }
 
@@ -71,28 +56,33 @@ const Registration = () => {
       }
 
       // Continue with registration if all validations pass
-      const account_type = "tourist";
-      const is_verified = false;
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-      const day = String(currentDate.getDate()).padStart(2, "0");
-      const hours = String(currentDate.getHours()).padStart(2, "0");
-      const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-      const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-      const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      // const account_type = "tourist";
+      // const is_verified = false;
+      // const currentDate = new Date();
+      // const year = currentDate.getFullYear();
+      // const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      // const day = String(currentDate.getDate()).padStart(2, "0");
+      // const hours = String(currentDate.getHours()).padStart(2, "0");
+      // const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+      // const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+      // const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
       // Send registration request
-      const res = await axios.post("http://127.0.0.1:8000/registeruser", {
+      const res = await axios.post("http://127.0.0.1:8000/api/registeruser", {
         firstname,
         lastname,
         email,
         password,
-        account_type,
-        account_created,
-        is_verified,
+        // account_type,
+        // account_created,
+        // is_verified,
       });
-
+      if(res.data.message === "Email already in use."){
+        setError("This email already exists. Please use a different email."); // Set error message
+        return;
+      }
+      localStorage.setItem("email", email);
+      setError(res.data.message);
       // If registration successful, set verificationSent to true
       setVerificationSent(true);
     } catch (error) {
@@ -241,7 +231,7 @@ const Registration = () => {
           </p>
         </div>
       )}
-      {verificationSent && <OTP />}
+      {verificationSent && <OTPRegistration />}
     </div>
   );
 };

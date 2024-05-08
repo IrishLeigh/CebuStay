@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import './OTP_Registration.css';
+import { Link, useNavigate } from 'react-router-dom';
 
 const OTPRegistration = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
@@ -90,25 +92,40 @@ const OTPRegistration = () => {
 
   const handleSubmitToken = async (e) => {
     e.preventDefault();
+    const em = localStorage.getItem('email');
     try {
 
-      const profileResponse = await axios.get("http://localhost/API/loadProfile.php", {
-          params: {
-            userid: 18 // Replace with the logged in user's id
-          }
-        });
-
-      const res = await axios.post("http://localhost/API/verifytoken.php", {
-        email,
-        token
-      });
-      // setToken(res.data.token);
-      console.log(res.data);
-      console.log("Profile Response Data:", profileResponse.data);
-      console.log("Token:", token);
-      if (profileResponse.data.verify_token === token) {
-        handleVerify();
+      // const profileResponse = await axios.get("http://localhost/API/loadProfile.php", {
+      //     params: {
+      //       userid: 18 // Replace with the logged in user's id
+      //     }
+      //   });
+      if(!verificationToken){
+        alert("Please enter verification code");
+        return;
       }
+     
+      const res = await axios.post("http://127.0.0.1:8000/api/verifytoken", {
+        email: em,
+        token: verificationToken
+      });
+      if(res.data.status === "error" && res.data.message === "Incorrect code"){
+        alert(res.data.message);
+        return;
+      } else if(res.data.status === "error" && res.data.message === "Verification token expired."){
+        alert(res.data.message);
+        return;
+      }
+      // setToken(res.data.token);
+      // console.log(res.data);
+      // console.log("Profile Response Data:", profileResponse.data);
+      // console.log("Token:", token);
+      // if (profileResponse.data.verify_token === token) {
+      //   handleVerify();
+      // }
+      localStorage.removeItem("email");
+      alert(res.data.message);
+      navigate('/login');
     } catch (error) {
    //   setResponse("Error occurred while submitting data.");
       console.error(error);
@@ -138,7 +155,19 @@ const OTPRegistration = () => {
       alert("Password reset successful");
     }
   };
-  
+
+  const handleResend = async (e) => {
+    const em = localStorage.getItem('email');
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/resendemail', {
+        email: em
+      });
+      alert(response.data.message);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <div className="center-container">
       <form className="otp-Form" onSubmit={handleSubmit}>
@@ -162,7 +191,7 @@ const OTPRegistration = () => {
              onClick={handleSubmitToken}
             >Verify</button>
             <button className="exitBtn">×</button>
-            <p className="resendNote">Didn't receive the code? <button className="resendBtn">Resend Code</button></p>
+            <p className="resendNote">Didn't receive the code? <button className="resendBtn" onClick={handleResend}>Resend Code</button></p>
           </>
         )}
 
