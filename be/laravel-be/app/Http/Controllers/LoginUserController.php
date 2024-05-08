@@ -20,7 +20,7 @@ class LoginUserController extends Controller
         $user = UserModel::where('email', $email)->first(); //check if email exists
 
         if (!$user) {   //if email doesn't exist
-            return response()->json(['message' => 'Email not found.', 'status' => 'error']);    //return error
+            return response()->json(['message' => 'Password incorrect.', 'status' => 'error']);     //return error
         }
         if ($user->password != $password) {   //if password doesn't match
             return response()->json(['message' => 'Password incorrect.', 'status' => 'error']);    //return error
