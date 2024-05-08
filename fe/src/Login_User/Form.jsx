@@ -77,7 +77,7 @@ const Form = () => {
         }
   
         console.log(response.data["message"]);
-        console.log("Login successful!");
+        // console.log("Login successful!");
         navigate("/landing"); // Correct usage of navigate function
       } else {
         setLoginError("Invalid credentials"); // Update error message for invalid credentials
