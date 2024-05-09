@@ -17,7 +17,7 @@ export default function SideBar() {
     id="from-date" 
     name="from-date" 
     className="mt-1 block w-full px-3 py-2 border border-zinc-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-    style={{ width: '18rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginBottom:'5px' }} 
+    style={{ width: '13rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginBottom:'5px' }} 
 />
 <label htmlFor="to-date" className="block text-sm font-medium text-zinc-700 mt-4" style={{ textAlign: 'left', fontFamily: 'Poppins', marginLeft:'5px', fontWeight:'bold', color:'black'}}>To</label>
 <input 
@@ -25,7 +25,7 @@ export default function SideBar() {
     id="to-date" 
     name="to-date" 
     className="mt-1 block w-full px-3 py-2 border border-zinc-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-    style={{ width: '18rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} 
+    style={{ width: '13rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} 
 />
 
             </div>
@@ -56,12 +56,12 @@ export default function SideBar() {
       type="number"
       placeholder="Min"
       className="w-1/3 px-3 py-2 border border-zinc-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-    style={{width:'8rem'}}/>
+    style={{width:'5.5rem', marginRight:'2px'}}/>
     <input
       type="number"
       placeholder="Max"
       className="w-1/3 px-3 py-2 border border-zinc-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-   style={{width:'8rem'}} />
+   style={{width:'5.5rem'}} />
   </div>
  
 </div>
