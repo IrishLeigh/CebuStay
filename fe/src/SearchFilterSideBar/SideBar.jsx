@@ -6,20 +6,20 @@ import './SideBar.css';
 export default function SideBar() {
     return (
         <div className="bg-white p-4 w-64">
-            <h2 className="text-lg font-semibold">Places to Visit</h2>
-            <p className="text-zinc-600">50 Places Found</p>
+            <h2 className="text-lg font-semibold" style={{textAlign:'left'}}>Places to Visit</h2>
+            <p className="text-zinc-600" style={{textAlign:'left', marginTop:'-12px'}}>50 Places Found</p>
             <div className="mt-6">
-                <h3 className="font-semibold">Availability</h3>
+                <h3 className="font-semibold" style={{textAlign:'left'}}>Availability</h3>
                 <hr className="my-2"/>
-                <label htmlFor="from-date" className="block text-sm font-medium text-zinc-700" style={{ textAlign: 'left', fontFamily: 'Poppins', marginLeft:"5px", fontWeight:'bold'}}>From</label>
+                <label htmlFor="from-date" className="block text-sm font-medium text-zinc-700" style={{ textAlign: 'left', fontFamily: 'Poppins', marginLeft:"5px", fontWeight:'bold', color:'black'}}>From</label>
 <input 
     type="date" 
     id="from-date" 
     name="from-date" 
     className="mt-1 block w-full px-3 py-2 border border-zinc-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-    style={{ width: '18rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} 
+    style={{ width: '18rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginBottom:'5px' }} 
 />
-<label htmlFor="to-date" className="block text-sm font-medium text-zinc-700 mt-4" style={{ textAlign: 'left', fontFamily: 'Poppins', marginLeft:'5px', fontWeight:'bold'}}>To</label>
+<label htmlFor="to-date" className="block text-sm font-medium text-zinc-700 mt-4" style={{ textAlign: 'left', fontFamily: 'Poppins', marginLeft:'5px', fontWeight:'bold', color:'black'}}>To</label>
 <input 
     type="date" 
     id="to-date" 
@@ -28,20 +28,20 @@ export default function SideBar() {
     style={{ width: '18rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} 
 />
 
-
             </div>
             <div className="mt-6">
                 <h3 className="font-semibold">Amenities</h3>
                 <hr className="my-2"/>
-                <div className="flex flex-wrap gap-2">
-                <button className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded" style={{backgroundColor: '#white', color: 'black'}}>Wi-Fi</button>
-<button className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded" style={{backgroundColor: '#white', color: 'black'}}>TV</button>
-<button className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded" style={{backgroundColor: '#white', color: 'black'}}>Kitchen</button>
-<button className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded" style={{backgroundColor: '#white', color: 'black'}}>Spa</button>
-<button className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded" style={{backgroundColor: '#white', color: 'black'}}>Fitness Center</button>
-<button className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded" style={{backgroundColor: '#white', color: 'black'}}>Breakfast</button>
-<button className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded" style={{backgroundColor: '#white', color: 'black'}}>Parking</button>
-
+                <div className="sidebar">
+                    <div className="flex flex-wrap gap-2">
+                        <button className="button">Wi-Fi</button>
+                        <button className="button">TV</button>
+                        <button className="button">Kitchen</button>
+                        <button className="button">Spa</button>
+                        <button className="button">Fitness Center</button>
+                        <button className="button">Breakfast</button>
+                        <button className="button">Parking</button>
+                    </div>
                 </div>
             </div>
             <div className="mt-6">

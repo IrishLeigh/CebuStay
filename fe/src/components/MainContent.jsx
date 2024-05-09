@@ -1,8 +1,6 @@
-// MainContent.jsx
-
 import React, { useState } from 'react';
 import './MainContent.css';
-import { MdBackHand, MdForward } from 'react-icons/md';
+import {  MdForward } from 'react-icons/md';
 import Search from './Search';
 
 const MainContent = () => {
@@ -21,9 +19,84 @@ const MainContent = () => {
         price: "₱1,400/night",
         type: "Hotel"
     },
- 
-
-   
+    {
+      image: "/place2.jpeg",
+      title: "Megaworld, Cebu",
+      distance: "1,000 kilometers away",
+      price: "₱1,400/night",
+      type: "Hotel"
+    },
+    {
+      image: "/place2.jpeg",
+      title: "Megaworld, Cebu",
+      distance: "1,000 kilometers away",
+      price: "₱1,400/night",
+      type: "Hotel"
+    },
+    {
+      image: "/place2.jpeg",
+      title: "Megaworld, Cebu",
+      distance: "1,000 kilometers away",
+      price: "₱1,400/night",
+      type: "Hotel"
+  },
+  {
+    image: "/place2.jpeg",
+    title: "Megaworld, Cebu",
+    distance: "1,000 kilometers away",
+    price: "₱1,400/night",
+    type: "Hotel"
+  },
+  {
+    image: "/place2.jpeg",
+    title: "Megaworld, Cebu",
+    distance: "1,000 kilometers away",
+    price: "₱1,400/night",
+    type: "Hotel"
+  },
+  {
+    image: "/place2.jpeg",
+    title: "Megaworld, Cebu",
+    distance: "1,000 kilometers away",
+    price: "₱1,400/night",
+    type: "Hotel"
+},
+{
+  image: "/place2.jpeg",
+  title: "Megaworld, Cebu",
+  distance: "1,000 kilometers away",
+  price: "₱1,400/night",
+  type: "Hotel"
+},
+{
+  image: "/place2.jpeg",
+  title: "Megaworld, Cebu",
+  distance: "1,000 kilometers away",
+  price: "₱1,400/night",
+  type: "Hotel"
+},
+{
+  image: "/place2.jpeg",
+  title: "Megaworld, Cebu",
+  distance: "1,000 kilometers away",
+  price: "₱1,400/night",
+  type: "Hotel"
+},
+{
+image: "/place2.jpeg",
+title: "Megaworld, Cebu",
+distance: "1,000 kilometers away",
+price: "₱1,400/night",
+type: "Hotel"
+},
+{
+image: "/place2.jpeg",
+title: "Megaworld, Cebu",
+distance: "1,000 kilometers away",
+price: "₱1,400/night",
+type: "Hotel"
+},  
+    // Add more accommodation objects as needed
   
     ];
 
@@ -31,6 +104,7 @@ const MainContent = () => {
     <div className="all-container">
       <Search />
       <div className="filter-buttons">
+          {/* Filter buttons */}
           <button className="filter-button" style={{ backgroundColor: '#16B4DD', color: 'Black', fontWeight:'500'}}
               onMouseEnter={(e) => e.target.style.backgroundColor = 'aqua'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#16B4DD'}>
@@ -58,9 +132,9 @@ const MainContent = () => {
           </button>
       </div>
       <div className="content-container">
-        <div className="main-content" style={{marginRight:'30px'}}>
+        <div className="main-content" style={{marginLeft:'2.3rem', display: 'flex', flexWrap: 'wrap'}}>
           {accommodations.map((accommodation, index) => (
-            <div className="card" key={index}>
+            <div className="card" key={index} style={{width: 'calc(33.33% - 1rem)', margin: '0.5rem'}}>
               <div className="card-img">
                 <img src={accommodation.image} alt={accommodation.title} />
               </div>
