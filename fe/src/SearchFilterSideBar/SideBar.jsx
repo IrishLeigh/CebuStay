@@ -64,6 +64,7 @@ export default function SideBar() {
             <button className={`button ${activeButtons.includes(13) && 'light-blue'}`} onClick={() => toggleColor(13)}>Parking</button>
         </div>
 
+
                 </div>
             </div>
             <div className="mt-6">
