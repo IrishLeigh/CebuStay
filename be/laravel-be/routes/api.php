@@ -66,5 +66,8 @@ Route::post('/bedroomtype', 'App\Http\Controllers\UnitDetailsController@insertBe
 Route::post('/uploadimage', 'App\Http\Controllers\FileController@store');
 //UPLOAD MULTIPLE IMAGES
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
-
+//GET IMAGES
 Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty');
+
+//User 
+Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager');

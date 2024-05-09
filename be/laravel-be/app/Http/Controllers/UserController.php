@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\UserModel;
+use App\Models\Property;
 
 class UserController extends Controller
 {
@@ -13,45 +14,18 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request)
+
+    public function becomeManager(Request $request)
     {
-        $students = new userModel();
-
-        $students->firstname = $request->input('firstname');
-        $students->lastname = $request->input('lastname');
-        $students->email = $request->input('email');
-        $students->password = $request->input('password');
-
-        $students->save();
-        return response()->json($students);
-    }
-
-    public function getUserById($userId)
-    {
-        $user = UserModel::find($userId);
-
-        if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+        $userid = $request->input('userid');
+        $this->enableCors($request);
+        $propertyuserref = Property::where('userid', $userid)->first();
+        if (!$propertyuserref) {
+            return response()->json(['message' => 'User has not listed a property.', 'status' => 'error']);
         }
-
-        return response()->json($user);
+        $usermanager = UserModel::find($userid);
+        $usermanager->accounttype = 'manager';
+        $usermanager->save();
+        return response()->json(['message' => 'User updated successfully.', 'status' => 'success']);
     }
-
-    public function update(Request $request, $userId)
-{
-    $user = UserModel::find($userId);
-
-    if (!$user) {
-        return response()->json(['message' => 'User not found.'], 404);
-    }
-
-    $user->firstname = $request->input('firstname', $user->firstname);
-    $user->lastname = $request->input('lastname', $user->lastname);
-    $user->email = $request->input('email', $user->email);
-    $user->password = $request->input('password', $user->password);
-
-    $user->save();
-    
-    return response()->json($user);
-}
 }
