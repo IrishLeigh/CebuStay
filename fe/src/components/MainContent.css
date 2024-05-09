@@ -10,7 +10,6 @@ body {
   overflow-y: auto; /* Enable vertical scrolling if content exceeds container height */
 
 }
-
 .content-container {
     max-width: 1200px; /* Adjust as needed */
     margin: 0 auto;
