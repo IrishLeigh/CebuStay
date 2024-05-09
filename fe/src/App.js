@@ -12,12 +12,20 @@ import LandingPage from './Landing_Page/landing';
 import { BrowserRouter as Router, Route, Switch, Routes } from "react-router-dom";
 import OTP from './components/OTP';
 import ForgotPass from './ForgotPassword_User/ForgotPass';
-import SearchFilter from './SearchFilter_User/SearchFilter';
+import MainContent from './components/MainContent';
+import PersistentDrawerLeft from './SearchFilterSideBar/SideBar';
+import Template from './SearchFilterSideBar/SideBar';
+import BasicGrid from './SearchFilterSideBar/SideBar';
+import OTPRegistration from './components/OTP_Registration';
+import Search from './components/Search';
+import SideBar from './SearchFilterSideBar/SideBar';
+import Layout from './Layout/Layout';
 function App() {
   return (
     <div className="App">
-      
-        <NavigationBar />
+
+        <NavigationBar/>
+        <Layout />
         <Routes>
           <Route path="/login"  element={<Form/>}/>  {/* Login page */}
           <Route path="/landing"  element={<LandingPage/>}/>  {/* Login page */}
@@ -26,8 +34,6 @@ function App() {
           <Route path="/EditName"  element={<EditProfile2/>}/>
           <Route path="/ForgotPass/register"  element={<Registration/>}/>   
           <Route path="/ForgotPass/OTP"  element={<OTP/>}/>       
-    
-
         </Routes>
       
     </div>

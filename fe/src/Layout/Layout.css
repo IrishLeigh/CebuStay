@@ -1,0 +1,11 @@
+/* Layout.css */
+
+.layout-container {
+    display: flex;
+  }
+  
+  .main-content-wrapper {
+    flex-grow: 1; /* Expand to fill remaining space */
+    overflow: hidden; /* Prevent content from overflowing */
+  }
+  
