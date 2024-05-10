@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './OTP.css';
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import axios from "axios";
 
 
@@ -11,17 +12,22 @@ const OTP = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordUpdated, setPasswordUpdated] = useState(false);
-  const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [showPasswordFields, setShowPasswordFields] = useState(false); 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [showVerifyButton, setShowVerifyButton] = useState(true);
+  const [showVerifyButton, setShowVerifyButton] = useState(true); 
   const [loginError, setLoginError] = useState("");
   const [send, setSend] = useState("");
   const [emptyPassword, setEmptyPassword] = useState(false);
   const navigate = useNavigate(); // Use useNavigate for navigation
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState(false);
 
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisibility(!confirmPasswordVisibility);
   };
 
   const handleSubmit = async (e) => {
@@ -53,6 +59,7 @@ const OTP = () => {
       console.error(error);
     }
   };
+
   const handleResend = async (e) => {
     e.preventDefault();
 
@@ -76,6 +83,19 @@ const OTP = () => {
     e.preventDefault();
     // Add your verification logic here using the verificationToken state
     try {
+
+      if (newPassword.length < 8) {
+        setLoginError("Password must be at least 8 characters long"); // Set error message
+        return;
+      }
+
+      var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
+      if (!passwordRegex.test(newPassword)) {
+        setLoginError(
+          "Password must contain at least one symbol or a capital letter"
+        ); // Set error message
+        return;
+      }
 
       if (newPassword === '' || confirmPassword === '') {
         // alert("Please fill all fields");
@@ -110,6 +130,9 @@ const OTP = () => {
       console.error(error);
     }
   };
+
+
+
 
   const handleLoginClick = () => {
     // Redirect to login page
@@ -146,20 +169,45 @@ const OTP = () => {
 
         {showPasswordFields && !passwordUpdated && (
           <div className="password-fields">
-            <input
-              type="password"
-              className="otp-input password-input"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="New Password"
-            />
-            <input
-              type="password"
-              className="otp-input password-input"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm Password"
-            />
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={passwordVisibility ? "text" : "password"}
+                  className="otp-input password-input"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="New Password"
+                />
+                <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '10px' }}>
+                  {passwordVisibility ? (
+                    <MdVisibility onClick={togglePasswordVisibility} style={{ paddingRight: ".5rem" }} />
+                  ) : (
+                    <MdVisibilityOff onClick={togglePasswordVisibility} style={{ paddingRight: ".5rem" }} />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={confirmPasswordVisibility ? "text" : "password"}
+                  className="otp-input password-input"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm Password"
+                />
+                <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '10px' }}>
+                  {confirmPasswordVisibility ? (
+                    <MdVisibility onClick={toggleConfirmPasswordVisibility} style={{ paddingRight: ".5rem" }} />
+                  ) : (
+                    <MdVisibilityOff onClick={toggleConfirmPasswordVisibility} style={{ paddingRight: ".5rem" }} />
+                  )}
+                </div>
+              </div>
+            </div>
+
+
             <div style={{ color: 'red', textAlign: 'center' }}>
               {(loginError)}
             </div>

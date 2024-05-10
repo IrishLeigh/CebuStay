@@ -4,18 +4,20 @@ import EditName from '../components/EditName';
 import './EditProfile2.css';
 import axios from 'axios';
 import { Link } from "react-router-dom";
+import { useUser } from "../components/UserProvider";
 
 const EditProfile2 = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [additional, setAdditional] = useState(null);
+  const { user } = useUser();
   const userId = 8;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userId}`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
         console.log("Response Data:", response.data); // Log the entire response object
         console.log("Response Data Email:", response.data.userid); // Log the entire response object
         setProfile(response.data);
@@ -69,12 +71,12 @@ const EditProfile2 = () => {
             </div>
             <div className="edit-detail-container email">
               <div className="edit-detail-label">Email</div>
-              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.user.email}</div>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.email}</div>
               <span className="edit-edit-text" onClick={handleDataUpdate}>Edit</span>
             </div>
             <div className="edit-detail-container phonenumber">
               <div className="edit-detail-label">Phone Number</div>
-              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.user.cellnumber}</div>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.cellnumber}</div>
               <Link to="/EditPhone">
                 <span className="edit-edit-text" >Edit</span>
               </Link>

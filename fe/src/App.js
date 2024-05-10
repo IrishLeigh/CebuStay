@@ -14,14 +14,17 @@ import {
   Route,
   Switch,
   Routes,
+  BrowserRouter,
 } from "react-router-dom";
 import OTP from "./components/OTP";
 import ForgotPass from "./ForgotPassword_User/ForgotPass";
+import { UserProvider } from "./components/UserProvider";
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
   return (
     <div className="App">
       <NavigationBar />
+      <UserProvider>
       <Routes>
         <Route path="/login" element={<Form />} /> {/* Login page */}
         <Route path="/landing" element={<LandingPage />} /> {/* Login page */}
@@ -34,6 +37,8 @@ function App() {
         <Route path="/EditProfile2" element={<EditProfile2 />} />
         <Route path="/EditPhone" element={<EditPhone/>} />
       </Routes>
+
+      </UserProvider>
     </div>
   );
 }

@@ -3,6 +3,8 @@ import { MdPerson } from 'react-icons/md';
 import './EditName.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from "../components/UserProvider";
+
 
 const EditName = () => {
   const [firstname, setFirstname] = useState('');
@@ -11,15 +13,17 @@ const EditName = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const { user } = useUser();
+  console.log("User:", user);
   const userId = 8;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userId}`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
         console.log("Response Data another:", response.data);
-        setFirstname(response.data.user.firstname);
-        setLastname(response.data.user.lastname);
+        setFirstname(response.data.firstname);
+        setLastname(response.data.lastname);
         setLoading(false);
       } catch (error) {
         setError("Error fetching profile data.");

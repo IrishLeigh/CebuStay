@@ -4,26 +4,21 @@ import { MdPerson, MdHistory, MdStar, MdDelete } from 'react-icons/md';
 import './EditProfile.css';
 
 import axios from 'axios';
+import { useUser } from "../components/UserProvider";
 
 const EditProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const userId = 8;
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userId}`);
-        if (response.data["status"] === "success") {
-          console.log(response.data["message"]);
-          setProfile(response.data); // Assuming response.data contains user profile data
-          setLoading(false);
-        } else {
-          console.log(response.data["message"]);
-          console.log("Login failed");
-        }
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        setProfile(response.data);
+        setLoading(false);
       } catch (error) {
         setError("Error fetching profile data.");
         console.error(error);
@@ -58,19 +53,19 @@ const EditProfile = () => {
           <div className="edit-container">
             <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
               <div className="edit-detail-label">Name</div>
-              <div className="edit-detail" style={{ textAlign: 'left' }}> {profile.user.firstname} {profile.user.lastname} </div>
+              <div className="edit-detail" style={{ textAlign: 'left' }}> {profile.firstname} {profile.lastname} </div>
               <Link to="/EditName">
                 <span className="edit-edit-text">Edit</span>
               </Link>
             </div>
             <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
               <div className="edit-detail-label">Email</div>
-              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.user.email}</div>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.email}</div>
               <span className="edit-edit-text">Edit</span>
             </div>
             <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
               <div className="edit-detail-label">Phone Number</div>
-              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.user.cellnumber}</div>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.cellnumber}</div>
               <Link to="/EditPhone">
                 <span className="edit-edit-text">Edit</span>
               </Link>

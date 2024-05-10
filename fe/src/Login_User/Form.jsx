@@ -3,9 +3,11 @@ import axios from "axios";
 import './Form.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import { useUser } from "../components/UserProvider";
 
 
 const Form = () => {
+  const { loginUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -75,7 +77,8 @@ const Form = () => {
           localStorage.removeItem("remembered_email");
           localStorage.removeItem("remembered_password");
         }
-  
+
+        console.log("Login successful! USer iS: ", response.data);
         console.log(response.data["message"]);
         // console.log("Login successful!");
         navigate("/landing"); // Correct usage of navigate function

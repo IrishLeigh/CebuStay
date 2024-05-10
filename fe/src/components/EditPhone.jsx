@@ -1,19 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './EditPhone.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-const userId = 8;
+import { useUser } from "../components/UserProvider";
+
 
 const EditPhone = () => {
   const [countryCode, setCountryCode] = useState('');
   const [cellphone_number, set_cellphone_number] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState(null);
+  const { user } = useUser();
   const navigate = useNavigate(); // Use useNavigate for navigation
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        set_cellphone_number(response.data.cellnumber);
+      } catch (error) {
+        setError("Error fetching profile data.");
+        console.error(error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const validatePhoneNumber = (number) => {
     // Regular expression for validating Philippine cellphone number format
@@ -29,8 +44,8 @@ const EditPhone = () => {
       return;
     }
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${userId}`, {
-        userid: userId, // Assuming userId is defined somewhere in your frontend code
+      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+        userid: user.userid, // Assuming userId is defined somewhere in your frontend code
         cellnumber: cellphone_number,
       });
       console.log('update profile', response.data);
