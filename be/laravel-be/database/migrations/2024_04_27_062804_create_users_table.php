@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('lastname');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('cellnumber')->default(NULL);
             $table->string('accounttype')->default('tourist');
             $table->boolean('isverified')->default(false);
             $table->string('verificationtoken')->nullable();

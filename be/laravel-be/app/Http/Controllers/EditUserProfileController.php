@@ -16,17 +16,32 @@ class EditUserProfileController extends Controller
      */
 
     // UPDATE method User firstname, lastname, email
-    public function updateProfile(Request $request, $userId)
+    public function updateProfile(Request $request)
     {
-        $user = UserModel::find($userId);
+        $this->enableCors($request);
+        $userid = $request->input('userid');
+        $user = UserModel::where('userid', $userid)->first();
 
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
 
-        $user->firstname = $request->input('firstname', $user->firstname);
-        $user->lastname = $request->input('lastname', $user->lastname);
-        $user->email = $request->input('email', $user->email);
+        // $user->firstname = $request->input('firstname');
+        // $user->lastname = $request->input('lastname');
+        // // $user->cellnumber = $request->input('cellnumber');
+        // // $user->email = $request->input('email');
+        if ($request->has('firstname')) {
+            $user->firstname = $request->input('firstname');
+        }
+        if ($request->has('lastname')) {
+            $user->lastname = $request->input('lastname');
+        }
+        if ($request->has('cellnumber')) {
+            $user->cellnumber = $request->input('cellnumber');
+        }
+        if ($request->has('email')) {
+            $user->email = $request->input('email');
+        }
 
         $user->save();
 

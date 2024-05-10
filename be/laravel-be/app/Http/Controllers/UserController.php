@@ -26,15 +26,17 @@ class UserController extends Controller
         return response()->json($students);
     }
 
-    public function getUserById($userId)
+    public function getUserById(Request $request, $userId)
     {
+        $this->enableCors($request);
+    
         $user = UserModel::find($userId);
-
+    
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['status' => 'error', 'message' => 'User not found for ID ' . $userId], 404);
         }
-
-        return response()->json($user);
+    
+        return response()->json(['status' => 'success', 'user' => $user]);
     }
 
     public function update(Request $request, $userId)

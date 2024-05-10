@@ -25,6 +25,7 @@ Route::post('/registeruser', 'App\Http\Controllers\RegisterUserController@regist
 Route::post('/verifytoken', 'App\Http\Controllers\RegisterUserController@verifyToken');
 Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendEmailCode');
 
+
 // Routes for amenity
 Route::post('/amenities', 'App\Http\Controllers\AmenityController@create');
 
@@ -42,7 +43,10 @@ Route::post('/houseRules', 'App\Http\Controllers\HouseruleController@create');
 Route::post('/location', 'App\Http\Controllers\LocationController@create');
 
 // Route for updating password based on email
-Route::put('/forgotPass/{email}', [UserForgotPassController::class, 'changePass']);
+// Route::get('/forgotPass', [UserForgotPassController::class, 'changePass']);
+Route::post('/forgotPass', 'App\Http\Controllers\UserForgotPassController@resendEmailCode');
+Route::put('/changepass', 'App\Http\Controllers\UserForgotPassController@changePass');
+
 
 // Routes for additional info
 Route::post('/additionalInfo/{userId}', [EditUserProfileController::class, 'createAdditionalInfo']);
