@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\UserModel;
+use App\Models\Property;
 
 class UserController extends Controller
 {
@@ -13,7 +14,8 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request)
+
+    public function becomeManager(Request $request)
     {
         $students = new userModel();
 
@@ -26,17 +28,15 @@ class UserController extends Controller
         return response()->json($students);
     }
 
-    public function getUserById(Request $request, $userId)
+    public function getUserById($userId)
     {
-        $this->enableCors($request);
-    
         $user = UserModel::find($userId);
-    
+
         if (!$user) {
-            return response()->json(['status' => 'error', 'message' => 'User not found for ID ' . $userId], 404);
+            return response()->json(['message' => 'User not found.'], 404);
         }
-    
-        return response()->json(['status' => 'success', 'user' => $user]);
+
+        return response()->json($user);
     }
 
     public function update(Request $request, $userId)
