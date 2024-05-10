@@ -30,7 +30,7 @@ export default function SideBar() {
             </div>
             <div className="mt-6">
                 <h3 className="font-semibold" style={{ textAlign: 'left' }}>Amenities</h3>
-                <hr className="my-2" />
+                <hr className="my-2" style={{ marginTop: '-1rem' }}/>
                 <div className="sidebar">
                     <div className="flex flex-wrap gap-2">
                         <button className="button">Wi-Fi</button>

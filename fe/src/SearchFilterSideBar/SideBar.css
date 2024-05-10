@@ -30,8 +30,8 @@
 }
 
 .my-2 {
-    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    margin-top: -1rem;
 }
 
 .block {
@@ -69,7 +69,7 @@
 }
 
 .border-zinc-300 {
-    border-color: lightblue;
+    border-color: rgb(0, 0, 0);
 }
 
 .rounded-md {
@@ -182,14 +182,6 @@
     background-color: #4299e1;
     border-color: #4299e1;
 }
-
-/* Additional styles */
-
-/* Adjustments for select elements */
-
-
-
-
 
 
 /*new css*/
