@@ -1,34 +1,46 @@
 import React, { useState } from 'react';
 import './EditPhone.css';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+const userId = 8;
 
 const EditPhone = () => {
   const [countryCode, setCountryCode] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-
-  const handleAdd = () => {
-    // Add logic to add the edited phone number
-    console.log('Country Code:', countryCode);
-    console.log('Phone Number:', phoneNumber);
-  };
-
+  const [cellphone_number, set_cellphone_number] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Use useNavigate for navigation
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
 
 
-  const hanndleSubmit = async (e) => {
+  const validatePhoneNumber = (number) => {
+    // Regular expression for validating Philippine cellphone number format
+    const phoneRegex = /^09\d{2}-\d{3}-\d{4}$/;
+    return phoneRegex.test(number);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validatePhoneNumber(cellphone_number)) {
+      // setError('Please enter a valid cellphone number format (e.g., 999-999-999).');
+      setSuccessMessage('Please enter a valid cellphone number format (e.g., 09xx-xxx-xxxx).');
+      return;
+    }
     try {
-      const response = await axios.put('http://localhost/api/updateProfile.php', {
-        userid: 1,
-        cellphone_number
+      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${userId}`, {
+        userid: userId, // Assuming userId is defined somewhere in your frontend code
+        cellnumber: cellphone_number,
       });
-      console.log(response.data);
+      console.log('update profile', response.data);
+      setSuccessMessage('Phone number updated successfully!');
+      navigate('/EditProfile');
     } catch (error) {
       console.error(error);
+      setError('Failed to update data. Please try again later.');
     }
-  }
+  };
 
   return (
     <div className="edit-phone-container">
@@ -55,12 +67,15 @@ const EditPhone = () => {
           value={cellphone_number}
           onChange={(e) => set_cellphone_number(e.target.value)}
           className="edit-phone-input"
-          placeholder="eg. 999-999-999"
+          placeholder="eg. 09xx-xxx-xxxx"
         />
       </div>
       <div className="edit-phone-buttons">
-        <button className="edit-button cancel-button">Cancel</button>
-        <button className="edit-button add-button" onClick={hanndleSubmit}>Add</button>
+        <Link to="/EditProfile">
+          <button className="edit-button cancel-button">Cancel</button>
+        </Link>
+        <button className="edit-button add-button" onClick={handleSubmit}>Add</button>
+        {successMessage && <p className="success-message">{successMessage}</p>}
       </div>
     </div>
   );

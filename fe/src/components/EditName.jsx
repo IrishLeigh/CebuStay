@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MdPerson } from 'react-icons/md';
 import './EditName.css';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 
 const EditName = () => {
   const [firstname, setFirstname] = useState('');
@@ -9,18 +10,16 @@ const EditName = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
+  const userId = 8;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost/api/loadProfile.php", {
-          params: {
-            userid: 14 // Replace with the logged in user's id
-          }
-        });
-        console.log("Response Data:", response.data);
-        setFirstname(response.data.firstname);
-        setLastname(response.data.lastname);
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userId}`);
+        console.log("Response Data another:", response.data);
+        setFirstname(response.data.user.firstname);
+        setLastname(response.data.user.lastname);
         setLoading(false);
       } catch (error) {
         setError("Error fetching profile data.");
@@ -35,13 +34,14 @@ const EditName = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put('http://localhost/api/updateProfile.php', {
-        userid: 1,
-        firstname,
-        lastname
+      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${userId}`, {
+        userid: userId, // Assuming userId is defined somewhere in your frontend code
+        firstname: firstname,
+        lastname: lastname,
       });
-      console.log(response.data);
+      console.log('update profile', response.data);
       setSuccessMessage('Data updated successfully!');
+      navigate('/EditProfile');
     } catch (error) {
       console.error(error);
       setError('Failed to update data. Please try again later.');
@@ -80,7 +80,9 @@ const EditName = () => {
         </div>
       </div>
       <div className="edit-name-buttons">
-        <button className="edit-button cancel-button" style={{ color: '#007bff', backgroundColor: 'white' }} onMouseEnter={(e) => { e.target.style.color = 'white'; e.target.style.backgroundColor = '#007bff' }} onMouseLeave={(e) => { e.target.style.color = '#007bff'; e.target.style.backgroundColor = 'white' }}>Cancel</button>
+        <Link to="/EditProfile">
+          <button className="edit-button cancel-button" style={{ color: '#007bff', backgroundColor: 'white' }} onMouseEnter={(e) => { e.target.style.color = 'white'; e.target.style.backgroundColor = '#007bff' }} onMouseLeave={(e) => { e.target.style.color = '#007bff'; e.target.style.backgroundColor = 'white' }}>Cancel</button>
+        </Link>
         <button className="edit-button save-button" style={{ backgroundColor: '#007bff', color: 'white' }} onClick={handleSubmit}>Save</button>
       </div>
       {successMessage && <p className="success-message">{successMessage}</p>}

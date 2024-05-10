@@ -61,23 +61,34 @@ const ForgotPass = () => {
     console.log("Email before sending request:", email);
     try {
 
-      const profileResponse = await axios.get("http://localhost/API/loadProfile.php", {
-          params: {
-            userid: 18 // Replace with the logged in user's id
-          }
+      const profileResponse = await axios.post("http://127.0.0.1:8000/api/forgotPass", {
+          email:email
         });
         setProfile(profileResponse.data);
-        console.log("Profile Response Data:", profileResponse.data);
+        setVerificationSent(true);
+        setEmailSent(true);
+        console.log("Verification Sent:", verificationSent);
+        console.log("Profile Response Data Mao ni:", profileResponse.data);
       // Send registration request
-      const res = await axios.post("http://localhost/API/pass.php", {
-        email
-      });
-      console.log(res.data);
+      // const res = await axios.post("http://localhost/API/pass.php", {
+      //   email
+      // });
+      // console.log(res.data);
 
       // If registration successful, set verificationSent to true
-      setVerificationSent(true);
+      
       if (profileResponse.data.email === email && profileResponse.data.is_verified === 1) {
-        handleSendEmail();
+        const res = await axios.post("http://127.0.0.1:8000/api/resendEmail", {
+        email: email,
+      });
+      if(res.data.status === "error" && res.data.message === "Incorrect code"){
+        alert(res.data.message);
+        return;
+      } else if(res.data.status === "error" && res.data.message === "Verification token expired."){
+        alert(res.data.message);
+        return;
+      }
+        setEmailSent(true);
       }
       
     } catch (error) {
@@ -170,7 +181,7 @@ const ForgotPass = () => {
             </div>
           </>
         ) : (
-          <Navigate to="/ForgotPass/OTP" /> 
+          <Navigate to="/ForgotPass/OTP" state={{ email: email }} /> 
         )}
       </div>
     </div>

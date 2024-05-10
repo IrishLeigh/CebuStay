@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './OTP.css';
+import axios from "axios";
+
 
 const OTP = () => {
+  const location = useLocation(); // Use useLocation hook to access location object
+  const email = location.state.email; // Access email from location state
   const [verificationToken, setVerificationToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -9,28 +14,107 @@ const OTP = () => {
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showVerifyButton, setShowVerifyButton] = useState(true);
+  const [loginError, setLoginError] = useState("");
+  const [send, setSend] = useState("");
+  const [emptyPassword, setEmptyPassword] = useState(false);
+  const navigate = useNavigate(); // Use useNavigate for navigation
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your verification logic here using the verificationToken state
-    // For now, let's simulate a successful verification
-    if (verificationToken === '123456') {
-      setShowPasswordFields(true);
-      setShowVerifyButton(false); // Hide the verify button
-    }
+  const togglePasswordVisibility = () => {
+    setPasswordVisibility(!passwordVisibility);
   };
 
-  const handleResetPassword = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Add your verification logic here using the verificationToken state
+    try {
+
+      if (!verificationToken) {
+        alert("Please enter verification code");
+        return;
+      }
+
+      const res = await axios.post("http://127.0.0.1:8000/api/verifytoken", {
+        email: email,
+        token: verificationToken
+      });
+      if (res.data.status === "error" && res.data.message === "Incorrect code") {
+        alert(res.data.message);
+        return;
+      } else if (res.data.status === "error" && res.data.message === "Verification token expired.") {
+        alert(res.data.message);
+        return;
+      }
+      setShowPasswordFields(true);
+      setShowVerifyButton(false);
+
+    } catch (error) {
+      //   setResponse("Error occurred while submitting data.");
+      console.error(error);
+    }
+  };
+  const handleResend = async (e) => {
+    e.preventDefault();
+
+    try {
+
+      const profileResponse = await axios.post("http://127.0.0.1:8000/api/forgotPass", {
+        email: email
+      });
+      setSend("Verification code resent successfully");
+      setTimeout(() => {
+        setSend("");
+      }, 3000);
+    }
+    catch (error) {
+      console.error("Error validating password and email:", error);
+    }
+  }
+
+  const handleResetPassword = async (e) => {
     // Add your reset password logic here
-    // For now, let's simulate a successful password update
-    setPasswordUpdated(true);
-    setShowSuccessMessage(true);
-    setShowPasswordFields(false); // Hide password fields after reset
+    e.preventDefault();
+    // Add your verification logic here using the verificationToken state
+    try {
+
+      if (newPassword === '' || confirmPassword === '') {
+        // alert("Please fill all fields");
+        setLoginError("Please fill in all the required fields");
+        setTimeout(() => {
+          setEmptyPassword(false);
+          setLoginError("");
+        }, 3000);
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        // alert("Passwords do not match");
+        setLoginError("Passwords do not match");
+        setTimeout(() => {
+          setEmptyPassword(false);
+          setLoginError("");
+        }, 3000);
+        return;
+      }
+
+      const res = await axios.put("http://127.0.0.1:8000/api/changepass", {
+        email: email,
+        password: newPassword,
+      });
+      console.log(res.data.message);
+      setPasswordUpdated(true);
+      setShowSuccessMessage(true);
+      setShowPasswordFields(false); // Hide password fields after reset
+    } catch (error) {
+      //   setResponse("Error occurred while submitting data.");
+      console.error(error);
+    }
   };
 
   const handleLoginClick = () => {
     // Redirect to login page
     // Add your redirection logic here
+    navigate("/login");
   };
 
   return (
@@ -52,8 +136,11 @@ const OTP = () => {
               />
             </div>
             <button type="submit" className="verifyButton">Verify</button>
+            <div style={{ color: 'red', textAlign: 'center' }}>
+              {(send)}
+            </div>
             <button className="exitBtn">×</button>
-            <p className="resendNote">Didn't receive the code? <button className="resendBtn">Resend Code</button></p>
+            <p className="resendNote">Didn't receive the code? <button className="resendBtn" onClick={handleResend}>Resend Code</button></p>
           </>
         )}
 
@@ -73,6 +160,9 @@ const OTP = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm Password"
             />
+            <div style={{ color: 'red', textAlign: 'center' }}>
+              {(loginError)}
+            </div>
             <button type="button" className="resetButton" onClick={handleResetPassword}>Reset Password</button>
           </div>
         )}

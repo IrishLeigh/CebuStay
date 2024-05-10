@@ -60,10 +60,12 @@ const ForgotPassword = () => {
     console.log("Email before sending request:", email);
     try {
 
-      const profileResponse = await axios.get("http://localhost/API/loadProfile.php", {
-          params: {
-            userid: 18 // Replace with the logged in user's id
-          }
+      const profileResponse = await axios.post("http://127.0.0.1:8000/api/login", {
+          // params: {
+          //   email: email, // Replace with the logged in user's id
+          //   password: 'Robert#411'
+          // }
+          email: email
         });
         setProfile(profileResponse.data);
         console.log("Profile Response Data:", profileResponse.data);

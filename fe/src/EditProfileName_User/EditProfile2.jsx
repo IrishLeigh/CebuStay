@@ -3,47 +3,30 @@ import { MdPerson, MdHistory, MdStar } from 'react-icons/md';
 import EditName from '../components/EditName';
 import './EditProfile2.css';
 import axios from 'axios';
+import { Link } from "react-router-dom";
 
 const EditProfile2 = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [additional, setAdditional] = useState(null);
+  const userId = 8;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost/API/loadProfile.php", {
-          params: {
-            userid: 14 // Replace with the logged in user's id
-          }
-        });
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userId}`);
         console.log("Response Data:", response.data); // Log the entire response object
         console.log("Response Data Email:", response.data.userid); // Log the entire response object
         setProfile(response.data);
         setLoading(false);
-      
-        // Add the additional code snippet
-        try {
-          const additionalResponse = await axios.get("http://localhost/API/additional.php", {
-            params: {
-              userid: 14 // Replace with the logged in user's id
-            }
-          });
-          console.log("Response Data Additional:", additionalResponse.data); // Log the entire response object
-          console.log("Response Data Email:", additionalResponse.data.userid); // Log the entire response object
-          setAdditional(additionalResponse.data);
-        } catch (additionalError) {
-          console.error("Error fetching additional data:", additionalError);
-        }
-  
       } catch (error) {
         setError("Error fetching profile data.");
         console.error(error);
         setLoading(false);
       }
     };
-  
+
     fetchProfile();
   }, []);
 
@@ -86,22 +69,24 @@ const EditProfile2 = () => {
             </div>
             <div className="edit-detail-container email">
               <div className="edit-detail-label">Email</div>
-              <div className="edit-detail" style={{textAlign:'left'}}>{profile.email}</div>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.user.email}</div>
               <span className="edit-edit-text" onClick={handleDataUpdate}>Edit</span>
             </div>
             <div className="edit-detail-container phonenumber">
               <div className="edit-detail-label">Phone Number</div>
-             {/* <div className="edit-detail" style={{textAlign:'left'}}>{additional.cellphone_number}</div> */}
-              <span className="edit-edit-text" onClick={handleDataUpdate}>Edit</span>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.user.cellnumber}</div>
+              <Link to="/EditPhone">
+                <span className="edit-edit-text" >Edit</span>
+              </Link>
             </div>
           </div>
         </div>
         <div className="edit-section">
           <h2 className="edit-section-header">Payment Methods</h2>
           <div className="edit-container">
-          <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
-              <div className="edit-detail" style={{textAlign:'left'}}>Gcash</div>
-              <div className="edit-detail" style={{textAlign:'left'}}>091******11</div>
+            <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>Gcash</div>
+              <div className="edit-detail" style={{ textAlign: 'left' }}>091******11</div>
               <span className="edit-edit-text" onClick={handleDataUpdate}>Edit</span>
             </div>
           </div>

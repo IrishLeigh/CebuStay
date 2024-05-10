@@ -30,6 +30,9 @@ function App() {
         <Route path="/EditName" element={<EditProfile2 />} />
         <Route path="/ForgotPass/register" element={<Registration />} />
         <Route path="/ForgotPass/OTP" element={<OTP />} />
+        <Route path="/EditProfile" element={<EditProfile />} />
+        <Route path="/EditProfile2" element={<EditProfile2 />} />
+        <Route path="/EditPhone" element={<EditPhone/>} />
       </Routes>
     </div>
   );
