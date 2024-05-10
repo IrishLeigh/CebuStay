@@ -281,6 +281,10 @@ input[type='range']:hover {
     font-size: .75rem;
     width: fit-content;
 }
+.light-blue {
+    background-color: aqua;
+}
+
 .sidebar {
     max-width: 20rem; /* Set maximum width for the sidebar */
 }
