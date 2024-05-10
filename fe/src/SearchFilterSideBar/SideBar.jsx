@@ -1,9 +1,25 @@
 // Sidebar.jsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import './SideBar.css';
 
 export default function SideBar() {
+
+
+    const [activeButtons, setActiveButtons] = useState([]);
+
+    const toggleColor = (index) => {
+        setActiveButtons(prevState => {
+            const newActiveButtons = [...prevState];
+            if (newActiveButtons.includes(index)) {
+                const indexToRemove = newActiveButtons.indexOf(index);
+                newActiveButtons.splice(indexToRemove, 1);
+            } else {
+                newActiveButtons.push(index);
+            }
+            return newActiveButtons;
+        });
+    };
     return (
         <div className="bg-white p-4 w-64" style={{ fontFamily: 'Poppins' }}>
             <h2 className="text-lg font-semibold" style={{ textAlign: 'left' }}>Places to Visit</h2>
@@ -32,15 +48,23 @@ export default function SideBar() {
                 <h3 className="font-semibold" style={{ textAlign: 'left' }}>Amenities</h3>
                 <hr className="my-2" style={{ marginTop: '-1rem' }}/>
                 <div className="sidebar">
-                    <div className="flex flex-wrap gap-2">
-                        <button className="button">Wi-Fi</button>
-                        <button className="button">TV</button>
-                        <button className="button">Kitchen</button>
-                        <button className="button">Spa</button>
-                        <button className="button">Fitness Center</button>
-                        <button className="button">Breakfast</button>
-                        <button className="button">Parking</button>
-                    </div>
+                <div className="flex flex-wrap gap-2">
+            <button className={`button ${activeButtons.includes(0) && 'light-blue'}`} onClick={() => toggleColor(0)}>Wi-Fi</button>
+            <button className={`button ${activeButtons.includes(1) && 'light-blue'}`} onClick={() => toggleColor(1)}>TV</button>
+            <button className={`button ${activeButtons.includes(2) && 'light-blue'}`} onClick={() => toggleColor(2)}>Kitchen</button>
+            <button className={`button ${activeButtons.includes(3) && 'light-blue'}`} onClick={() => toggleColor(3)}>Spa</button>
+            <button className={`button ${activeButtons.includes(4) && 'light-blue'}`} onClick={() => toggleColor(4)}>Fitness Center</button>
+            <button className={`button ${activeButtons.includes(5) && 'light-blue'}`} onClick={() => toggleColor(5)}>Breakfast</button>
+            <button className={`button ${activeButtons.includes(6) && 'light-blue'}`} onClick={() => toggleColor(6)}>Parking</button>
+            <button className={`button ${activeButtons.includes(7) && 'light-blue'}`} onClick={() => toggleColor(7)}>Wi-Fi</button>
+            <button className={`button ${activeButtons.includes(8) && 'light-blue'}`} onClick={() => toggleColor(8)}>TV</button>
+            <button className={`button ${activeButtons.includes(9) && 'light-blue'}`} onClick={() => toggleColor(9)}>Kitchen</button>
+            <button className={`button ${activeButtons.includes(10) && 'light-blue'}`} onClick={() => toggleColor(10)}>Spa</button>
+            <button className={`button ${activeButtons.includes(11) && 'light-blue'}`} onClick={() => toggleColor(11)}>Fitness Center</button>
+            <button className={`button ${activeButtons.includes(12) && 'light-blue'}`} onClick={() => toggleColor(12)}>Breakfast</button>
+            <button className={`button ${activeButtons.includes(13) && 'light-blue'}`} onClick={() => toggleColor(13)}>Parking</button>
+        </div>
+
                 </div>
             </div>
             <div className="mt-6">
