@@ -7,7 +7,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import AccommodationPropertyMap from "./AccommodationPropertyMap";
 import { useData } from "../registration_unit/registration_location/contextAddressData";
-
+import '../../components/Button/NextButton.css'
 const AddressForm = () => {
   //useContext
   const {location} = useData();
@@ -119,13 +119,17 @@ const AddressForm = () => {
               />
             </Grid>
             <Grid item xs={12} textAlign="center">
-              <Button
+              {/* <Button
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
               >
-                Pin your location
-              </Button>
+                Pin your loca
+                tion
+              </Button> */}
+              <div className='nextButton-container'>
+                <button className="nextButton" onClick={handleSubmit} sx={{ color: '#007BFF' }}>Pin Your Location</button>
+              </div>
             </Grid>
           </Grid>
         </Paper>

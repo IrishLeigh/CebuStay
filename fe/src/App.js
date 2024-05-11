@@ -10,12 +10,10 @@ import EditName from './components/EditName';
 import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
 import LandingPage from "./Landing_Page/landing";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  BrowserRouter,
-} from "react-router-dom";
+import LocationRegistration from './components/registration_unit/registration_location/location';
+import RegistrationUnit from './pages/Registration_Unit/RegistrationUnit';
+import { useData } from './components/registration_unit/registration_location/contextAddressData';
+import { BrowserRouter } from 'react-router-dom';
 import OTP from "./components/OTP";
 import ForgotPass from "./ForgotPassword_User/ForgotPass";
 import { UserProvider } from "./components/UserProvider";

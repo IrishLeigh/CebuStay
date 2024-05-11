@@ -4,19 +4,19 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import { TextField } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import SingleBedIcon from '@mui/icons-material/SingleBed';
 import RemoveIcon from '@mui/icons-material/Remove';
-import Grid from '@mui/material/Grid'; // Import Grid component
-import Container from '@mui/material/Container'; // Import Container component
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
 import { useData } from '../registration_location/contextAddressData';
+import '../../../components/Button/NextButton.css'
 
 export default function BedroomDetails({ onBedroomDetailsChange }) {
 
   const {bedroomQTY} = useData();
   const [bedrooms, setBedrooms] = useState([]);
-  const [bedroomDetailsData, setBedroomDetailsData] = useState([]);
-  
+  // const [bedroomDetailsData, setBedroomDetailsData] = useState([]);
 
   // Function to initialize bedrooms based on number of rooms
   const initializeBedrooms = (numRooms) => {
@@ -30,28 +30,14 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
   };
 
   // Update bedroomDetailsData whenever bedrooms change
-  useEffect(() => {
-    initializeBedrooms(bedroomQTY); // Initialize bedrooms with the provided quantity
-  }, [bedroomQTY]);
-  useEffect(() => {
-    // Call the callback function whenever bedroom details change
+  const handleSave = () => {
     onBedroomDetailsChange(bedrooms);
-  }, [bedrooms, onBedroomDetailsChange]);
+    console.log("Bedrooms:",bedrooms);
+  };
 
   useEffect(() => {
-    const updatedBedroomDetails = bedrooms.map((bedroom, index) => formatBedroomDetails(index, bedroom));
-    setBedroomDetailsData(updatedBedroomDetails);
-  }, [bedrooms]);
-
-  const formatBedroomDetails = (index, bedroom) => {
-    return {
-      bedroomNo: index + 1,
-      singleBed: bedroom.singleBed,
-      doubleBed: bedroom.doubleBed,
-      largeBed: bedroom.largeBed,
-      superLargeBed: bedroom.superLargeBed,
-    };
-  };
+    initializeBedrooms(bedroomQTY);
+  }, [bedroomQTY]);
 
   const incrementQuantity = (index, type) => {
     setBedrooms((prevBedrooms) =>
@@ -69,23 +55,21 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
     );
   };
 
-  // console.log(bedroomDetailsData);
-
   return (
     <Container maxWidth="lg">
       <Grid
         container
         justifyContent="center"
         alignItems="center"
-        sx={{ minHeight: '100vh' }} // Set minHeight to fill the screen vertically
+        sx={{ minHeight: '100vh' }}
       >
         <Grid item xs={12} md={8} lg={6}>
           <Paper
             elevation={3}
             sx={{
               p: 2,
-              width: '93%', // Set width to 100% for responsiveness
-              maxWidth: '32rem', // Added maxWidth for larger screens
+              width: '93%',
+              maxWidth: '32rem',
               textAlign: 'left',
             }}
           >
@@ -134,7 +118,7 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
                   </IconButton>
                   <input
                     type="text"
-                    value={bedroom.doubleBed}
+                    value={bedroom.doubleBed} 
                     style={{ width: '4rem', height: '2rem', border: 'none', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}
                   />
                   <IconButton onClick={() => decrementQuantity(index, 'doubleBed')}>
@@ -151,7 +135,7 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
                   </IconButton>
                   <input
                     type="text"
-                    value={bedroom.largeBed}
+                    value={bedroom.largeBed} 
                     style={{ width: '4rem', height: '2rem', border: 'none', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}
                   />
                   <IconButton onClick={() => decrementQuantity(index, 'largeBed')}>
@@ -168,7 +152,7 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
                   </IconButton>
                   <input
                     type="text"
-                    value={bedroom.superLargeBed}
+                    value={bedroom.superLargeBed} 
                     style={{ width: '4rem', height: '2rem', border: 'none', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}
                   />
                   <IconButton onClick={() => decrementQuantity(index, 'superLargeBed')}>
@@ -176,7 +160,12 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
                   </IconButton>
                 </div>
               </div>
+              
             ))}
+            <div className='button-container'>
+              <button className="button" onClick={handleSave} sx={{ color: '#007BFF' }}>Next</button>
+            </div>
+
           </Paper>
         </Grid>
       </Grid>

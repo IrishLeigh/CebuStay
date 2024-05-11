@@ -183,7 +183,9 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                   style={{ width: 'auto', marginLeft: '1rem', marginBottom: '2rem', justifyContent: 'left' }}
                 />
               </Box>
-              <IconButton onClick={handleSave} sx={{ color: '#007BFF' }}>Save</IconButton>
+              <div className='button-container'>
+                <button className="button" onClick={handleSave} sx={{ color: '#007BFF' }}>Next</button>
+              </div>
             </Paper>
           </Box>
         </Grid>

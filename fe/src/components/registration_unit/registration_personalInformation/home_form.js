@@ -6,8 +6,9 @@ import Container from "@mui/material/Container";
 import Grid from '@mui/material/Grid';
 import FormPropsTextFields from '../../textfield';
 import TextField from '@mui/material/TextField';
+import '../../../components/Button/NextButton.css'
 
-export default function SimplePaper({ onFormDataChange }) {
+export default function SimplePaper({ onPropertyInformationChange }) {
   const [propertyData, setPropertyData] = useState({
     propertyName: '',
     propertyDescription: '',
@@ -20,12 +21,17 @@ export default function SimplePaper({ onFormDataChange }) {
       ...prevState,
       [field]: newValue
     }));
-
-    // Call the onFormDataChange callback with updated propertyData
-    if (typeof onFormDataChange === 'function') {
-      onFormDataChange({ ...propertyData, [field]: newValue });
-    }
   };
+
+  const handleSave = () => {
+    // Call the onPropertyInformationChange callback with the updated propertyData object
+    if (typeof onPropertyInformationChange === 'function') {
+      onPropertyInformationChange(propertyData);
+    }
+  
+    console.log("Property info", propertyData);
+  };
+  
 
   return (
     <Container maxWidth="lg">
@@ -36,14 +42,15 @@ export default function SimplePaper({ onFormDataChange }) {
               display: "flex",
               flexDirection: "column",
               textAlign: "left",
-              mt: 12,
-              mb: 12
+              mt: 15,
+              mb: 15
             }}
           >
-            <Typography variant="h4" sx={{ mb: 2 }}>
+             <Typography sx={{ fontSize: "2rem" }} fontWeight="bold" mb={2}>
               Property Information
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}>
+        
+            <Typography sx={{ fontSize: "1rem" }} mb={2}>
               Describe your property in detail. Highlight its unique features, amenities, and any additional information potential tenants or buyers should know
             </Typography>
             <Paper elevation={3} sx={{ p: "2rem" ,maxWidth:'32rem'}}>
@@ -87,8 +94,12 @@ export default function SimplePaper({ onFormDataChange }) {
                   value={propertyData.gettingToProperty} // Add value prop here
                   onChange={(e) => handleChange(e.target.value, 'gettingToProperty')}
                 />
+                 <div className='button-container'>
+                  <button className="button" onClick={handleSave} style={{ color: '#007BFF' }}>Next</button>
+                </div>
               </Box>
             </Paper>
+            
           </Box>
         </Grid>
       </Grid>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Typography, Grid, Container } from "@mui/material";
 import { motion } from "framer-motion";
+import '../../components/Button/NextButton.css'
 
 const data = {
   basicAmenities: [
@@ -176,7 +177,7 @@ function AccommodationPropertyInformation({ onAmenitiesChange }) {
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
-          Property Information
+          BOBO Information
         </Typography>
         <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
           Please click the buttons you choose.
@@ -209,6 +210,9 @@ function AccommodationPropertyInformation({ onAmenitiesChange }) {
         <Typography variant="body1">
           Facilities: {selectedAmenities.facilities.join(", ")}
         </Typography>
+        <div className='nextButton-container'>
+          <button className="nextButton" sx={{ color: '#007BFF' }}>Save</button>
+        </div>
       </Container>
     </>
   );
