@@ -7,6 +7,8 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from "@mui/material/TextField";
 import DatePicker from '../../time';
 import { Container } from "@mui/material";
+import Button from "@mui/material/Button";
+import '../../../components/Button/NextButton.css'
 
 export default function HouseRules({ onHouseRulesDataChange }) {
 
@@ -25,30 +27,13 @@ export default function HouseRules({ onHouseRulesDataChange }) {
     checkOutUntil: ''
   });
 
-  // Define the handleTimeChange function
-  const handleTimeChange = (value, title) => {
-    setHouseRulesData(prevData => ({
-      ...prevData,
-      [title]: value
-    }));
-    onHouseRulesDataChange({ ...houseRulesData, [title]: value });
+  const handleSave = () => {
+    // Call the callback function with the saved house rules data
+    onHouseRulesDataChange(houseRulesData);
+    console.log("House rules data saved:", houseRulesData);
   };
+
   
-
-  const handleNoiseRestrictionChange = (event) => {
-    setShowTimePicker(event.target.checked);
-    setHouseRulesData(prevData => ({
-      ...prevData,
-      noiseRestrictions: event.target.checked
-    }));
-    onHouseRulesDataChange({ ...houseRulesData, noiseRestrictions: event.target.checked });
-  };
-
-  const handleHouseRulesChange = (newHouseRulesData) => {
-    setHouseRulesData(newHouseRulesData);
-    onHouseRulesDataChange(newHouseRulesData); // Propagate changes to parent component
-  };
-
   return (
     <Container maxWidth="lg">
       <Grid container justifyContent="center" alignItems="center">
@@ -69,24 +54,24 @@ export default function HouseRules({ onHouseRulesDataChange }) {
                     <Checkbox
                       defaultChecked={houseRulesData.smokingAllowed}
                       color="secondary"
-                      onChange={(e) => handleHouseRulesChange({ ...houseRulesData, smokingAllowed: e.target.checked })}
+                      onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, smokingAllowed: e.target.checked }))}
                     /> Smoking Allowed
                     <br />
                     <Checkbox
                       defaultChecked={houseRulesData.petsAllowed}
                       color="secondary"
-                      onChange={(e) => handleHouseRulesChange({ ...houseRulesData, petsAllowed: e.target.checked })}
+                      onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, petsAllowed: e.target.checked }))}
                     /> Pets allowed
                     <br />
                     <Checkbox
                       defaultChecked={houseRulesData.partiesAllowed}
                       color="secondary"
-                      onChange={(e) => handleHouseRulesChange({ ...houseRulesData, partiesAllowed: e.target.checked })}
+                      onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, partiesAllowed: e.target.checked }))}
                     /> Parties/events allowed
                     <br />
                     <Checkbox
                       defaultChecked={showTimePicker}
-                      onChange={handleNoiseRestrictionChange}
+                      onChange={(e) => setShowTimePicker(e.target.checked)}
                       color="secondary"
                     />{" "}
                     Noise Restrictions
@@ -104,7 +89,7 @@ export default function HouseRules({ onHouseRulesDataChange }) {
                           inputProps={{
                             step: 300, // 5 min
                           }}
-                          onChange={(e) => handleHouseRulesChange({ ...houseRulesData, quietHoursStart: e.target.value })}
+                          onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, quietHoursStart: e.target.value }))}
                         />
 
                         <TextField
@@ -118,7 +103,7 @@ export default function HouseRules({ onHouseRulesDataChange }) {
                           inputProps={{
                             step: 300, // 5 min
                           }}
-                          onChange={(e) => handleHouseRulesChange({ ...houseRulesData, quietHoursEnd: e.target.value })}
+                          onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, quietHoursEnd: e.target.value }))}
                         />
                       </div>
                     )}
@@ -133,7 +118,7 @@ export default function HouseRules({ onHouseRulesDataChange }) {
                       multiline
                       maxRows={10}
                       value={houseRulesData.customRules}
-                      onChange={(e) => handleHouseRulesChange({ ...houseRulesData, customRules: e.target.value })}
+                      onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, customRules: e.target.value }))}
                       sx={{ m: 2, width: '92%' }}  
                     />
                   </Box>
@@ -147,15 +132,15 @@ export default function HouseRules({ onHouseRulesDataChange }) {
                     }}
                   >
 
-                    {/* Pass the handleTimeChange function to the DatePicker component */}
+                    {/* Pass the setHouseRulesData function to the DatePicker component */}
                     <DatePicker
                       title="Check-in From"
-                      onChange={(value) => handleTimeChange(value, "checkInFrom")}
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
                     />
 
                     <DatePicker 
                       title="Check-in Until"
-                      onChange={(value) => handleTimeChange(value, "checkInUntil")}
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
                     />
                   </Box>
                   <Box
@@ -168,14 +153,17 @@ export default function HouseRules({ onHouseRulesDataChange }) {
                   >
                      <DatePicker
                       title="Check-out From"
-                      onChange={(value) => handleTimeChange(value, "checkOutFrom")}
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutFrom: value }))}
                     />
 
                     <DatePicker 
                       title="Check-out Until"
-                      onChange={(value) => handleTimeChange(value, "checkOutUntil")}
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
                     />
                   </Box>
+                  <div className='nextButton-container'>
+                    <button className="nextButton" onClick={handleSave} sx={{ color: '#007BFF' }}>Next</button>
+                  </div>
                 </form>
               </Box>
 

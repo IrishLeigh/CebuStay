@@ -5,10 +5,8 @@ import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
 import CheckIcon from '@mui/icons-material/Check';
 import Container from '@mui/material/Container';
+import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
-import Stack from '@mui/material/Stack';
 
 const Root = styled('div')(({ theme }) => ({
   width: '100%',
@@ -22,10 +20,12 @@ const Root = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function UnitPricing() {
+export default function UnitPricing({ handleUnitPricing }) {
   const pesoSign = '\u20B1';
-  const [priceEntered, setPriceEntered] = React.useState(false);
-  const [basePrice, setBasePrice] = React.useState('');
+  const [priceEntered, setPriceEntered] = useState(false);
+  const [basePrice, setBasePrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [priceUnit, setPriceUnit] = useState({ basePrice: '', profit: '',maxPrice:'' });
 
   const handleChange = (event) => {
     // Remove non-numeric characters
@@ -45,12 +45,24 @@ export default function UnitPricing() {
     // Return the calculated profit
     return profitValue;
   };
-  
 
+  useEffect(() => {
+    // Update the price unit whenever base price changes or on component mount
+    const profitValue = profit();
+    setPriceUnit({ basePrice, profit: profitValue });
+  }, [basePrice]);
+
+  // Callback function to handle save action
+  const handleSave = () => {
+    // Execute the handleUnitPricing callback function provided by the parent component
+    handleUnitPricing(priceUnit);
+    console.log("priceUnit: ", priceUnit);
+  };
 
   return (
-    <Container maxWidth="x1">
+    <Container maxWidth="xl">
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Button onClick={handleSave} variant="contained">Save</Button>
         <Paper
           elevation={3}
           sx={{
@@ -77,9 +89,6 @@ export default function UnitPricing() {
               <p style={{ margin: 0 }}>Including taxes, commission, and charges</p>
             </div>
 
-            {/* <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <p>Base Price</p>
-            </div> */}
             <div style={{ display: "flex", fontSize: "74px", justifyContent: "center", alignItems: "center" }}>
               <div>{pesoSign}</div>
               <input
@@ -110,9 +119,8 @@ export default function UnitPricing() {
                       <h6>Your total earnings would be (including taxes)</h6>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                      <div style={{ fontWeight: 'bold', fontSize: '24px' }}>{pesoSign} {profit()}</div>
+                      <div style={{ fontWeight: 'bold', fontSize: '24px' }}> {pesoSign}{priceUnit.profit}</div>
                     </div>
-
                   </Root>
                 </div>
               </React.Fragment>

@@ -11,7 +11,7 @@ import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
 import LandingPage from "./Landing_Page/landing";
 import LocationRegistration from './components/registration_unit/registration_location/location';
-import RegistrationUnit from './Registration_Unit/RegistrationUnit';
+import RegistrationUnit from './pages/Registration_Unit/RegistrationUnit';
 import { useData } from './components/registration_unit/registration_location/contextAddressData';
 import { BrowserRouter } from 'react-router-dom';
 import OTP from "./components/OTP";

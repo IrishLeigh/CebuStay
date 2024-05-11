@@ -25,9 +25,9 @@ export default function DatePicker(props) {
           value={value}
           onChange={handleTimeChange} // Pass the formatted time to the parent component
         />
-        <Typography>
+        {/* <Typography>
           Stored value: {value == null ? 'null' : dayjs(value).format('HH:mm')}
-        </Typography>
+        </Typography> */}
       </Stack>
     </LocalizationProvider>
   );
