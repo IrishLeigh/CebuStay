@@ -10,14 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('home', function (Blueprint $table) {
-            $table->increments('homeid');
+        Schema::create('booking_policy', function (Blueprint $table) {
+            $table->increments('bookingpolicyid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
-            $table->unsignedInteger('proppricingid')->nullable(true);
-            $table->foreign('proppricingid')->references('proppricingid')->on('property_pricing');
-            $table->string('unit_type');
-            $table->boolean('isoccupied')->default(false);
+            $table->boolean('is_cancel_plan')->default(false);
+            $table->integer('cancel_days');
+            $table->boolean('non_refundable');
+            $table->boolean('modification_plan');
+            $table->boolean('offer_discount');
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('home');
+        Schema::dropIfExists('bookingpolicy');
     }
 };

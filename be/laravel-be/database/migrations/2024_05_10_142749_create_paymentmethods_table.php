@@ -10,14 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('home', function (Blueprint $table) {
-            $table->increments('homeid');
+        Schema::create('payment_methods', function (Blueprint $table) {
+            $table->increments('paymentmethodid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
-            $table->unsignedInteger('proppricingid')->nullable(true);
-            $table->foreign('proppricingid')->references('proppricingid')->on('property_pricing');
-            $table->string('unit_type');
-            $table->boolean('isoccupied')->default(false);
+            $table->boolean('isonline'); //online or flexible
+            $table->string('paymentmethod');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('home');
+        Schema::dropIfExists('paymentmethods');
     }
 };

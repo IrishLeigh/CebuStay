@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 // use Illuminate\Http\Response;
+use App\Models\Property;
 use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends Controller
@@ -178,7 +179,7 @@ class FileController extends Controller
                 ]);
 
                 $file_id = json_decode($response->getBody()->getContents())->id;
-                $file_url = "https://drive.google.com/uc?id=$file_id";
+                $file_url = "https://drive.google.com/thumbnail?id=$file_id";
 
                 $newFile = new File(); // Assuming File model namespace
                 $newFile->file_name = $name;
@@ -210,6 +211,32 @@ class FileController extends Controller
             ];
         });
         return response()->json(['img' => $imglist]);
+    }
+    public function getAllFirstImg(Request $request)
+    {
+        $this->enableCors($request);
+        $allproperties = Property::all();
+        // Array to store the results
+        $result = [];
+
+        // Loop through each property
+        foreach ($allproperties as $property) {
+            // Get the first file associated with this property
+            $firstFile = File::where('propertyid', $property->propertyid)->first();
+
+            // If there is a file, add its information to the result array
+            if ($firstFile) {
+                $result[] = [
+                    'propertyid' => $property->propertyid,
+                    'file_id' => $firstFile->id,
+                    'src' => $firstFile->file_url, // Assuming path is a field in your File model
+                    // Add any other information you need
+                ];
+            }
+        }
+
+        // Return the result
+        return response()->json($result);
     }
 
 }

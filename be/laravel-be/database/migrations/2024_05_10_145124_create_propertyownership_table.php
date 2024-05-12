@@ -10,14 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('home', function (Blueprint $table) {
-            $table->increments('homeid');
+        Schema::create('property_ownership', function (Blueprint $table) {
+            $table->increments('propertyownershipid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
-            $table->unsignedInteger('proppricingid')->nullable(true);
-            $table->foreign('proppricingid')->references('proppricingid')->on('property_pricing');
-            $table->string('unit_type');
-            $table->boolean('isoccupied')->default(false);
+            $table->string('ownershiptype');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('home');
+        Schema::dropIfExists('propertyownership');
     }
 };

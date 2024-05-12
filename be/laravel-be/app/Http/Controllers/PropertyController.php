@@ -26,7 +26,15 @@ class PropertyController extends Controller
             $home->propertyid = $propertyid;
             $home->unit_type = $property->unit_type;
             $home->save();
+            $homeid = $home->homeid;
         }
-        return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid]);
+        return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid, "homeid" => $homeid]);
+    }
+
+    public function getAllProperties(Request $request)
+    {
+        $this->enableCors($request);
+        $properties = Property::select('propertyid', 'property_name', 'property_desc', 'unit_type')->get();
+        return response()->json($properties);
     }
 }

@@ -60,10 +60,18 @@ Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToke
 
 //Routes for property
 Route::post('/propertyinfo', 'App\Http\Controllers\PropertyController@InsertPropertyInfo');
+Route::get('/allproperties', 'App\Http\Controllers\PropertyController@getAllProperties');
 
 //Routes for unitdetails
 Route::post('/unitdetails', 'App\Http\Controllers\UnitDetailsController@insertUnitDetails');
 Route::post('/bedroomtype', 'App\Http\Controllers\UnitDetailsController@insertBedTypes');
+
+//Route for Inserting Booking Policy
+Route::post('/bookingpolicy', 'App\Http\Controllers\BookingPolicyController@InsertBookingPolicyInfo');
+//Route for Inserting Property Pricing
+Route::post('/propertypricing', 'App\Http\Controllers\PropertyPricingController@insertPropertyPricing');
+//Route for Inserting Property Payment Methods
+Route::post('/propertypaymentmethod', 'App\Http\Controllers\PropertyPaymentMethodsController@insertPropertyPaymentMethods');
 
 //UPLOAD IMG
 //UPLOAD ONE IMAGE
@@ -72,6 +80,6 @@ Route::post('/uploadimage', 'App\Http\Controllers\FileController@store');
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
 //GET IMAGES
 Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty');
-
+Route::get('/getallfirstimg', 'App\Http\Controllers\FileController@getAllFirstImg');
 //User 
 Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager');
