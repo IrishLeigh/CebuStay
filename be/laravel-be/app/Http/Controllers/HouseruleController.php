@@ -51,6 +51,7 @@ class HouseRuleController extends Controller
         $houseRule->save();
 
         return response()->json([
+            'status' => 'Success.',
             'message' => 'House rule updated successfully.',
             'houseRule' => $houseRule,
         ]);

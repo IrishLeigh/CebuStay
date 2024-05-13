@@ -17,15 +17,12 @@ class UserController extends Controller
 
     public function becomeManager(Request $request)
     {
-        $students = new userModel();
+        $user = UserModel::find($request->input('userid'));
 
-        $students->firstname = $request->input('firstname');
-        $students->lastname = $request->input('lastname');
-        $students->email = $request->input('email');
-        $students->password = $request->input('password');
+        $user->accounttype = 'manager';
 
-        $students->save();
-        return response()->json($students);
+        $user->save();
+        return response()->json($user);
     }
 
     public function getUserById($userId)

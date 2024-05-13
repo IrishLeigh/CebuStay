@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('displayname');
             $table->date('dateofbirth');
             $table->string('contactnumber');
+            $table->string('language');
             $table->string('email');
             $table->string('country_region');
             $table->string('province');
@@ -28,6 +29,7 @@ return new class extends Migration {
             $table->string('primary_address');
             $table->string('zipcode');
             $table->string('nationality');
+            $table->string('describe');
 
             $table->timestamps();
         });
@@ -38,6 +40,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('propertyowner');
+        Schema::dropIfExists('property_owner');
     }
 };
