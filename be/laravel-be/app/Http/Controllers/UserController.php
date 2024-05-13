@@ -17,6 +17,8 @@ class UserController extends Controller
 
     public function becomeManager(Request $request)
     {
+
+        $this->enableCors($request);
         $user = UserModel::find($request->input('userid'));
 
         $user->accounttype = 'manager';

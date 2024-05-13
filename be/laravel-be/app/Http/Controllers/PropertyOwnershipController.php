@@ -18,13 +18,13 @@ class PropertyOwnershipController extends Controller
         $this->enableCors($request);
         $propertyOwnership = new PropertyOwnership();
         $propertyOwnership->propertyid = $request->input('propertyid');
-        $propertyOwnership->propertyownershipid = $request->input('ownershiptype');
+        $propertyOwnership->ownershiptype = $request->input('ownershiptype');
         $propertyOwnership->save();
 
         // return response()->json($propertyOwnership);
 
         return response()->json([
-            'status' => 'Success.',
+            'status' => 'success',
             'message' => 'Registration successful.',
             'houseRule' => $propertyOwnership,
         ]);

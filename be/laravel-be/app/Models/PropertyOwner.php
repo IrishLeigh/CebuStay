@@ -12,9 +12,7 @@ class PropertyOwner extends Model
 
     protected $fillable = [
         'propertyownerid',
-        'propertyid',
         'propertyownershipid',
-        'propertycalendarid',
         'firstname',
         'lastname',
         'displayname',
@@ -26,7 +24,7 @@ class PropertyOwner extends Model
         'city',
         'primary_address',
         'zipcode',
-        'nationality',
         'describe',
+        'calendar',
     ];
 }

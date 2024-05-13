@@ -17,7 +17,7 @@ class PropertyOwnerController extends Controller
     {
         $this->enableCors($request);
         $propertyOwner = new PropertyOwner();
-        $propertyOwner->propertyid = $request->input('propertyid');
+        // $propertyOwner->propertyid = $request->input('propertyid');
         $propertyOwner->propertyownershipid = $request->input('propertyownershipid');
         // $propertyOwner->propertycalendarid = $request->input('propertycalendarid');
         $propertyOwner->firstname = $request->input('firstname');
@@ -31,10 +31,15 @@ class PropertyOwnerController extends Controller
         $propertyOwner->city = $request->input('city');
         $propertyOwner->primary_address = $request->input('primary_address');
         $propertyOwner->zipcode = $request->input('zipcode');
-        $propertyOwner->nationality = $request->input('nationality');
         $propertyOwner->describe = $request->input('describe');
+        $propertyOwner->calendar = $request->input('calendar');
         $propertyOwner->save();
 
-        return response()->json($propertyOwner);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Registration successful.',
+            'houseRule' => $propertyOwner,
+        ]);
     }
 }
