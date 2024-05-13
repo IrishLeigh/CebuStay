@@ -43,6 +43,7 @@ export default function RegistrationUnit() {
   // New added
   const [unitPricing, setUnitPricing] = useState({});
   const [hostData, setHostData] = useState({});
+  const [paymentData, setPaymentData] = useState({});
 
 
   // Functions to handle step navigation
@@ -133,7 +134,13 @@ export default function RegistrationUnit() {
     setHostData(data);
   };
 
-console.log("Host Data",hostData);
+  // Define the callback function to handle payment data change
+  const handlePaymentDataChange = (data) => {
+    // Update the paymentData state with the new data
+    setPaymentData(data);
+  };
+
+console.log("Payment Data From Parent",paymentData);
   return (
     <Container maxWidth="xl" sx={{ overflowX: 'hidden' }}  >
       {step === 1 && (
@@ -206,6 +213,7 @@ console.log("Host Data",hostData);
       {step === 7 && (
          <div>
           <AnimatePage>
+              {/* The logic behind this is nag gamit ug useContext, using the address and mapval defined above */}
             <AddressForm />
           </AnimatePage>
           
@@ -217,7 +225,10 @@ console.log("Host Data",hostData);
       )}
       {step === 8 && (
          <div className="animationContainer">
-          <AccommodationPropertyInformation onAmenitiesChange={handleAmenitiesChange} />
+          <AnimatePage>
+            <AccommodationPropertyInformation onAmenitiesChange={handleAmenitiesChange} />
+          </AnimatePage>
+          
           <div className="stepperFooter" style={{ display: 'flex', justifyContent: 'space-between' }}>
             <button className="stepperPrevious" onClick={prevStep}>Previous</button>
             <button className="stepperNext" onClick={nextStep}>Next</button>
@@ -226,7 +237,10 @@ console.log("Host Data",hostData);
       )}
       {step === 9 && (
          <div className="animationContainer">
-          <HouseRules onHouseRulesDataChange={handleHouseRulesDataChange} />
+          <AnimatePage> 
+            <HouseRules onHouseRulesDataChange={handleHouseRulesDataChange} />
+          </AnimatePage>
+          
           <div className="stepperFooter" style={{ display: 'flex', justifyContent: 'space-between' }}>
             <button className="stepperPrevious" onClick={prevStep}>Previous</button>
             <button className="stepperNext" onClick={nextStep}>Next</button>
@@ -235,7 +249,10 @@ console.log("Host Data",hostData);
       )}
       {step === 10 && (
         <div>
-          <Policies onPoliciesDataChange={handlePoliciesDataChange} />
+          <AnimatePage>
+            <Policies onPoliciesDataChange={handlePoliciesDataChange} />
+          </AnimatePage>
+          
           <div className="stepperFooter" style={{ display: 'flex', justifyContent: 'space-between' }}>
             <button className="stepperPrevious" onClick={prevStep}>Previous</button>
             <button className="stepperNext" onClick={nextStep}>Next</button>
@@ -245,7 +262,10 @@ console.log("Host Data",hostData);
       )}
       {step === 11 && (
         <div>
+          <AnimatePage>
             <UnitPricing handleUnitPricing={handleUnitPricing} />
+          </AnimatePage>
+            
           <div className="stepperFooter" style={{ display: 'flex', justifyContent: 'space-between' }}>
             <button className="stepperPrevious" onClick={prevStep}>Previous</button>
             <button className="stepperNext" onClick={nextStep}>Next</button>
@@ -255,7 +275,7 @@ console.log("Host Data",hostData);
       {step === 12 && (
         <div>
           <AnimatePage>
-            <PaymentMethods />
+            <PaymentMethods onPaymentDataChange={handlePaymentDataChange} />
           </AnimatePage>
             
           <div className="stepperFooter" style={{ display: 'flex', justifyContent: 'space-between' }}>

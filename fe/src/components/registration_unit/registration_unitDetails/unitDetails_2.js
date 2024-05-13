@@ -82,7 +82,7 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
     // console.log("Room Details:", unitDetailsData);
     onRoomDetailsChange(unitDetailsData);
   };
-  // console.log(unitDetailsData);
+  console.log("Unit Details Data: ",unitDetailsData);
   return (
     <Container maxWidth="lg">
       <Grid container justifyContent="center" alignItems="center">
@@ -94,14 +94,22 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
               alignItems: "center",
               minHeight: "100vh",
               padding: "1rem",
+              mt: 12,
+              mb: 12
             }}
           >
-            <Typography variant="h4">Unit Details</Typography>
-            <Typography variant="body1">
-              Describe your property in detail. Highlight its unique features,
-              amenities, and any additional information potential tenants or
-              buyers should know.
-            </Typography>
+            
+            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div>
+              <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">Unit Details</Typography>
+              <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
+                Describe your property in detail. 
+              </Typography>
+              </div>
+              <div className='nextButton-container'>
+                  <button className="nextButton" onClick={handleSave} >Save</button>
+              </div>
+            </Box>    
             <Paper
               elevation={3}
               sx={{
@@ -111,6 +119,11 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                 textAlign: "center",
               }}
             >
+              <Typography variant="body1" m={4} sx={{ textAlign: "left" }}>
+              Describe your property in detail. Highlight its unique features,
+              amenities, and any additional information potential tenants or
+              buyers should know.
+            </Typography>
               <Typography
                 variant="h6"
                 sx={{ fontSize: "1.125rem", m: "2rem", textAlign: "left" }}
@@ -212,6 +225,7 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                 />
               </Box>
 <<<<<<< HEAD
+<<<<<<< HEAD
               <div className='button-container'>
                 <button className="button" onClick={handleSave} sx={{ color: '#007BFF' }}>Next</button>
               </div>
@@ -220,6 +234,11 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                 Save
               </IconButton>
 >>>>>>> b13dcc5 (BERT IT IS UP TO YOU NOW)
+=======
+              {/* <IconButton onClick={handleSave} sx={{ color: "#007BFF" }}>
+                Save
+              </IconButton> */}
+>>>>>>> a79df4a (Initial Booking Registration with minor changes)
             </Paper>
           </Box>
         </Grid>

@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+import { Box } from "@mui/material";
 import AccommodationPropertyMap from "./AccommodationPropertyMap";
 import { useData } from "../registration_unit/registration_location/contextAddressData";
 import '../../components/Button/NextButton.css'
@@ -68,37 +69,32 @@ const AddressForm = () => {
 
 
   return (
-    <>
-      <Container
-        maxWidth="md"
+    
+      <Container maxWidth="lg">
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} md={6}>
+        <Box
         sx={{
-          height: "100vh",
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          flexDirection: "column",
+          textAlign: "left",
+          mt: 12,
+          mb: 12
         }}
       >
+          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div>
+            <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
+              Property Location
+            </Typography>
+
+            <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
+              Idk Here yet.
+            </Typography>
+          </div>
+        </Box>
         <Paper elevation={3} sx={{ p: 2, width: "100%" }}>
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "1.5rem",
-              textAlign: "left",
-            }}
-          >
-            Property Location
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "1.1rem",
-              textAlign: "left",
-              marginBottom: 2,
-            }}
-          >
-            Fill the form
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+
               <TextField
                 label="Street Address"
                 value={street}
@@ -107,8 +103,8 @@ const AddressForm = () => {
                 helperText="Enter your street address"
                 fullWidth
               />
-            </Grid>
-            <Grid item xs={12}>
+ 
+ 
               <TextField
                 label="Postal/ZIP Code"
                 value={postalCode}
@@ -117,23 +113,13 @@ const AddressForm = () => {
                 helperText="Enter your postal or ZIP code"
                 fullWidth
               />
-            </Grid>
-            <Grid item xs={12} textAlign="center">
-              {/* <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                Pin your loca
-                tion
-              </Button> */}
               <div className='nextButton-container'>
                 <button className="nextButton" onClick={handleSubmit} sx={{ color: '#007BFF' }}>Pin Your Location</button>
               </div>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+              </Paper>
+          </Box>
+        
+    
       {addPin && (
         <AccommodationPropertyMap
           location={addPin}
@@ -142,7 +128,10 @@ const AddressForm = () => {
           }
         />
       )}
-    </>
+            </Grid>
+          </Grid>
+
+      </Container>
   );
 };
 

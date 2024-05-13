@@ -38,18 +38,38 @@ export default function HouseRules({ onHouseRulesDataChange }) {
     <Container maxWidth="lg">
       <Grid container justifyContent="center" alignItems="center">
         <Grid item xs={12} md={8} lg={6}>
-          <Box sx={{ textAlign: "left" }}>
-            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>House Rules</Typography>
-            <Typography variant="body1" sx={{ fontSize: 18, mb: 2 }}>
-              Set clear rules for your listing to ensure a smooth and enjoyable stay for your guests
-            </Typography>
-          </Box>
-          <Box sx={{ width: '93%' }}> {/* Adjusted width */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              textAlign: "left",
+              mt: 12,
+              mb: 12
+            }}
+          
+          >
+            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div>
+                <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
+                  House Rules
+                </Typography>
+
+                <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
+                Catchy prhase.
+                </Typography>
+              </div>
+              <div className='nextButton-container'>
+                  <button className="nextButton" onClick={handleSave} >Save</button>
+              </div>
+            </Box>
             <Paper elevation={3} sx={{ p: 2, display: "flex", flexDirection: "column", alignItems: "left" }}>
               {/* Standard House Rules*/}
-              <Box>
+
                 <form>
                   <Box>
+                  <Typography sx={{ fontSize: "1.125rem",width: "100%" }} m={2} >
+                    Set clear rules for your listing to ensure a smooth and enjoyable stay for your guests
+                    </Typography>
                     <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: 18, m: 2 }}>Standard Rules</Typography>
                     <Checkbox
                       defaultChecked={houseRulesData.smokingAllowed}
@@ -161,11 +181,8 @@ export default function HouseRules({ onHouseRulesDataChange }) {
                       onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
                     />
                   </Box>
-                  <div className='nextButton-container'>
-                    <button className="nextButton" onClick={handleSave} sx={{ color: '#007BFF' }}>Next</button>
-                  </div>
                 </form>
-              </Box>
+              
 
             </Paper>
           </Box>
