@@ -8,18 +8,34 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export default function PaymentMethods() {
-  const [value, setValue] = useState('');
-  const [payout, setPayout] = useState('');
+export default function PaymentMethods({ onPaymentDataChange }) {
+  const [paymentData, setPaymentData] = useState({
+    selectedPayment: '',
+    selectedPayout: ''
+  });
 
   const handleChange = (event) => {
-    setValue(event.target.value);
+    setPaymentData(prevState => ({
+      ...prevState,
+      selectedPayment: event.target.value
+    }));
   };
 
   const handlePayout = (event) => {
-    setPayout(event.target.value);
+    setPaymentData(prevState => ({
+      ...prevState,
+      selectedPayout: event.target.value
+    }));
   };
 
+  const handleSave = () => {
+    if (typeof onPaymentDataChange === 'function') {
+      onPaymentDataChange(paymentData);
+    }
+  };
+
+  console.log("paymentData", paymentData);
+  
   return (
     <Container
       maxWidth="md"
@@ -39,13 +55,21 @@ export default function PaymentMethods() {
           mb: 12
         }}
       >
-        <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
-          Payment Methods
-        </Typography>
+        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div>
+            <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
+             Payment Methods
+            </Typography>
 
-        <Typography sx={{ fontSize: "1.5rem" }} mb={2}>
-          Add something here, I don't know yet
-        </Typography>
+            <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
+              Idk here yet.
+            </Typography>
+          </div>
+          <div className='nextButton-container'>
+              <button className="nextButton" onClick={handleSave} >Save</button>
+          </div>
+        </Box>
+
 
         <Paper elevation={3} sx={{ p: "2rem", width: "100%" }}>
           <Box
@@ -62,7 +86,7 @@ export default function PaymentMethods() {
               <RadioGroup
                 aria-labelledby="Payment"
                 name="Payment"
-                value={value}
+                value={paymentData.selectedPayment}
                 onChange={handleChange}
               >
                 <FormControlLabel
@@ -103,7 +127,7 @@ export default function PaymentMethods() {
               <RadioGroup
                 aria-labelledby="Payout"
                 name="Payout"
-                value={payout}
+                value={paymentData.selectedPayout}
                 onChange={handlePayout}
               >
                 <FormControlLabel

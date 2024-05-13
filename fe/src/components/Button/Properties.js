@@ -35,12 +35,7 @@ export default function Properties({ onSelectedTypeChange }) {
   const handleClick = (button) => {
     setSelectedType(selectedType === button ? null : button);
     onSelectedTypeChange(selectedType === button ? null : button); // Propagate selectedType to parent
-  };
-
-  const handleSave = () => {
-    // Trigger the callback to the parent component
-    onSelectedTypeChange(selectedType);
-    console.log("Property:",selectedType);
+    console.log("Property:", selectedType === button ? null : button); // Log selected property
   };
 
   return (
@@ -129,11 +124,6 @@ export default function Properties({ onSelectedTypeChange }) {
             </Grid>
           ))}
         </Grid>
-        
-        {/* Save button */}
-        <div className='nextButton-container'>
-          <button className="nextButton" onClick={handleSave} sx={{ color: '#007BFF' }}>Save</button>
-        </div>
       </Container>
     </Box>
   );

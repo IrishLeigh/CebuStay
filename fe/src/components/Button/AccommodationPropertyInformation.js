@@ -177,7 +177,7 @@ function AccommodationPropertyInformation({ onAmenitiesChange }) {
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
-          BOBO Information
+          Property Information
         </Typography>
         <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
           Please click the buttons you choose.

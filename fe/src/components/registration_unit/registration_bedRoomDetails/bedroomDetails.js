@@ -57,13 +57,31 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
 
   return (
     <Container maxWidth="lg">
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        sx={{ minHeight: '100vh' }}
-      >
-        <Grid item xs={12} md={8} lg={6}>
+    <Grid container justifyContent="center" alignItems="center">
+      <Grid item xs={12} md={8} lg={6}>
+        <Box
+          sx={{
+            display: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "100vh",
+            padding: "1rem",
+            mt: 12,
+            mb: 12
+          }}
+        >
+        
+        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div>
+          <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">Bed Types </Typography>
+          <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
+            Add here idk.
+          </Typography>
+          </div>
+          <div className='nextButton-container'>
+              <button className="nextButton" onClick={handleSave}>Save</button>
+          </div>
+        </Box>
           <Paper
             elevation={3}
             sx={{
@@ -73,6 +91,7 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
               textAlign: 'left',
             }}
           >
+            
             {bedrooms.map((bedroom, index) => (
               <div
                 key={index}
@@ -85,11 +104,9 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-start',
-                    marginLeft: '2rem',
-                    marginBottom: '2rem',
                   }}
                 >
-                  <Typography variant="h4" sx={{ fontWeight: 'bold', textAlign: 'left' }}>{`Bedroom ${index + 1}`}</Typography>
+                  <Typography m={4} sx={{ fontSize: "1.5rem",fontWeight: 'bold', textAlign: 'left' }}>{`Bedroom ${index + 1}`}</Typography>
                 </div>
 
                 {/* Single Bed */}
@@ -162,11 +179,10 @@ export default function BedroomDetails({ onBedroomDetailsChange }) {
               </div>
               
             ))}
-            <div className='button-container'>
-              <button className="button" onClick={handleSave} sx={{ color: '#007BFF' }}>Next</button>
-            </div>
+            
 
           </Paper>
+          </Box>
         </Grid>
       </Grid>
     </Container>

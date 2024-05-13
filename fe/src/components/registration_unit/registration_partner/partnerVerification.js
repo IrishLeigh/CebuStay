@@ -9,6 +9,7 @@ import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button'; // Add this import 
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
+import '../../../components/Button/NextButton.css'
 
 export default function PartnerVerification({ onHostDataChange }) {
   const [hostType, setHostType] = useState('');
@@ -63,8 +64,8 @@ export default function PartnerVerification({ onHostDataChange }) {
               For verification, please tell us who you are.
             </Typography>
           </div>
-          <div>
-            <Button variant="contained" onClick={handleSave}>Save</Button>
+          <div className='nextButton-container'>
+              <button className="nextButton" onClick={handleSave} >Save</button>
           </div>
         </Box>
 

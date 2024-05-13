@@ -63,11 +63,11 @@ const MapForm = ({ google, location}) => {
       }}
     >
       <div
-        style={{ width: "100%", maxWidth: "50rem", marginBottom: "1.25rem" }}
+        style={{ width: "100%", maxWidth: "50rem", marginBottom: "10rem" }}
       >
         {" "}
         {/* Adjusted maxWidth */}
-        <Typography sx={{ fontSize: "2rem", mb: 2, textAlign: "left" }}>
+        <Typography sx={{ fontSize: "2rem", mb: 2, textAlign: "left" , }} fontWeight="bold">
           Pin your exact location
         </Typography>
         <Paper

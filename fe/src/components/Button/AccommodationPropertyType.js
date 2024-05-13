@@ -31,10 +31,18 @@ const AccommodationPropertyType = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: "90vh",
+        height: "100vh",
       }}
     >
-      <Box mt={5}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          textAlign: "left",
+          mt: 12,
+          mb: 12
+        }}
+      >
         <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
           Property Type
         </Typography>
