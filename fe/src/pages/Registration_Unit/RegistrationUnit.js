@@ -117,7 +117,7 @@ export default function RegistrationUnit() {
                 },
               }
             );
-            // if (resImgUpload.data.status === "success") {
+            if (resImgUpload.data.status === "success") {
             if (resPropertid.data.propertyid) {
               //ari padayun bert
               const street = locationDetails.addressData.street;
@@ -256,7 +256,60 @@ export default function RegistrationUnit() {
                       );
                       if (paymentres.data.status === "success") {
                         console.log("paymentres: ", paymentres.data);
+                        console.log("hostData: ", hostData);
                         //Ari bert padayun
+                        const hosttype = hostData.hostType;
+                        console.log("hosttype", hosttype);
+                        const ownership = await axios.post(
+                          "http://127.0.0.1:8000/api/propertyownership",
+                          {
+                            propertyid: propertyid,
+                            ownershiptype: hosttype,
+                          }
+                        );
+                        if (ownership.data.status === "success") {
+                          const ownershipid = ownership.data.houseRule.propertyownershipid;
+                          
+                        const firstName = hostData.FirstName;
+                        const lastName = hostData.LastName;
+                        const displayName = hostData.DisplayName;
+                        const dateofbirth = hostData.DateOfBirth;
+                        const phoneNumber = hostData.PhoneNumber;
+                        const email = hostData.Email;
+                        const city = hostData.City;
+                        const province = hostData.Province;
+                        const zipcode = hostData.ZipCode;
+                        const address = hostData.PrimaryAddress;
+                        const describe = hostData.Describe;
+                        const calendar = hostData.CalendarLink;
+                          const owner = await axios.post(
+                            "http://127.0.0.1:8000/api/propertyowner",
+                            {
+                              propertyownershipid: ownershipid,
+                              firstname: firstName,
+                              lastname: lastName,
+                              displayname: displayName,
+                              dateofbirth: dateofbirth,
+                              contactnumber: phoneNumber,
+                              email: email,
+                              province: province,
+                              city: city,
+                              primary_address: address,
+                              zipcode: zipcode,
+                              describe: describe,
+                              calendar: calendar
+                            }
+                          )
+                          if (owner.data.status === "success") {
+                            console.log(owner.data.message);
+                            const manager = await axios.post(
+                              "http://127.0.0.1:8000/api/becomeManager", {
+                                userid: 6,
+                              }
+                            )
+                            console.log('Manager:',manager.data);
+                          }
+                        }
                       }
                     }
                   }
@@ -266,6 +319,7 @@ export default function RegistrationUnit() {
           }
         }
       }
+    }
 
       // Optionally, reset the form data after submission
       // Reset all state variables here if needed
@@ -326,6 +380,7 @@ export default function RegistrationUnit() {
   // Callback function to handle host data from PartnerVerification
   const handleHostDataChange = (data) => {
     setHostData(data);
+    
   };
 
   // Define the callback function to handle payment data change
@@ -333,7 +388,7 @@ export default function RegistrationUnit() {
     // Update the paymentData state with the new data
     setPaymentData(data);
   };
-
+  
   console.log("Payment Data From Parent", paymentData);
   return (
     <Container maxWidth="xl" sx={{ overflowX: "hidden" }}>
