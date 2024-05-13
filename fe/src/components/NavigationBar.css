@@ -1,7 +1,4 @@
 /* Navbar */
-body {
-  margin: 0; /* Remove default margin */
-}
 .navbar {
   display: flex;
   justify-content: space-between;

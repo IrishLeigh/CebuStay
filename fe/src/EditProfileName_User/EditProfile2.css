@@ -34,10 +34,13 @@
   position: relative;
 }
 
+.edit-detail-container:hover {
+  background-color: #fff; /* Change background color on hover */
+}
+
 .edit-detail-label {
   font-weight: 400;
   margin-bottom: 5px;
-  text-align: left;
 }
 
 .edit-edit-text {
@@ -50,7 +53,6 @@
 
 .edit-section-header {
   font-weight: 400;
-  text-align: left;
 }
 
 .edit-button {

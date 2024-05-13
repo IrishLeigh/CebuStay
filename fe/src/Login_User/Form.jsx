@@ -1,38 +1,119 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import './Form.css';
-import { Link, BrowserRouter as Router } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import { useUser } from "../components/UserProvider";
+
 
 const Form = () => {
+  const { loginUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [emptyEmail, setEmptyEmail] = useState(false);
+  const [emptyPassword, setEmptyPassword] = useState(false);
+  const navigate = useNavigate(); // Use useNavigate for navigation
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisibility(!passwordVisibility);
+  };
+
+  const handleRememberMe = () => {
+    setRememberMe(!rememberMe);
+    // Store the "Remember me" option in local storage
+    localStorage.setItem("remember_me", !rememberMe);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(email, password);
+    
+    if (!email && !password) {
+      setEmptyEmail(true);
+      setEmptyPassword(true);
+      setTimeout(() => {
+        setEmptyEmail(false);
+        setEmptyPassword(false);
+      }, 3000);
+      return;
+    } else if (!email) {
+      setEmptyEmail(true);
+      setEmptyPassword(false);
+      setLoginError("Please fill in all the required fields");
+      setTimeout(() => {
+        setEmptyEmail(false);
+        setLoginError("");
+      }, 3000);
+      return;
+    } else if (!password) {
+      setEmptyEmail(false);
+      setEmptyPassword(true);
+      setLoginError("Please fill in all the required fields");
+      setTimeout(() => {
+        setEmptyPassword(false);
+        setLoginError("");
+      }, 3000);
+      return;
+  
+
+    
+    }
+
     try {
-      // Send POST request to login.php endpoint
-      const response = await axios.post("http://localhost/API/login.php", {
+      const response = await axios.post("http://127.0.0.1:8000/api/login", {
         email,
         password,
       });
-      console.log(response.data);
-      // Check if login was successful
-      if (response.data["userid"] !== 0) {
-        // Login successful
-        console.log("Login successful");
-        console.log(response.data["userid"]);
-        // Redirect or perform other actions for logged-in user
+      if (response.data["status"] === "success") {
+        const token = response.data["token"];
+        localStorage.setItem("auth_token", token);
+  
+        if (rememberMe) {
+          localStorage.setItem("remembered_email", email);
+          localStorage.setItem("remembered_password", password);
+        } else {
+          localStorage.removeItem("remembered_email");
+          localStorage.removeItem("remembered_password");
+        }
+
+        console.log("Login successful! USer iS: ", response.data);
+        console.log(response.data["message"]);
+        // console.log("Login successful!");
+        navigate("/landing"); // Correct usage of navigate function
       } else {
-        // Login failed
-        setLoginError("Invalid email or password");
+        setLoginError("Invalid credentials"); // Update error message for invalid credentials
+        console.log(response.data["message"]);
+        console.log("Login failed");
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      setLoginError("An error occurred while logging in");
     }
+
+    // Clear the login error after 2 seconds
+    setTimeout(() => {
+      setLoginError("");
+    }, 3000);
   };
+  
+  useEffect(() => {
+    // Check if there are remembered credentials in local storage and fill in the fields
+    const rememberedEmail = localStorage.getItem("remembered_email");
+    const rememberedPassword = localStorage.getItem("remembered_password");
+    const rememberedRememberMe = localStorage.getItem("remember_me");
+
+    // If "Remember me" is enabled and there are remembered credentials
+    if (rememberedRememberMe === "true" && rememberedEmail) {
+      setEmail(rememberedEmail);
+      // If there's a remembered password, set it as well
+      if (rememberedPassword) {
+        setPassword(rememberedPassword);
+      }
+      // Set rememberMe state to true
+      setRememberMe(true);
+    }
+  }, []);
 
   return (
     <div className="container">
@@ -41,8 +122,9 @@ const Form = () => {
           <h2 style={{ fontWeight: '600', fontFamily: 'Open Sans' }}>Login to your account</h2>
         </div>
         <form className="form">
-          <div className="flex-column">
-            <label style={{marginRight:'85%'}}>Email</label>
+          {/* Email Input */}
+          <div className="email">
+            <label style={{ marginRight: '85%', fontWeight: '10px' }}>Email</label>
           </div>
           <div className="inputForm">
             <svg height="20" viewBox="0 0 32 32" width="20" xmlns="http://www.w3.org/2000/svg">
@@ -50,41 +132,73 @@ const Form = () => {
                 <path d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"></path>
               </g>
             </svg>
-            <input type="text" className="input" placeholder="Enter your Email" 
-            onChange={(e) => setEmail(e.target.value)}/>
+            <input
+              type="text"
+              className="input"
+              placeholder="Enter your Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
 
-          <div className="flex-column">
-            <label style={{marginRight:'79%'}}>Password</label>
+          {/* Password Input */}
+          <div className="password">
+            <label style={{ marginRight: '79%', fontWeight: '20px' }}>Password</label>
           </div>
           <div className="inputForm">
             <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg">
               <path d="M336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
               <path d="M304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
             </svg>
-            <input type="password" className="input" placeholder="Enter your Password" 
-            onChange={(e) => setPassword(e.target.value)}/>
-            <svg viewBox="0 0 576 512" height="1em" xmlns="http://www.w3.org/2000/svg">
-              <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"></path>
-            </svg>
+            <input
+              type={passwordVisibility ? "text" : "password"}
+              className="input"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ paddingRight: "30px" }}
+            />
+            {passwordVisibility ? (
+              <MdVisibility onClick={togglePasswordVisibility} style={{ paddingRight: "30px" }} />
+            ) : (
+              <MdVisibilityOff onClick={togglePasswordVisibility} style={{ paddingRight: "30px" }} />
+            )}
           </div>
 
-          <div className="flex-row">
-            <div>
-              <input type="checkbox" />
+          <div style={{ color: 'red', textAlign: 'center' }}>
+            {(emptyEmail || emptyPassword) && "Please fill in all the required fields"}
+            {loginError && !emptyEmail && !emptyPassword && loginError}
+          </div>
+
+          <div className="remember-forgot" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="remember" style={{ textAlign: 'left' }}>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={handleRememberMe}
+              />
               <label>Remember me</label>
             </div>
-            <span className="span">Forgot password?</span>
+
+            <div className="forgotpassword" style={{ textAlign: 'right' }}>
+              <Link to="/login/ForgotPass">
+                <span className="span">Forgot password?</span>
+              </Link>
+            </div>
           </div>
-          <button className="button-submit" style={{background:"#1780CB"}} onClick={handleSubmit}>Login to Continue</button>
-          <p className="p">
-          Don't have an account? <Link to="/components/Registration" className="span">Sign Up</Link>
-        </p>
+
+          <button className="button-submit" style={{ background: "#1780CB" }} onClick={handleSubmit}>Login to Continue</button>
+
+          <p className="p">Don't have an account?
+            <Link to="/login/register" className="span">Sign Up</Link>
+          </p>
+
           <p className="p line">Or With</p>
 
+          {/* Google Sign In Button */}
           <div className="flex-row">
             <button className="btn google">
-              <svg
+            <svg
                 version="1.1"
                 width="20"
                 id="Layer_1"
@@ -114,9 +228,43 @@ const Form = () => {
               </svg>
               Google
             </button>
-            
+            <button className="btn apple">
+              <svg
+                version="1.1"
+                height="20"
+                width="20"
+                id="Capa_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                viewBox="0 0 22.773 22.773"
+                style={{ enableBackground: 'new 0 0 22.773 22.773' }}
+                xmlSpace="preserve"
+              >
+                <g>
+                  <g>
+                    <path
+                      d="M15.769,0c0.053,0,0.106,0,0.162,0c0.13,1.606-0.483,2.806-1.228,3.675c-0.731,0.863-1.732,1.7-3.351,1.573
+                      c-0.108-1.583,0.506-2.694,1.25-3.561C13.292,0.879,14.557,0.16,15.769,0z"
+                    ></path>
+                    <path
+                      d="M20.67,16.716c0,0.016,0,0.03,0,0.045c-0.455,1.378-1.104,2.559-1.896,3.655c-0.723,0.995-1.609,2.334-3.191,2.334
+                      c-1.367,0-2.275-0.879-3.676-0.903c-1.482-0.024-2.297,0.735-3.652,0.926c-0.155,0-0.31,0-0.462,0
+                      c-0.995-0.144-1.798-0.932-2.383-1.642c-1.725-2.098-3.058-4.808-3.306-8.276c0-0.34,0-0.679,0-1.019
+                      c0.105-2.482,1.311-4.5,2.914-5.478c0.846-0.52,2.009-0.963,3.304-0.765c0.555,0.086,1.122,0.276,1.619,0.464
+                      c0.471,0.181,1.06,0.502,1.618,0.485c0.378-0.011,0.754-0.208,1.135-0.347c1.116-0.403,2.21-0.865,3.652-0.648
+                      c1.733,0.262,2.963,1.032,3.723,2.22c-1.466,0.933-2.625,2.339-2.427,4.74C17.818,14.688,19.086,15.964,20.67,16.716z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+              Apple
+            </button>
           </div>
         </form>
+
+        
       </div>
     </div>
   );
