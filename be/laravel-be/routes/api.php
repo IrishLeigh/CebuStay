@@ -28,7 +28,7 @@ Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendE
 
 // Routes for amenity
 Route::post('/amenities', 'App\Http\Controllers\AmenityController@create');
-
+Route::get('/getamenities', 'App\Http\Controllers\AmenityController@getAmenities');
 // Routes for service
 Route::post('/services', 'App\Http\Controllers\ServiceController@create');
 
