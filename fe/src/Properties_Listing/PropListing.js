@@ -131,6 +131,7 @@ export default function QuiltedImageList() {
   //     </Container>
   //   );
   // }
+
   const propertyInfo = {
     property_details: {
       propertyid: 60,
@@ -513,7 +514,6 @@ export default function QuiltedImageList() {
     </>
   );
 }
-
 const property_images = [
   {
     id: 132,
