@@ -25,6 +25,11 @@ Route::post('/registeruser', 'App\Http\Controllers\RegisterUserController@regist
 Route::post('/verifytoken', 'App\Http\Controllers\RegisterUserController@verifyToken');
 Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendEmailCode');
 
+// Routes for propertyowner
+Route::post('/propertyowner', 'App\Http\Controllers\PropertyOwnerController@create');
+
+// Routes for propertyownership
+Route::post('/propertyownership', 'App\Http\Controllers\PropertyOwnershipController@create');
 
 // Routes for amenity
 Route::post('/amenities', 'App\Http\Controllers\AmenityController@create');
