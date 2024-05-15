@@ -23,4 +23,11 @@ class AmenityController extends Controller
 
         return response()->json($amenity);
     }
+
+    public function getAmenities(Request $request)
+    {
+        $this->enableCors($request);
+        $amenities = Amenity::select('propertyid', 'amenity_name')->get();
+        return response()->json(['status' => 'success', 'data' => $amenities]);
+    }
 }

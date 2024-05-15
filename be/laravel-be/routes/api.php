@@ -33,7 +33,7 @@ Route::post('/propertyownership', 'App\Http\Controllers\PropertyOwnershipControl
 
 // Routes for amenity
 Route::post('/amenities', 'App\Http\Controllers\AmenityController@create');
-
+Route::get('/getamenities', 'App\Http\Controllers\AmenityController@getAmenities');
 // Routes for service
 Route::post('/services', 'App\Http\Controllers\ServiceController@create');
 
@@ -75,6 +75,7 @@ Route::post('/bedroomtype', 'App\Http\Controllers\UnitDetailsController@insertBe
 Route::post('/bookingpolicy', 'App\Http\Controllers\BookingPolicyController@InsertBookingPolicyInfo');
 //Route for Inserting Property Pricing
 Route::post('/propertypricing', 'App\Http\Controllers\PropertyPricingController@insertPropertyPricing');
+Route::get('/allpropertypricing', 'App\Http\Controllers\PropertyPricingController@getAllPropertyPricing');
 //Route for Inserting Property Payment Methods
 Route::post('/propertypaymentmethod', 'App\Http\Controllers\PropertyPaymentMethodsController@insertPropertyPaymentMethods');
 
