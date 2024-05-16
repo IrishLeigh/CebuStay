@@ -10,6 +10,9 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\FacilitiesController;
 use App\Http\Controllers\HouseRuleController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PaymentController;
+
+Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
