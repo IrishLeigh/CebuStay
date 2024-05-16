@@ -37,4 +37,16 @@ class PayMongoService
 
         return json_decode($response->getBody(), true);
     }
+
+    public function retrieveLink($linkId)
+    {
+        $response = $this->client->get('https://api.paymongo.com/v1/links/' . $linkId, [
+            'headers' => [
+                'accept' => 'application/json',
+                'authorization' => 'Basic ' . base64_encode($this->apiKey),
+            ],
+        ]);
+
+        return json_decode($response->getBody(), true);
+    }
 }

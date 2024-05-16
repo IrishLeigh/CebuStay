@@ -13,6 +13,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PaymentController;
 
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
+Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
 
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');

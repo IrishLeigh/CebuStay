@@ -30,4 +30,26 @@ class PaymentController extends Controller
 
         return response()->json($link);
     }
+
+    public function retrievePaymentLink($linkId)
+    {
+        $link = $this->payMongoService->retrieveLink($linkId);
+
+        if (!$link) {
+            return response()->json(['error' => 'Link not found'], 404);
+        }
+
+        return response()->json($link);
+    }
+
+    public function retrievePaymentLinkApi(Request $request, $linkId)
+    {
+        $link = $this->payMongoService->retrieveLink($linkId);
+
+        if (!$link) {
+            return response()->json(['error' => 'Link not found'], 404);
+        }
+
+        return response()->json($link);
+    }
 }
