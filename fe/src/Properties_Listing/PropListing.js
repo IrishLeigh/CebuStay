@@ -68,10 +68,25 @@ export default function QuiltedImageList() {
     setShowReservationForm(true);
   };
 
+  const property_facilities = [
+    {
+      facilitiesid: 36,
+      facilities_name: "Gym",
+    },
+    {
+      facilitiesid: 37,
+      facilities_name: "Parking Area",
+    },
+    {
+      facilitiesid: 38,
+      facilities_name: "Swimming Pool",
+    },
+  ];
+
   return (
     <>
       <Container maxWidth="xl" style={{ backgroundColor: "#F4F7FA" }}>
-        <div style={{ position: "relative" }}>
+        <div>
           <ImageList variant="quilted" cols={4} rowHeight={250}>
             {itemData.map((item) => (
               <ImageListItem
@@ -87,227 +102,278 @@ export default function QuiltedImageList() {
               </ImageListItem>
             ))}
           </ImageList>
+          {/* 7 horizontal colors */}
           <div
             style={{
-              width: "100%",
-              height: "40px", // Height of the colored line
-              position: "absolute",
-              top: "100%",
+              height: "45px", // Height of the colored line
               display: "flex",
+              marginTop: "-20px",
             }}
           >
-            <div
-              style={{ flex: "1 0 0", width: "205px", background: "#16B4DD" }}
-            />
-            <div
-              style={{ flex: "1 0 0", width: "205px", background: "#ADC939" }}
-            />
-            <div
-              style={{ flex: "1 0 0", width: "205px", background: "#F9CC41" }}
-            />
-            <div
-              style={{ flex: "1 0 0", width: "205px", background: "#F77D1E" }}
-            />
-            <div
-              style={{ flex: "1 0 0", width: "205px", background: "#EE414B" }}
-            />
-            <div
-              style={{ flex: "1 0 0", width: "205px", background: "#A334CF" }}
-            />
-            <div
-              style={{ flex: "1 0 0", width: "205px", background: "#1780CB" }}
-            />
+            <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
+            <div style={{ flex: "1 0 0", background: "#ADC939" }} />
+            <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
+            <div style={{ flex: "1 0 0", background: "#F77D1E" }} />
+            <div style={{ flex: "1 0 0", background: "#EE414B" }} />
+            <div style={{ flex: "1 0 0", background: "#A334CF" }} />
+            <div style={{ flex: "1 0 0", background: "#1780CB" }} />
           </div>
         </div>
-        <Paper
-          elevation={0}
+        <div
           style={{
-            position: "relative",
-            left: "20px", // Adjust as needed
-            textAlign: "left",
-            padding: "10px",
-            maxWidth: "calc(65% - 40px)", // Adjust to leave space for padding
-            top: "40px",
-            backgroundColor: "#F4F7FA",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            padding: "20px 0px 20px",
           }}
         >
-          <Typography
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              fontFamily: "Poppins",
-            }}
-          >
-            Megaworld, Cebu, Philippines
-          </Typography>
-          <Typography style={{ fontSize: "1.125rem", fontFamily: "Poppins" }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </Typography>
-        </Paper>
-        <Paper
-          elevation={0}
-          style={{
-            position: "relative",
-            left: "20px", // Adjust as needed
-            textAlign: "left",
-            padding: "10px",
-            maxWidth: "calc(65% - 40px)", // Adjust to leave space for padding
-            top: "40px",
-            boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
-            marginBottom: "30px", // Add margin between sections
-          }}
-        >
-          <Typography
-            style={{
-              fontSize: "1.6rem",
-              fontFamily: "Poppins",
-            }}
-          >
-            Highlights
-          </Typography>
           <div
             style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: "10px", // Adjust as needed
+              width: "65%",
+              marginRight: "10px",
             }}
           >
-            <div
+            <Paper
+              elevation={0}
               style={{
-                marginRight: "20px",
-                display: "flex",
-                alignItems: "center",
+                left: "20px", // Adjust as needed
+                textAlign: "left",
+                backgroundColor: "#F4F7FA",
               }}
             >
-              <WifiIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
               <Typography
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: "2rem",
+                  fontWeight: "bold",
                   fontFamily: "Poppins",
-                  textAlign: "center",
                 }}
               >
-                Free WiFi
+                Megaworld, Cebu, Philippines
               </Typography>
-            </div>
-            <div
+              <Typography
+                style={{ fontSize: "1.125rem", fontFamily: "Poppins" }}
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </Typography>
+            </Paper>
+            <Paper
+              elevation={0}
               style={{
-                marginRight: "20px",
-                display: "flex",
-                alignItems: "center",
+                left: "20px", // Adjust as needed
+                textAlign: "left",
+                padding: "10px",
+                boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
+                marginTop: "20px", // Add margin between sections
               }}
             >
-              <AcUnitIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
               <Typography
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: "1.6rem",
                   fontFamily: "Poppins",
-                  textAlign: "center",
                 }}
               >
-                Air Conditioning
+                Highlights
               </Typography>
-            </div>
-            <div
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: "10px", // Adjust as needed
+                  justifyContent: "space-around",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div
+                  style={{
+                    marginRight: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <WifiIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
+                  <Typography
+                    style={{
+                      fontSize: "1.2rem",
+                      fontFamily: "Poppins",
+                      textAlign: "center",
+                    }}
+                  >
+                    Free WiFi
+                  </Typography>
+                </div>
+                <div
+                  style={{
+                    marginRight: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <AcUnitIcon
+                    style={{ fontSize: "2rem", marginRight: "5px" }}
+                  />
+                  <Typography
+                    style={{
+                      fontSize: "1.2rem",
+                      fontFamily: "Poppins",
+                      textAlign: "center",
+                    }}
+                  >
+                    Air Conditioning
+                  </Typography>
+                </div>
+                <div
+                  style={{
+                    marginRight: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <BalconyIcon
+                    style={{ fontSize: "2rem", marginRight: "5px" }}
+                  />
+                  <Typography
+                    style={{
+                      fontSize: "1.2rem",
+                      fontFamily: "Poppins",
+                      textAlign: "center",
+                    }}
+                  >
+                    Balcony
+                  </Typography>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <PoolIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
+                  <Typography
+                    style={{
+                      fontSize: "1.2rem",
+                      fontFamily: "Poppins",
+                      textAlign: "center",
+                    }}
+                  >
+                    Private Pool
+                  </Typography>
+                </div>
+              </div>
+            </Paper>
+            <Paper
+              elevation={0}
               style={{
-                marginRight: "20px",
-                display: "flex",
-                alignItems: "center",
+                left: "20px", // Adjust as needed
+                marginTop: "20px",
+                textAlign: "left",
+                padding: "10px",
+                boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
               }}
             >
-              <BalconyIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
               <Typography
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: "1.6rem",
                   fontFamily: "Poppins",
-                  textAlign: "center",
                 }}
               >
-                Balcony
+                Facilities
               </Typography>
-            </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <PoolIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
-              <Typography
-                style={{
-                  fontSize: "1.2rem",
-                  fontFamily: "Poppins",
-                  textAlign: "center",
-                }}
-              >
-                Private Pool
-              </Typography>
-            </div>
+              <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {property_facilities.map((facility) => (
+                  <div style={{ marginLeft: "20px", width: "25%" }}>
+                    <Typography key={facility.facilitiesid}>
+                      {facility.facilities_name}
+                    </Typography>
+                  </div>
+                ))}
+              </div>
+            </Paper>
           </div>
-        </Paper>
-        <Paper
-          elevation={0}
-          style={{
-            position: "relative",
-            left: "20px", // Adjust as needed
-            textAlign: "left",
-            padding: "10px",
-            maxWidth: "calc(65% - 40px)", // Adjust to leave space for padding
-            top: "40px",
-            boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
-            display: "flex",
-            flexDirection: "column", // Display items in a column
-          }}
-        >
-          <Typography
+          <div
             style={{
-              fontSize: "1.6rem",
-              fontFamily: "Poppins",
+              textAlign: "left",
+              width: "35%",
+              marginLeft: "10px",
             }}
           >
-            Facilities
-          </Typography>
-          <div style={{ display: "flex", flexWrap: "wrap" }}>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Bedrooms</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Living Area</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Towels</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Balcony</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Air Conditioning</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>High-speed Wi-Fi</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Hair Dryer</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Telephone</Typography>
-            </div>
-            <div style={{ marginLeft: "20px", width: "25%" }}>
-              <Typography>Smart TV</Typography>
-            </div>
+            <Paper
+              elevation={0}
+              style={{
+                boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
+                padding: "20px",
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DatePicker", "DatePicker"]}>
+                  <div
+                    style={{
+                      marginTop: "40px",
+                      display: "flex",
+                      flexDirection: "col",
+                    }}
+                  >
+                    <DatePicker
+                      label="Check-in"
+                      value={checkInDate}
+                      onChange={handleCheckInChange}
+                      minDate={dayjs()}
+                    />
+
+                    <DatePicker
+                      label="Check-out"
+                      value={checkOutDate}
+                      onChange={handleCheckOutChange}
+                      minDate={
+                        checkInDate ? checkInDate.add(1, "day") : dayjs()
+                      }
+                    />
+                  </div>
+                </DemoContainer>
+              </LocalizationProvider>
+              {/* Horizontal line */}
+              <hr
+                style={{ borderTop: "1px solid #D4CFCF", margin: "20px 0" }}
+              />
+              {/* Typography for "Guest" */}
+              <Typography
+                style={{
+                  fontSize: "1.6rem",
+                  fontFamily: "Poppins",
+                  textAlign: "left",
+                }}
+              >
+                Guest
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ marginTop: "100px", width: "100%" }}
+                onClick={handleReserveClick}
+              >
+                Reserve
+              </Button>
+              <Typography
+                style={{
+                  fontSize: "1rem",
+                  fontFamily: "Poppins",
+                  textAlign: "center",
+                  marginTop: "10px",
+                  color: "#5E5E5E",
+                }}
+              >
+                You won’t be charged yet
+              </Typography>
+            </Paper>
           </div>
-        </Paper>
+        </div>
+
         <Paper
           elevation={0}
           style={{
-            position: "relative",
-            left: "20px", // Adjust as needed
             textAlign: "left",
             padding: "10px",
-            maxWidth: "calc(65% - 40px)", // Adjust to leave space for padding
-            top: "47px",
             backgroundColor: "#F4F7FA",
           }}
         >
@@ -371,7 +437,6 @@ export default function QuiltedImageList() {
         <Paper
           elevation={0}
           style={{
-            position: "relative",
             left: "20px", // Adjust as needed
             textAlign: "left",
             padding: "10px",
@@ -482,74 +547,7 @@ export default function QuiltedImageList() {
             </div>
           </div>
         </Paper>
-
-        <Paper
-          elevation={0}
-          style={{
-            position: "relative",
-            left: "67%", // Adjust as needed
-            textAlign: "left",
-            padding: "10px",
-            maxWidth: "calc(34% - 40px)", // Adjust to leave space for padding
-            top: "-900px",
-            boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
-            marginBottom: "30px", // Add margin between sections
-            height: "347px",
-          }}
-        >
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DatePicker", "DatePicker"]}>
-              <div style={{ marginTop: "40px" }}>
-                <DatePicker
-                  label="Check-in"
-                  value={checkInDate}
-                  onChange={handleCheckInChange}
-                  minDate={dayjs()}
-                />
-              </div>
-              <div style={{ marginTop: "40px" }}>
-                <DatePicker
-                  label="Check-out"
-                  value={checkOutDate}
-                  onChange={handleCheckOutChange}
-                  minDate={checkInDate ? checkInDate.add(1, "day") : dayjs()}
-                />
-              </div>
-            </DemoContainer>
-          </LocalizationProvider>
-          {/* Horizontal line */}
-          <hr style={{ borderTop: "1px solid #D4CFCF", margin: "20px 0" }} />
-          {/* Typography for "Guest" */}
-
-          <Typography
-            style={{
-              fontSize: "1.6rem",
-              fontFamily: "Poppins",
-              textAlign: "left",
-            }}
-          >
-            Guest
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginTop: "100px", width: "100%" }}
-            onClick={handleReserveClick}
-          >
-            Reserve
-          </Button>
-          <Typography
-            style={{
-              fontSize: "1rem",
-              fontFamily: "Poppins",
-              textAlign: "center",
-              marginTop: "10px",
-              color: "#5E5E5E",
-            }}
-          >
-            You won’t be charged yet
-          </Typography>
-        </Paper>
+        <ReservationForm />
       </Container>
     </>
   );
