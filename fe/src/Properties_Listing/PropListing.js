@@ -15,7 +15,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
-import ReservationForm from "../components/Reservation";
+import ReservationForm from "./Reservation";
 
 function srcset(image, size, rows = 1, cols = 1) {
   return {
