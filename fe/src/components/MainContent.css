@@ -15,13 +15,7 @@ body {
     margin: 0 auto;
   }
   
-  .filter-buttons {
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-    margin-right: 87px;
-    margin-top: 2rem;
-}
+
 
 
   
@@ -36,7 +30,6 @@ body {
     height: 4rem;
     width: 8rem;
     border-radius: .5rem;
-    font-size: 12px;
     color: black;
     font-family:'poppins', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
@@ -65,7 +58,7 @@ body {
   
   .card-img {
     width: 100%;
-    height: auto;
+    height: 15rem;
     border-radius: 10px;
     overflow: hidden;
     transition: transform 1s;
@@ -148,7 +141,7 @@ body {
     justify-content: flex-start; /* Align buttons from left to right */
     margin-bottom: 5px;
     margin-top: 2rem;
-    margin-left: 23px;
+    margin-left: 0.3rem;
   }
   
   .filter-button {
@@ -161,7 +154,7 @@ body {
     margin-right: 10px; /* Adjust the margin between buttons */
     margin-bottom: 10px; /* Adjust the margin between rows */
     border-radius: .5rem;
-    font-size: 12px;
+    font-size: 15px;
     font-family: 'poppins', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 200;
     width: 10rem;
@@ -178,3 +171,4 @@ body {
 
 
   
+/*Filter buttons*/
