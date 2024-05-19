@@ -17,6 +17,37 @@ export default function SideBar() {
                 newActiveButtons.push(index);
             }
             return newActiveButtons;
+    const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
+        const [activeButtons, setActiveButtons] = useState([]);
+        const [selectedBookingOptions, setSelectedBookingOptions] = useState([]);
+
+        const handleMinPriceChange = (e) => {
+            onFilterChange({ minPrice: e.target.value });
+          };
+
+          const handleMaxPriceChange = (e) => {
+            onFilterChange({ maxPrice: e.target.value });
+          };
+
+          const handleBedroomsChange = (e) => {
+            onFilterChange({ bedrooms: e.target.value });
+          };
+        
+          const handleBedsChange = (e) => {
+            onFilterChange({ beds: e.target.value });
+          };
+        
+          const handleBathroomsChange = (e) => {
+            onFilterChange({ bathrooms: e.target.value });
+          };
+          
+        const handleBookingOptionChange = (option) => {
+        setSelectedBookingOptions((prevOptions) => {
+            const updatedOptions = prevOptions.includes(option)
+                ? prevOptions.filter((o) => o !== option)
+                : [...prevOptions, option];
+            onFilterChange({ bookingOptions: updatedOptions });
+            return updatedOptions;
         });
     };
     return (
