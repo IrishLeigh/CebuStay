@@ -17,6 +17,24 @@ use App\Models\Service;
 
 class PropertyController extends Controller
 {
+    public function show(Request $request)
+    {
+        $this->enableCors($request);
+        $propertyId = $request->input('propertyid');
+
+        $property = Property::with([
+            'home',
+            'location',
+            'unitdetails',
+            'unitdetails.unitrooms',
+            'unitdetails.unitrooms.bedtype',
+            'propertyfiles'
+
+        ])->findOrFail($propertyId);
+
+        return response()->json($property);
+    }
+
     public function InsertPropertyInfo(Request $request)
     {
         $this->enableCors($request);

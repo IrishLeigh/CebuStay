@@ -16,5 +16,10 @@ class File extends Model
         'propertyid',
     ];
 
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'propertyid', 'propertyid');
+    }
+
     use HasFactory;
 }
