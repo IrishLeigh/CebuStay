@@ -4,7 +4,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
-import '../../components/Button/NextButton.css'
+import "../../components/Button/NextButton.css";
 
 const propertyTypes = [
   {
@@ -31,22 +31,28 @@ const propertyTypes = [
 
 export default function Properties({ onSelectedTypeChange }) {
   const [selectedType, setSelectedType] = useState(null);
-  
-  useEffect(() => {
-    const storedSelectedType = localStorage.getItem("selectedType");
-    if (storedSelectedType) {
-      setSelectedType(storedSelectedType);
-    }
-  }, []);
+
+  // useEffect(() => {
+  //   const storedSelectedType = localStorage.getItem("selectedType");
+  //   if (storedSelectedType) {
+  //     setSelectedType(storedSelectedType);
+  //   }
+  // }, []);
+
+  // const handleClick = (button) => {
+  //   const newSelectedType = selectedType === button ? null : button;
+  //   setSelectedType(newSelectedType);
+  //   localStorage.setItem("selectedType", newSelectedType);
+  //   onSelectedTypeChange(selectedType === button ? null : button);
+  //   console.log("Property:", newSelectedType);
+  // };
 
   const handleClick = (button) => {
-    const newSelectedType = selectedType === button ? null : button;
-    setSelectedType(newSelectedType);
-    localStorage.setItem("selectedType", newSelectedType);
-    onSelectedTypeChange(newSelectedType);
-    console.log("Property:", newSelectedType);
+    setSelectedType(selectedType === button ? null : button);
+    onSelectedTypeChange(selectedType === button ? null : button); // Propagate selectedType to parent
+    console.log("Property:", selectedType === button ? null : button); // Log selected property
   };
-
+  console.log("selected type sulod: ", selectedType);
   return (
     <Box>
       <Container

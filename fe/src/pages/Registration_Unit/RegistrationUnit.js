@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Container, Hidden } from "@mui/material";
 import axios from "axios";
 import UnitInfo_2 from "../../components/registration_unit/registration_unitDetails/unitDetails_2";
@@ -27,10 +27,8 @@ export default function RegistrationUnit() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  
-
   // State variables for form data
-  const { addressData ,mapVal} = useData();
+  const { addressData, mapVal } = useData();
   const [selectedType, setSelectedType] = useState("");
   const [selectedPropertyType, setSelectedPropertyType] = useState("");
   const [propertyInfo, setPropertyInfo] = useState({});
@@ -76,11 +74,12 @@ export default function RegistrationUnit() {
       // });
       // console.log("Form submitted successfully:", response.data);
       setLoading(true);
-
+      console.log("propinfo:", propertyInfo);
+      console.log("proptype gawass: ", selectedType);
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid: 1,
+          userid: 6,
           property_name: propertyInfo.propertyName,
           property_type: selectedType,
           property_desc: propertyInfo.propertyDescription,
@@ -110,9 +109,19 @@ export default function RegistrationUnit() {
           );
           if (resBedInsert.data.status === "success") {
             const formdata = new FormData();
+            // console.log("naa propertyid?", resPropertid.data.propertyid);
+
+            // Append propertyid to formdata
             formdata.append("propertyid", resPropertid.data.propertyid);
+
+            // Append each selected image to formdata
             for (let i = 0; i < selectedImages.length; i++) {
               formdata.append("files[]", selectedImages[i]);
+            }
+
+            // Debugging: Log the contents of FormData
+            for (let pair of formdata.entries()) {
+              console.log(pair[0] + ":", pair[1]);
             }
             const resImgUpload = await axios.post(
               "http://127.0.0.1:8000/api/uploadfiles",
@@ -123,199 +132,209 @@ export default function RegistrationUnit() {
                 },
               }
             );
-            if (resImgUpload.data.status === "success") {
-            if (resPropertid.data.propertyid) {
-              //ari padayun bert
-              const street = locationDetails.addressData.street;
-              const postalCode = locationDetails.addressData.postalCode;
-              const pinloc = locationDetails.mapVal;
-              console.log("propertyId pinloc:", pinloc);
-              const propertyLoc = await axios.post(
-                "http://127.0.0.1:8000/api/location",
-                {
-                  propertyid: resPropertid.data.propertyid,
-                  address: street,
-                  zipcode: postalCode,
-                  latitude: pinloc.lat,
-                  longitude: pinloc.lng,
-                }
-              );
-              if (propertyLoc.data.locationid) {
-                console.log("Amenities:", selectedAmenities);
-                for (const amenity of selectedAmenities["basicAmenities"]) {
-                  // Make a POST request for each amenity
-                  const resAmenity = await axios.post(
-                    "http://127.0.0.1:8000/api/amenities",
-                    {
-                      propertyid: resPropertid.data.propertyid,
-                      amenity_name: amenity,
-                    }
-                  );
-                }
-              }
-              if (propertyLoc.data.locationid) {
-                for (const service of selectedAmenities["basicServices"]) {
-                  // Make a POST request for each amenity
-                  const resService = await axios.post(
-                    "http://127.0.0.1:8000/api/services",
-                    {
-                      propertyid: resPropertid.data.propertyid,
-                      service_name: service,
-                    }
-                  );
-                }
-              }
-
-              if (propertyLoc.data.locationid) {
-                for (const facilities of selectedAmenities["facilities"]) {
-                  // Make a POST request for each amenity
-                  const resFacilities = await axios.post(
-                    "http://127.0.0.1:8000/api/facilities",
-                    {
-                      propertyid: resPropertid.data.propertyid,
-                      facilities_name: facilities,
-                    }
-                  );
-                }
-              }
-              if (propertyLoc.data.locationid) {
-                const checkInFrom = houseRulesData.checkInFrom;
-                const checkInUntil = houseRulesData.checkInUntil;
-                const checkOutFrom = houseRulesData.checkOutFrom;
-                const checkOutUntil = houseRulesData.checkOutUntil;
-                const quietHoursStart = houseRulesData.quietHoursStart;
-                const quietHoursEnd = houseRulesData.quietHoursEnd;
-                const customRules = houseRulesData.customRules;
-                const smokingAllowed = houseRulesData.smokingAllowed;
-                const petsAllowed = houseRulesData.petsAllowed;
-                const partiesAllowed = houseRulesData.partiesAllowed;
-                const noiseRestrictions = houseRulesData.noiseRestrictions;
-
-                console.log("HouseRules", houseRulesData);
-                const houseRules = await axios.post(
-                  "http://127.0.0.1:8000/api/houseRules",
+            console.log("loc", locationDetails);
+            console.log("resImgUpload", resImgUpload);
+            if (resImgUpload.status == 200) {
+              if (resPropertid.data.propertyid) {
+                //ari padayun bert
+                const street = locationDetails.addressData.street;
+                const postalCode = locationDetails.addressData.postalCode;
+                const pinloc = locationDetails.mapVal;
+                console.log("propertyId pinloc:", pinloc);
+                const propertyLoc = await axios.post(
+                  "http://127.0.0.1:8000/api/location",
                   {
                     propertyid: resPropertid.data.propertyid,
-                    smoking_allowed: smokingAllowed,
-                    pets_allowed: petsAllowed,
-                    parties_events_allowed: partiesAllowed,
-                    noise_restrictions: noiseRestrictions,
-                    quiet_hours_start: quietHoursStart,
-                    quiet_hours_end: quietHoursEnd,
-                    custom_rules: customRules,
-                    check_in_from: checkInFrom,
-                    check_in_until: checkInUntil,
-                    check_out_from: checkOutFrom,
-                    check_out_until: checkOutUntil,
+                    address: street,
+                    zipcode: postalCode,
+                    latitude: pinloc.lat,
+                    longitude: pinloc.lng,
                   }
                 );
-                console.log("houseRules: ", houseRules);
-                if (houseRules.data) {
-                  const is_cancel_plan = policiesData.standardCancellation;
-                  const cancel_days = policiesData.cancellationDays;
-                  const non_refundable = policiesData.nonRefundableRate;
-                  const modification_plan = policiesData.modificationPlan;
-                  const offer_discount = policiesData.offerDiscounts;
-                  const booking_policies = await axios.post(
-                    "http://127.0.0.1:8000/api/bookingpolicy",
-                    {
-                      propertyid: resPropertid.data.propertyid,
-                      is_cancel_plan: is_cancel_plan,
-                      cancel_days: cancel_days,
-                      non_refundable: non_refundable,
-                      modification_plan: modification_plan,
-                      offer_discount: offer_discount,
-                    }
-                  );
-                  if (booking_policies.data.status === "success") {
-                    console.log("booking_policies: ", booking_policies.data);
-                    const homeid = resPropertid.data.homeid;
-                    const max_price = 0;
-                    const min_price = unitPricing.basePrice;
-                    const profit = unitPricing.profit;
-                    const unit_pricing = await axios.post(
-                      "http://127.0.0.1:8000/api/propertypricing",
+                console.log("propertyLoc:", propertyLoc);
+                if (propertyLoc.status) {
+                  console.log("Amenities:", selectedAmenities);
+                  for (const amenity of selectedAmenities["basicAmenities"]) {
+                    // Make a POST request for each amenity
+                    const resAmenity = await axios.post(
+                      "http://127.0.0.1:8000/api/amenities",
                       {
-                        homeid: homeid,
-                        max_price: max_price,
-                        min_price: min_price,
-                        profit: profit,
+                        propertyid: resPropertid.data.propertyid,
+                        amenity_name: amenity,
                       }
                     );
-                    if (unit_pricing.data.status === "success") {
-                      console.log("unit_pricing: ", unit_pricing.data);
-                      const isonline =
-                        paymentData.selectedPayment === "Online" ? true : false;
-                      const paymentmethod = paymentData.selectedPayout;
-                      const propertyid = resPropertid.data.propertyid;
-                      console.log("nara", paymentData);
-                      console.log("propertyid", resPropertid.data.propertyid);
-                      console.log("isonline", isonline);
-                      console.log("paymentmethod", paymentmethod);
-                      const paymentres = await axios.post(
-                        "http://127.0.0.1:8000/api/propertypaymentmethod",
+                  }
+                }
+
+                if (propertyLoc.status) {
+                  for (const service of selectedAmenities["basicServices"]) {
+                    // Make a POST request for each amenity
+                    const resService = await axios.post(
+                      "http://127.0.0.1:8000/api/services",
+                      {
+                        propertyid: resPropertid.data.propertyid,
+                        service_name: service,
+                      }
+                    );
+                  }
+                }
+
+                if (propertyLoc.status) {
+                  for (const facilities of selectedAmenities["facilities"]) {
+                    // Make a POST request for each amenity
+                    const resFacilities = await axios.post(
+                      "http://127.0.0.1:8000/api/facilities",
+                      {
+                        propertyid: resPropertid.data.propertyid,
+                        facilities_name: facilities,
+                      }
+                    );
+                  }
+                }
+                if (propertyLoc.data.locationid) {
+                  const checkInFrom = houseRulesData.checkInFrom;
+                  const checkInUntil = houseRulesData.checkInUntil;
+                  const checkOutFrom = houseRulesData.checkOutFrom;
+                  const checkOutUntil = houseRulesData.checkOutUntil;
+                  const quietHoursStart = houseRulesData.quietHoursStart;
+                  const quietHoursEnd = houseRulesData.quietHoursEnd;
+                  const customRules = houseRulesData.customRules;
+                  const smokingAllowed = houseRulesData.smokingAllowed;
+                  const petsAllowed = houseRulesData.petsAllowed;
+                  const partiesAllowed = houseRulesData.partiesAllowed;
+                  const noiseRestrictions = houseRulesData.noiseRestrictions;
+
+                  console.log("HouseRules", houseRulesData);
+                  const houseRules = await axios.post(
+                    "http://127.0.0.1:8000/api/houseRules",
+                    {
+                      propertyid: resPropertid.data.propertyid,
+                      smoking_allowed: smokingAllowed,
+                      pets_allowed: petsAllowed,
+                      parties_events_allowed: partiesAllowed,
+                      noise_restrictions: noiseRestrictions,
+                      quiet_hours_start: quietHoursStart,
+                      quiet_hours_end: quietHoursEnd,
+                      custom_rules: customRules,
+                      check_in_from: checkInFrom,
+                      check_in_until: checkInUntil,
+                      check_out_from: checkOutFrom,
+                      check_out_until: checkOutUntil,
+                    }
+                  );
+                  console.log("houseRules: ", houseRules);
+                  if (houseRules.data) {
+                    const is_cancel_plan = policiesData.standardCancellation;
+                    const cancel_days = policiesData.cancellationDays;
+                    const non_refundable = policiesData.nonRefundableRate;
+                    const modification_plan = policiesData.modificationPlan;
+                    const offer_discount = policiesData.offerDiscounts;
+                    const booking_policies = await axios.post(
+                      "http://127.0.0.1:8000/api/bookingpolicy",
+                      {
+                        propertyid: resPropertid.data.propertyid,
+                        is_cancel_plan: is_cancel_plan,
+                        cancel_days: cancel_days,
+                        non_refundable: non_refundable,
+                        modification_plan: modification_plan,
+                        offer_discount: offer_discount,
+                      }
+                    );
+                    if (booking_policies.data.status === "success") {
+                      console.log("booking_policies: ", booking_policies.data);
+                      const homeid = resPropertid.data.homeid;
+                      const max_price = 0;
+                      const min_price = unitPricing.basePrice;
+                      const profit = unitPricing.profit;
+                      const unit_pricing = await axios.post(
+                        "http://127.0.0.1:8000/api/propertypricing",
                         {
-                          propertyid: propertyid,
-                          isonline: isonline,
-                          paymentmethod: paymentmethod,
+                          homeid: homeid,
+                          max_price: max_price,
+                          min_price: min_price,
+                          profit: profit,
                         }
                       );
-                      if (paymentres.data.status === "success") {
-                        console.log("paymentres: ", paymentres.data);
-                        console.log("hostData: ", hostData);
-                        //Ari bert padayun
-                        const hosttype = hostData.hostType;
-                        console.log("hosttype", hosttype);
-                        const ownership = await axios.post(
-                          "http://127.0.0.1:8000/api/propertyownership",
+                      if (unit_pricing.data.status === "success") {
+                        console.log("unit_pricing: ", unit_pricing.data);
+                        const isonline =
+                          paymentData.selectedPayment === "Online"
+                            ? true
+                            : false;
+                        const paymentmethod = paymentData.selectedPayout;
+                        const propertyid = resPropertid.data.propertyid;
+                        console.log("nara", paymentData);
+                        console.log("propertyid", resPropertid.data.propertyid);
+                        console.log("isonline", isonline);
+                        console.log("paymentmethod", paymentmethod);
+                        const paymentres = await axios.post(
+                          "http://127.0.0.1:8000/api/propertypaymentmethod",
                           {
                             propertyid: propertyid,
-                            ownershiptype: hosttype,
+                            isonline: isonline,
+                            paymentmethod: paymentmethod,
                           }
                         );
-                        if (ownership.data.status === "success") {
-                          const ownershipid = ownership.data.houseRule.propertyownershipid;
-                          
-                        const firstName = hostData.FirstName;
-                        const lastName = hostData.LastName;
-                        const displayName = hostData.DisplayName;
-                        const dateofbirth = hostData.DateOfBirth;
-                        const phoneNumber = hostData.PhoneNumber;
-                        const email = hostData.Email;
-                        const city = hostData.City;
-                        const province = hostData.Province;
-                        const zipcode = hostData.ZipCode;
-                        const address = hostData.PrimaryAddress;
-                        const describe = hostData.Describe;
-                        const calendar = hostData.CalendarLink;
-                          const owner = await axios.post(
-                            "http://127.0.0.1:8000/api/propertyowner",
+                        if (paymentres.data.status === "success") {
+                          console.log("paymentres: ", paymentres.data);
+                          console.log("hostData: ", hostData);
+                          //Ari bert padayun
+                          const hosttype = hostData.hostType;
+                          console.log("hosttype", hosttype);
+                          const ownership = await axios.post(
+                            "http://127.0.0.1:8000/api/propertyownership",
                             {
-                              propertyownershipid: ownershipid,
-                              firstname: firstName,
-                              lastname: lastName,
-                              displayname: displayName,
-                              dateofbirth: dateofbirth,
-                              contactnumber: phoneNumber,
-                              email: email,
-                              province: province,
-                              city: city,
-                              primary_address: address,
-                              zipcode: zipcode,
-                              describe: describe,
-                              calendar: calendar
+                              propertyid: propertyid,
+                              ownershiptype: hosttype,
                             }
-                          )
-                          if (owner.data.status === "success") {
-                            console.log(owner.data.message);
-                            const manager = await axios.post(
-                              "http://127.0.0.1:8000/api/becomeManager", {
-                                userid: 6,
+                          );
+                          if (ownership.data.status === "success") {
+                            const ownershipid =
+                              ownership.data.houseRule.propertyownershipid;
+
+                            const firstName = hostData.FirstName;
+                            const lastName = hostData.LastName;
+                            const displayName = hostData.DisplayName;
+                            const dateofbirth = hostData.DateOfBirth;
+                            const phoneNumber = hostData.PhoneNumber;
+                            const email = hostData.Email;
+                            const city = hostData.City;
+                            const province = hostData.Province;
+                            const zipcode = hostData.ZipCode;
+                            const address = hostData.PrimaryAddress;
+                            const describe = hostData.Describe;
+                            const calendar = hostData.CalendarLink;
+                            const owner = await axios.post(
+                              "http://127.0.0.1:8000/api/propertyowner",
+                              {
+                                propertyownershipid: ownershipid,
+                                firstname: firstName,
+                                lastname: lastName,
+                                displayname: displayName,
+                                dateofbirth: dateofbirth,
+                                contactnumber: phoneNumber,
+                                email: email,
+                                province: province,
+                                city: city,
+                                primary_address: address,
+                                zipcode: zipcode,
+                                describe: describe,
+                                calendar: calendar,
                               }
-                            )
-                            console.log('Manager:',manager.data);
-                            console.log('Successfulty Registered');
-                            setModalMessage("Successfully Registered");
+                            );
+                            console.log("Owner:", owner);
+                            if (owner.data.status === "success") {
+                              console.log(owner.data.message);
+                              const manager = await axios.post(
+                                "http://127.0.0.1:8000/api/becomeManager",
+                                {
+                                  userid: 6,
+                                }
+                              );
+                              console.log("Manager:", manager.data);
+                              console.log("Successfulty Registered");
+                              setModalMessage("Successfully Registered");
+                            }
                           }
                         }
                       }
@@ -327,36 +346,32 @@ export default function RegistrationUnit() {
           }
         }
       }
-    }
 
       // Optionally, reset the form data after submission
       // Reset all state variables here if needed
     } catch (error) {
       console.error("Error submitting form:", error);
       setModalMessage("Submission failed. Please try again later.");
-    }finally {
+    } finally {
       // Hide modal and reset loading state after a delay
       setTimeout(() => {
-          setShowModal(false);
-          setLoading(false);
+        setShowModal(false);
+        setLoading(false);
       }, 2000);
-  }
-};
-
-
+    }
+  };
   // Callback functions to handle form data changes
   const handleSelectedTypeChange = (type) => {
     setSelectedType(type);
   };
 
- 
   const handleSelectedPropertyTypeChange = useCallback((propertyType) => {
     // Handle the change in the parent component
     setSelectedPropertyType(propertyType);
-    console.log('Selected Property Type:', propertyType);
+    console.log("Selected Property Type:", propertyType);
   }, []);
-  const handlePropertyInformationChange = (newPropertyData) => {
-    setPropertyInfo(newPropertyData);
+  const handlePropertyInformationChange = (propertyData) => {
+    setPropertyInfo(propertyData);
   };
 
   const handleRoomDetailsChange = (newRoomDetails) => {
@@ -399,7 +414,6 @@ export default function RegistrationUnit() {
   // Callback function to handle host data from PartnerVerification
   const handleHostDataChange = (data) => {
     setHostData(data);
-    
   };
 
   // Define the callback function to handle payment data change
@@ -408,24 +422,41 @@ export default function RegistrationUnit() {
     setPaymentData(data);
   };
   useEffect(() => {
-    localStorage.setItem("registrationFormData", JSON.stringify({
-      selectedType,
-      selectedPropertyType,
-      propertyInfo,
-      unitDetailsData,
-      bedroomDetails,
-      houseRulesData,
-      policiesData,
-      selectedImages,
-      locationDetails,
-      selectedAmenities,
-      unitPricing,
-      hostData,
-      paymentData,
-      // Add more form data variables as needed
-      // Other form data...
-    }));
-  }, [selectedType, selectedPropertyType, propertyInfo, unitDetailsData, bedroomDetails, houseRulesData, policiesData, selectedImages, locationDetails, selectedAmenities, unitPricing, hostData, paymentData /* Add other form data dependencies here */]);
+    localStorage.setItem(
+      "registrationFormData",
+      JSON.stringify({
+        selectedType,
+        selectedPropertyType,
+        propertyInfo,
+        unitDetailsData,
+        bedroomDetails,
+        houseRulesData,
+        policiesData,
+        selectedImages,
+        locationDetails,
+        selectedAmenities,
+        unitPricing,
+        hostData,
+        paymentData,
+        // Add more form data variables as needed
+        // Other form data...
+      })
+    );
+  }, [
+    selectedType,
+    selectedPropertyType,
+    propertyInfo,
+    unitDetailsData,
+    bedroomDetails,
+    houseRulesData,
+    policiesData,
+    selectedImages,
+    locationDetails,
+    selectedAmenities,
+    unitPricing,
+    hostData,
+    paymentData /* Add other form data dependencies here */,
+  ]);
 
   // UseEffect to retrieve form data from localStorage on component mount
   useEffect(() => {
@@ -448,7 +479,7 @@ export default function RegistrationUnit() {
       // Set other form data state variables...
     }
   }, []);
-  
+
   //   console.log("Property Data From Parent", propertyInfo);
   // console.log("Propertyselctedtype  from Parents: ", selectedPropertyType);
   // console.log("Property Type from Parent: ", selectedType);
@@ -460,16 +491,11 @@ export default function RegistrationUnit() {
   // console.log("Location Details :", locationDetails);
   // console.log("Amenties :", selectedAmenities);
   // console.log("Unit Pricing :", unitPricing);
-  console.log("hostData", hostData);
+  // console.log("hostData", hostData);
   // console.log("Payment Data", paymentData);
-
-
-
 
   // console.log("Payment method from Parent: ", paymentData);
 
-  
-  
   return (
     <div className="registration-page">
       <Container maxWidth="xl" sx={{ overflowX: "hidden" }}>
@@ -724,16 +750,15 @@ export default function RegistrationUnit() {
         )}
         {showModal && (
           <div className="modal">
-              <div className="modal-content">
-                  {/* Loader */}
-                  {loading && <div className="loader">Loading...</div>}
-                  
-                  {/* Modal message */}
-                  {!loading && <div>{modalMessage}</div>}
-              </div>
-          </div>
-)}
+            <div className="modal-content">
+              {/* Loader */}
+              {loading && <div className="loader">Loading...</div>}
 
+              {/* Modal message */}
+              {!loading && <div>{modalMessage}</div>}
+            </div>
+          </div>
+        )}
       </Container>
     </div>
   );
