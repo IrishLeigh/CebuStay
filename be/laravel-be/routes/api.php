@@ -10,6 +10,10 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\FacilitiesController;
 use App\Http\Controllers\HouseRuleController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PaymentController;
+
+Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
+Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
 
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
@@ -66,7 +70,8 @@ Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToke
 //Routes for property
 Route::post('/propertyinfo', 'App\Http\Controllers\PropertyController@InsertPropertyInfo');
 Route::get('/allproperties', 'App\Http\Controllers\PropertyController@getAllProperties');
-
+Route::get('/getproperty', 'App\Http\Controllers\PropertyController@getPropertyById');
+Route::get('/getproptest', 'App\Http\Controllers\PropertyController@show');
 //Routes for unitdetails
 Route::post('/unitdetails', 'App\Http\Controllers\UnitDetailsController@insertUnitDetails');
 Route::post('/bedroomtype', 'App\Http\Controllers\UnitDetailsController@insertBedTypes');
@@ -89,3 +94,6 @@ Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgB
 Route::get('/getallfirstimg', 'App\Http\Controllers\FileController@getAllFirstImg');
 //User 
 Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager');
+
+//FOR BOOKING
+Route::post('/insertbooking', 'App\Http\Controllers\BookingController@insertBooking');

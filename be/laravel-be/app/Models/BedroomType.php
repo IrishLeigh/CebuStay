@@ -10,4 +10,10 @@ class BedroomType extends Model
     protected $table = 'bedroomtype';
     protected $primaryKey = 'bedroomid';
     protected $guarded = ['bedroomid', 'unitroomid', 'bedroomnum', 'singlebed', 'bunkbed', 'largebed', 'superlargebed'];
+
+    public function unitroom()
+    {
+        return $this->belongsTo(UnitRooms::class, 'unitroomid', 'unitroomid');
+    }
+
 }

@@ -18,4 +18,9 @@ class Location extends Model
         'latitude',
         'longitude',
     ];
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'propertyid', 'propertyid');
+    }
 }
