@@ -3,18 +3,13 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import WifiIcon from "@mui/icons-material/Wifi";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
-import BalconyIcon from "@mui/icons-material/Balcony";
-import PoolIcon from "@mui/icons-material/Pool";
-import { Container } from "@mui/material";
+import { Container, CssBaseline } from "@mui/material";
 import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Button from "@mui/material/Button";
-import LinearProgress from "@mui/material/LinearProgress";
 import ReservationForm from "./Reservation";
 
 function srcset(image, size, rows = 1, cols = 1) {
@@ -68,46 +63,161 @@ export default function QuiltedImageList() {
     setShowReservationForm(true);
   };
 
-  const property_facilities = [
-    {
-      facilitiesid: 36,
-      facilities_name: "Gym",
+  const property_info = {
+    property_details: {
+      propertyid: 60,
+      property_name: "GardenBert",
+      property_desc: "Elahang Ludi sa Lacion",
+      property_type: "Home",
+      property_directions:
+        "Discover the vibrant hub of Megaworld Newtown Cebu, nestled in the heart of Mactan Island, easily accessible by taking a jeepney bound for Punta Engaño from downtown Cebu City. Start from downtown Cebu City near SM City Cebu or Ayala Center Cebu, common transportation hubs. Look for jeepneys heading to Punta Engaño or Lapu-Lapu City for Mactan Island access. Board a jeepney with appropriate signage or ask locals for confirmation. Pay the fare, typically PHP 40 to PHP 50, and ensure exact change if possible. Traverse either the Marcelo Fernan Bridge or Mactan-Mandaue Bridge to Mactan Island. Disembark at Punta Engaño in Lapu-Lapu City, the final stop. Megaworld Newtown Cebu is located nearby, adjacent to Mactan Newtown. Walk a short distance from the jeepney stop to reach specific destinations within the complex.",
+      unit_type: "Private room",
     },
-    {
-      facilitiesid: 37,
-      facilities_name: "Parking Area",
+    property_address: {
+      address: "Labangon",
+      zipcode: "6009",
+      latitude: "12312532",
+      longitude: "9823082098",
     },
-    {
-      facilitiesid: 38,
-      facilities_name: "Swimming Pool",
+    property_home: {
+      homeid: 26,
+      proppricingid: 10,
+      isoccupied: 0,
     },
-  ];
+    property_unitpricing: {
+      min_price: 1000,
+    },
+    property_unitrooms: {
+      unitid: 49,
+      guest_capacity: 3,
+      unitrooms: [
+        {
+          unitroomid: 177,
+          roomname: "Bedroom",
+          quantity: 2,
+        },
+        {
+          unitroomid: 178,
+          roomname: "Living Room",
+          quantity: 1,
+        },
+        {
+          unitroomid: 179,
+          roomname: "Bathroom",
+          quantity: 2,
+        },
+      ],
+      unitbeds: [
+        {
+          bedroomnum: "1",
+          beds: {
+            singlebed: 2,
+          },
+        },
+        {
+          bedroomnum: "2",
+          beds: {
+            largebed: 2,
+          },
+        },
+      ],
+    },
+    property_amenities: [
+      {
+        amenityid: 44,
+        amenity_name: "Toiletries",
+      },
+      {
+        amenityid: 45,
+        amenity_name: "Television",
+      },
+    ],
+    property_facilities: [
+      {
+        facilitiesid: 36,
+        facilities_name: "Gym",
+      },
+      {
+        facilitiesid: 37,
+        facilities_name: "Parking Area",
+      },
+      {
+        facilitiesid: 38,
+        facilities_name: "Swimming Pool",
+      },
+    ],
+    property_services: [
+      {
+        serviceid: 39,
+        service_name: "House Keeping",
+      },
+      {
+        serviceid: 40,
+        service_name: "Breakfast",
+      },
+      {
+        serviceid: 41,
+        service_name: "Pet Friendly",
+      },
+    ],
+    property_houserules: [
+      {
+        houserulesid: 21,
+        smoking_allowed: 1,
+        pets_allowed: 0,
+        parties_events_allowed: 1,
+        noise_restrictions: "No loud noises after 10 PM",
+        quiet_hours_start: "22:00:00",
+        quiet_hours_end: "07:00:00",
+        custom_rules: "No shoes inside the house.\nKeep the kitchen clean.",
+        check_in_from: "14:00:00",
+        check_in_until: "22:00:00",
+        check_out_from: "08:00:00",
+        check_out_until: "11:00:00",
+      },
+    ],
+    property_bookingpolicy: {
+      bookingpolicyid: 14,
+      is_cancel_plan: 1,
+      cancel_days: 7,
+      non_refundable: 1,
+      modification_plan: 1,
+      offer_discount: 0,
+    },
+  };
 
   return (
     <>
       <Container maxWidth="xl" style={{ backgroundColor: "#F4F7FA" }}>
-        <div>
-          <ImageList variant="quilted" cols={4} rowHeight={250}>
-            {itemData.map((item) => (
+        <CssBaseline />
+        <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
+          <ImageList
+            variant="quilted"
+            cols={4}
+            rowHeight={Math.floor(window.innerHeight / 4)}
+          >
+            {property_images.map((image) => (
               <ImageListItem
-                key={item.img}
-                cols={item.cols || 1}
-                rows={item.rows || 1}
+                key={image.id}
+                cols={image.cols || 1}
+                rows={image.rows || 1}
               >
                 <img
-                  {...srcset(item.img, 121, item.rows, item.cols)}
-                  alt={item.title}
-                  loading="lazy"
+                  src={image.src}
+                  alt={`Property Image ${image.id}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </ImageListItem>
             ))}
           </ImageList>
+        </div>
+        <div>
           {/* 7 horizontal colors */}
           <div
             style={{
               height: "45px", // Height of the colored line
               display: "flex",
-              marginTop: "-20px",
+              marginTop: "-16px",
             }}
           >
             <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
@@ -148,146 +258,80 @@ export default function QuiltedImageList() {
                   fontFamily: "Poppins",
                 }}
               >
-                Megaworld, Cebu, Philippines
+                {property_info.property_details.property_name}
               </Typography>
               <Typography
                 style={{ fontSize: "1.125rem", fontFamily: "Poppins" }}
               >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
+                {property_info.property_details.property_desc}
               </Typography>
             </Paper>
             <Paper
               elevation={0}
               style={{
-                left: "20px", // Adjust as needed
-                textAlign: "left",
-                padding: "10px",
-                boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
-                marginTop: "20px", // Add margin between sections
-              }}
-            >
-              <Typography
-                style={{
-                  fontSize: "1.6rem",
-                  fontFamily: "Poppins",
-                }}
-              >
-                Highlights
-              </Typography>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: "10px", // Adjust as needed
-                  justifyContent: "space-around",
-                  flexWrap: "wrap",
-                }}
-              >
-                <div
-                  style={{
-                    marginRight: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <WifiIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
-                  <Typography
-                    style={{
-                      fontSize: "1.2rem",
-                      fontFamily: "Poppins",
-                      textAlign: "center",
-                    }}
-                  >
-                    Free WiFi
-                  </Typography>
-                </div>
-                <div
-                  style={{
-                    marginRight: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <AcUnitIcon
-                    style={{ fontSize: "2rem", marginRight: "5px" }}
-                  />
-                  <Typography
-                    style={{
-                      fontSize: "1.2rem",
-                      fontFamily: "Poppins",
-                      textAlign: "center",
-                    }}
-                  >
-                    Air Conditioning
-                  </Typography>
-                </div>
-                <div
-                  style={{
-                    marginRight: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <BalconyIcon
-                    style={{ fontSize: "2rem", marginRight: "5px" }}
-                  />
-                  <Typography
-                    style={{
-                      fontSize: "1.2rem",
-                      fontFamily: "Poppins",
-                      textAlign: "center",
-                    }}
-                  >
-                    Balcony
-                  </Typography>
-                </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <PoolIcon style={{ fontSize: "2rem", marginRight: "5px" }} />
-                  <Typography
-                    style={{
-                      fontSize: "1.2rem",
-                      fontFamily: "Poppins",
-                      textAlign: "center",
-                    }}
-                  >
-                    Private Pool
-                  </Typography>
-                </div>
-              </div>
-            </Paper>
-            <Paper
-              elevation={0}
-              style={{
-                left: "20px", // Adjust as needed
                 marginTop: "20px",
                 textAlign: "left",
                 padding: "10px",
                 boxShadow: "0 0 0 1px #D4CFCF", // Add a 2px black stroke
               }}
             >
-              <Typography
-                style={{
-                  fontSize: "1.6rem",
-                  fontFamily: "Poppins",
-                }}
-              >
-                Facilities
-              </Typography>
-              <div style={{ display: "flex", flexWrap: "wrap" }}>
-                {property_facilities.map((facility) => (
-                  <div style={{ marginLeft: "20px", width: "25%" }}>
-                    <Typography key={facility.facilitiesid}>
-                      {facility.facilities_name}
-                    </Typography>
+              <div style={{ display: "flex" }}>
+                <div
+                  style={{ flex: 1, paddingRight: "20px", minHeight: "300px" }}
+                >
+                  <Typography
+                    style={{
+                      fontSize: "2rem",
+                      fontWeight: "bold",
+                      fontFamily: "Poppins",
+                    }}
+                  >
+                    Amenities
+                  </Typography>
+                  <div style={{ flexWrap: "wrap" }}>
+                    {property_info.property_amenities.map((amenity) => (
+                      <div style={{ width: "50%" }} key={amenity.amenityid}>
+                        <Typography>{amenity.amenity_name}</Typography>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                <div style={{ flex: 1, paddingRight: "20px" }}>
+                  <Typography
+                    style={{
+                      fontSize: "2rem",
+                      fontWeight: "bold",
+                      fontFamily: "Poppins",
+                    }}
+                  >
+                    Facilities
+                  </Typography>
+                  <div style={{ flexWrap: "wrap" }}>
+                    {property_info.property_facilities.map((facility) => (
+                      <div style={{ width: "50%" }} key={facility.facilitiesid}>
+                        <Typography>{facility.facilities_name}</Typography>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Typography
+                    style={{
+                      fontSize: "2rem",
+                      fontWeight: "bold",
+                      fontFamily: "Poppins",
+                    }}
+                  >
+                    Services
+                  </Typography>
+                  <div style={{ flexWrap: "wrap" }}>
+                    {property_info.property_services.map((service) => (
+                      <div style={{ width: "50%" }} key={service.serviceid}>
+                        <Typography>{service.service_name}</Typography>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </Paper>
           </div>
@@ -311,7 +355,6 @@ export default function QuiltedImageList() {
                     style={{
                       marginTop: "40px",
                       display: "flex",
-                      flexDirection: "col",
                     }}
                   >
                     <DatePicker
@@ -386,11 +429,6 @@ export default function QuiltedImageList() {
           >
             How to Get Here
           </Typography>
-          <Typography style={{ fontSize: "1.125rem", fontFamily: "Poppins" }}>
-            Discover the vibrant hub of Megaworld Newtown Cebu, nestled in the
-            heart of Mactan Island, easily accessible by taking a jeepney bound
-            for Punta Engaño from downtown Cebu City.
-          </Typography>
           <Typography
             component="ul" // Render as an unordered list
             style={{
@@ -400,152 +438,8 @@ export default function QuiltedImageList() {
               paddingLeft: "20px", // Add left padding to match bullet
             }}
           >
-            <li>
-              Start from downtown Cebu City near SM City Cebu or Ayala Center
-              Cebu, common transportation hubs.
-            </li>
-            <li>
-              Look for jeepneys heading to "Punta Engaño" or "Lapu-Lapu City"
-              for Mactan Island access.
-            </li>
-            <li>
-              Board a jeepney with appropriate signage or ask locals for
-              confirmation.
-            </li>
-            <li>
-              Pay the fare, typically PHP 40 to PHP 50, and ensure exact change
-              if possible.
-            </li>
-            <li>
-              Traverse either the Marcelo Fernan Bridge or Mactan-Mandaue Bridge
-              to Mactan Island.
-            </li>
-
-            <li>
-              Disembark at Punta Engaño in Lapu-Lapu City, the final stop.
-            </li>
-            <li>
-              Megaworld Newtown Cebu is located nearby, adjacent to Mactan
-              Newtown.
-            </li>
-            <li>
-              Walk a short distance from the jeepney stop to reach specific
-              destinations within the complex.
-            </li>
+            {property_info.property_details.property_directions}
           </Typography>
-        </Paper>
-        <Paper
-          elevation={0}
-          style={{
-            left: "20px", // Adjust as needed
-            textAlign: "left",
-            padding: "10px",
-            maxWidth: "calc(65% - 40px)", // Adjust to leave space for padding
-            top: "40px",
-            backgroundColor: "#F4F7FA",
-          }}
-        >
-          <Typography
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              fontFamily: "Poppins",
-            }}
-          >
-            Guest Reviews
-          </Typography>
-          {/* Progress Bar */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gridGap: "20px",
-              marginTop: "20px",
-            }}
-          >
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>
-                Cleanliness:
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.cleanliness * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>Location:</Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.location * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>
-                Free Wi-Fi:
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.freeWifi * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>Staff:</Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.cleanliness * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>
-                Facilities:
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.location * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>Comfort:</Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.freeWifi * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>Security:</Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.cleanliness * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>
-                Value for Money:
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.location * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-            <div>
-              <Typography style={{ marginBottom: "5px" }}>
-                Food Quality:
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={guestReview.freeWifi * 10}
-                style={{ height: "10px" }}
-              />
-            </div>
-          </div>
         </Paper>
         <ReservationForm />
       </Container>
@@ -553,27 +447,35 @@ export default function QuiltedImageList() {
   );
 }
 
-const itemData = [
+const property_images = [
   {
-    img: "image1.png",
-    title: "Image1",
+    id: 132,
+    src: "https://drive.google.com/thumbnail?id=1SvJFWaxbMkDnjvemhQWmr0VOGvZhbxb0",
     rows: 2,
     cols: 2,
   },
   {
-    img: "image2.png",
-    title: "Image2",
+    id: 136,
+    src: "https://drive.google.com/thumbnail?id=1jtRFdO-jnsvOyvFh6tgW7vx5VlviK6oD",
+    rows: 1,
+    cols: 1,
   },
   {
-    img: "image3.png",
-    title: "Image3",
+    id: 137,
+    src: "https://drive.google.com/thumbnail?id=1Ft6hiOwuPoTKyIz-xgSbGS_qfsFu1Fvd",
+    cols: 1,
+    rows: 1,
   },
   {
-    img: "image4.png",
-    title: "Image4",
+    id: 138,
+    src: "https://drive.google.com/thumbnail?id=1SLTFennA-9Vcueawn9KCRSTw8kWsC12t",
+    cols: 1,
+    rows: 1,
   },
   {
-    img: "image5.png",
-    title: "Image5",
+    id: 139,
+    src: "https://drive.google.com/thumbnail?id=1HXBjDcLXETGT4JzQuSN0wKtzel8nOvCk",
+    cols: 1,
+    rows: 1,
   },
 ];
