@@ -1,9 +1,10 @@
 /* Navbar */
 
-body {
-  margin: 0; /* Remove default margin */
-}
+body{
 
+  margin:0;
+  padding: 0;
+}
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -38,13 +39,55 @@ body {
   border: none; /* Remove border */
   margin-left: 20px; /* Add space between links and button */
 }
-.property-listing {
-  background-color: #2a06f5; /* Yellow background */
+.sign-up {
+  background-color: #F9CC41; /* Yellow background */
   padding: 10px 20px;
   border-radius: 5px;
   color: #ffffff;
   border: none; /* Remove border */
   margin-left: 20px; /* Add space between links and button */
+}
+
+/* Sign In Button */
+.sign-in,
+.sign-up,
+.property-listing {
+  background-color: #F9CC41; /* Yellow background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  border: none; /* Remove border */
+  margin-left: 20px; /* Add space between links and button */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.sign-in:hover,
+.sign-up:hover{
+  background-color: #A334CF   ; /* Darker yellow on hover */
+  color: #ffffff;
+}
+
+.property-listing:hover {
+  background-color: #ADC939   ; /* Darker yellow on hover */
+  color: #ffffff;
+}
+
+
+
+.sign-in:active,
+.sign-up:active,
+.property-listing:active {
+  background-color: #C5890C; /* Even darker yellow on click */
+}
+
+.property-listing {
+  background-color: #A334CF; /* Yellow background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  border: none; /* Remove border */
+  margin-left: 1.5rem; /* Add space between links and button */
+  margin-right: 1.5rem;
 }
 /* Logo */
 .logo img {

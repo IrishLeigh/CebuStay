@@ -1,0 +1,13 @@
+
+/* Assuming your image file is in the same directory as your CSS file */
+.registration-page {
+  
+  /* Set the background image */
+  background-image: url("/public/RegisterBG.png");
+  /* Set background size to cover the entire container */
+  background-size: cover;
+  /* Center the background image */
+  background-position: center;
+  /* Set background attachment to fixed to ensure the image remains fixed while scrolling */
+  background-attachment: fixed;
+}

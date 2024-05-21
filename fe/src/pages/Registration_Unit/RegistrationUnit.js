@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useCallback} from "react";
 import { Container, Hidden } from "@mui/material";
 import axios from "axios";
 import UnitInfo_2 from "../../components/registration_unit/registration_unitDetails/unitDetails_2";
@@ -18,13 +18,19 @@ import "./Registration.css"; // Import CSS file
 import AnimatePage from "./AnimatedPage";
 import PaymentMethods from "../../components/registration_unit/registration_pMethods/PaymentMethods";
 import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
+import "./RegistrationUnitBG.css";
 
 export default function RegistrationUnit() {
   const [step, setStep] = useState(1);
   const finalStep = 13; // Define the total number of steps
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  
 
   // State variables for form data
-  const { addressData, mapVal } = useData();
+  const { addressData ,mapVal} = useData();
   const [selectedType, setSelectedType] = useState("");
   const [selectedPropertyType, setSelectedPropertyType] = useState("");
   const [propertyInfo, setPropertyInfo] = useState({});
@@ -52,7 +58,6 @@ export default function RegistrationUnit() {
   const prevStep = () => {
     setStep(step - 1);
   };
-
   // Function to handle form submission
   const handleSubmit = async () => {
     try {
@@ -70,11 +75,12 @@ export default function RegistrationUnit() {
       //   selectedAmenities,
       // });
       // console.log("Form submitted successfully:", response.data);
+      setLoading(true);
 
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid: 6,
+          userid: 1,
           property_name: propertyInfo.propertyName,
           property_type: selectedType,
           property_desc: propertyInfo.propertyDescription,
@@ -308,6 +314,8 @@ export default function RegistrationUnit() {
                               }
                             )
                             console.log('Manager:',manager.data);
+                            console.log('Successfulty Registered');
+                            setModalMessage("Successfully Registered");
                           }
                         }
                       }
@@ -325,17 +333,28 @@ export default function RegistrationUnit() {
       // Reset all state variables here if needed
     } catch (error) {
       console.error("Error submitting form:", error);
-    }
-  };
+      setModalMessage("Submission failed. Please try again later.");
+    }finally {
+      // Hide modal and reset loading state after a delay
+      setTimeout(() => {
+          setShowModal(false);
+          setLoading(false);
+      }, 2000);
+  }
+};
+
 
   // Callback functions to handle form data changes
   const handleSelectedTypeChange = (type) => {
     setSelectedType(type);
   };
 
-  const handleSelectedPropertyTypeChange = (propertyType) => {
+ 
+  const handleSelectedPropertyTypeChange = useCallback((propertyType) => {
+    // Handle the change in the parent component
     setSelectedPropertyType(propertyType);
-  };
+    console.log('Selected Property Type:', propertyType);
+  }, []);
   const handlePropertyInformationChange = (newPropertyData) => {
     setPropertyInfo(newPropertyData);
   };
@@ -388,259 +407,334 @@ export default function RegistrationUnit() {
     // Update the paymentData state with the new data
     setPaymentData(data);
   };
+  useEffect(() => {
+    localStorage.setItem("registrationFormData", JSON.stringify({
+      selectedType,
+      selectedPropertyType,
+      propertyInfo,
+      unitDetailsData,
+      bedroomDetails,
+      houseRulesData,
+      policiesData,
+      selectedImages,
+      locationDetails,
+      selectedAmenities,
+      unitPricing,
+      hostData,
+      paymentData,
+      // Add more form data variables as needed
+      // Other form data...
+    }));
+  }, [selectedType, selectedPropertyType, propertyInfo, unitDetailsData, bedroomDetails, houseRulesData, policiesData, selectedImages, locationDetails, selectedAmenities, unitPricing, hostData, paymentData /* Add other form data dependencies here */]);
+
+  // UseEffect to retrieve form data from localStorage on component mount
+  useEffect(() => {
+    const savedData = JSON.parse(localStorage.getItem("registrationFormData"));
+    if (savedData) {
+      setSelectedType(savedData.selectedType);
+      setSelectedPropertyType(savedData.selectedPropertyType);
+      setPropertyInfo(savedData.propertyInfo);
+      setUnitDetailsData(savedData.unitDetailsData);
+      setBedroomDetailsData(savedData.bedroomDetails);
+      setHouseRulesData(savedData.houseRulesData);
+      setPoliciesData(savedData.policiesData);
+      setSelectedImages(savedData.selectedImages);
+      setLocationDetails(savedData.locationDetails);
+      setSelectedAmenities(savedData.selectedAmenities);
+      setUnitPricing(savedData.unitPricing);
+      setHostData(savedData.hostData);
+      setPaymentData(savedData.paymentData);
+      // Add more form data state variables as needed
+      // Set other form data state variables...
+    }
+  }, []);
   
-  console.log("Payment Data From Parent", paymentData);
+  //   console.log("Property Data From Parent", propertyInfo);
+  // console.log("Propertyselctedtype  from Parents: ", selectedPropertyType);
+  // console.log("Property Type from Parent: ", selectedType);
+  // console.log("Unitdetaisl data from Parent: ", unitDetailsData);
+  // console.log("Bedroom Dteails:", bedroomDetails);
+  // console.log("House Rulese Data:", houseRulesData);
+  // console.log("Policies Data:", policiesData);
+  // console.log("Selected Images :", selectedImages);
+  // console.log("Location Details :", locationDetails);
+  // console.log("Amenties :", selectedAmenities);
+  // console.log("Unit Pricing :", unitPricing);
+  console.log("hostData", hostData);
+  // console.log("Payment Data", paymentData);
+
+
+
+
+  // console.log("Payment method from Parent: ", paymentData);
+
+  
+  
   return (
-    <Container maxWidth="xl" sx={{ overflowX: "hidden" }}>
-      {step === 1 && (
-        <div>
-          <AnimatePage>
-            <Properties onSelectedTypeChange={handleSelectedTypeChange} />
-          </AnimatePage>
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "flex-end" }}
-          >
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+    <div className="registration-page">
+      <Container maxWidth="xl" sx={{ overflowX: "hidden" }}>
+        {step === 1 && (
+          <div>
+            <AnimatePage>
+              <Properties onSelectedTypeChange={handleSelectedTypeChange} />
+            </AnimatePage>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 2 && (
-        <div>
-          <AnimatePage>
-            <PropertyType
-              onSelectedPropertyTypeChange={handleSelectedPropertyTypeChange}
-            />
-          </AnimatePage>
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+        )}
+        {step === 2 && (
+          <div>
+            <AnimatePage>
+              <PropertyType
+                onSelectedPropertyTypeChange={handleSelectedPropertyTypeChange}
+              />
+            </AnimatePage>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 3 && (
-        <div>
-          <AnimatePage>
-            <SimplePaper
-              onPropertyInformationChange={handlePropertyInformationChange}
-            />
-          </AnimatePage>
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+        )}
+        {step === 3 && (
+          <div>
+            <AnimatePage>
+              <SimplePaper
+                onPropertyInformationChange={handlePropertyInformationChange}
+              />
+            </AnimatePage>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 4 && (
-        <div>
-          <AnimatePage>
-            <UnitInfo_2 onRoomDetailsChange={handleRoomDetailsChange} />
-          </AnimatePage>
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+        )}
+        {step === 4 && (
+          <div>
+            <AnimatePage>
+              <UnitInfo_2 onRoomDetailsChange={handleRoomDetailsChange} />
+            </AnimatePage>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 5 && (
-        <div>
-          <AnimatePage>
-            <BedroomDetails
-              onBedroomDetailsChange={handleBedRoomDetailsChange}
-            />
-          </AnimatePage>
+        )}
+        {step === 5 && (
+          <div>
+            <AnimatePage>
+              <BedroomDetails
+                onBedroomDetailsChange={handleBedRoomDetailsChange}
+              />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 6 && (
-        <div>
-          <AnimatePage>
-            <AccommodationUploadPhotos onImagesChange={handleImagesChange} />
-          </AnimatePage>
+        )}
+        {step === 6 && (
+          <div>
+            <AnimatePage>
+              <AccommodationUploadPhotos onImagesChange={handleImagesChange} />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 7 && (
-        <div>
-          <AnimatePage>
-            {/* The logic behind this is nag gamit ug useContext, using the address and mapval defined above */}
-            <AddressForm />
-          </AnimatePage>
+        )}
+        {step === 7 && (
+          <div>
+            <AnimatePage>
+              {/* The logic behind this is nag gamit ug useContext, using the address and mapval defined above */}
+              <AddressForm />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 8 && (
-        <div className="animationContainer">
-          <AnimatePage>
-            <AccommodationPropertyInformation
-              onAmenitiesChange={handleAmenitiesChange}
-            />
-          </AnimatePage>
+        )}
+        {step === 8 && (
+          <div className="animationContainer">
+            <AnimatePage>
+              <AccommodationPropertyInformation
+                onAmenitiesChange={handleAmenitiesChange}
+              />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 9 && (
-        <div className="animationContainer">
-          <AnimatePage>
-            <HouseRules onHouseRulesDataChange={handleHouseRulesDataChange} />
-          </AnimatePage>
+        )}
+        {step === 9 && (
+          <div className="animationContainer">
+            <AnimatePage>
+              <HouseRules onHouseRulesDataChange={handleHouseRulesDataChange} />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 10 && (
-        <div>
-          <AnimatePage>
-            <Policies onPoliciesDataChange={handlePoliciesDataChange} />
-          </AnimatePage>
+        )}
+        {step === 10 && (
+          <div>
+            <AnimatePage>
+              <Policies onPoliciesDataChange={handlePoliciesDataChange} />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 11 && (
-        <div>
-          <AnimatePage>
-            <UnitPricing handleUnitPricing={handleUnitPricing} />
-          </AnimatePage>
+        )}
+        {step === 11 && (
+          <div>
+            <AnimatePage>
+              <UnitPricing handleUnitPricing={handleUnitPricing} />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 12 && (
-        <div>
-          <AnimatePage>
-            <PaymentMethods onPaymentDataChange={handlePaymentDataChange} />
-          </AnimatePage>
+        )}
+        {step === 12 && (
+          <div>
+            <AnimatePage>
+              <PaymentMethods onPaymentDataChange={handlePaymentDataChange} />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={nextStep}>
-              Next
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-      {step === 13 && (
-        <div>
-          <AnimatePage>
-            <PartnerVerification onHostDataChange={handleHostDataChange} />
-          </AnimatePage>
+        )}
+        {step === 13 && (
+          <div>
+            <AnimatePage>
+              <PartnerVerification onHostDataChange={handleHostDataChange} />
+            </AnimatePage>
 
-          <div
-            className="stepperFooter"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <button className="stepperPrevious" onClick={prevStep}>
-              Previous
-            </button>
-            <button className="stepperNext" onClick={handleSubmit}>
-              Submit
-            </button>
+            <div
+              className="stepperFooter"
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <button className="stepperPrevious" onClick={prevStep}>
+                Previous
+              </button>
+              <button className="stepperNext" onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-    </Container>
+        )}
+        {showModal && (
+          <div className="modal">
+              <div className="modal-content">
+                  {/* Loader */}
+                  {loading && <div className="loader">Loading...</div>}
+                  
+                  {/* Modal message */}
+                  {!loading && <div>{modalMessage}</div>}
+              </div>
+          </div>
+)}
+
+      </Container>
+    </div>
   );
 }

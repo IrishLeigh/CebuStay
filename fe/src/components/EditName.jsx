@@ -14,14 +14,14 @@ const EditName = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
   const { user } = useUser();
-  console.log("User:", user);
+  // console.log("User:", user);
   const userId = 8;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
-        console.log("Response Data another:", response.data);
+        // console.log("Response Data another:", response.data);
         setFirstname(response.data.firstname);
         setLastname(response.data.lastname);
         setLoading(false);
@@ -43,7 +43,7 @@ const EditName = () => {
         firstname: firstname,
         lastname: lastname,
       });
-      console.log('update profile', response.data);
+      // console.log('update profile', response.data);
       setSuccessMessage('Data updated successfully!');
       navigate('/EditProfile');
     } catch (error) {
@@ -84,7 +84,7 @@ const EditName = () => {
         </div>
       </div>
       <div className="edit-name-buttons">
-        <Link to="/EditProfile">
+        <Link to="/profile">
           <button className="edit-button cancel-button" style={{ color: '#007bff', backgroundColor: 'white' }} onMouseEnter={(e) => { e.target.style.color = 'white'; e.target.style.backgroundColor = '#007bff' }} onMouseLeave={(e) => { e.target.style.color = '#007bff'; e.target.style.backgroundColor = 'white' }}>Cancel</button>
         </Link>
         <button className="edit-button save-button" style={{ backgroundColor: '#007bff', color: 'white' }} onClick={handleSubmit}>Save</button>

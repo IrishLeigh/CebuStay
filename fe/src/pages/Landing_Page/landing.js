@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useUser } from "../components/UserProvider";
+import { useUser } from "../../components/UserProvider";
 
 const LandingPage = () => {
   const [user, setUser] = useState(null);

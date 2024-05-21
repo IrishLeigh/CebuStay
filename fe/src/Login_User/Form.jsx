@@ -6,7 +6,7 @@ import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useUser } from "../components/UserProvider";
 
 
-const Form = () => {
+const Form = ({setToken}) => {
   const { loginUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,9 +56,7 @@ const Form = () => {
         setLoginError("");
       }, 3000);
       return;
-  
-
-    
+ 
     }
 
     try {
@@ -69,6 +67,7 @@ const Form = () => {
       if (response.data["status"] === "success") {
         const token = response.data["token"];
         localStorage.setItem("auth_token", token);
+        setToken(token);
   
         if (rememberMe) {
           localStorage.setItem("remembered_email", email);
@@ -78,9 +77,10 @@ const Form = () => {
           localStorage.removeItem("remembered_password");
         }
 
-        console.log("Login successful! USer iS: ", response.data);
+        console.log("Login successful! User iS: ", response.data);
         console.log(response.data["message"]);
         // console.log("Login successful!");
+
         navigate("/landing"); // Correct usage of navigate function
       } else {
         setLoginError("Invalid credentials"); // Update error message for invalid credentials
@@ -115,7 +115,7 @@ const Form = () => {
   }, []);
 
   return (
-    <div className="container">
+    <div className="formContainer">
       <div className="form-container">
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ fontWeight: '600', fontFamily: 'Open Sans' }}>Login to your account</h2>
@@ -180,7 +180,7 @@ const Form = () => {
             </div>
 
             <div className="forgotpassword" style={{ textAlign: 'right' }}>
-              <Link to="/login/ForgotPass">
+              <Link to="/login/forgot-password">
                 <span className="span">Forgot password?</span>
               </Link>
             </div>
@@ -189,7 +189,7 @@ const Form = () => {
           <button className="button-submit" style={{ background: "#1780CB" }} onClick={handleSubmit}>Login to Continue</button>
 
           <p className="p">Don't have an account?
-            <Link to="/login/register" className="span">Sign Up</Link>
+            <Link to="/register" className="span">Sign Up</Link>
           </p>
 
           <p className="p line">Or With</p>

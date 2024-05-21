@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -14,25 +14,37 @@ import { useData } from "../registration_location/contextAddressData";
 
 export default function UnitInfo_2({ onRoomDetailsChange }) {
   const { totalQTY } = useData();
-  const [unitDetailsData, setUnitDetailsData] = useState({
-    roomDetails: [
-      { roomType: "Bedroom", quantity: 0 },
-      { roomType: "Bathroom", quantity: 0 },
-      { roomType: "Living Room", quantity: 0 },
-      { roomType: "Kitchen", quantity: 0 },
-    ],
-    guestCapacity: "",
+  const [unitDetailsData, setUnitDetailsData] = useState(() => {
+    // Retrieve data from localStorage if available, otherwise use default data
+    const savedData = localStorage.getItem("unitDetailsData");
+    return savedData ? JSON.parse(savedData) : {
+      roomDetails: [
+        { roomType: "Bedroom", quantity: 0 },
+        { roomType: "Bathroom", quantity: 0 },
+        { roomType: "Living Room", quantity: 0 },
+        { roomType: "Kitchen", quantity: 0 },
+      ],
+      guestCapacity: "",
+    };
   });
+
+  useEffect(() => {
+    // Save data to localStorage whenever it changes
+    localStorage.setItem("unitDetailsData", JSON.stringify(unitDetailsData));
+    onRoomDetailsChange(unitDetailsData);
+  }, [unitDetailsData]);
 
   const totalBedrooms = unitDetailsData.roomDetails.reduce((total, room) => {
     if (room.roomType === "Bedroom") {
       total += room.quantity;
-      // Set the quantity in totalQty
     }
     return total;
   }, 0);
+  
+  // Call totalQTY after calculating totalBedrooms
   totalQTY(totalBedrooms);
-  // console.log("TOTALBEDROOMS: ",totalBedrooms)
+  
+ 
 
   const addRoom = () => {
     setUnitDetailsData((prevData) => ({
@@ -77,12 +89,6 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
     setUnitDetailsData({ ...unitDetailsData, guestCapacity: value });
   };
 
-  // Call the onRoomDetailsChange function whenever there's a change in room details
-  const handleSave = () => {
-    // console.log("Room Details:", unitDetailsData);
-    onRoomDetailsChange(unitDetailsData);
-  };
-  console.log("Unit Details Data: ",unitDetailsData);
   return (
     <Container maxWidth="lg">
       <Grid container justifyContent="center" alignItems="center">
@@ -94,8 +100,8 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
               alignItems: "center",
               minHeight: "100vh",
               padding: "1rem",
-              mt: 12,
-              mb: 12
+              mt: 8,
+              mb: 10
             }}
           >
             
@@ -105,9 +111,6 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
               <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
                 Describe your property in detail. 
               </Typography>
-              </div>
-              <div className='nextButton-container'>
-                  <button className="nextButton" onClick={handleSave} >Save</button>
               </div>
             </Box>    
             <Paper
@@ -183,7 +186,7 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                   </Box>
                 ))}
                 <IconButton
-                  aria-label="add"
+                    aria-label="add"
                   onClick={addRoom}
                   sx={{
                     color: "grey",
@@ -199,6 +202,7 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                   <AddCircleIcon /> Add Room
                 </IconButton>
               </div>
+
               <Box sx={{ mt: "1rem" }}>
                 <Typography
                   variant="h6"
@@ -224,21 +228,6 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                   }}
                 />
               </Box>
-<<<<<<< HEAD
-<<<<<<< HEAD
-              <div className='button-container'>
-                <button className="button" onClick={handleSave} sx={{ color: '#007BFF' }}>Next</button>
-              </div>
-=======
-              <IconButton onClick={handleSave} sx={{ color: "#007BFF" }}>
-                Save
-              </IconButton>
->>>>>>> b13dcc5 (BERT IT IS UP TO YOU NOW)
-=======
-              {/* <IconButton onClick={handleSave} sx={{ color: "#007BFF" }}>
-                Save
-              </IconButton> */}
->>>>>>> a79df4a (Initial Booking Registration with minor changes)
             </Paper>
           </Box>
         </Grid>
@@ -246,3 +235,4 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
     </Container>
   );
 }
+

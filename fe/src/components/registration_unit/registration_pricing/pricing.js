@@ -6,7 +6,6 @@ import { styled } from "@mui/material/styles";
 import CheckIcon from "@mui/icons-material/Check";
 import Container from "@mui/material/Container";
 import { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -16,66 +15,57 @@ const Root = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   "& > :not(style) ~ :not(style)": {
-    marginTop: theme.spacing(2),
+    margin: 0,
   },
 }));
 
 export default function UnitPricing({ handleUnitPricing }) {
   const pesoSign = "\u20B1";
   const [priceEntered, setPriceEntered] = useState(false);
-  const [basePrice, setBasePrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [basePrice, setBasePrice] = useState(() => {
+    const savedBasePrice = localStorage.getItem('basePrice');
+    return savedBasePrice ? savedBasePrice : "";
+  });
   const [priceUnit, setPriceUnit] = useState({
-    basePrice: "",
+    basePrice: basePrice,
     profit: "",
-    maxPrice: "",
   });
 
   const handleChange = (event) => {
-    // Remove non-numeric characters
     const numericValue = event.target.value.replace(/\D/g, "");
-    // Set the input value without formatting
     event.target.value = numericValue;
-    // Check if the input has content
     setPriceEntered(Boolean(numericValue));
-    // Set the base price state
     setBasePrice(numericValue);
   };
 
-  const profit = () => {
-    // Calculate the profit by deducting 18% from the base price
+  const calculateProfit = (basePrice) => {
     const discount = basePrice * 0.18;
-    const profitValue = (basePrice - discount).toFixed(2); // Round to 2 decimal places
-    // Return the calculated profit
+    const profitValue = (basePrice - discount).toFixed(2);
     return profitValue;
   };
 
   useEffect(() => {
-    // Update the price unit whenever base price changes or on component mount
-    const profitValue = profit();
+    const profitValue = calculateProfit(basePrice);
     setPriceUnit({ basePrice, profit: profitValue });
   }, [basePrice]);
 
-  // Callback function to handle save action
-  const handleSave = () => {
-    // Execute the handleUnitPricing callback function provided by the parent component
+  useEffect(() => {
+    localStorage.setItem('basePrice', basePrice);
     handleUnitPricing(priceUnit);
-    console.log("priceUnit: ", priceUnit);
-  };
+  }, [priceUnit, basePrice, handleUnitPricing]);
 
   return (
     <Container maxWidth="xl">
-      <div
+      <Box
         style={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
+          mt: 12,
+          mb: 12
         }}
       >
-        <Button onClick={handleSave} variant="contained">
-          Save
-        </Button>
         <Paper
           elevation={3}
           sx={{
@@ -95,6 +85,7 @@ export default function UnitPricing({ handleUnitPricing }) {
               p: 2,
               justifyContent: "center",
               alignItems: "center",
+              
             }}
           >
             <div style={{ fontSize: "24px", margin: 0 }}>
@@ -178,7 +169,6 @@ export default function UnitPricing({ handleUnitPricing }) {
                       }}
                     >
                       <div style={{ fontWeight: "bold", fontSize: "24px" }}>
-                        {" "}
                         {pesoSign}
                         {priceUnit.profit}
                       </div>
@@ -189,7 +179,7 @@ export default function UnitPricing({ handleUnitPricing }) {
             )}
           </Box>
         </Paper>
-      </div>
+      </Box>
     </Container>
   );
 }

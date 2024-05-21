@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Typography, Grid, Container } from "@mui/material";
 import { motion } from "framer-motion";
 import '../../components/Button/NextButton.css'
@@ -104,17 +104,21 @@ function AmenityButton({ icon, text, isSelected, onClick }) {
   );
 }
 
-function CategorySection({ category, label, onItemsChange }) {
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
+function CategorySection({ category, label, onItemsChange, initialSelectedItems }) {
+  const [selectedAmenities, setSelectedAmenities] = useState(initialSelectedItems || []);
 
   const toggleItemSelection = (itemText) => {
-    if (selectedAmenities.includes(itemText)) {
-      setSelectedAmenities(selectedAmenities.filter((item) => item !== itemText));
-    } else {
-      setSelectedAmenities([...selectedAmenities, itemText]);
-    }
-    onItemsChange(category, selectedAmenities); // Notify parent component about the updated selected items
+    const newSelectedAmenities = selectedAmenities.includes(itemText)
+      ? selectedAmenities.filter((item) => item !== itemText)
+      : [...selectedAmenities, itemText];
+
+    setSelectedAmenities(newSelectedAmenities);
+    onItemsChange(category, newSelectedAmenities); // Notify parent component about the updated selected items
   };
+
+  useEffect(() => {
+    onItemsChange(category, selectedAmenities);
+  }, [selectedAmenities, category, onItemsChange]);
 
   return (
     <>
@@ -149,20 +153,26 @@ function CategorySection({ category, label, onItemsChange }) {
 
 function AccommodationPropertyInformation({ onAmenitiesChange }) {
   const [selectedAmenities, setSelectedAmenities] = useState({
-    basicAmenities: [],
-    basicServices: [],
-    facilities: [],
+    basicAmenities: JSON.parse(localStorage.getItem("basicAmenities")) || [],
+    basicServices: JSON.parse(localStorage.getItem("basicServices")) || [],
+    facilities: JSON.parse(localStorage.getItem("facilities")) || [],
   });
 
   const handleItemsChange = (category, items) => {
-    setSelectedAmenities((prevSelectedAmenities) => ({
-      ...prevSelectedAmenities,
-      [category]: items,
-    }));
+    setSelectedAmenities((prevSelectedAmenities) => {
+      const updatedAmenities = {
+        ...prevSelectedAmenities,
+        [category]: items,
+      };
+      localStorage.setItem(category, JSON.stringify(updatedAmenities[category]));
+      return updatedAmenities;
+    });
     onAmenitiesChange(category, items); // Notify parent component about the updated selected items
   };
-  
-  
+
+  useEffect(() => {
+    localStorage.setItem("selectedAmenities", JSON.stringify(selectedAmenities));
+  }, [selectedAmenities]);
 
   return (
     <>
@@ -186,16 +196,19 @@ function AccommodationPropertyInformation({ onAmenitiesChange }) {
           category="basicAmenities"
           label={"Basic Amenities"}
           onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicAmenities}
         />
         <CategorySection
           category="basicServices"
           label={"Basic Services"}
           onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicServices}
         />
         <CategorySection
           category="facilities"
           label={"Facilities"}
           onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.facilities}
         />
         {/* Display selected items for each category */}
         <Typography variant="h6" sx={{ mt: 4 }}>
