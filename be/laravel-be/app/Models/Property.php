@@ -43,4 +43,9 @@ class Property extends Model
         return $this->hasMany(File::class, 'propertyid', 'propertyid');
     }
 
+    public function booking()
+    {
+        return $this->hasMany(Booking::class, 'propertyid', 'propertyid');
+    }
+
 }

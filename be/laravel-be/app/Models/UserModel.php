@@ -16,4 +16,9 @@ class UserModel extends Model
     {
         return $this->hasOne(Property::class, 'userid', 'userid');
     }
+
+    public function booking()
+    {
+        return $this->hasMany(Booking::class, 'propertyid', 'propertyid');
+    }
 }

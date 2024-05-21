@@ -94,3 +94,6 @@ Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgB
 Route::get('/getallfirstimg', 'App\Http\Controllers\FileController@getAllFirstImg');
 //User 
 Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager');
+
+//FOR BOOKING
+Route::post('/insertbooking', 'App\Http\Controllers\BookingController@insertBooking');
