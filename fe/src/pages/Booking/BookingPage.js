@@ -40,7 +40,7 @@ function BookingPage() {
     const postBooking = async () => {
       try {
         const userid = 6; // Replace with the logged in user's id
-        const propertyid = 60; // Replace with the property id
+        const propertyid = 1; // Replace with the property id
         const booker_fname = guestDetails.firstName;
         const booker_lname = guestDetails.lastName;
         const booker_email = guestDetails.email;
@@ -94,6 +94,40 @@ function BookingPage() {
         );
         console.log(bookingres.data.message);
         //BERT PADAYUN DIRE
+        console.log("Booking data:", bookingres.data);
+        if (bookingres) {
+
+          try {
+            const response = await axios.post('http://localhost:8000/api/create-payment-link', {
+              amount: price * 100,
+              description: guests,
+              remarks: lengthStay,
+            });
+
+            const link = response.data.link.data.attributes.checkout_url;
+
+            const getRes = await axios.put('http://localhost:8000/api/bookings', {
+              bookingid: bookingres.data.bookingid.bookingid,
+              pid: response.data.payment.pid
+            });
+            const postData = {
+              pid: response.data.payment.pid,
+              linkid: response.data.link.data.id,
+              amount: price * 100,
+              description: guests,
+              remarks: lengthStay,
+            };
+
+            await axios.put('http://localhost:8000/api/update-payment-link', postData);
+
+            window.open(link, '_blank');
+
+          } catch (error) {
+            console.error('Error creating payment link:', error);
+          }
+
+        }
+
       } catch (error) {
         console.log(error);
       }
