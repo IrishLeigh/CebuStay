@@ -48,7 +48,7 @@ const EditPhone = () => {
         userid: user.userid, // Assuming userId is defined somewhere in your frontend code
         cellnumber: cellphone_number,
       });
-      console.log('update profile', response.data);
+      // console.log('update profile', response.data);
       setSuccessMessage('Phone number updated successfully!');
       navigate('/EditProfile');
     } catch (error) {

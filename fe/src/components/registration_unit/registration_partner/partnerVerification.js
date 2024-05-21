@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -6,7 +6,6 @@ import Container from "@mui/material/Container";
 import { RadioGroup } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import Button from '@mui/material/Button'; // Add this import 
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
 import '../../../components/Button/NextButton.css'
@@ -28,12 +27,14 @@ export default function PartnerVerification({ onHostDataChange }) {
     setCompanyData(data);
   };
 
-  const handleSave = () => {
-    const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
-    console.log("Data to send", dataToSend);
-    onHostDataChange(dataToSend);
-  };
+  // Memoize the onHostDataChange function to prevent infinite loops
+  const memoizedOnHostDataChange = useCallback(onHostDataChange, []);
 
+  useEffect(() => {
+    const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+    // Only call memoizedOnHostDataChange if the data has actually changed
+    memoizedOnHostDataChange(dataToSend);
+  }, [hostType, individualData, companyData, memoizedOnHostDataChange]);
 
   return (
     <Container
@@ -63,9 +64,6 @@ export default function PartnerVerification({ onHostDataChange }) {
             <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
               For verification, please tell us who you are.
             </Typography>
-          </div>
-          <div className='nextButton-container'>
-              <button className="nextButton" onClick={handleSave} >Save</button>
           </div>
         </Box>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -32,10 +32,19 @@ const propertyTypes = [
 export default function Properties({ onSelectedTypeChange }) {
   const [selectedType, setSelectedType] = useState(null);
   
+  useEffect(() => {
+    const storedSelectedType = localStorage.getItem("selectedType");
+    if (storedSelectedType) {
+      setSelectedType(storedSelectedType);
+    }
+  }, []);
+
   const handleClick = (button) => {
-    setSelectedType(selectedType === button ? null : button);
-    onSelectedTypeChange(selectedType === button ? null : button); // Propagate selectedType to parent
-    console.log("Property:", selectedType === button ? null : button); // Log selected property
+    const newSelectedType = selectedType === button ? null : button;
+    setSelectedType(newSelectedType);
+    localStorage.setItem("selectedType", newSelectedType);
+    onSelectedTypeChange(newSelectedType);
+    console.log("Property:", newSelectedType);
   };
 
   return (

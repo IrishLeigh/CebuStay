@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -6,36 +6,40 @@ import Container from "@mui/material/Container";
 import { RadioGroup } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 export default function PaymentMethods({ onPaymentDataChange }) {
-  const [paymentData, setPaymentData] = useState({
-    selectedPayment: '',
-    selectedPayout: ''
+  const [paymentData, setPaymentData] = useState(() => {
+    const savedPaymentData = localStorage.getItem('paymentData');
+    return savedPaymentData ? JSON.parse(savedPaymentData) : {
+      selectedPayment: '',
+      selectedPayout: ''
+    };
   });
 
   const handleChange = (event) => {
-    setPaymentData(prevState => ({
-      ...prevState,
+    const newPaymentData = {
+      ...paymentData,
       selectedPayment: event.target.value
-    }));
+    };
+    setPaymentData(newPaymentData);
+    localStorage.setItem('paymentData', JSON.stringify(newPaymentData));
+    onPaymentDataChange(newPaymentData);
   };
 
   const handlePayout = (event) => {
-    setPaymentData(prevState => ({
-      ...prevState,
+    const newPaymentData = {
+      ...paymentData,
       selectedPayout: event.target.value
-    }));
+    };
+    setPaymentData(newPaymentData);
+    localStorage.setItem('paymentData', JSON.stringify(newPaymentData));
+    onPaymentDataChange(newPaymentData);
   };
 
-  const handleSave = () => {
-    if (typeof onPaymentDataChange === 'function') {
-      onPaymentDataChange(paymentData);
-    }
-  };
+  useEffect(() => {
+    onPaymentDataChange(paymentData);
+  }, []);
 
-  console.log("paymentData", paymentData);
-  
   return (
     <Container
       maxWidth="md"
@@ -58,18 +62,14 @@ export default function PaymentMethods({ onPaymentDataChange }) {
         <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <div>
             <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
-             Payment Methods
+              Payment Methods
             </Typography>
 
-            <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
+            <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2} >
               Idk here yet.
             </Typography>
           </div>
-          <div className='nextButton-container'>
-              <button className="nextButton" onClick={handleSave} >Save</button>
-          </div>
         </Box>
-
 
         <Paper elevation={3} sx={{ p: "2rem", width: "100%" }}>
           <Box
@@ -170,8 +170,6 @@ export default function PaymentMethods({ onPaymentDataChange }) {
                 </Typography>
               </RadioGroup>
             </div>
-                
-            
           </Box>
         </Paper>
       </Box>

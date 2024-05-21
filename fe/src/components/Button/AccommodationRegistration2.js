@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -20,14 +20,25 @@ const propertyTypes = [
 
 export default function PropertyType({ onSelectedPropertyTypeChange }) {
   const [selectedPropertyType, setSelectedPropertyType] = useState(null);
+
+  useEffect(() => {
+    const storedSelectedPropertyType = localStorage.getItem("selectedPropertyType");
+    if (storedSelectedPropertyType) {
+      setSelectedPropertyType(storedSelectedPropertyType);
+    }
+  }, []);
+
   const handleClick = (button) => {
-    setSelectedPropertyType(selectedPropertyType === button ? null : button);
-    onSelectedPropertyTypeChange(selectedPropertyType === button ? null : button); // Propagate selectedPropertyType to parent
+    const newSelectedPropertyType = selectedPropertyType === button ? null : button;
+    setSelectedPropertyType(newSelectedPropertyType);
+    localStorage.setItem("selectedPropertyType", newSelectedPropertyType);
+    onSelectedPropertyTypeChange(newSelectedPropertyType);
   };
 
 
+  console.log("Property Type", selectedPropertyType);
   return (
-    <Box>
+    <Box mb={5} mt={-9}>
       <Container
         maxWidth="md"
         sx={{
@@ -53,6 +64,7 @@ export default function PropertyType({ onSelectedPropertyTypeChange }) {
             fontSize: "1.5rem",
             textAlign: "left",
             marginBottom: 5,
+            marginTop: 0
           }}
         >
           What guests can book?

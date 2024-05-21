@@ -153,7 +153,7 @@ export default function RegistrationUnit() {
               const street = locationDetails.addressData.street;
               const postalCode = locationDetails.addressData.postalCode;
               const pinloc = locationDetails.mapVal;
-              console.log('propertyId pinloc:', pinloc);
+              // console.log('propertyId pinloc:', pinloc);
               const propertyLoc = await axios.post(
                 "http://127.0.0.1:8000/api/location",
                 {
@@ -165,7 +165,7 @@ export default function RegistrationUnit() {
                 }
               )
               if (propertyLoc.data.locationid) {
-                console.log('Amenities:', selectedAmenities);
+                // console.log('Amenities:', selectedAmenities);
                 for (const amenity of selectedAmenities['basicAmenities']) {
                   // Make a POST request for each amenity
                   const resAmenity = await axios.post(
@@ -215,7 +215,7 @@ export default function RegistrationUnit() {
                 const partiesAllowed = houseRulesData.partiesAllowed;
                 const noiseRestrictions = houseRulesData.noiseRestrictions;
 
-                console.log('HouseRules', houseRulesData);
+                // console.log('HouseRules', houseRulesData);
                 const houseRules = await axios.post(
                   "http://127.0.0.1:8000/api/houseRules",
                   {
@@ -233,7 +233,7 @@ export default function RegistrationUnit() {
                     check_out_until: checkOutUntil,
                   }
                 )
-                console.log('houseRules: ', houseRules);
+                // console.log('houseRules: ', houseRules);
               }
             }
           }

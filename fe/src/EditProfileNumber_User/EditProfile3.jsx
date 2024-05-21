@@ -9,7 +9,48 @@ const EditProfile3 = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+    const token = localStorage.getItem("auth_token");
 
+    // console.log("Token:", token);
+    if (token) {
+      const jwtToken = token.split("=")[1];
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .then((response) => {
+          setUser(response.data["data"]);
+          
+        })
+        .catch((error) => {
+          alert("Error decoding JWT token:", error);
+          setUser(null);
+        });
+        console.log ("user token",token);
+    } else {
+      setUser(null);
+    }
+  }, []);
+  
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        console.log("Response Data:", response.data); // Log the entire response object
+        console.log("Response Data Email:", response.data.userid); // Log the entire response object
+        setProfile(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching profile data.");
+        console.error(error);
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -32,6 +73,9 @@ const EditProfile3 = () => {
     fetchProfile();
   }, []);
   
+  
+  console.log ("user data",user);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
