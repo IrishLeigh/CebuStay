@@ -14,6 +14,8 @@ use App\Http\Controllers\PaymentController;
 
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
+Route::put('/update-payment-link', [PaymentController::class, 'updatePaymentLink']);
+Route::get('/getpayments', [PaymentController::class, 'getAllPayments']);
 
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
@@ -98,3 +100,4 @@ Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager
 
 //FOR BOOKING
 Route::post('/insertbooking', 'App\Http\Controllers\BookingController@insertBooking');
+Route::put('/bookings', 'App\Http\Controllers\BookingController@updateBookingPid');

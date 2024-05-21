@@ -49,4 +49,20 @@ class BookingController extends Controller
         return response()->json(['message' => 'Booking created, Proceed to Payment', 'status' => 'success', 'bookingid' => $booking]);
 
     }
+
+    public function updateBookingPid(Request $request)
+    {
+        $this->enableCors($request);
+        $bookingid = $request->input('bookingid');
+        $booking = Booking::find($bookingid);
+
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error'], 404);
+        }
+
+        $booking->pid = $request->input('pid');
+        $booking->save();
+
+        return response()->json(['message' => 'Booking PID updated successfully', 'status' => 'success']);
+    }
 }
