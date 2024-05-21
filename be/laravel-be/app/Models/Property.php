@@ -21,7 +21,7 @@ class Property extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userid', 'userid');
+        return $this->belongsTo(UserModel::class, 'userid', 'userid');
     }
     public function home()
     {
