@@ -12,11 +12,10 @@ return new class extends Migration {
     {
         Schema::create('tbl_payment', function (Blueprint $table) {
             $table->increments('pid');
-            $table->string('paymentid');
-            $table->string('linkid');
+            $table->string('linkid') -> nullable();
             $table->double('amount');
             $table->string('description');
-            $table->string('remarks');
+            $table->int('remarks');
             $table->timestamps();
         });
     }
