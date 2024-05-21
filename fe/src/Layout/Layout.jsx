@@ -15,6 +15,13 @@ const Layout = () => {
     bookingOptions: []
   });
 
+  const [searchData, setSearchData] = useState({
+    destination: '',
+    startDate: new Date(),
+    endDate: null,
+    guestCapacity: '',
+});
+
   const handleFilterChange = (newFilters) => {
     setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
   };
@@ -26,7 +33,7 @@ const Layout = () => {
   return (
     <div className="layout-container">
       <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
-      <MainContent selectedAmenities={selectedAmenities} accommodations={accommodationlist} filters={filters} pricinglist={pricinglist} />
+      <MainContent selectedAmenities={selectedAmenities} accommodations={accommodationlist} filters={filters} pricinglist={pricinglist} searchData={searchData} setSearchData={setSearchData} />
     </div>
   );
 };

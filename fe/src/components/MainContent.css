@@ -10,31 +10,195 @@ body {
   overflow-y: auto; /* Enable vertical scrolling if content exceeds container height */
 
 }
+
 .content-container {
     max-width: 1200px; /* Adjust as needed */
     margin: 0 auto;
   }
-  
 
-
-
-  
-  .filter-button, .text-button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
+  .btn-shiny2 {
+    width: 160px;
     font-size: 16px;
+    font-weight: 100;
+    color: #fff;
     cursor: pointer;
-    margin-left: 4%;
-    height: 4rem;
-    width: 8rem;
-    border-radius: .5rem;
-    color: black;
-    font-family:'poppins', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: bold;
-    
+    margin: 20px;
+    height: 60px;
+    text-align: center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    transition: all .4s ease-in-out;
+    font-family: 'poppins', Tahoma, Geneva, Verdana, sans-serif;
+
   }
+  
+  .btn-shiny2:hover {
+    background-position: 100% 0;
+    transition: all .4s ease-in-out;
+  }
+  
+  .btn-shiny2:focus {
+    outline: none;
+  }
+  
+  .btn-shiny2 {
+    background-image: linear-gradient(
+      to right,
+      #25aae1,
+      #4481eb,
+      #04befe,
+      #3f86ed
+    );
+  }
+
+  .btn-shiny4 {
+    width: 160px;
+    font-size: 16px;
+    font-weight: 100;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    height: 60px;
+    text-align: center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    transition: all .4s ease-in-out;
+    font-family: 'poppins', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .btn-shiny4:hover {
+    background-position: 100% 0;
+    transition: all .4s ease-in-out;
+  }
+  
+  .btn-shiny4:focus {
+    outline: none;
+  }
+  
+  .btn-shiny4 {
+    background-image: linear-gradient(
+      to right,
+      #25aae1,
+      #4481eb,
+      #04befe,
+      #3f86ed
+    );
+  }
+  
+  .btn-shiny5 {
+    width: 160px;
+    font-size: 16px;
+    font-weight: 100;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    height: 60px;
+    text-align: center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    transition: all .4s ease-in-out;
+    font-family: 'poppins', Tahoma, Geneva, Verdana, sans-serif;
+
+  }
+  
+  .btn-shiny5:hover {
+    background-position: 100% 0;
+    transition: all .4s ease-in-out;
+  }
+  
+  .btn-shiny5:focus {
+    outline: none;
+  }
+  
+  .btn-shiny5 {
+    background-image: linear-gradient(
+      to right,
+      #25aae1,
+      #4481eb,
+      #04befe,
+      #3f86ed
+    );
+  }
+
+  .btn-shiny6 {
+    width: 160px;
+    font-size: 16px;
+    font-weight: 100;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    height: 60px;
+    text-align: center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    transition: all .4s ease-in-out;
+    font-family: 'poppins', Tahoma, Geneva, Verdana, sans-serif;
+
+  }
+  
+  .btn-shiny6:hover {
+    background-position: 100% 0;
+    transition: all .4s ease-in-out;
+  }
+  
+  .btn-shiny6:focus {
+    outline: none;
+  }
+  
+  .btn-shiny6 {
+    background-image: linear-gradient(
+      to right,
+      #25aae1,
+      #4481eb,
+      #04befe,
+      #3f86ed
+    );
+  }
+
+  .btn-shiny7 {
+    width: 160px;
+    font-size: 16px;
+    font-weight: 100;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    height: 60px;
+    text-align: center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    transition: all .4s ease-in-out;
+    font-family: 'poppins', Tahoma, Geneva, Verdana, sans-serif;
+
+  }
+  
+  .btn-shiny7:hover {
+    background-position: 100% 0;
+    transition: all .4s ease-in-out;
+  }
+  
+  .btn-shiny7:focus {
+    outline: none;
+  }
+  
+  .btn-shiny7 {
+    background-image: linear-gradient(
+      to right,
+      #25aae1,
+      #4481eb,
+      #04befe,
+      #3f86ed
+    );
+  }
+  
+
+
+
+
 
   .card {
     width: 100%;

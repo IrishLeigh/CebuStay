@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import './MainContent.css';
 import Search from './Search';
-import axios from 'axios';
 import { MdForward } from 'react-icons/md';
 
 
@@ -11,7 +10,7 @@ export const accommodationlist = [
       "propertyid": 59,
       "property_name": "GardenLudi",
       "property_desc": "Elahang Ludi sa Lacion",
-      "property_type": "House",
+      "property_type": "Home",
       "unit_type": "Private room",
       "src": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/418124699.jpg?k=ab5255aeec58442350af38e5b820c038390fecda205a5f19ca0973cf97a6d6bf&o=&hp=1",
       "guest_capacity": 2,
@@ -58,7 +57,7 @@ export const accommodationlist = [
     "propertyid": 62,
     "property_name": "GardenKat",
     "property_desc": "Elahang Kat sa Algeria",
-    "property_type": "House",
+    "property_type": "Home",
     "unit_type": "Private room",
     "src": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/418124699.jpg?k=ab5255aeec58442350af38e5b820c038390fecda205a5f19ca0973cf97a6d6bf&o=&hp=1",
     "guest_capacity": 3,
@@ -74,7 +73,7 @@ export const accommodationlist = [
   "propertyid": 1,
   "property_name": "GardenGen",
   "property_desc": "Elahang Kat sa Algeria",
-  "property_type": "House",
+  "property_type": "Home",
   "unit_type": "Private room",
   "src": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/418124699.jpg?k=ab5255aeec58442350af38e5b820c038390fecda205a5f19ca0973cf97a6d6bf&o=&hp=1",
   "guest_capacity": 3,
@@ -90,7 +89,7 @@ export const accommodationlist = [
   "propertyid": 2,
   "property_name": "GardenAl",
   "property_desc": "Elahang Kat sa Algeria",
-  "property_type": "House",
+  "property_type": "Home",
   "unit_type": "Private room",
   "src": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/418124699.jpg?k=ab5255aeec58442350af38e5b820c038390fecda205a5f19ca0973cf97a6d6bf&o=&hp=1",
   "guest_capacity": 3,
@@ -105,7 +104,7 @@ export const accommodationlist = [
   "propertyid": 3,
   "property_name": "GardenPhoebe",
   "property_desc": "Elahang Kat sa Algeria",
-  "property_type": "House",
+  "property_type": "Home",
   "unit_type": "Private room",
   "src": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/418124699.jpg?k=ab5255aeec58442350af38e5b820c038390fecda205a5f19ca0973cf97a6d6bf&o=&hp=1",
   "guest_capacity": 4,
@@ -130,6 +129,7 @@ export const accommodationlist = [
     "booking_options":["Self Check-in", "Instant Book"]
 }
 ];
+
 export const pricinglist =[
   {
       "proppricingid": 9,
@@ -190,10 +190,22 @@ export const pricinglist =[
 ];
 
 
-
-const MainContent = ({ selectedAmenities, accommodations, filters, pricinglist }) => {
+const MainContent = ({ selectedAmenities = [],
+  accommodations = accommodationlist,
+  filters = {
+    minPrice: null,
+    maxPrice: null,
+    bedrooms: 'Any',
+    beds: 'Any',
+    bathrooms: 'Any',
+    bookingOptions: [],
+  },
+  pricinglist = [],
+}) => {
   const [selectedPropertyType, setSelectedPropertyType] = useState('Any');
   const [guestCapacity, setGuestCapacity] = useState(null);
+
+  
 
   const { minPrice, maxPrice,bedrooms, beds, bathrooms, bookingOptions } = filters;
 
@@ -237,34 +249,34 @@ const MainContent = ({ selectedAmenities, accommodations, filters, pricinglist }
   return (
     <div className="all-container">
   <Search onSearch={handleSearch} />    
-  <div className="filter-buttons">
-      <button className="filter-button" 
-              style={{ backgroundColor: '#16B4DD', color: 'Black', fontWeight:'500'}}
+  <div className="filter-buttons" style={{marginLeft:'4.5rem'}}>
+      <button className="btn-shiny2" 
+              
               onMouseEnter={(e) => e.target.style.backgroundColor = 'aqua'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#16B4DD'}
-              onClick={() => handlePropertyTypeClick('House')}
+              onClick={() => handlePropertyTypeClick('Home')}
               >
-              House
+              Home
           </button>
-          <button className="filter-button" style={{ backgroundColor: '#ADC939', color: 'Black', fontWeight:'500' }}
+          <button className="btn-shiny4" 
               onMouseEnter={(e) => e.target.style.backgroundColor = 'aqua'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#ADC939'}
               onClick={() => handlePropertyTypeClick('Hotel')}>
               Hotel
           </button>
-          <button className="filter-button" style={{ backgroundColor: '#F9CC41', color: 'Black', fontWeight:'500'}}
+          <button className="btn-shiny5" 
               onMouseEnter={(e) => e.target.style.backgroundColor = 'aqua'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#F9CC41'}
               onClick={() => handlePropertyTypeClick('Homestay')}>
               Homestay
           </button>
-          <button className="filter-button" style={{ backgroundColor: '#EE414B', color: 'Black', fontWeight:'500' }}
+          <button className="btn-shiny6" 
               onMouseEnter={(e) => e.target.style.backgroundColor = 'aqua'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#EE414B'}
               onClick={() => handlePropertyTypeClick('Apartment')}>
               Apartment
           </button>
-          <button className="filter-button" style={{ backgroundColor: '#16B4DD', color: 'Black', fontWeight:'500' }}
+          <button className="btn-shiny7" 
               onMouseEnter={(e) => e.target.style.backgroundColor = 'aqua'}
               onMouseLeave={(e) => e.target.style.backgroundColor = '#16B4DD'}
               onClick={() => handlePropertyTypeClick('Any')}>
