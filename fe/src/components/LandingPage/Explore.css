@@ -104,11 +104,42 @@
     color: white;
     border-radius: 10px;
   }
+
+  .image-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start; 
+    margin-left: -650px;
+  }
+
+
+
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 300px; 
+    right: 250px;
+    top: 1350px;
+    background-color: #fff; 
+    border: 1px solid #ccc; 
+    padding: 15px;
+    border-radius: 15px;
+  }
+  
+
+  .card-img {
+    border-radius: 15px 15px 10px 10px;
+  }
+  
   
   .map-image {
     aspect-ratio: 0.49;
     object-fit: auto;
-    object-position: center;
+    object-position: left;
     width: 585px;
     align-self: start;
     margin-top: 28px;
