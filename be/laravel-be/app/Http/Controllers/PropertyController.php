@@ -48,7 +48,8 @@ class PropertyController extends Controller
 
         $property->save();
         $propertyid = $property->propertyid;
-        if ($property->property_type == "Home") {
+        $homeid = null;
+        if ($property->property_type == "Home" || $property->property_type == "Apartment") {
             $home = new Home();
             $home->propertyid = $propertyid;
             $home->unit_type = $property->unit_type;

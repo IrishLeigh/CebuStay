@@ -101,3 +101,4 @@ Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager
 //FOR BOOKING
 Route::post('/insertbooking', 'App\Http\Controllers\BookingController@insertBooking');
 Route::put('/bookings', 'App\Http\Controllers\BookingController@updateBookingPid');
+Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');

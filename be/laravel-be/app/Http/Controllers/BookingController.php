@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Booker;
 use App\Models\Guest;
+use App\Models\Property;
+use App\Models\Location;
 
 class BookingController extends Controller
 {
@@ -65,4 +67,34 @@ class BookingController extends Controller
 
         return response()->json(['message' => 'Booking PID updated successfully', 'status' => 'success']);
     }
+
+    public function getAllBookingByUserId(Request $request)
+    {
+        $this->enableCors($request);
+
+        $userid = $request->input('userid');
+
+        // Eager load the property and location relationships
+        $bookings = Booking::with(['property.location'])
+            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'status')
+            ->where('userid', $userid)
+            ->get();
+
+        // Format the response to include the additional property and location data
+        $formattedBookings = $bookings->map(function ($booking) {
+            return [
+                'bookingid' => $booking->bookingid,
+                'booking_date' => $booking->booking_date,
+                'property_name' => $booking->property->property_name,
+                'property_type' => $booking->property->property_type,
+                'address' => $booking->property->location->address,
+                'guest_count' => $booking->guest_count,
+                'total_price' => $booking->total_price,
+                'status' => $booking->status,
+            ];
+        });
+
+        return response()->json($formattedBookings);
+    }
+
 }
