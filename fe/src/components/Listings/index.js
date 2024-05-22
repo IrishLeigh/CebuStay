@@ -20,24 +20,47 @@ import Sidebar from "../Sidebar";
 
 const Listings = () => {
   // Sample data for the table
-  const listings = [
+  const userproperties = [
     {
-      property: "Ocean View Villa",
-      id: "1",
-      address: "123 Beachside Ave",
-      nightlyPrice: "$300",
-      paymentMethod: "Credit Card",
-      cancellationPolicy: "Flexible",
+      propertyid: 59,
+      property_name: "GardenLudi",
+      property_type: "Home",
+      address: "Labangon",
+      paymentmethod: "Gcash",
+      is_cancel_plan: 1,
     },
     {
-      property: "Mountain Retreat",
-      id: "2",
-      address: "456 Mountain Rd",
-      nightlyPrice: "$200",
-      paymentMethod: "Paypal",
-      cancellationPolicy: "Strict",
+      propertyid: 60,
+      property_name: "GardenBert",
+      property_type: "Home",
+      address: "Labangon",
+      paymentmethod: "Gcash",
+      is_cancel_plan: 1,
     },
-    // Add more listings as needed
+    {
+      propertyid: 61,
+      property_name: "GardenRhad",
+      property_type: "Home",
+      address: "Labangon",
+      paymentmethod: "Paypal",
+      is_cancel_plan: 1,
+    },
+    {
+      propertyid: 62,
+      property_name: "GardenKat",
+      property_type: "Home",
+      address: "Labangon",
+      paymentmethod: "Paypal",
+      is_cancel_plan: 1,
+    },
+    {
+      propertyid: 63,
+      property_name: "GardenRish",
+      property_type: "Home",
+      address: "Labangon",
+      paymentmethod: "Bank",
+      is_cancel_plan: 0,
+    },
   ];
 
   // State to manage the modal open/close and current listing being edited
@@ -74,24 +97,24 @@ const Listings = () => {
                   <TableCell>Property</TableCell>
                   <TableCell>Id</TableCell>
                   <TableCell>Address</TableCell>
-                  <TableCell>Nightly Price</TableCell>
                   <TableCell>Payment Method</TableCell>
                   <TableCell>Cancellation Policy</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {listings.map((listing) => (
-                  <TableRow key={listing.id}>
+                {userproperties.map((listing) => (
+                  <TableRow key={listing.propertyid}>
                     <TableCell padding="checkbox">
                       <Checkbox />
                     </TableCell>
-                    <TableCell>{listing.property}</TableCell>
-                    <TableCell>{listing.id}</TableCell>
+                    <TableCell>{listing.property_name}</TableCell>
+                    <TableCell>{listing.propertyid}</TableCell>
                     <TableCell>{listing.address}</TableCell>
-                    <TableCell>{listing.nightlyPrice}</TableCell>
-                    <TableCell>{listing.paymentMethod}</TableCell>
-                    <TableCell>{listing.cancellationPolicy}</TableCell>
+                    <TableCell>{listing.paymentmethod}</TableCell>
+                    <TableCell>
+                      {listing.is_cancel_plan ? "Yes" : "No"}
+                    </TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleOpen(listing)}>
                         <EditIcon />
@@ -125,11 +148,11 @@ const Listings = () => {
                     fullWidth
                     margin="normal"
                     label="Property"
-                    value={currentListing.property}
+                    value={currentListing.property_name}
                     onChange={(e) =>
                       setCurrentListing({
                         ...currentListing,
-                        property: e.target.value,
+                        property_name: e.target.value,
                       })
                     }
                   />
@@ -148,24 +171,12 @@ const Listings = () => {
                   <TextField
                     fullWidth
                     margin="normal"
-                    label="Nightly Price"
-                    value={currentListing.nightlyPrice}
-                    onChange={(e) =>
-                      setCurrentListing({
-                        ...currentListing,
-                        nightlyPrice: e.target.value,
-                      })
-                    }
-                  />
-                  <TextField
-                    fullWidth
-                    margin="normal"
                     label="Payment Method"
-                    value={currentListing.paymentMethod}
+                    value={currentListing.paymentmethod}
                     onChange={(e) =>
                       setCurrentListing({
                         ...currentListing,
-                        paymentMethod: e.target.value,
+                        paymentmethod: e.target.value,
                       })
                     }
                   />
@@ -173,11 +184,11 @@ const Listings = () => {
                     fullWidth
                     margin="normal"
                     label="Cancellation Policy"
-                    value={currentListing.cancellationPolicy}
+                    value={currentListing.is_cancel_plan ? "Yes" : "No"}
                     onChange={(e) =>
                       setCurrentListing({
                         ...currentListing,
-                        cancellationPolicy: e.target.value,
+                        is_cancel_plan: e.target.value === "Yes" ? 1 : 0,
                       })
                     }
                   />
