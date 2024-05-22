@@ -100,11 +100,12 @@ export default function RegistrationUnit() {
       //   selectedAmenities,
       // });
       // console.log("Form submitted successfully:", response.data);
-
+      
+      setOpen(true);
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid: 6,
+          userid: 1,
           property_name: propertyData.propertyName,
           property_type: selectedType,
           property_desc: propertyData.propertyDescription,

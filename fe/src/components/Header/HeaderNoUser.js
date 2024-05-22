@@ -2,41 +2,28 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import { useNavigate } from 'react-router-dom';
 
 const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function HeaderNoUser() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const navigate = useNavigate();
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+  const handlePageClick = (page) => {
+    if (page === 'Accommodation') {
+      window.location.href = '/accommodation'; // Redirect to accommodation page
+    } else {
+      window.location.href = `/${page.toLowerCase().replace(' ', '-')}`; // Redirect to other pages
+    }
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null); 
+  const handleSignUpClick = () => {
+    window.location.href = '/register'; // Redirect to the register page
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const handleLoginClick = () => {
+    window.location.href = '/login'; // Redirect to the login page
   };
- 
 
   return (
     <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black', }} m={0} p={0}>
@@ -52,47 +39,20 @@ function HeaderNoUser() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handlePageClick(page)}
                 sx={{ mx: 1, color: 'black' }}
               >
-                <Typography sx={{ fontSize: "0.9rem",color:'#16B4DD' }} fontWeight="bold">{page}</Typography>
+                <Typography sx={{ fontSize: "0.9rem", color:'#16B4DD' }} fontWeight="bold">{page}</Typography>
               </Button>
             ))}
           </Box>
-          <button className="sign-in">Log In</button>
-          <button className="sign-in">Sign Up</button>
-          {/* <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box> */}
+
+          <button className="sign-in" onClick={handleLoginClick}>Log In</button>
+          <button className="sign-in" onClick={handleSignUpClick}>Sign Up</button>
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
+
 export default HeaderNoUser;

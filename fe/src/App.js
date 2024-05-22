@@ -26,6 +26,7 @@ import Sidebar from "./components/Sidebar";
 import React from "react";
 import Listings from "./components/Listings";
 import AccommodationReservation from "./components/AccommodationReservation";
+import Layout from './Layout/Layout';
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -38,7 +39,6 @@ function App() {
     const storedToken = localStorage.getItem("auth_token");
     if (storedToken) {
       setToken(storedToken);
-      setIsAuthenticated(!!storedToken);
     } else {
       setToken(null);
     }
@@ -68,7 +68,7 @@ function App() {
           {token ? <HeaderUser token={token} setToken={setToken} /> : <HeaderNoUser setToken={setToken} />}
           <Routes>
             <Route path="/login" element={<Form setToken={setToken} />} />
-            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<Registration />} />
             <Route path="/login/forgot-password" element={<ForgotPassword />} />
             <Route path="/edit-name" element={<EditName />} />
@@ -76,6 +76,8 @@ function App() {
             <Route path="/forgot-password/otp" element={<OTP />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
            <Route path="/aregister" element={<RegistrationUnit />} /> 
+           <Route path="/accommodation" element={<Layout />} /> 
+           
 
             {/* Private Routes */}
             <Route element={<PrivateRoutes token={token} />} >
