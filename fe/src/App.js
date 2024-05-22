@@ -22,6 +22,7 @@ import { useState, useEffect } from 'react';
 import PrivateRoutes from './protectedRoutes/ProtectedRoutes';
 import axios from 'axios';
 import Layout from './Layout/Layout';
+import LayoutLandingPage from './components/LandingPage/LayoutLandingPage';
 
 function App() {
 
@@ -62,7 +63,7 @@ function App() {
           {token ? <HeaderUser token={token} setToken={setToken} /> : <HeaderNoUser setToken={setToken} />}
           <Routes>
             <Route path="/login" element={<Form setToken={setToken} />} />
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<LayoutLandingPage />} />
             <Route path="/register" element={<Registration />} />
             <Route path="/login/forgot-password" element={<ForgotPassword />} />
             <Route path="/edit-name" element={<EditName />} />
@@ -71,6 +72,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPass />} />
            <Route path="/aregister" element={<RegistrationUnit />} /> 
            <Route path="/accommodation" element={<Layout />} /> 
+          
            
 
             {/* Private Routes */}
@@ -84,6 +86,7 @@ function App() {
 
 
             {/* Redirect to login for any unmatched route */}
+            <Route path="*" element={<LayoutLandingPage />} />
             {/* <Route path="*" element={<Navigate to="/login" />} /> */}
           </Routes>
 

@@ -2,7 +2,7 @@ import React from 'react';
 import './Hidden.css';
 import { MdForward } from 'react-icons/md';
 
-const hiddenGemsData = [
+export const hiddenGemsData = [
   {
     title: "Paradise Beach",
     location: "Bantayan Island",
@@ -50,15 +50,15 @@ const Hidden = (props) => {
           </span>
         </div>
 
-        <div className="card-container">
+        <div className="card-container2">
           {hiddenGemsData.map((gem, index) => (
-            <div className="card" key={index}>
+            <div className="card2" key={index}>
               <img
                 src={gem.imageUrl}
                 alt={gem.altText}
-                className="card-image"
+                className="card-image2"
               />
-              <span className="card-text">
+              <span className="card-text2">
                 <span>{gem.title}</span>
                 <br />
                 <span>{gem.location}</span>
