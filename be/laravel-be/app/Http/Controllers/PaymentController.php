@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Services\PayMongoService;
 use Illuminate\Http\Request;
 
@@ -16,23 +17,40 @@ class PaymentController extends Controller
 
     public function createPaymentLink(Request $request)
     {
+        $this->enableCors($request);
         $request->validate([
             'amount' => 'required|integer|min:100', // PayMongo requires the amount in cents
             'description' => 'required|string|max:255',
-            'remarks' => 'nullable|string|max:255',
+            'remarks' => 'nullable|integer|max:100', // remarks should be string, not integer
         ]);
 
+        // $linkid = null;
         $amount = $request->input('amount');
         $description = $request->input('description');
-        $remarks = $request->input('remarks', '');
+        $remarks = $request->input('remarks');
 
+        // Create the payment link using the PayMongo service
         $link = $this->payMongoService->createLink($amount, $description, $remarks);
 
-        return response()->json($link);
+        // Save the payment record in the database
+        $payment = new Payment();
+        // $payment->linkid = $linkid;
+        $payment->amount = $amount;
+        $payment->description = $description;
+        $payment->remarks = $remarks;
+        $payment->save();
+
+        // Return the payment record along with the PayMongo link
+        return response()->json([
+            'payment' => $payment, // include the payment record in the response
+            'link' => $link, // include the PayMongo link in the response
+        ]);
     }
+
 
     public function retrievePaymentLink($linkId)
     {
+        // Retrieve the payment link using the PayMongo service
         $link = $this->payMongoService->retrieveLink($linkId);
 
         if (!$link) {
@@ -44,6 +62,7 @@ class PaymentController extends Controller
 
     public function retrievePaymentLinkApi(Request $request, $linkId)
     {
+        // Retrieve the payment link using the PayMongo service
         $link = $this->payMongoService->retrieveLink($linkId);
 
         if (!$link) {
@@ -52,4 +71,57 @@ class PaymentController extends Controller
 
         return response()->json($link);
     }
+    public function updatePaymentLink(Request $request)
+    {
+        $this->enableCors($request);
+
+        $request->validate([
+            'pid' => 'required|integer|max:255', // Ensure pid is provided
+            'linkid' => 'required|string|max:255', // Ensure linkid is provided
+            'amount' => 'required|integer|min:100', // PayMongo requires the amount in cents
+            'description' => 'required|string|max:255',
+            'remarks' => 'nullable|integer|max:255', // Ensure remarks is a string
+        ]);
+
+        // Retrieve input values
+        $pid = $request->input('pid');
+        $linkid = $request->input('linkid');
+        $amount = $request->input('amount');
+        $description = $request->input('description');
+        $remarks = $request->input('remarks');
+
+        // Find the existing payment record by pid
+        $payment = Payment::find($pid);
+
+        if ($payment) {
+            // Update the payment record
+            $payment->linkid = $linkid;
+            $payment->amount = $amount;
+            $payment->description = $description;
+            $payment->remarks = $remarks;
+            $payment->save();
+
+            return response()->json([
+                'message' => 'Payment link updated successfully.',
+                'payment' => $payment,
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Payment record not found for updating.',
+            ], 404);
+        }
+    }
+
+
+    public function getAllPayments()
+    {
+        $payments = Payment::all();
+
+        return response()->json([
+            'payments' => $payments,
+        ]);
+    }
+
+
+
 }

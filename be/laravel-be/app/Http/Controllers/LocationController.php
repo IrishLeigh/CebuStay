@@ -27,4 +27,10 @@ class LocationController extends Controller
 
         return response()->json($location);
     }
+    public function getAllLocation(Request $request)
+    {
+        $this->enableCors($request);
+        $locations = Location::select('propertyid', 'address');
+        return response()->json(['status' => 'success', 'data' => $locations->get()]);
+    }
 }

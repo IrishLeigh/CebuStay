@@ -14,6 +14,8 @@ use App\Http\Controllers\PaymentController;
 
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
+Route::put('/update-payment-link', [PaymentController::class, 'updatePaymentLink']);
+Route::get('/getpayments', [PaymentController::class, 'getAllPayments']);
 
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
@@ -50,6 +52,7 @@ Route::post('/houseRules', 'App\Http\Controllers\HouseruleController@create');
 // Routes for location
 // Route::post('/location', [LocationController::class, 'create']);
 Route::post('/location', 'App\Http\Controllers\LocationController@create');
+Route::get('/getlocations', 'App\Http\Controllers\LocationController@getAllLocation');
 
 // Route for updating password based on email
 // Route::get('/forgotPass', [UserForgotPassController::class, 'changePass']);
@@ -97,3 +100,5 @@ Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager
 
 //FOR BOOKING
 Route::post('/insertbooking', 'App\Http\Controllers\BookingController@insertBooking');
+Route::put('/bookings', 'App\Http\Controllers\BookingController@updateBookingPid');
+Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');
