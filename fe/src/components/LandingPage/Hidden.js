@@ -1,72 +1,79 @@
-import React from 'react'
-import './Hidden.css'
+import React from 'react';
+import './Hidden.css';
+import { MdForward } from 'react-icons/md';
+
+const hiddenGemsData = [
+  {
+    title: "Paradise Beach",
+    location: "Bantayan Island",
+    imageUrl: "/paradise.png",
+    altText: "paradise12641"
+  },
+  {
+    title: "Hermit’s Cove",
+    location: "Aloguinsan",
+    imageUrl: "/hermitscove.png",
+    altText: "hermitscove12640"
+  },
+  {
+    title: "Aguinid Falls",
+    location: "Samboan",
+    imageUrl: "/aguinidfalls.png",
+    altText: "aguinidfalls12640"
+  },
+   {
+    title: "Aguinid Falls",
+    location: "Samboan",
+    imageUrl: "/aguinidfalls.png",
+    altText: "aguinidfalls12640"
+  },
+  {
+    title: "Sirao Pictorial Garden",
+    location: "Liloan",
+    imageUrl: "/sirao.png",
+    altText: "sirao12640"
+  }
+];
 
 const Hidden = (props) => {
   return (
     <div className="frame471-container">
-
       <div className="frame471-frame471">
-        <div className="frame471-group414">
-          <div className="frame471-group214">
-            <span className="frame471-text">
-              <span>Hidden Gems</span>
+        <div className="frame471-group214">
+          <span className="frame471-text" style={{marginTop:'1rem', textAlign:'center'}}>
+            <span style={{ marginLeft: '4.5rem', textAlign:'center' }}>Hidden Gems</span>
+          </span>
+          <span className="frame471-text02">
+            <span style={{ marginLeft: '4.5rem' }}>
+              Discover the Untouched Wonders of Nature's Hidden Havens
             </span>
-            <span className="frame471-text02">
-              <span>
-                Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-                amet sint. Velit officia consequat duis enim velit mollit
-              </span>
-            </span>
-          </div>
-          <span className="frame471-text04">
-            <span>Paradise Beach</span>
-            <br></br>
-            <span>Bantayan Island</span>
           </span>
-          <span className="frame471-text08">
-            <span>Hermit’s Cove</span>
-            <br></br>
-            <span>Aloguinsan</span>
-          </span>
-          <img
-            src="/aguinidfalls.png"
-            alt="aguinidfalls12640"
-            className="frame471-aguinidfalls1"
-          />
-          <span className="frame471-text12">
-            <span>Aguinid Falls</span>
-            <br></br>
-            <span>Samboan</span>
-          </span>
-          <img
-            src="/sirao.png"
-            alt="sirao12640"
-            className="frame471-sirao1"
-          />
-          <span className="frame471-text16">
-            <span>Sirao Pictorial Garden</span>
-            <br></br>
-            <span>Liloan</span>
-          </span>
-          <div className="frame471-frame14">
-            <button className="frame471-text20">
-              View All Posts
-            </button>
-          </div>
-          <img
-            src="/hermitscove.png"
-            alt="hermitscove12640"
-            className="frame471-hermitscove1"
-          />
-          <img
-            src="/paradise.png"
-            alt="paradise12641"
-            className="frame471-paradise1"
-          />
         </div>
+
+        <div className="card-container">
+          {hiddenGemsData.map((gem, index) => (
+            <div className="card" key={index}>
+              <img
+                src={gem.imageUrl}
+                alt={gem.altText}
+                className="card-image"
+              />
+              <span className="card-text">
+                <span>{gem.title}</span>
+                <br />
+                <span>{gem.location}</span>
+              </span>
+              <button className="see-more-button" >
+                See More <MdForward />
+              </button>
+            </div>
+          ))}
+        </div>
+
+       
       </div>
     </div>
-  )
+  );
 }
 
-export default Hidden
+export default Hidden;
