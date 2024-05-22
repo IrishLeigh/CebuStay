@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { MdPerson, MdHistory, MdStar, MdDelete } from 'react-icons/md';
 import './EditProfile.css';
-
 import axios from 'axios';
 import { useUser } from "../components/UserProvider";
 

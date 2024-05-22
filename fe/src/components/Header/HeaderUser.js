@@ -37,36 +37,39 @@ function HeaderUser({ token, setToken }) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-//  const handleLogout = () => {
-//     // Clear JWT token from local storage
-//     localStorage.removeItem('auth_token');
-//     // Update token state to null
-//     setToken(null);
-//     // Navigate to login page or perform any additional logout tasks
-//     navigate('/login');
-//   };
-const handleSettings = (setting) => {
-  switch (setting) {
-    case 'Profile':
-      // Only navigate to profile if the user is authenticated
-      if (token) {
-        navigate('/profile');
-      }
-      break;
-    case 'Bookings':
-      navigate('/');
-      break;
-    case 'Logout':
-      localStorage.removeItem('auth_token');
-      setToken(null);
-      navigate('/login');
-      break;
-    default:
-      // Add handling for other settings if needed
-      break;
-  }
-};
-  
+
+  const handlePageClick = (page) => {
+    if (page === 'Accommodation') {
+      window.location.href = '/accommodation'; // Redirect to accommodation page
+    } else {
+      navigate(`/${page.toLowerCase().replace(' ', '-')}`); // Client-side navigation
+    }
+    handleCloseNavMenu();
+  };
+
+  const handleSettings = (setting) => {
+    switch (setting) {
+      case 'Profile':
+        // Only navigate to profile if the user is authenticated
+        if (token) {
+          navigate('/profile');
+        }
+        break;
+      case 'Bookings':
+        navigate('/');
+        break;
+      case 'Logout':
+        localStorage.removeItem('auth_token');
+        setToken(null);
+        navigate('/login');
+        break;
+      default:
+        // Add handling for other settings if needed
+        break;
+    }
+    handleCloseUserMenu();
+  };
+
   console.log("token from header user:", token);
   return (
     <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
@@ -82,24 +85,20 @@ const handleSettings = (setting) => {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handlePageClick(page)}
                 sx={{ mx: 1, color: 'black' }}
               >
                 <Typography sx={{ fontSize: "0.9rem",color:'#16B4DD' }} fontWeight="bold">{page}</Typography>
               </Button>
             ))}
 
-
-
             <button className="property-listing">
               <Link to="/aregister" style={{ textDecoration: 'none', color: 'inherit' }}>
                 List your property
               </Link>
             </button>
-
           </Box>
-          
-          
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -124,8 +123,8 @@ const handleSettings = (setting) => {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={() => handleSettings(setting)}>
-                <Typography textAlign="center">{setting}</Typography>
-              </MenuItem>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
               ))}
             </Menu>
           </Box>
@@ -134,4 +133,5 @@ const handleSettings = (setting) => {
     </AppBar>
   );
 }
+
 export default HeaderUser;

@@ -19,13 +19,13 @@ import AnimatePage from "./AnimatedPage";
 import PaymentMethods from "../../components/registration_unit/registration_pMethods/PaymentMethods";
 import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
 import "./RegistrationUnitBG.css";
+import {Modal , Backdrop, CircularProgress} from "@mui/material";
 
 export default function RegistrationUnit() {
   const [step, setStep] = useState(1);
   const finalStep = 13; // Define the total number of steps
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [modalMessage, setModalMessage] = useState(""); // Define modalMessage state variable
+  const [open, setOpen] = useState(false);
 
   // State variables for form data
   const { addressData, mapVal } = useData();
@@ -56,6 +56,9 @@ export default function RegistrationUnit() {
   const prevStep = () => {
     setStep(step - 1);
   };
+
+
+  
   // Function to handle form submission
   const handleSubmit = async () => {
     try {
@@ -73,13 +76,13 @@ export default function RegistrationUnit() {
       //   selectedAmenities,
       // });
       // console.log("Form submitted successfully:", response.data);
-      setLoading(true);
+      setOpen(true);
       console.log("propinfo:", propertyInfo);
       console.log("proptype gawass: ", selectedType);
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid: 6,
+          userid: 1,
           property_name: propertyInfo.propertyName,
           property_type: selectedType,
           property_desc: propertyInfo.propertyDescription,
@@ -328,12 +331,38 @@ export default function RegistrationUnit() {
                               const manager = await axios.post(
                                 "http://127.0.0.1:8000/api/becomeManager",
                                 {
-                                  userid: 6,
+                                  userid: 1,
                                 }
                               );
                               console.log("Manager:", manager.data);
                               console.log("Successfulty Registered");
                               setModalMessage("Successfully Registered");
+
+                              // Clear local storage after successful submission
+                              localStorage.removeItem("selectedPropertyType");
+                              localStorage.removeItem("propertyData");
+                              localStorage.removeItem("unitDetailsData");
+                              localStorage.removeItem("bedrooms");
+                              localStorage.removeItem("selectedImages");
+                              localStorage.removeItem("basicAmenities");
+                              localStorage.removeItem("basicServices");
+                              localStorage.removeItem("facilities");
+                              localStorage.removeItem("houseRulesData");
+                              localStorage.removeItem("paymentData");
+                              localStorage.removeItem("hostData");
+                              localStorage.removeItem("policiesData");
+                              localStorage.removeItem("paymentData");
+                              localStorage.removeItem("basePrice");
+
+                              console.log("Successfully removed localstorage")
+                              
+                              setOpen(false); // Close the circular progress
+                              setModalMessage("Successfully Registered");
+
+  
+                        
+                      
+
                             }
                           }
                         }
@@ -354,10 +383,7 @@ export default function RegistrationUnit() {
       setModalMessage("Submission failed. Please try again later.");
     } finally {
       // Hide modal and reset loading state after a delay
-      setTimeout(() => {
-        setShowModal(false);
-        setLoading(false);
-      }, 2000);
+    
     }
   };
   // Callback functions to handle form data changes
@@ -745,20 +771,36 @@ export default function RegistrationUnit() {
               <button className="stepperNext" onClick={handleSubmit}>
                 Submit
               </button>
+              {/* <button className="stepperNext" onClick={handleLoader}>
+                testing
+              </button> */}
             </div>
           </div>
         )}
-        {showModal && (
-          <div className="modal">
-            <div className="modal-content">
-              {/* Loader */}
-              {loading && <div className="loader">Loading...</div>}
+          {/* Modal for displaying messages */}
+      <Modal
+        open={!!modalMessage}
+        onClose={() => setModalMessage("")}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <div className="modal-content">
+          <h2 id="modal-title">{modalMessage}</h2>
+          <button
+            onClick={() => {
+              setModalMessage("");
+              window.location.href = '/'; // Redirect to homepage
+            }}
+          >
+            Go to Homepage
+          </button>
+        </div>
+      </Modal>
 
-              {/* Modal message */}
-              {!loading && <div>{modalMessage}</div>}
-            </div>
-          </div>
-        )}
+      {/* Loading indicator */}
+      <Backdrop open={open}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       </Container>
     </div>
   );
