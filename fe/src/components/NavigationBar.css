@@ -1,12 +1,18 @@
 /* Navbar */
+
+body {
+  margin: 0; /* Remove default margin */
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #ffffff; /* Change as needed */
   padding: 10px 20px;
-  box-shadow: 0 2px 4px rgba(16, 10, 10, 0.1); /* Adding shadow */
+  box-shadow: 0 2px 6px rgba(1, 0, 0, 0.2); /* Increased opacity and blur radius */
 }
+
 
 /* Text Links */
 .navbar-text {

@@ -36,6 +36,20 @@ const Registration = () => {
         return;
       }
 
+      // Check if email already exists
+      const emailCheckResponse = await axios.post(
+        "http://127.0.0.1:8000/registeruser",
+        {
+          action: "check_email",
+          email,
+        }
+      );
+
+      if (emailCheckResponse.data.exists) {
+        setError("This email already exists. Please use a different email."); // Set error message
+        return;
+      }
+
       var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
       if (!passwordRegex.test(password)) {
         setError(
@@ -56,16 +70,16 @@ const Registration = () => {
       }
 
       // Continue with registration if all validations pass
-      // const account_type = "tourist";
-      // const is_verified = false;
-      // const currentDate = new Date();
-      // const year = currentDate.getFullYear();
-      // const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-      // const day = String(currentDate.getDate()).padStart(2, "0");
-      // const hours = String(currentDate.getHours()).padStart(2, "0");
-      // const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-      // const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-      // const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      const account_type = "tourist";
+      const is_verified = false;
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      const day = String(currentDate.getDate()).padStart(2, "0");
+      const hours = String(currentDate.getHours()).padStart(2, "0");
+      const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+      const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+      const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
       // Send registration request
       const res = await axios.post("http://127.0.0.1:8000/api/registeruser", {

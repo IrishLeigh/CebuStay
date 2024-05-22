@@ -102,7 +102,6 @@ const Form = () => {
     const rememberedEmail = localStorage.getItem("remembered_email");
     const rememberedPassword = localStorage.getItem("remembered_password");
     const rememberedRememberMe = localStorage.getItem("remember_me");
-
     // If "Remember me" is enabled and there are remembered credentials
     if (rememberedRememberMe === "true" && rememberedEmail) {
       setEmail(rememberedEmail);
