@@ -12,32 +12,40 @@ import LandingPage from "./Landing_Page/landing";
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
   Routes,
   BrowserRouter,
 } from "react-router-dom";
 import OTP from "./components/OTP";
 import ForgotPass from "./ForgotPassword_User/ForgotPass";
 import { UserProvider } from "./components/UserProvider";
+import QuiltedImageList from "./Properties_Listing/PropListing";
+import Sidebar from "./components/Sidebar";
+import React from "react";
+import Listings from "./components/Listings";
+import AccommodationReservation from "./components/AccommodationReservation";
+
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
   return (
     <div className="App">
       <NavigationBar />
-      <UserProvider>
-      <Routes>
-        <Route path="/login" element={<Form />} /> {/* Login page */}
-        <Route path="/landing" element={<LandingPage />} /> {/* Login page */}
-        <Route path="/login/register" element={<Registration />} />
-        <Route path="/login/ForgotPass" element={<ForgotPass />} />
-        <Route path="/EditName" element={<EditProfile2 />} />
-        <Route path="/ForgotPass/register" element={<Registration />} />
-        <Route path="/ForgotPass/OTP" element={<OTP />} />
-        <Route path="/EditProfile" element={<EditProfile />} />
-        <Route path="/EditProfile2" element={<EditProfile2 />} />
-        <Route path="/EditPhone" element={<EditPhone/>} />
-      </Routes>
+      <Sidebar />
 
+      <UserProvider>
+        <Routes>
+          <Route path="/login" element={<Form />} /> {/* Login page */}
+          <Route path="/landing" element={<LandingPage />} /> {/* Login page */}
+          <Route path="/login/register" element={<Registration />} />
+          <Route path="/login/ForgotPass" element={<ForgotPass />} />
+          <Route path="/EditName" element={<EditProfile2 />} />
+          <Route path="/ForgotPass/register" element={<Registration />} />
+          <Route path="/ForgotPass/OTP" element={<OTP />} />
+          <Route path="/EditProfile" element={<EditProfile />} />
+          <Route path="/EditProfile2" element={<EditProfile2 />} />
+          <Route path="/EditPhone" element={<EditPhone />} />
+          <Route path="/listings" element={<Listings />} />
+          <Route path="/reservation" element={<AccommodationReservation />} />
+        </Routes>
       </UserProvider>
     </div>
   );
