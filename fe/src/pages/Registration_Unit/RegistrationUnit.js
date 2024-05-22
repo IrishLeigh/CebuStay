@@ -82,7 +82,7 @@ export default function RegistrationUnit() {
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid: 1,
+          userid: 6,
           property_name: propertyInfo.propertyName,
           property_type: selectedType,
           property_desc: propertyInfo.propertyDescription,
@@ -112,7 +112,7 @@ export default function RegistrationUnit() {
           );
           if (resBedInsert.data.status === "success") {
             const formdata = new FormData();
-            // console.log("naa propertyid?", resPropertid.data.propertyid);
+            console.log("naa propertyid?", resPropertid.data.propertyid);
 
             // Append propertyid to formdata
             formdata.append("propertyid", resPropertid.data.propertyid);
@@ -121,7 +121,7 @@ export default function RegistrationUnit() {
             for (let i = 0; i < selectedImages.length; i++) {
               formdata.append("files[]", selectedImages[i]);
             }
-
+            console.log("FORMDATA YAWA:", formdata);
             // Debugging: Log the contents of FormData
             for (let pair of formdata.entries()) {
               console.log(pair[0] + ":", pair[1]);
@@ -331,7 +331,7 @@ export default function RegistrationUnit() {
                               const manager = await axios.post(
                                 "http://127.0.0.1:8000/api/becomeManager",
                                 {
-                                  userid: 1,
+                                  userid: 6,
                                 }
                               );
                               console.log("Manager:", manager.data);

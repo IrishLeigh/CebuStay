@@ -1,67 +1,81 @@
 import React from 'react';
 import './Popular.css';
+import { MdForward } from 'react-icons/md';
 
-function Popular() {
-  const handleViewAllClick = () => {
-    
-  };
+export const hiddenGemsData = [
+  {
+    title: "Paradise Beach",
+    location: "Bantayan Island",
+    imageUrl: "/paradise.png",
+    altText: "paradise12641"
+  },
+  {
+    title: "Hermit’s Cove",
+    location: "Aloguinsan",
+    imageUrl: "/hermitscove.png",
+    altText: "hermitscove12640"
+  },
+  {
+    title: "Aguinid Falls",
+    location: "Samboan",
+    imageUrl: "/aguinidfalls.png",
+    altText: "aguinidfalls12640"
+  }
+];
 
-  const handleHotelClick = () => {
-    
-  };
-
-  const handleHomeStayClick = () => {
-    
-  };
-
-  const handleGuesthouseClick = () => {
-    
-  };
-
-  const handleReviewClick = () => {
-    
-  };
-
+function BackgroundShape() {
   return (
-    <div className="div">
-      <div className="div-2">
-        <div className="div-3">Popular Places</div>
-        <div className="div-4">
-          <button className="div-5" onClick={handleHotelClick}>
-            Hotel
-          </button>
-          <button className="div-6" onClick={handleHomeStayClick}>
-            Home Stay
-          </button>
-          <button className="div-7" onClick={handleGuesthouseClick}>
-            Guesthouse
-          </button>
-          <button className="div-8" onClick={handleViewAllClick}>
-            View All
-          </button>
+    <>
+      {/* <svg className="background-shape background-shape-left" viewBox="0 0 600 250" preserveAspectRatio="none">
+        <path d="M0,250 Q300,0 800,250 L600,0 L1,0 Z" fill="lightblue" />
+      </svg> */}
+      <svg className="background-shape background-shape-" viewBox="0 0 800 250" preserveAspectRatio="none">
+        <path d="M0,0 Q200,0 300,125 Q400,250 800,250 L800,0 Z" fill="lightblue" />
+      </svg>
+    </>
+  );
+}
+
+
+const Popular = (props) => {
+  return (
+    // <div className="frame471-container">
+      <div className="frame481-frame481">
+        <BackgroundShape/>
+        <div className="frame471-group214">
+          <span className="frame481-text" style={{marginTop:'1rem', textAlign:'center'}}>
+            <span style={{ marginLeft: '2.5rem', textAlign:'center' }}>Nearby Places</span>
+          </span>
+          <span className="frame471-text02">
+            <span style={{ marginLeft: '3.5rem' }}>
+            Discover the Unseen: Endless adventures just around the corner. 
+         </span>
+          </span>
         </div>
-      </div>
-      <div className="div-9">
-        <div className="div-10">
-         
-          
-          <div class="cards" >
-    <div class="card red">
-        <p class="tip">Hover Me</p>
-        <p class="second-text">Lorem Ipsum</p>
-    </div>
-    <div class="card blue">
-        <p class="tip">Hover Me</p>
-        <p class="second-text">Lorem Ipsum</p>
-    </div>
-    <div class="card green">
-        <p class="tip">Hover Me</p>
-        <p class="second-text">Lorem Ipsum</p>
-    </div>
-</div>
+
+        <div className="card-container3">
+          {hiddenGemsData.map((gem, index) => (
+            <div className="card3" key={index}>
+              <img
+                src={gem.imageUrl}
+                alt={gem.altText}
+                className="card-image3"
+              />
+              <span className="card-text3">
+                <span>{gem.title}</span>
+                <br />
+                <span>{gem.location}</span>
+              </span>
+              <button className="see-more-button" >
+                See More <MdForward />
+              </button>
+            </div>
+          ))}
         </div>
+
+       
       </div>
-    </div>
+    // </div>
   );
 }
 

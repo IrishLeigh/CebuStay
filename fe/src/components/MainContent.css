@@ -211,7 +211,17 @@ body {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     border-radius: .5rem;
     margin: 1rem;
+    cursor: pointer;
   }
+
+.card:hover {
+  box-shadow: 0 14px 28px #25a9e138, 0 10px 10px #25a9e144;
+  transition: .4s;
+}
+.card:not(:hover) {
+  transition: .4s;
+}
+
   .card:not(:first-child) {
     margin-top: 20px; /* Adjust the margin between cards */
   }
@@ -226,6 +236,7 @@ body {
     border-radius: 10px;
     overflow: hidden;
     transition: transform 1s;
+    cursor: pointer;
   }
   
   .card-img img {
@@ -272,7 +283,7 @@ body {
     transform: translateY(-15%);
     box-shadow: rgba(9, 5, 238, 0.25) 0px 13px 47px -5px, rgba(72, 6, 215, 0.3) 0px 8px 16px -8px;
   }
-  
+
   .card-button:hover {
     border: 1px solid #0a1af1;
     background-color: #0a1af1;

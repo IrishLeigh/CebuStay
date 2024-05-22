@@ -1,4 +1,4 @@
-
+// MainContent.jsx
 import React, { useState, useEffect } from 'react';
 import './MainContent.css';
 import Search from './Search';
@@ -241,13 +241,18 @@ const MainContent = ({ selectedAmenities = [],
     const handleView = (e, propertyid) => {
       // alert('Propertyid: ' + propertyid);
       console.log('Propertyid: ' + propertyid);
+      
       //INSERT REDIRECT TO VIEW PROPERTY HERE
     };
 
     const handleSearch = ({ guestCapacity }) => {
       setGuestCapacity(guestCapacity);
     };
-
+    
+    useEffect(() => {
+      const acc = filteredAccommodations
+      console.log(acc)
+    }, [])
   return (
     <div className="all-container">
   <Search onSearch={handleSearch} />    
