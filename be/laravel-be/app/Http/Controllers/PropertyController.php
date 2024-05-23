@@ -214,10 +214,4 @@ class PropertyController extends Controller
     }
 
 
-
-    public function getAllBedroomDetails(Request $request)
-    {
-        $this->enableCors($request);
-
-    }
 }

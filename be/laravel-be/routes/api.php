@@ -90,6 +90,7 @@ Route::post('/propertypaymentmethod', 'App\Http\Controllers\PropertyPaymentMetho
 //UPLOAD IMG
 //UPLOAD ONE IMAGE
 Route::post('/uploadimage', 'App\Http\Controllers\FileController@store');
+
 //UPLOAD MULTIPLE IMAGES
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
 //GET IMAGES
@@ -101,4 +102,10 @@ Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager
 //FOR BOOKING
 Route::post('/insertbooking', 'App\Http\Controllers\BookingController@insertBooking');
 Route::put('/bookings', 'App\Http\Controllers\BookingController@updateBookingPid');
+
+Route::get('/property/bookings', 'App\Http\Controllers\BookingController@getAllBookingByProperty');
+
 Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');
+
+//Route for USER Manager
+Route::get('/user/properties', 'App\Http\Controllers\UserController@getAllPropertyByUser');
