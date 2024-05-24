@@ -18,11 +18,6 @@ class PaymentController extends Controller
     public function createPaymentLink(Request $request)
     {
         $this->enableCors($request);
-        $request->validate([
-            'amount' => 'required|integer|min:100', // PayMongo requires the amount in cents
-            'description' => 'required|string|max:255',
-            'remarks' => 'nullable|integer|max:100', // remarks should be string, not integer
-        ]);
 
         // $linkid = null;
         $amount = $request->input('amount');
@@ -75,14 +70,6 @@ class PaymentController extends Controller
     {
         $this->enableCors($request);
 
-        $request->validate([
-            'pid' => 'required|integer|max:255', // Ensure pid is provided
-            'linkid' => 'required|string|max:255', // Ensure linkid is provided
-            'amount' => 'required|integer|min:100', // PayMongo requires the amount in cents
-            'description' => 'required|string|max:255',
-            'remarks' => 'nullable|integer|max:255', // Ensure remarks is a string
-        ]);
-
         // Retrieve input values
         $pid = $request->input('pid');
         $linkid = $request->input('linkid');
@@ -111,7 +98,6 @@ class PaymentController extends Controller
             ], 404);
         }
     }
-
 
     public function getAllPayments()
     {
