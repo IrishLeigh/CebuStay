@@ -12,7 +12,7 @@ use PHPMailer\PHPMailer\Exception;
 use Carbon\Carbon;
 
 
-class UserForgotPassController extends Controller
+class UserForgotPassController extends CORS
 {
     /**
      * Update user profile.

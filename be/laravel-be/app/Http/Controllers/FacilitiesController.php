@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Facilities;
 
-class FacilitiesController extends Controller
+class FacilitiesController extends CORS
 {
     /**
      * Create a new amenity for a property.

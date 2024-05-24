@@ -9,7 +9,7 @@ use App\Models\Guest;
 use App\Models\Property;
 use App\Models\Location;
 
-class BookingController extends Controller
+class BookingController extends CORS
 {
     public function insertBooking(Request $request)
     {
@@ -96,5 +96,51 @@ class BookingController extends Controller
 
         return response()->json($formattedBookings);
     }
+
+    public function getAllBookingByProperty(Request $request)
+    {
+        $this->enableCors($request);
+        $userId = $request->input('userid');
+
+        // Fetch all bookings related to properties of the given user
+        $bookings = Booking::select(
+            'tbl_booking.propertyid',
+            'tbl_booking.bookingid',
+            'tbl_booking.booking_date',
+            'tbl_booking.guestid',
+            'tbl_booking.checkin_date',
+            'tbl_booking.checkout_date',
+            'tbl_booking.total_price',
+            'tbl_booking.status',
+            'property.property_name', // Select property_name from property table
+            'tbl_guest.guestname' // Select guestname from guest table
+        )
+            ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+            ->join('tbl_guest', 'tbl_booking.guestid', '=', 'tbl_guest.guestid') // Join guest table
+            ->where('property.userid', $userId)
+            ->get();
+
+        // Format the bookings
+        $formattedBookings = $bookings->map(function ($booking) {
+            return [
+                'bookingid' => $booking->bookingid,
+                'booking_date' => $booking->booking_date,
+                'propertyid' => $booking->propertyid,
+                'property_name' => $booking->property_name,
+                'guestid' => $booking->guestid,
+                'guestname' => $booking->guestname, // Retrieve guestname from the result
+                'checkin_date' => $booking->checkin_date,
+                'checkout_date' => $booking->checkout_date,
+                'total_price' => $booking->total_price,
+                'status' => $booking->status,
+            ];
+        });
+
+        return response()->json($formattedBookings);
+    }
+
+
+
+
 
 }

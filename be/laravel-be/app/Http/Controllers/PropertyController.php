@@ -15,7 +15,7 @@ use App\Models\Facilities;
 use App\Models\Service;
 
 
-class PropertyController extends Controller
+class PropertyController extends CORS
 {
     public function show(Request $request)
     {
@@ -214,10 +214,4 @@ class PropertyController extends Controller
     }
 
 
-
-    public function getAllBedroomDetails(Request $request)
-    {
-        $this->enableCors($request);
-
-    }
 }

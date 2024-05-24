@@ -7,7 +7,7 @@ use App\Models\UserModel;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class LoginUserController extends Controller
+class LoginUserController extends CORS
 {
 
     public function login(Request $request)
@@ -33,7 +33,7 @@ class LoginUserController extends Controller
                     array(
                         'iat' => time(),
                         'nbf' => time(),
-                        'exp' => time() + 3600,
+                        'exp' => time() + 86400,
                         'data' => array(
                             'userid' => $userid,
                             'firstname' => $user->firstname,

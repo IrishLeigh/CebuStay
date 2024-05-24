@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BookingPolicy;
 
-class BookingPolicyController extends Controller
+class BookingPolicyController extends CORS
 {
 
     public function InsertBookingPolicyInfo(Request $request)

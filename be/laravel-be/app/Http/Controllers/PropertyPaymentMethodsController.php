@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PropertyPaymentMethods;
 
-class PropertyPaymentMethodsController extends Controller
+class PropertyPaymentMethodsController extends CORS
 {
     public function insertPropertyPaymentMethods(Request $request)
     {

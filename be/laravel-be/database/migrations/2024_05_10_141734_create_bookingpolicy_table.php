@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
             $table->boolean('is_cancel_plan')->default(false);
-            $table->integer('cancel_days');
+            $table->integer('cancel_days')->nullable(true);
             $table->boolean('non_refundable');
             $table->boolean('modification_plan');
             $table->boolean('offer_discount');
