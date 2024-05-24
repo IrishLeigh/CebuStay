@@ -33,7 +33,7 @@ class LoginUserController extends CORS
                     array(
                         'iat' => time(),
                         'nbf' => time(),
-                        'exp' => time() + 3600,
+                        'exp' => time() + 86400,
                         'data' => array(
                             'userid' => $userid,
                             'firstname' => $user->firstname,
