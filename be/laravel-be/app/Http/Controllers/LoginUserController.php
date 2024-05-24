@@ -7,7 +7,7 @@ use App\Models\UserModel;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class LoginUserController extends Controller
+class LoginUserController extends CORS
 {
 
     public function login(Request $request)

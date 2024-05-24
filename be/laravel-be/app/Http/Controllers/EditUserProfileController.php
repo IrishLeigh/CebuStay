@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UserModel;
 use App\Models\EditUserProfile;
 
-class EditUserProfileController extends Controller
+class EditUserProfileController extends CORS
 {
     /**
      * Update user profile.

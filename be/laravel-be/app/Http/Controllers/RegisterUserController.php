@@ -10,7 +10,7 @@ use PHPMailer\PHPMailer\Exception;
 
 use Carbon\Carbon;
 
-class RegisterUserController extends Controller
+class RegisterUserController extends CORS
 {
 
     public function sendEmail($firstname, $lastname, $email, $verify_token)

@@ -12,7 +12,7 @@ use GuzzleHttp\Psr7;
 use App\Models\Property;
 use Symfony\Component\HttpFoundation\Response;
 
-class FileController extends Controller
+class FileController extends CORS
 {
     private function token()
     {

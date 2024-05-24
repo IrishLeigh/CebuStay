@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\PropertyPricing;
 use App\Models\Home;
 
-class PropertyPricingController extends Controller
+class PropertyPricingController extends CORS
 {
     public function insertPropertyPricing(Request $request)
     {

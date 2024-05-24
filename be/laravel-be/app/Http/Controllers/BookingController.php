@@ -9,7 +9,7 @@ use App\Models\Guest;
 use App\Models\Property;
 use App\Models\Location;
 
-class BookingController extends Controller
+class BookingController extends CORS
 {
     public function insertBooking(Request $request)
     {

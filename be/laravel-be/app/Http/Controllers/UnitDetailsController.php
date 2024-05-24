@@ -7,7 +7,7 @@ use App\Models\UnitDetails;
 use App\Models\UnitRooms;
 use App\Models\BedroomType;
 
-class UnitDetailsController extends Controller
+class UnitDetailsController extends CORS
 {
     public function insertUnitDetails(Request $request)
     {

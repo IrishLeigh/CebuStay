@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PropertyOwner;
 
-class PropertyOwnerController extends Controller
+class PropertyOwnerController extends CORS
 {
     /**
      * Create a new amenity for a property.

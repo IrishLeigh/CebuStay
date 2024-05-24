@@ -6,7 +6,7 @@ use App\Models\Payment;
 use App\Services\PayMongoService;
 use Illuminate\Http\Request;
 
-class PaymentController extends Controller
+class PaymentController extends CORS
 {
     protected $payMongoService;
 

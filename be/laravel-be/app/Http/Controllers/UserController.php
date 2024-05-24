@@ -9,7 +9,7 @@ use App\Models\Location;
 use App\Models\PropertyPaymentMethods;
 use App\Models\BookingPolicy;
 
-class UserController extends Controller
+class UserController extends CORS
 {
     /**
      * Create a new user.
