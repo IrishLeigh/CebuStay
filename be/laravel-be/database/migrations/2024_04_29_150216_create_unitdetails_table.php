@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->increments('unitid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
+            $table->unsignedInteger('proppricingid')->nullable(true);
+            $table->foreign('proppricingid')->references('proppricingid')->on('property_pricing');
             $table->integer('guest_capacity');
             $table->timestamps();
         });

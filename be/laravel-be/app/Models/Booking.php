@@ -15,6 +15,7 @@ class Booking extends Model
         'bookingid',
         'userid',
         'propertyid',
+        'unitid',
         'bookerid',
         'guestid',
         'pid',
@@ -32,6 +33,11 @@ class Booking extends Model
     public function property()
     {
         return $this->belongsTo(Property::class, 'propertyid', 'propertyid');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(UnitDetails::class, 'unitid', 'unitid');
     }
 
     public function user()

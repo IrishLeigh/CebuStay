@@ -54,9 +54,8 @@ class PropertyController extends CORS
             $home->propertyid = $propertyid;
             $home->unit_type = $property->unit_type;
             $home->save();
-            $homeid = $home->homeid;
         }
-        return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid, "homeid" => $homeid]);
+        return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid]);
     }
 
     // public function getAllProperties(Request $request)
@@ -81,7 +80,7 @@ class PropertyController extends CORS
         $property_houserules = DB::table('house_rules')->select('houserulesid', 'smoking_allowed', 'pets_allowed', 'parties_events_allowed', 'noise_restrictions', 'quiet_hours_start', 'quiet_hours_end', 'custom_rules', 'check_in_from', 'check_in_until', 'check_out_from', 'check_out_until')->where('propertyid', $request->input('propertyid'))->get();
         $property_home = DB::table('home')->select('homeid', 'proppricingid', 'isoccupied')->where('propertyid', $request->input('propertyid'))->first();
         $property_unitdetails = DB::table('unitdetails')->where('propertyid', $request->input('propertyid'))->first();
-        $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $property_home->proppricingid)->first();
+        $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $property_unitdetails->proppricingid)->first();
         $unitid = $property_unitdetails->unitid;
         $unitrooms = DB::table('unitrooms')->select('unitroomid', 'roomname', 'quantity')->where('unitid', $unitid)->get();
         $unitroomsCollection = collect($unitrooms);
@@ -126,7 +125,7 @@ class PropertyController extends CORS
         return response()->json([
             "property_details" => $property_info,
             "property_address" => $property_address,
-            "property_home" => $property_home,
+            // "property_home" => $property_home,
             "property_unitpricing" => $unitpricing,
             "property_unitrooms" => $unitrooms,
             "property_amenities" => $property_amenities,
