@@ -15,17 +15,21 @@ import ForgotPass from './ForgotPassword_User/ForgotPass';
 import MainContent from './components/MainContent';
 import PersistentDrawerLeft from './SearchFilterSideBar/SideBar';
 import Template from './SearchFilterSideBar/SideBar';
-import BasicGrid from './SearchFilterSideBar/SideBar';
 import OTPRegistration from './components/OTP_Registration';
 import Search from './components/Search';
 import SideBar from './SearchFilterSideBar/SideBar';
 import Layout from './Layout/Layout';
+import LayoutLandingPage from './components/LandingPage/LayoutLandingPage';
+import Explore from './components/LandingPage/Explore';
+import BasicGrid from './components/LandingPage/Land';
+import Popular from './components/LandingPage/Popular';
+import UserBookingHistory from './components/UserBookingHistory/UserBookingHistory';
 function App() {
   return (
     <div className="App">
 
         <NavigationBar/>
-        <Layout />
+        <Layout/>
         <Routes>
           <Route path="/login"  element={<Form/>}/>  {/* Login page */}
           <Route path="/landing"  element={<LandingPage/>}/>  {/* Login page */}

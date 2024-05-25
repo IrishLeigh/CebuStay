@@ -1,21 +1,23 @@
 import React from 'react';
-import Landing from './Landing';
 import Explore from './Explore';
 import Popular from './Popular';
 import Hidden from './Hidden';
 import Footer from './Footer';
-import MainContent from '../MainContent';
-import Layout from '../../Layout/Layout';
+import BasicGrid from './Land';
 
 const LayoutLandingPage = () => {
   return (
-    <div>
-      <Landing />
+    <>
+     <div>
+      <BasicGrid/>
       <Explore />
       <Popular />
       <Hidden />
-      <Footer />
     </div>
+    <Footer/>
+
+    </>
+   
   );
 };
 
