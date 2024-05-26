@@ -63,4 +63,16 @@ class UnitDetailsController extends CORS
 
         return response()->json(["status" => 'success', "message" => "Bedroom Details inserted successfully"]);
     }
+
+    public function getUnitById(Request $request)
+    {
+        try {
+            $this->enableCors($request);
+            $unitid = $request->input('unitid');
+            $unit = UnitDetails::with(['unitrooms', 'unitrooms.bedtype'])->where('unitid', $unitid)->first();
+            return response()->json(['unit' => $unit]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
 }

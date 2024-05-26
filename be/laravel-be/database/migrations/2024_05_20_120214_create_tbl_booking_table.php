@@ -28,6 +28,7 @@ return new class extends Migration {
             $table->time('arrival_time');
             $table->string('status');
             $table->date('booking_date');
+            $table->enum('type', ['reservation', 'booking']);
 
             $table->foreign('userid')->references('userid')->on('users');
             $table->foreign('propertyid')->references('propertyid')->on('property');
