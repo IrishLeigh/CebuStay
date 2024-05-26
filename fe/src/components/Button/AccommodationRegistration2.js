@@ -31,7 +31,6 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
   console.log("Property Type", selectedPropertyType);
   return (
     <Box mb={5} mt={-9}>
-    <Box mb={5} mt={-9}>
       <Container
         maxWidth="md"
         sx={{
@@ -58,7 +57,6 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
             textAlign: "left",
             marginBottom: 5,
             marginTop: 0
-            marginTop: 0
           }}
         >
           What guests can book?
@@ -72,8 +70,6 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
                   variant="contained"
                   sx={{
                     backgroundColor:
-                      selectedPropertyType === type.name ? "#1780CB" : "white",
-                    color: selectedPropertyType === type.name ? "white" : "black",
                       selectedPropertyType === type.name ? "#1780CB" : "white",
                     color: selectedPropertyType === type.name ? "white" : "black",
                     fontFamily: "Poppins, sans-serif",

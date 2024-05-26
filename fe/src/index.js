@@ -19,7 +19,7 @@ root.render(
 <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <AccommodationReservation/>
+          <App/>
           </UserProvider>
       </DataProvider>
     </BrowserRouter>

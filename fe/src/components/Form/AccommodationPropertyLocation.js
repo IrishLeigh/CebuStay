@@ -39,7 +39,6 @@ const AddressForm = () => {
 
   const handleSubmit = async () => {
     const address = `${street}, Cebu, Philippines, ${postalCode}`;
-
     try {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -130,9 +129,6 @@ const AddressForm = () => {
       </Grid>
     </Container>
   );
-};
-
-export default AddressForm;
 };
 
 export default AddressForm;
