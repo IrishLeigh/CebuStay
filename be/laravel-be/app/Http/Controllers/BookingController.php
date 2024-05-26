@@ -9,6 +9,9 @@ use App\Models\Booker;
 use App\Models\Guest;
 use App\Models\Property;
 use App\Models\Location;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use App\Models\Payment;
 
 class BookingController extends CORS
 {
@@ -125,6 +128,97 @@ class BookingController extends CORS
         return response()->json(['message' => 'Booking PID updated successfully', 'status' => 'success']);
     }
 
+    public function sendEmail($bookerFirstName, $bookerLastName, $bookerEmail, $bookingId)
+    {
+        $booking = Booking::find($bookingId);
+        $pid = $booking->pid;
+        $payment = Payment::find($pid);
+
+        // $guestName = $guest->guestname;
+        $length = $booking->stay_length;
+        $guestCount = $booking->guest_count;
+        $bookingDate = $booking->booking_date;
+        $checkin = $booking->checkin_date;
+        $checkout = $booking->checkout_date;
+        $status = $booking->status;
+        $amount = $payment->amount;
+
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->SMTPAuth = true;
+        //Enable SMTP authentication
+        $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
+        $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
+        $mail->Password = 'tkuz tiec nnxt zuqj';
+
+        $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
+        $mail->Port = 587;
+
+        $mail->setFrom('misternonoy11@email.com', $bookerFirstName);
+        $mail->addAddress($bookerEmail);     //Add a recipient
+
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'Email Verification from CebuStay';
+
+        $email_template = "
+        <h2 style='color: #000000;'>Hi $bookerFirstName $bookerLastName,</h2>
+        <h3 style='color: #000000;'>This is your Payment Details: </h3>
+        <h3 style='color: #000000;'>Length of stay: <span style='color: #000000;'>$length</span></h3>
+        <h3 style='color: #000000;'>Number of Guests: <span style='color: #000000;'>$guestCount</span></h3>
+        <h3 style='color: #000000;'>Booking Date: <span style='color: #000000;'>$bookingDate</span></h3>
+        <h3 style='color: #000000;'>Checked In Date: <span style='color: #000000;'>$checkin</span></h3>
+        <h3 style='color: #000000;'>Checked Out Date: <span style='color: #000000;'>$checkout</span></h3>
+        <h3 style='color: #000000;'>Status: <span style='color: #000000;'>$status</span></h3>
+        <h3 style='color: #000000;'>Amount: <span style='color: #000000;'>$amount</span></h3>
+    ";
+
+        $mail->Body = $email_template;
+        try {
+            $mail->send();
+            // echo "na send";
+            return 1; // Email sent successfully
+
+        } catch (Exception $e) {
+            // echo "wala na send";
+            return 0; // Error occurred while sending email
+        }
+    }
+
+    public function updateBookingStatus(Request $request)
+    {
+        $this->enableCors($request);
+        $bookingid = $request->input('bookingid');
+        $booking = Booking::find($bookingid);
+
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error'], 404);
+        }
+
+        $booking->status = $request->input('status');
+        $booking->save();
+
+        $bookingId = $booking->bookingid;
+        $bookerId = $booking->bookerid;
+        $guestId = $booking->guestid;
+
+        $booker = Booker::find($bookerId);
+        $guest = Guest::find($guestId);
+
+
+        $bookerEmail = $booker->email;
+        $bookerFirstName = $booker->firstname;
+        $bookerLastName = $booker->lastname;
+
+
+        $result = $this->sendEmail($bookerFirstName, $bookerLastName, $bookerEmail, $bookingId);
+
+        if ($result) {
+            return response()->json(['message' => 'Booking PID updated successfully. Email sent.', 'status' => 'success']);
+        } else {
+            return response()->json(['message' => 'Booking PID updated successfully. Error sending email.', 'status' => 'error']);
+        }
+    }
+
     public function getAllBookingByUserId(Request $request)
     {
         $this->enableCors($request);
@@ -170,6 +264,7 @@ class BookingController extends CORS
             'tbl_booking.total_price',
             'tbl_booking.status',
             'tbl_booking.type', // Select type from tbl_booking table
+            'tbl_booking.bookerid',
             'property.property_name', // Select property_name from property table
             'property.property_type', // Select property_type from property table
             'property.property_desc', // Select property_desc from property table
@@ -180,8 +275,10 @@ class BookingController extends CORS
             ->where('property.userid', $userId)
             ->get();
 
+
         // Format the bookings
         $formattedBookings = $bookings->map(function ($booking) {
+            $booker = Booker::find($booking->bookerid);
             return [
                 'bookingid' => $booking->bookingid,
                 'booking_date' => $booking->booking_date,
@@ -196,9 +293,28 @@ class BookingController extends CORS
                 'total_price' => $booking->total_price,
                 'status' => $booking->status,
                 'type' => $booking->type, // Add type from tbl_booking
+                'booker' => $booker,
             ];
         });
 
         return response()->json($formattedBookings);
     }
+
+    public function getAllBookingByBookingId(Request $request)
+    {
+        $this->enableCors($request);
+        $bookingId = $request->input('bookingid');
+
+        $booking = Booking::find($bookingId);
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error'], 404);
+        }
+
+        return response()->json($booking);
+    }
+
+
+
+
+
 }

@@ -212,6 +212,86 @@ class PropertyController extends CORS
         return response()->json($properties);
     }
 
+    public function getAllPropertiesByUser(Request $request)
+    {
+        $this->enableCors($request);
+        $userid = $request->input('userid');
+
+        $properties = Property::find($userid);
+
+        // Retrieve properties
+        $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')->get();
+
+        // Retrieve unit details
+        $unitDetails = UnitDetails::select('unitid', 'guest_capacity', 'propertyid')->get();
+
+        // Retrieve unit rooms
+        $unitRooms = UnitRooms::select('unitid', 'unitroomid', 'roomname', 'quantity')->get();
+
+        // Retrieve bedroom types
+        $bedroomTypes = BedroomType::select('unitroomid', 'singlebed', 'bunkbed', 'largebed', 'superlargebed')->get();
+
+        // Create associative arrays for unit details, unit rooms, and bedroom types
+        $unitDetailsByPropertyId = [];
+        foreach ($unitDetails as $unitDetail) {
+            $unitDetailsByPropertyId[$unitDetail->propertyid] = $unitDetail;
+        }
+
+        $unitRoomsByUnitId = [];
+        foreach ($unitRooms as $unitRoom) {
+            $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
+        }
+
+        // Add guest_capacity, bedroomcount, bathroomcount, and bedcount to properties list
+        foreach ($properties as $property) {
+            $propertyId = $property->propertyid;
+
+            // Guest Capacity
+            $guestCapacity = isset($unitDetailsByPropertyId[$propertyId]) ? $unitDetailsByPropertyId[$propertyId]->guest_capacity : null;
+            $property->guest_capacity = $guestCapacity;
+
+            // Bedroom Count
+            $bedroomCount = 0;
+            // Bathroom Count
+            $bathroomCount = 0;
+            // Bed Count
+
+
+            if (isset($unitRoomsByUnitId[$unitDetailsByPropertyId[$propertyId]->unitid])) {
+                foreach ($unitRoomsByUnitId[$unitDetailsByPropertyId[$propertyId]->unitid] as $unitRoom) {
+                    if ($unitRoom->roomname === 'Bedroom') {
+                        $bedroomCount += $unitRoom->quantity;
+                    } elseif ($unitRoom->roomname === 'Bathroom') {
+                        $bathroomCount += $unitRoom->quantity;
+                    }
+                }
+            }
+
+            $property->bedroomcount = $bedroomCount;
+            $property->bathroomcount = $bathroomCount;
+        }
+        $bedCount = 0;
+        foreach ($properties as $property) {
+            $propertyId = $property->propertyid;
+            $unitid = $unitDetailsByPropertyId[$propertyId]->unitid;
+            foreach ($unitRooms as $unitRoom) {
+                if ($unitRoom->unitid == $unitid && $unitRoom->roomname == 'Bedroom') {
+                    $uiroomid = $unitRoom->unitroomid;
+                    foreach ($bedroomTypes as $bedroomType) {
+                        if ($bedroomType->unitroomid == $uiroomid) {
+                            $bedCount += $bedroomType->singlebed + $bedroomType->bunkbed + $bedroomType->largebed + $bedroomType->superlargebed;
+                        }
+                    }
+
+                }
+            }
+            $property->bedcount = $bedCount;
+            $bedCount = 0;
+        }
+        return response()->json($properties);
+    }
+
+
     public function searchAvailableProperties(Request $request)
     {
         $checkinDate = $request->input('checkin_date');
