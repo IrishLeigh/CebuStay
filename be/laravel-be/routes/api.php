@@ -108,5 +108,9 @@ Route::get('/property/bookings', 'App\Http\Controllers\BookingController@getAllB
 
 Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');
 
+//AVAILABILITY FUNCTIONS
+Route::get('/getavailableproperties', 'App\Http\Controllers\PropertyController@searchAvailableProperties');
+Route::get('/getavailableunits', 'App\Http\Controllers\PropertyController@searchAvailableUnits');
+
 //Route for USER Manager
 Route::get('/user/properties', 'App\Http\Controllers\UserController@getAllPropertyByUser');

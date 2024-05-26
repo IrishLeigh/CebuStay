@@ -212,5 +212,66 @@ class PropertyController extends CORS
         return response()->json($properties);
     }
 
+    public function searchAvailableProperties(Request $request)
+    {
+        $checkinDate = $request->input('checkin_date');
+        $checkoutDate = $request->input('checkout_date');
+        $guestCount = $request->input('guest_count');
+
+        $properties = DB::table('property')
+            ->join('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid')
+            ->where('unitdetails.guest_capacity', '>=', $guestCount)
+            ->whereNotExists(function ($query) use ($checkinDate, $checkoutDate) {
+                $query->select(DB::raw(1))
+                    ->from('tbl_booking')
+                    ->whereRaw('tbl_booking.unitid = unitdetails.unitid')
+                    ->where(function ($query) use ($checkinDate, $checkoutDate) {
+                        $query->whereBetween('tbl_booking.checkin_date', [$checkinDate, $checkoutDate])
+                            ->orWhereBetween('tbl_booking.checkout_date', [$checkinDate, $checkoutDate])
+                            ->orWhere(function ($query) use ($checkinDate, $checkoutDate) {
+                                $query->where('tbl_booking.checkin_date', '<=', $checkinDate)
+                                    ->where('tbl_booking.checkout_date', '>=', $checkoutDate);
+                            });
+                    });
+            })
+            ->select('property.propertyid', 'unitdetails.unitid', 'unitdetails.guest_capacity')
+            ->distinct()
+            ->get();
+
+        return response()->json($properties);
+    }
+
+    public function getAvailableUnits(Request $request)
+    {
+        $checkinDate = $request->input('checkin_date');
+        $checkoutDate = $request->input('checkout_date');
+        $guestCount = $request->input('guest_count');
+        $propertyId = $request->input('propertyid'); // Get the property ID from the request
+
+        $properties = DB::table('property')
+            ->join('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid')
+            ->where('unitdetails.propertyid', $propertyId) // Filter by property ID
+            ->where('unitdetails.guest_capacity', '>=', $guestCount)
+            ->whereNotExists(function ($query) use ($checkinDate, $checkoutDate) {
+                $query->select(DB::raw(1))
+                    ->from('tbl_booking')
+                    ->whereRaw('tbl_booking.unitid = unitdetails.unitid')
+                    ->where(function ($query) use ($checkinDate, $checkoutDate) {
+                        $query->whereBetween('tbl_booking.checkin_date', [$checkinDate, $checkoutDate])
+                            ->orWhereBetween('tbl_booking.checkout_date', [$checkinDate, $checkoutDate])
+                            ->orWhere(function ($query) use ($checkinDate, $checkoutDate) {
+                                $query->where('tbl_booking.checkin_date', '<=', $checkinDate)
+                                    ->where('tbl_booking.checkout_date', '>=', $checkoutDate);
+                            });
+                    });
+            })
+            ->select('property.propertyid', 'unitdetails.unitid', 'unitdetails.guest_capacity')
+            ->distinct()
+            ->get();
+
+        $availableunits = $properties->pluck('unitid');
+        return response()->json($properties);
+    }
+
 
 }
