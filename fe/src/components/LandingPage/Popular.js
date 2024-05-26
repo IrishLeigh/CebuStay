@@ -44,7 +44,7 @@ const Popular = (props) => {
         <BackgroundShape/>
         <div className="frame471-group214">
           <span className="frame481-text" style={{marginTop:'1rem', textAlign:'center'}}>
-            <span style={{ marginLeft: '2.5rem', textAlign:'center' }}>Nearby Places</span>
+            <span style={{ marginLeft: '3rem', textAlign:'center' }}>Nearby Places</span>
           </span>
           <span className="frame471-text02">
             <span style={{ marginLeft: '3.5rem' }}>

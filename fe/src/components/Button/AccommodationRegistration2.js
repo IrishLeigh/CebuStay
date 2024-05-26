@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -9,7 +9,7 @@ const propertyTypes = [
   {
     name: "Entire Room",
     description:
-      " Guests are able to use the entire place and do not have to share this with the host or other guests.",
+      "Guests are able to use the entire place and do not have to share this with the host or other guests.",
   },
   {
     name: "Private Room",
@@ -18,25 +18,15 @@ const propertyTypes = [
   },
 ];
 
-export default function PropertyType({ onSelectedPropertyTypeChange }) {
-  const [selectedPropertyType, setSelectedPropertyType] = useState(null);
-
-  useEffect(() => {
-    const storedSelectedPropertyType = localStorage.getItem("selectedPropertyType");
-    if (storedSelectedPropertyType) {
-      setSelectedPropertyType(storedSelectedPropertyType);
-    }
-  }, []);
+export default function PropertyType({ onSelectedPropertyTypeChange, parentSelectedPropertyType }) {
+  const [selectedPropertyType, setSelectedPropertyType] = useState(parentSelectedPropertyType);
 
   const handleClick = (button) => {
     const newSelectedPropertyType = selectedPropertyType === button ? null : button;
     setSelectedPropertyType(newSelectedPropertyType);
-    localStorage.setItem("selectedPropertyType", newSelectedPropertyType);
     onSelectedPropertyTypeChange(newSelectedPropertyType);
   };
 
-
-  console.log("Property Type", selectedPropertyType);
   return (
     <Box mb={5} mt={-9}>
       <Container

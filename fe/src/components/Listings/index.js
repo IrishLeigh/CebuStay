@@ -14,13 +14,15 @@ import {
   Box,
   TextField,
   Button,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import { Edit as EditIcon } from "@mui/icons-material";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import Sidebar from "../Sidebar";
 
 const Listings = () => {
   // Sample data for the table
-  const userproperties = [
+  const [userproperties, setUserProperties] = useState([
     {
       propertyid: 59,
       property_name: "GardenLudi",
@@ -61,9 +63,9 @@ const Listings = () => {
       paymentmethod: "Bank",
       is_cancel_plan: 0,
     },
-  ];
+  ]);
 
-  // State to manage the modal open/close and current listing being edited
+  const [selectedListings, setSelectedListings] = useState([]);
   const [open, setOpen] = useState(false);
   const [currentListing, setCurrentListing] = useState(null);
 
@@ -78,7 +80,33 @@ const Listings = () => {
     setCurrentListing(null);
   };
 
-  // Handler to update the listing (This is a placeholder, implement as needed)
+  const handleCheckboxClick = (event, id) => {
+    if (event.target.checked) {
+      setSelectedListings([...selectedListings, id]);
+    } else {
+      setSelectedListings(
+        selectedListings.filter((listingId) => listingId !== id)
+      );
+    }
+  };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = userproperties.map((listing) => listing.propertyid);
+      setSelectedListings(newSelecteds);
+      return;
+    }
+    setSelectedListings([]);
+  };
+
+  const handleDelete = () => {
+    const newProperties = userproperties.filter(
+      (property) => !selectedListings.includes(property.propertyid)
+    );
+    setUserProperties(newProperties);
+    setSelectedListings([]);
+  };
+
   const handleSave = () => {
     console.log("Save changes", currentListing);
     handleClose();
@@ -89,11 +117,39 @@ const Listings = () => {
       <Sidebar />
       <div style={{ flex: 1 }}>
         <Container>
+          <Toolbar
+            style={{
+              display: "flex",
+              marginBottom: "20px",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<DeleteIcon />}
+              onClick={handleDelete}
+              disabled={selectedListings.length === 0}
+            >
+              Delete Selected
+            </Button>
+          </Toolbar>
           <TableContainer component={Paper}>
             <Table aria-label="listings table">
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox"></TableCell>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={
+                        selectedListings.length > 0 &&
+                        selectedListings.length < userproperties.length
+                      }
+                      checked={
+                        userproperties.length > 0 &&
+                        selectedListings.length === userproperties.length
+                      }
+                      onChange={handleSelectAllClick}
+                    />
+                  </TableCell>
                   <TableCell>Property</TableCell>
                   <TableCell>Id</TableCell>
                   <TableCell>Address</TableCell>
@@ -106,7 +162,14 @@ const Listings = () => {
                 {userproperties.map((listing) => (
                   <TableRow key={listing.propertyid}>
                     <TableCell padding="checkbox">
-                      <Checkbox />
+                      <Checkbox
+                        checked={
+                          selectedListings.indexOf(listing.propertyid) !== -1
+                        }
+                        onChange={(event) =>
+                          handleCheckboxClick(event, listing.propertyid)
+                        }
+                      />
                     </TableCell>
                     <TableCell>{listing.property_name}</TableCell>
                     <TableCell>{listing.propertyid}</TableCell>
@@ -126,7 +189,7 @@ const Listings = () => {
             </Table>
           </TableContainer>
 
-          {/* Edit Modal
+          {/* Edit Modal */}
           <Modal open={open} onClose={handleClose}>
             <Box
               sx={{
@@ -210,7 +273,7 @@ const Listings = () => {
                 </div>
               )}
             </Box>
-          </Modal> */}
+          </Modal>
         </Container>
       </div>
     </div>

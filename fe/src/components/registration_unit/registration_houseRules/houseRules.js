@@ -8,32 +8,18 @@ import TextField from "@mui/material/TextField";
 import DatePicker from '../../time';
 import { Container } from "@mui/material";
 
-export default function HouseRules({ onHouseRulesDataChange }) {
+export default function HouseRules({ onHouseRulesDataChange, parentHouseRules }) {
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [houseRulesData, setHouseRulesData] = useState(() => {
-    const savedData = localStorage.getItem('houseRulesData');
-    return savedData ? JSON.parse(savedData) : {
-      smokingAllowed: false,
-      petsAllowed: false,
-      partiesAllowed: false,
-      noiseRestrictions: false,
-      quietHoursStart: '22:00',
-      quietHoursEnd: '12:00',
-      customRules: '',
-      checkInFrom: '',
-      checkInUntil: '',
-      checkOutFrom: '',
-      checkOutUntil: ''
-    };
-  });
+  const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
+  
 
   useEffect(() => {
     // Call the callback function with the updated house rules data whenever it changes
     onHouseRulesDataChange(houseRulesData);
     // console.log("house rules data: ", houseRulesData);
 
-    // Save the house rules data to localStorage
-    localStorage.setItem('houseRulesData', JSON.stringify(houseRulesData));
+    // // Save the house rules data to localStorage
+    // localStorage.setItem('houseRulesData', JSON.stringify(houseRulesData));
   }, [houseRulesData, onHouseRulesDataChange]);
 
   return (
@@ -142,39 +128,43 @@ export default function HouseRules({ onHouseRulesDataChange }) {
 
                 <Box
                   sx={{
-                    display: 'flex',
+                    display: 'column',
                     justifyContent: 'left',
                     alignItems: 'left',
                     m: 2
                   }}
                 >
-                  <DatePicker
-                    title="Check-in From"
-                    onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
-                  />
-
-                  <DatePicker 
-                    title="Check-in Until"
-                    onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'left',
-                    alignItems: 'left',
-                    m: 2
-                  }}
-                >
-                  <DatePicker
-                    title="Check-out From"
-                    onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutFrom: value }))}
-                  />
-
-                  <DatePicker 
-                    title="Check-out Until"
-                    onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
-                  />
+                  <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', m: 2 }}>
+                    <DatePicker
+                      title="Check-in From"
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
+                      value={houseRulesData.checkInFrom}
+                    />
+                    <DatePicker
+                      title="Check-in Until"
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
+                      value={houseRulesData.checkInUntil}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'left',
+                      alignItems: 'left',
+                      m: 2
+                    }}
+                  >
+                    <DatePicker
+                      title="Check-out From"
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutFrom: value }))}
+                      value={houseRulesData.checkOutFrom}
+                    />
+                    <DatePicker
+                      title="Check-out Until"
+                      onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
+                      value={houseRulesData.checkOutUntil}
+                    />
+                  </Box>
                 </Box>
               </form>
             </Paper>

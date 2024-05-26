@@ -14,7 +14,8 @@ import AccommodationPropertyInformation from "../components/Button/Accommodation
 import { useData } from "../components/registration_unit/registration_location/contextAddressData";
 import SingleBed from "@mui/icons-material/SingleBed";
 
-export default function RegistrationUnit() {
+export default function AccommodationRegistrationUI() {
+  const [open, setOpen] = useState(false);
   // State for form data
   // Use DataContext
   const { addressData, mapVal } = useData();

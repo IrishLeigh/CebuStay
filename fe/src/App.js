@@ -10,7 +10,6 @@ import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
 import LocationRegistration from './components/registration_unit/registration_location/location';
 import LandingPage from './pages/Landing_Page/landing';
-import RegistrationUnit from './pages/Registration_Unit/RegistrationUnit';
 import { useData } from './components/registration_unit/registration_location/contextAddressData';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import OTP from "./components/OTP";
@@ -28,6 +27,10 @@ import Listings from "./components/Listings";
 import AccommodationReservation from "./components/AccommodationReservation";
 import Layout from './Layout/Layout';
 import LayoutLandingPage from './components/LandingPage/LayoutLandingPage';
+import PropListing from './Properties_Listing/PropListing';
+import ReservationForm from './Properties_Listing/Reservation';
+import BookingPage from './pages/Booking/BookingPage';
+import AccommodationRegistrationUI from './pages/Registration_Unit/AccommodationRegistrationUI';
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -76,8 +79,14 @@ function App() {
             <Route path="/forgot-password/register" element={<Registration />} />
             <Route path="/forgot-password/otp" element={<OTP />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
-           <Route path="/aregister" element={<RegistrationUnit />} /> 
-           <Route path="/accommodation" element={<Layout />} /> 
+           <Route path="/aregister" element={<AccommodationRegistrationUI />} /> 
+           <Route path="/accommodation"  element={<Layout />} />
+           <Route path="/reservation" element={<AccommodationReservation />} />
+           <Route path="/accommodation/property/:propertyid" element={<PropListing />} />
+           <Route path="/accommodation/booking/:propertyid" element={<BookingPage />} />
+           <Route path="/listings" element={<Listings />}  exact/>
+
+           
           
            
 
@@ -86,7 +95,9 @@ function App() {
               <Route element={<EditProfile />} path='/profile' exact/>
               <Route element={<EditProfile2 />} path='/profile/edit-name' exact/>
               <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/>
-              <Route path="/aregister" element={<RegistrationUnit />} /> 
+              <Route path="/aregister" element={<AccommodationRegistrationUI />} exact/> 
+              
+              
               
             </Route>
 

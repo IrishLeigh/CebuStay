@@ -29,8 +29,8 @@ const propertyTypes = [
   },
 ];
 
-export default function Properties({ onSelectedTypeChange }) {
-  const [selectedType, setSelectedType] = useState(null);
+export default function Properties({ onSelectedTypeChange, parentSelectedData }) {
+  const [selectedType, setSelectedType] = useState(parentSelectedData);
 
   // useEffect(() => {
   //   const storedSelectedType = localStorage.getItem("selectedType");

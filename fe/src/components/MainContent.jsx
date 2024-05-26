@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import './MainContent.css';
 import Search from './Search';
 import { MdForward } from 'react-icons/md';
+import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 // export const accommodationlist = [
@@ -204,6 +206,8 @@ const MainContent = ({ selectedAmenities = [],
 }) => {
   const [selectedPropertyType, setSelectedPropertyType] = useState('Any');
   const [guestCapacity, setGuestCapacity] = useState(null);
+  const{propertyid} = useParams();
+  const  navigate = useNavigate();
 
   
 
@@ -240,6 +244,7 @@ const MainContent = ({ selectedAmenities = [],
 
     const handleView = (e, propertyid) => {
       // alert('Propertyid: ' + propertyid);
+      navigate(`/accommodation/property/${propertyid}`);
       console.log('Propertyid: ' + propertyid);
       
       //INSERT REDIRECT TO VIEW PROPERTY HERE

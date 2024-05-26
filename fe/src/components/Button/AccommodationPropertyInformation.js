@@ -151,12 +151,8 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
   );
 }
 
-function AccommodationPropertyInformation({ onAmenitiesChange }) {
-  const [selectedAmenities, setSelectedAmenities] = useState({
-    basicAmenities: JSON.parse(localStorage.getItem("basicAmenities")) || [],
-    basicServices: JSON.parse(localStorage.getItem("basicServices")) || [],
-    facilities: JSON.parse(localStorage.getItem("facilities")) || [],
-  });
+function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}) {
+  const [selectedAmenities, setSelectedAmenities] = useState(parentAmmenities);
 
   const handleItemsChange = (category, items) => {
     setSelectedAmenities((prevSelectedAmenities) => {

@@ -6,28 +6,27 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
-export default function DatePicker(props) {
-  const [value, setValue] = React.useState(null);
+export default function DatePicker({ title, onChange, value }) {
+  const [selectedTime, setSelectedTime] = React.useState(dayjs(value, 'HH:mm'));
 
   const handleTimeChange = (newValue) => {
-    const formattedTime = newValue ? dayjs(newValue).format('HH:mm') : null;
-    setValue(newValue); // Update the state with the Date object
-    props.onChange(formattedTime); // Pass the formatted time to the parent component
+    const formattedTime = newValue ? newValue.format('HH:mm') : null;
+    setSelectedTime(newValue);
+    onChange(formattedTime); // Pass the formatted time to the parent component
   };
+
+  React.useEffect(() => {
+    setSelectedTime(dayjs(value, 'HH:mm'));
+  }, [value]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={2} sx={{ width: "245px", mr: 1 }}>
-        <Typography>
-          {props.title}
-        </Typography>
+        <Typography>{title}</Typography>
         <TimePicker
-          value={value}
-          onChange={handleTimeChange} // Pass the formatted time to the parent component
+          value={selectedTime}
+          onChange={handleTimeChange}
         />
-        {/* <Typography>
-          Stored value: {value == null ? 'null' : dayjs(value).format('HH:mm')}
-        </Typography> */}
       </Stack>
     </LocalizationProvider>
   );

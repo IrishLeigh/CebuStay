@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -11,70 +11,76 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { useData } from "../registration_location/contextAddressData";
+import { useEffect } from "react";
 
-export default function UnitInfo_2({ onRoomDetailsChange }) {
+export default function UnitInfo_2({ onRoomDetailsChange, parentsUnitDetailsData }) {
   const { totalQTY } = useData();
-  const [unitDetailsData, setUnitDetailsData] = useState(() => {
-    // Retrieve data from localStorage if available, otherwise use default data
-    const savedData = localStorage.getItem("unitDetailsData");
-    return savedData ? JSON.parse(savedData) : {
-      roomDetails: [
-        { roomType: "Bedroom", quantity: 0 },
-        { roomType: "Bathroom", quantity: 0 },
-        { roomType: "Living Room", quantity: 0 },
-        { roomType: "Kitchen", quantity: 0 },
-      ],
-      guestCapacity: "",
-    };
+  const [unitDetailsData, setUnitDetailsData] = useState({
+    roomDetails: [
+      { roomType: "Bedroom", quantity: 0 },
+      { roomType: "Bathroom", quantity: 0 },
+      { roomType: "Living Room", quantity: 0 },
+      { roomType: "Kitchen", quantity: 0 },
+    ],
+    guestCapacity: "",
   });
 
-  useEffect(() => {
-    // Save data to localStorage whenever it changes
-    localStorage.setItem("unitDetailsData", JSON.stringify(unitDetailsData));
-    onRoomDetailsChange(unitDetailsData);
-  }, [unitDetailsData]);
+    // Mount parent's data when the component is initialized
+    useEffect(() => {
+      if (parentsUnitDetailsData) {
+        setUnitDetailsData(parentsUnitDetailsData);
+      }
+    }, [parentsUnitDetailsData]);
 
   const totalBedrooms = unitDetailsData.roomDetails.reduce((total, room) => {
     if (room.roomType === "Bedroom") {
       total += room.quantity;
+      // Set the quantity in totalQty
     }
     return total;
   }, 0);
-  
-  // Call totalQTY after calculating totalBedrooms
   totalQTY(totalBedrooms);
-  
- 
+  console.log("TOTALBEDROOMS: ",totalBedrooms)
 
   const addRoom = () => {
     setUnitDetailsData((prevData) => ({
       ...prevData,
       roomDetails: [...prevData.roomDetails, { roomType: "", quantity: 0 }],
     }));
+    // Call the callback immediately after adding a room
+    onRoomDetailsChange(unitDetailsData);
   };
 
   const handleRoomTypeChange = (index, value) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
     updatedRoomDetails[index].roomType = value;
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
+    // Call the callback immediately after changing room type
+    onRoomDetailsChange(unitDetailsData);
   };
 
   const handleQuantityChange = (index, value) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
     updatedRoomDetails[index].quantity = value;
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
+    // Call the callback immediately after changing quantity
+    onRoomDetailsChange(unitDetailsData);
   };
 
   const removeRoom = (index) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
     updatedRoomDetails.splice(index, 1);
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
+    // Call the callback immediately after removing a room
+    onRoomDetailsChange(unitDetailsData);
   };
 
   const incrementQuantity = (index) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
     updatedRoomDetails[index].quantity += 1;
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
+    // Call the callback immediately after incrementing quantity
+    onRoomDetailsChange(unitDetailsData);
   };
 
   const decrementQuantity = (index) => {
@@ -83,10 +89,14 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
       updatedRoomDetails[index].quantity -= 1;
     }
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
+    // Call the callback immediately after decrementing quantity
+    onRoomDetailsChange(unitDetailsData);
   };
 
   const handleGuestCapacityChange = (value) => {
     setUnitDetailsData({ ...unitDetailsData, guestCapacity: value });
+    // Call the callback immediately after changing guest capacity
+    onRoomDetailsChange(unitDetailsData);
   };
 
   return (
@@ -100,8 +110,8 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
               alignItems: "center",
               minHeight: "100vh",
               padding: "1rem",
-              mt: 8,
-              mb: 10
+              mt: 12,
+              mb: 12
             }}
           >
             
@@ -186,23 +196,21 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
                   </Box>
                 ))}
                 <IconButton
-                    aria-label="add"
+                  aria-label="add"
                   onClick={addRoom}
                   sx={{
                     color: "grey",
                     "&:hover": {
                       color: "#ADC939",
-                    },
                     fontSize: "1rem",
                     marginRight: "auto",
                     display: "block",
                     marginLeft: "5.5rem",
-                  }}
+                  }}}
                 >
-                  <AddCircleIcon /> Add Room
+                  <AddCircleIcon />Add Room
                 </IconButton>
               </div>
-
               <Box sx={{ mt: "1rem" }}>
                 <Typography
                   variant="h6"
@@ -235,4 +243,3 @@ export default function UnitInfo_2({ onRoomDetailsChange }) {
     </Container>
   );
 }
-

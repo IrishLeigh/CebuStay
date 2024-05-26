@@ -19,14 +19,51 @@ import AnimatePage from "./AnimatedPage";
 import PaymentMethods from "../../components/registration_unit/registration_pMethods/PaymentMethods";
 import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
 import "./RegistrationUnitBG.css";
-import {Modal , Backdrop, CircularProgress} from "@mui/material";
-
-export default function RegistrationUnit() {
+import {Modal , Backdrop, CircularProgress, Box, Typography, Fade} from "@mui/material";
+import { useUser } from "../../components/UserProvider";
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+export default function AccommodationRegistrationUI() {
   const [step, setStep] = useState(1);
   const finalStep = 13; // Define the total number of steps
   const [modalMessage, setModalMessage] = useState(""); // Define modalMessage state variable
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState();
+  const { loginUser } = useUser();
 
+  
+
+  useEffect(() => {
+    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+    const token = localStorage.getItem("auth_token");
+
+    // console.log("Token:", token);
+    if (token) {
+      const jwtToken = token.split("=")[1];
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .then((response) => {
+          setUser(response.data["data"]);
+          loginUser(response.data.data);
+          console.log("RESPONSE DATA: ", response.data["data"]);
+        })
+        .catch((error) => {
+          alert("Error decoding JWT token:", error);
+          setUser(null);
+        });
+    } else {
+      setUser(null);
+    }
+  }, []);
   // State variables for form data
   const { addressData, mapVal } = useData();
   const [selectedType, setSelectedType] = useState("");
@@ -76,13 +113,13 @@ export default function RegistrationUnit() {
       //   selectedAmenities,
       // });
       // console.log("Form submitted successfully:", response.data);
-      setOpen(true);
+      // setOpen(true);
       console.log("propinfo:", propertyInfo);
       console.log("proptype gawass: ", selectedType);
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid: 6,
+          userid:user.userid,
           property_name: propertyInfo.propertyName,
           property_type: selectedType,
           property_desc: propertyInfo.propertyDescription,
@@ -113,15 +150,45 @@ export default function RegistrationUnit() {
           if (resBedInsert.data.status === "success") {
             const formdata = new FormData();
             console.log("naa propertyid?", resPropertid.data.propertyid);
-
+            console.log("naa selectimage?", resUnitid.data.unitid);
+          
             // Append propertyid to formdata
             formdata.append("propertyid", resPropertid.data.propertyid);
-
-            // Append each selected image to formdata
-            for (let i = 0; i < selectedImages.length; i++) {
-              formdata.append("files[]", selectedImages[i]);
+          
+            console.log("FORMDATA selectImages:", selectedImages);
+          
+            // Check if selectedImages is an array
+            if (!Array.isArray(selectedImages)) {
+              console.error("selectedImages is not an array.");
+              return;
             }
-            console.log("FORMDATA YAWA:", formdata);
+          console.log("Is AN Array:");
+            // Function to convert URL to File
+            async function urlToFile(url, filename) {
+              const response = await fetch(url);
+              const blob = await response.blob();
+              return new File([blob], filename, { type: blob.type });
+            }
+          
+            try {
+              // Convert each image object to a File object and append to FormData
+              await Promise.all(selectedImages.map(async (image) => {
+                if (!image.url || !image.name) {
+                  console.error("selectedImages item is missing URL or name.", image);
+                  return;
+                }
+          
+                const file = await urlToFile(image.url, image.name);
+                formdata.append("files[]", file);
+                console.log("FORMDATA selectimagesforloop:", file);
+              }));
+            } catch (error) {
+              console.error("Error converting URL to file:", error);
+              return;
+            }
+          
+            console.log("FORMDATA after processing:", formdata);
+          
             // Debugging: Log the contents of FormData
             for (let pair of formdata.entries()) {
               console.log(pair[0] + ":", pair[1]);
@@ -331,12 +398,13 @@ export default function RegistrationUnit() {
                               const manager = await axios.post(
                                 "http://127.0.0.1:8000/api/becomeManager",
                                 {
-                                  userid: 6,
+                                  userid:user.userid,
                                 }
                               );
                               console.log("Manager:", manager.data);
-                              console.log("Successfulty Registered");
+                              console.log("Successfully Registered");
                               setModalMessage("Successfully Registered");
+                              setOpen(false); // Close the circular progress
 
                               // Clear local storage after successful submission
                               localStorage.removeItem("selectedPropertyType");
@@ -356,8 +424,8 @@ export default function RegistrationUnit() {
 
                               console.log("Successfully removed localstorage")
                               
-                              setOpen(false); // Close the circular progress
-                              setModalMessage("Successfully Registered");
+                              // setOpen(false); // Close the circular progress
+                              // setModalMessage("Successfully Registered");
 
   
                         
@@ -396,6 +464,7 @@ export default function RegistrationUnit() {
     setSelectedPropertyType(propertyType);
     console.log("Selected Property Type:", propertyType);
   }, []);
+
   const handlePropertyInformationChange = (propertyData) => {
     setPropertyInfo(propertyData);
   };
@@ -511,7 +580,7 @@ export default function RegistrationUnit() {
   // console.log("Property Type from Parent: ", selectedType);
   // console.log("Unitdetaisl data from Parent: ", unitDetailsData);
   // console.log("Bedroom Dteails:", bedroomDetails);
-  // console.log("House Rulese Data:", houseRulesData);
+  console.log("House Rulese Data:", houseRulesData);
   // console.log("Policies Data:", policiesData);
   // console.log("Selected Images :", selectedImages);
   // console.log("Location Details :", locationDetails);
@@ -521,6 +590,8 @@ export default function RegistrationUnit() {
   // console.log("Payment Data", paymentData);
 
   // console.log("Payment method from Parent: ", paymentData);
+  console.log("userid", user && user["userid"]);
+
 
   return (
     <div className="registration-page">
@@ -528,7 +599,7 @@ export default function RegistrationUnit() {
         {step === 1 && (
           <div>
             <AnimatePage>
-              <Properties onSelectedTypeChange={handleSelectedTypeChange} />
+              <Properties onSelectedTypeChange={handleSelectedTypeChange} parentSelectedData = {selectedType} />
             </AnimatePage>
             <div
               className="stepperFooter"
@@ -544,7 +615,7 @@ export default function RegistrationUnit() {
           <div>
             <AnimatePage>
               <PropertyType
-                onSelectedPropertyTypeChange={handleSelectedPropertyTypeChange}
+                onSelectedPropertyTypeChange={handleSelectedPropertyTypeChange} parentSelectedPropertyType = {selectedPropertyType}
               />
             </AnimatePage>
             <div
@@ -564,7 +635,8 @@ export default function RegistrationUnit() {
           <div>
             <AnimatePage>
               <SimplePaper
-                onPropertyInformationChange={handlePropertyInformationChange}
+                onPropertyInformationChange={handlePropertyInformationChange} 
+                parentPropertyInfo = {propertyInfo}
               />
             </AnimatePage>
             <div
@@ -583,7 +655,8 @@ export default function RegistrationUnit() {
         {step === 4 && (
           <div>
             <AnimatePage>
-              <UnitInfo_2 onRoomDetailsChange={handleRoomDetailsChange} />
+              <UnitInfo_2 onRoomDetailsChange={handleRoomDetailsChange}
+              parentUnitDetailsData={unitDetailsData} />
             </AnimatePage>
             <div
               className="stepperFooter"
@@ -603,6 +676,7 @@ export default function RegistrationUnit() {
             <AnimatePage>
               <BedroomDetails
                 onBedroomDetailsChange={handleBedRoomDetailsChange}
+                parentBedroomDetails ={bedroomDetails}
               />
             </AnimatePage>
 
@@ -622,7 +696,7 @@ export default function RegistrationUnit() {
         {step === 6 && (
           <div>
             <AnimatePage>
-              <AccommodationUploadPhotos onImagesChange={handleImagesChange} />
+              <AccommodationUploadPhotos onImagesChange={handleImagesChange} parentImages = {selectedImages}/>
             </AnimatePage>
 
             <div
@@ -663,6 +737,7 @@ export default function RegistrationUnit() {
             <AnimatePage>
               <AccommodationPropertyInformation
                 onAmenitiesChange={handleAmenitiesChange}
+                parentAmmenities={selectedAmenities}
               />
             </AnimatePage>
 
@@ -682,7 +757,9 @@ export default function RegistrationUnit() {
         {step === 9 && (
           <div className="animationContainer">
             <AnimatePage>
-              <HouseRules onHouseRulesDataChange={handleHouseRulesDataChange} />
+              <HouseRules onHouseRulesDataChange={handleHouseRulesDataChange} 
+                parentHouseRules={houseRulesData}
+              />
             </AnimatePage>
 
             <div
@@ -778,7 +855,7 @@ export default function RegistrationUnit() {
           </div>
         )}
           {/* Modal for displaying messages */}
-      <Modal
+      {/* <Modal
         open={!!modalMessage}
         onClose={() => setModalMessage("")}
         aria-labelledby="modal-title"
@@ -795,12 +872,36 @@ export default function RegistrationUnit() {
             Go to Homepage
           </button>
         </div>
-      </Modal>
-
-      {/* Loading indicator */}
-      <Backdrop open={open}>
+      </Modal> */}
+          {/* Loading indicator */}
+          <Backdrop open={open}>
         <CircularProgress color="inherit" />
       </Backdrop>
+      <Modal
+  aria-labelledby="transition-modal-title"
+  aria-describedby="transition-modal-description"
+  open={!!modalMessage}
+  onClose={() => setModalMessage("")}
+  closeAfterTransition
+  slots={{ backdrop: Backdrop }}
+>
+  <Fade in={!!modalMessage}>
+    <Box sx={style}>
+      <Typography id="transition-modal-title" variant="h6" component="h2">
+        {modalMessage}
+      </Typography>
+      <button
+        onClick={() => {
+          setModalMessage("");
+          window.location.href = '/'; // Redirect to homepage
+        }}
+      >
+        Go to Homepage
+      </button>
+    </Box>
+  </Fade>
+</Modal>
+
       </Container>
     </div>
   );

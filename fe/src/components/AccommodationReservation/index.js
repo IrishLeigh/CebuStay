@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableContainer,
@@ -8,11 +8,16 @@ import {
   TableBody,
   Container,
   Paper,
-  Checkbox,
+  IconButton,
 } from "@mui/material";
+import { Edit as EditIcon } from "@mui/icons-material";
 import Sidebar from "../Sidebar";
+import EditReservationModal from "./modals/guests";
 
 const AccommodationReservation = () => {
+  const [open, setOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState(null);
+
   // Sample data for the table
   const reservations = [
     {
@@ -26,8 +31,11 @@ const AccommodationReservation = () => {
       property: "Ocean View Villa",
       stayDate: "2023-06-15 to 2023-06-20",
       price: "$1500",
-      status: "Confirmed",
+      payment: "Paid",
+      status: "Check-in",
       actionNeeded: "None",
+      unit: "Villa A",
+      numberOfGuests: 4,
     },
     {
       id: "2",
@@ -40,11 +48,24 @@ const AccommodationReservation = () => {
       property: "Mountain Retreat",
       stayDate: "2023-07-10 to 2023-07-15",
       price: "$1000",
-      status: "Pending",
+      payment: "Pending",
+      status: "Check-out",
       actionNeeded: "Review",
+      unit: "Cabin B",
+      numberOfGuests: 2,
     },
     // Add more reservations as needed
   ];
+
+  const handleOpen = (reservation) => {
+    setSelectedReservation(reservation);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedReservation(null);
+  };
 
   return (
     <div style={{ display: "flex" }}>
@@ -55,21 +76,20 @@ const AccommodationReservation = () => {
             <Table aria-label="reservations table">
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox"></TableCell>
                   <TableCell>Guest Details</TableCell>
                   <TableCell>Property</TableCell>
+                  <TableCell>Unit</TableCell>
                   <TableCell>Stay Date</TableCell>
+                  <TableCell>No. of Guests</TableCell>
                   <TableCell>Price</TableCell>
+                  <TableCell>Payment</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Action Needed</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {reservations.map((reservation) => (
                   <TableRow key={reservation.id}>
-                    <TableCell padding="checkbox">
-                      <Checkbox />
-                    </TableCell>
                     <TableCell>
                       <div>
                         <div>{reservation.guestDetails.fullname}</div>
@@ -79,15 +99,28 @@ const AccommodationReservation = () => {
                       </div>
                     </TableCell>
                     <TableCell>{reservation.property}</TableCell>
+                    <TableCell>{reservation.unit}</TableCell>
                     <TableCell>{reservation.stayDate}</TableCell>
+                    <TableCell>{reservation.numberOfGuests}</TableCell>
                     <TableCell>{reservation.price}</TableCell>
+                    <TableCell>{reservation.payment}</TableCell>
                     <TableCell>{reservation.status}</TableCell>
-                    <TableCell>{reservation.actionNeeded}</TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleOpen(reservation)}>
+                        <EditIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
+
+          <EditReservationModal
+            open={open}
+            handleClose={handleClose}
+            reservation={selectedReservation}
+          />
         </Container>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -6,26 +6,9 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import FormPropsTextFields from "../../textfield";
 import TextField from "@mui/material/TextField";
-import "../../../components/Button/NextButton.css";
 
-export default function SimplePaper({ onPropertyInformationChange }) {
-  const [propertyData, setPropertyData] = useState(() => {
-    // Retrieve property data from localStorage if available, otherwise use default values
-    const savedData = localStorage.getItem("propertyData");
-    return savedData
-      ? JSON.parse(savedData)
-      : {
-          propertyName: "",
-          propertyDescription: "",
-          numberOfUnits: "",
-          gettingToProperty: "",
-        };
-  });
-
-  useEffect(() => {
-    // Save property data to localStorage whenever it changes
-    localStorage.setItem("propertyData", JSON.stringify(propertyData));
-  }, [propertyData]);
+export default function SimplePaper({ onPropertyInformationChange, parentPropertyInfo }) {
+  const [propertyData, setPropertyData] = useState(parentPropertyInfo);
 
   const handleChange = (newValue, field) => {
     setPropertyData((prevState) => ({
@@ -35,7 +18,7 @@ export default function SimplePaper({ onPropertyInformationChange }) {
 
     // Directly pass the property information to the parent component whenever there's a change
     if (typeof onPropertyInformationChange === "function") {
-      onPropertyInformationChange(propertyData);
+      onPropertyInformationChange({ ...propertyData, [field]: newValue });
     }
   };
   console.log("Property Information suood:", propertyData);
@@ -84,7 +67,7 @@ export default function SimplePaper({ onPropertyInformationChange }) {
                   rows={6}
                   sx={{ width: "100%" }} // Set width to 100%
                   placeholder="Say Something about your listing here.."
-                  value={propertyData.propertyDescription} // Add value prop here
+                  value={propertyData.propertyDescription}
                   onChange={(e) =>
                     handleChange(e.target.value, "propertyDescription")
                   }
@@ -92,7 +75,7 @@ export default function SimplePaper({ onPropertyInformationChange }) {
                 <FormPropsTextFields
                   name="Number of Units"
                   width="100%"
-                  value={propertyData.numberOfUnits} // Add value prop here
+                  value={propertyData.numberOfUnits}
                   onChange={(value) => handleChange(value, "numberOfUnits")}
                 />
                 <TextField
@@ -102,7 +85,7 @@ export default function SimplePaper({ onPropertyInformationChange }) {
                   rows={6}
                   sx={{ width: "100%" }} // Set width to 100%
                   placeholder="Please let guests know the best ways to reach your property"
-                  value={propertyData.gettingToProperty} // Add value prop here
+                  value={propertyData.gettingToProperty}
                   onChange={(e) =>
                     handleChange(e.target.value, "gettingToProperty")
                   }

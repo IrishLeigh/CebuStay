@@ -38,10 +38,12 @@ const Registration = () => {
 
       // Check if email already exists
       const emailCheckResponse = await axios.post(
-        "http://127.0.0.1:8000/registeruser",
+        "http://127.0.0.1:8000/api/registeruser",
         {
-          action: "check_email",
+          firstname,
+          lastname,
           email,
+          password,
         }
       );
 

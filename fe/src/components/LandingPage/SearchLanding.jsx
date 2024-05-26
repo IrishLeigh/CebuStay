@@ -5,6 +5,8 @@ import { MdSearch } from 'react-icons/md';
 import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Link} from 'react-router-dom';
+
 
 export default function Search({onSearch}) {
     const [startDate, setStartDate] = useState(new Date()); // Default today's date for "From"
@@ -57,7 +59,7 @@ export default function Search({onSearch}) {
                         onChange={e => setGuestCapacity(e.target.value)}
                     />
                     <button className="search-button" id="searchButton" >
-                        <MdSearch className="search-icon" />
+                        <Link to="accommodation"><MdSearch className="search-icon" /></Link>
                     </button>
                 </div>
             </div>

@@ -4,26 +4,60 @@ import BookingDetails from "./BookingDetails";
 import BookingGuestDetails from "./BookingGuestDetails";
 import "./BookingPage.css";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 function BookingPage() {
   const [price, setPrice] = useState();
   const [basePrice, setBasePrice] = useState(1900.24);
   const [guests, setGuests] = useState("2");
   const [lengthStay, setLengthStay] = useState(2);
+  const [propertyData, setPropertyData] = useState(null);
   const [guestDetails, setGuestDetails] = useState(null);
+  const {propertyid} = useParams();
+  const [user, setUser] = useState();
+  // const { loginUser } = useUser();
 
+  
+
+  useEffect(() => {
+    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+    const token = localStorage.getItem("auth_token");
+
+    // console.log("Token:", token);
+    if (token) {
+      const jwtToken = token.split("=")[1];
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .then((response) => {
+          setUser(response.data["data"]);
+          console.log("User: ", response.data["data"]);
+          // loginUser(response.data.data);
+          console.log("RESPONSE DATA: ", response.data["data"]);
+        })
+        .catch((error) => {
+          console.log("Error decoding JWT token:", error);
+          setUser(null);
+        });
+    } else {
+      setUser(null);
+    }
+  }, []);
+console.log("userid sud sa booking:", user);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const propertyid = 60; // Replace with the property id with kang kaye
+        console.log("Propertyid: ", propertyid);
+        const propertyId = propertyid; // Replace with the property id with kang kaye
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/getproperty",
           {
             params: {
-              propertyid: propertyid,
+              propertyid: propertyId,
             },
           }
         );
+
         console.log("Propertydata: ", propertyres.data);
+        setPropertyData(propertyres.data);
       } catch (error) {
         console.error(error);
       }
@@ -39,8 +73,10 @@ function BookingPage() {
     console.log("Guest Details:", guestDetails); // Log guest details along with other data
     const postBooking = async () => {
       try {
-        const userid = 6; // Replace with the logged in user's id
-        const propertyid = 1; // Replace with the property id
+        // const pId = propertyid;
+        // console.log("Property Id: ", pId);
+        const userid = user.userid; // Replace with the logged in user's id
+        // const propertyid = pId; // Replace with the property id
         const booker_fname = guestDetails.firstName;
         const booker_lname = guestDetails.lastName;
         const booker_email = guestDetails.email;

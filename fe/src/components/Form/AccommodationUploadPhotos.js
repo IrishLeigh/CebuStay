@@ -7,14 +7,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
 import { Box } from "@mui/material";
 
-const AccommodationUploadPhotos = ({ onImagesChange }) => {
+const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
   const [selectedImages, setSelectedImages] = useState([]);
 
-  // Load images from local storage on component mount
+  // Load images from parent data on component mount
   useEffect(() => {
-    const savedImages = JSON.parse(localStorage.getItem("selectedImages")) || [];
-    setSelectedImages(savedImages);
-  }, []);
+    console.log("Parent images:", parentImages); // Debugging line
+    if (parentImages && parentImages.length > 0) {
+      setSelectedImages(parentImages);
+    }
+  }, [parentImages]);
 
   const handleImageChange = (event) => {
     const imageFiles = event.target.files;
@@ -22,7 +24,7 @@ const AccommodationUploadPhotos = ({ onImagesChange }) => {
 
     const oversizedImages = [];
     const newImages = Array.from(imageFiles).map((file) => {
-      if (file.size > 1000 * 1000) {
+      if (file.size > 5 * 1024 * 1024) { // Corrected size check to 5MB
         oversizedImages.push(file.name);
         return null;
       }
@@ -77,6 +79,7 @@ const AccommodationUploadPhotos = ({ onImagesChange }) => {
   });
 
   useEffect(() => {
+    console.log("Selected images updated:", selectedImages); // Debugging line
     onImagesChange(selectedImages);
   }, [selectedImages, onImagesChange]);
 

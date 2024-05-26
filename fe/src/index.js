@@ -7,9 +7,9 @@ import { DataProvider } from "./components/registration_unit/registration_locati
 import Form from "./Login_User/Form";
 import MenuAppBar from "./components/Header/AppBar";
 import HeaderNoUser from "./components/Header/HeaderNoUser";
-import RegistrationUnit from "./pages/Registration_Unit/RegistrationUnit";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
+import AccommodationReservation from "./components/AccommodationReservation";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -19,7 +19,7 @@ root.render(
 <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <App/>
+          <AccommodationReservation/>
           </UserProvider>
       </DataProvider>
     </BrowserRouter>
