@@ -78,6 +78,7 @@ Route::get('/getproptest', 'App\Http\Controllers\PropertyController@show');
 //Routes for unitdetails
 Route::post('/unitdetails', 'App\Http\Controllers\UnitDetailsController@insertUnitDetails');
 Route::post('/bedroomtype', 'App\Http\Controllers\UnitDetailsController@insertBedTypes');
+Route::get('/getunit/{unitid}', 'App\Http\Controllers\UnitDetailsController@getUnitById');
 
 //Route for Inserting Booking Policy
 Route::post('/bookingpolicy', 'App\Http\Controllers\BookingPolicyController@InsertBookingPolicyInfo');

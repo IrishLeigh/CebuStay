@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Booker;
@@ -14,43 +15,99 @@ class BookingController extends CORS
     public function insertBooking(Request $request)
     {
         $this->enableCors($request);
-        $booking = new Booking();
-        $booking->userid = $request->input('userid');
-        $booking->propertyid = $request->input('propertyid');
 
-        $booker = new Booker();
-        $booker->firstname = $request->input('booker_fname');
-        $booker->lastname = $request->input('booker_lname');
-        $booker->email = $request->input('booker_email');
-        $booker->phonenum = $request->input('booker_phone');
-        $booker->country = $request->input('booker_country');
-        $booker->countrycode = $request->input('booker_country_code');
-        $booker->is_my_book = $request->input('is_my_book');
-        $booker->save();
+        try {
+            DB::beginTransaction();
 
-        $booking->bookerid = $booker->bookerid;
-        $guest = new Guest();
-        $guest->guestname = $request->input('guestname');
-        $guest->guestemail = $request->input('guestemail');
-        $guest->save();
+            // Retrieve and validate the check-in and check-out dates
+            $checkin = $request->input('checkin_date');
+            $checkout = $request->input('checkout_date');
 
-        $booking->guestid = $guest->guestid;
-        $booking->pid = $request->input('pid');
+            if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
+                return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
+            }
 
-        $booking->stay_length = $request->input('stay_length');
-        $booking->guest_count = $request->input('guest_count');
-        $booking->checkin_date = $request->input('checkin_date');
-        $booking->checkout_date = $request->input('checkout_date');
-        $booking->total_price = $request->input('total_price');
-        $booking->special_request = $request->input('special_request');
-        $booking->arrival_time = $request->input('arrival_time');
-        $booking->status = $request->input('status');
-        $booking->booking_date = $request->input('booking_date');
-        $booking->save();
+            // Retrieve all bookings for the given unitid
+            $bookings = Booking::where('unitid', $request->input('unitid'))->get();
 
-        return response()->json(['message' => 'Booking created, Proceed to Payment', 'status' => 'success', 'bookingid' => $booking]);
+            // Perform validation check for date conflict
+            foreach ($bookings as $booking) {
+                if (
+                    ($checkin >= $booking->checkin_date && $checkin <= $booking->checkout_date) ||
+                    ($checkout >= $booking->checkin_date && $checkout <= $booking->checkout_date) ||
+                    ($checkin < $booking->checkin_date && $checkout > $booking->checkout_date)
+                ) {
+                    return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
+                }
+            }
 
+            // Check if today is the check-in date
+            $today = date('Y-m-d');
+            $isCheckinToday = ($checkin === $today);
+
+            // Set booking type
+            $bookingType = 'reservation'; // Default type is 'reservation'
+
+            // Check if there are no existing bookings for today for the same unit
+            if ($isCheckinToday) {
+                $existingBookingsToday = Booking::where('unitid', $request->input('unitid'))
+                    ->where('checkin_date', $today)
+                    ->exists();
+
+                // If there are no existing bookings for today, set type to 'booking'
+                if (!$existingBookingsToday) {
+                    $bookingType = 'booking';
+                }
+            }
+
+            $booking = new Booking();
+            $booking->userid = $request->input('userid');
+            $booking->propertyid = $request->input('propertyid');
+            $booking->unitid = $request->input('unitid');
+
+            $booker = new Booker();
+            $booker->firstname = $request->input('booker_fname');
+            $booker->lastname = $request->input('booker_lname');
+            $booker->email = $request->input('booker_email');
+            $booker->phonenum = $request->input('booker_phone');
+            $booker->country = $request->input('booker_country');
+            $booker->countrycode = $request->input('booker_country_code');
+            $booker->is_my_book = $request->input('is_my_book');
+            $booker->save();
+
+            $booking->bookerid = $booker->bookerid;
+
+            $guest = new Guest();
+            $guest->guestname = $request->input('guestname');
+            $guest->guestemail = $request->input('guestemail');
+            $guest->save();
+
+            $booking->guestid = $guest->guestid;
+            $booking->pid = $request->input('pid');
+            $booking->stay_length = $request->input('stay_length');
+            $booking->guest_count = $request->input('guest_count');
+            $booking->checkin_date = $checkin;
+            $booking->checkout_date = $checkout;
+            $booking->total_price = $request->input('total_price');
+            $booking->special_request = $request->input('special_request');
+            $booking->arrival_time = $request->input('arrival_time');
+            $booking->status = $request->input('status');
+            $booking->booking_date = date('Y-m-d'); // Assuming booking_date is the current date
+            $booking->type = $bookingType; // Set booking type
+
+            $booking->save();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Booking created, Proceed to Payment', 'status' => 'success', 'bookingid' => $booking->bookingid, 'ischeck' => $today]);
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json(['message' => 'Failed to create booking: ' . $e->getMessage(), 'status' => 'error']);
+        }
     }
+
+
 
     public function updateBookingPid(Request $request)
     {

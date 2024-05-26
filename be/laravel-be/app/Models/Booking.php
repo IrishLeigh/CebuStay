@@ -27,6 +27,7 @@ class Booking extends Model
         'special_request',
         'arrival_time',
         'status',
+        'type',
         'booking_date'
     ];
 
