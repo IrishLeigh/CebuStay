@@ -11,12 +11,18 @@ use App\Http\Controllers\FacilitiesController;
 use App\Http\Controllers\HouseRuleController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CheckoutSessionController;
+
+use App\Http\Controllers\WebhookController;
+
+// Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);
 
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
 Route::put('/update-payment-link', [PaymentController::class, 'updatePaymentLink']);
-Route::get('/getpayments', [PaymentController::class, 'getAllPayments']);
-
+Route::get('/getpayments', [PaymentController::class, 'getPayments']);
+Route::post('/payment-callback', [PaymentController::class, 'paymentCallback']);
+Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
 Route::post('/users', [UserController::class, 'create']);
@@ -102,8 +108,11 @@ Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager
 //FOR BOOKING
 Route::post('/insertbooking', 'App\Http\Controllers\BookingController@insertBooking');
 Route::put('/bookings', 'App\Http\Controllers\BookingController@updateBookingPid');
+Route::put('/bookingStatus', 'App\Http\Controllers\BookingController@updateBookingStatus');
+Route::put('/bookingSedMail', 'App\Http\Controllers\BookingController@sendEmail');
 
 Route::get('/property/bookings', 'App\Http\Controllers\BookingController@getAllBookingByProperty');
+Route::get('/property/bookingId', 'App\Http\Controllers\BookingController@getAllBookingByBookingId');
 
 Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');
 
