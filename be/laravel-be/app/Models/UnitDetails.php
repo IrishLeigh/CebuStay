@@ -9,7 +9,7 @@ class UnitDetails extends Model
 {
     protected $table = 'unitdetails';
     protected $primaryKey = 'unitid';
-    protected $guarded = ['unitid', 'propertyid', 'guest_capacity'];
+    protected $guarded = ['unitid', 'propertyid', 'proppricingid', 'guest_capacity'];
 
     public function property()
     {
@@ -18,5 +18,13 @@ class UnitDetails extends Model
     public function unitrooms()
     {
         return $this->hasMany(UnitRooms::class, 'unitid', 'unitid');
+    }
+    public function proppricing()
+    {
+        return $this->hasOne(PropertyPricing::class, 'proppricingid', 'proppricingid');
+    }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'unitid', 'unitid');
     }
 }

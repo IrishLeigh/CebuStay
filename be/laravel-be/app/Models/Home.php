@@ -9,7 +9,7 @@ class Home extends Model
 {
     protected $table = 'home';
     protected $primaryKey = 'homeid';
-    protected $guarded = ['homeid', 'propertyid', 'unit_type', 'isoccupied', 'proppricingid'];
+    protected $guarded = ['homeid', 'propertyid', 'unit_type', 'isoccupied'];
 
     public function property()
     {

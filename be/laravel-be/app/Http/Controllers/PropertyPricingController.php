@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PropertyPricing;
 use App\Models\Home;
+use App\Models\UnitDetails;
 
 class PropertyPricingController extends CORS
 {
@@ -17,10 +18,14 @@ class PropertyPricingController extends CORS
         $propertyPricing->profit = $request->input('profit');
         $propertyPricing->save();
         $proppricingid = $propertyPricing->proppricingid;
-        $homeid = $request->input('homeid');
-        $homeref = Home::where('homeid', $homeid)->first();
-        $homeref->proppricingid = $proppricingid;
-        $homeref->save();
+        $unitid = $request->input('unitid');
+        $unitref = UnitDetails::where('unitid', $unitid)->first();
+        $unitref->proppricingid = $proppricingid;
+        $unitref->save();
+        // $homeid = $request->input('homeid');
+        // $homeref = Home::where('homeid', $homeid)->first();
+        // $homeref->proppricingid = $proppricingid;
+        // $homeref->save();
         return response()->json(["status" => 'success', "message" => "Property Pricing inserted successfully"]);
     }
 
@@ -42,26 +47,47 @@ class PropertyPricingController extends CORS
         $propertyPrices = PropertyPricing::select('proppricingid', 'max_price', 'min_price', 'profit')->get();
 
         // Retrieve home prices
-        $homePrices = Home::select('proppricingid', 'homeid', 'propertyid')->get();
+        // $homePrices = Home::select('proppricingid', 'homeid', 'propertyid')->get();
+        $unitPrices = UnitDetails::select('proppricingid', 'unitid', 'propertyid')->get();
 
         // Create an associative array with proppricingid as keys
-        $homePricesByProppricingId = [];
-        foreach ($homePrices as $homePrice) {
-            if (!isset($homePricesByProppricingId[$homePrice->proppricingid])) {
-                $homePricesByProppricingId[$homePrice->proppricingid] = [
-                    'homeid' => $homePrice->homeid,
-                    'propertyid' => $homePrice->propertyid
+        // $homePricesByProppricingId = [];
+        $unitPricesByProppricingId = [];
+
+        // foreach ($homePrices as $homePrice) {
+        //     if (!isset($homePricesByProppricingId[$homePrice->proppricingid])) {
+        //         $homePricesByProppricingId[$homePrice->proppricingid] = [
+        //             'homeid' => $homePrice->homeid,
+        //             'propertyid' => $homePrice->propertyid
+        //         ];
+        //     }
+        // }
+        foreach ($unitPrices as $unitPrice) {
+            if (!isset($unitPricesByProppricingId[$unitPrice->proppricingid])) {
+                $unitPricesByProppricingId[$unitPrice->proppricingid] = [
+                    'unitid' => $unitPrice->unitid,
+                    'propertyid' => $unitPrice->propertyid
                 ];
             }
         }
 
         // Add homeid and propertyid to propertyprice list
+        // foreach ($propertyPrices as $key => $propertyPrice) {
+        //     if (isset($homePricesByProppricingId[$propertyPrice->proppricingid])) {
+        //         $propertyPrices[$key]->homeid = $homePricesByProppricingId[$propertyPrice->proppricingid]['homeid'];
+        //         $propertyPrices[$key]->propertyid = $homePricesByProppricingId[$propertyPrice->proppricingid]['propertyid'];
+        //     } else {
+        //         $propertyPrices[$key]->homeid = null;
+        //         $propertyPrices[$key]->propertyid = null;
+        //     }
+        // }
+
         foreach ($propertyPrices as $key => $propertyPrice) {
-            if (isset($homePricesByProppricingId[$propertyPrice->proppricingid])) {
-                $propertyPrices[$key]->homeid = $homePricesByProppricingId[$propertyPrice->proppricingid]['homeid'];
-                $propertyPrices[$key]->propertyid = $homePricesByProppricingId[$propertyPrice->proppricingid]['propertyid'];
+            if (isset($unitPricesByProppricingId[$propertyPrice->proppricingid])) {
+                $propertyPrices[$key]->unitid = $unitPricesByProppricingId[$propertyPrice->proppricingid]['unitid'];
+                $propertyPrices[$key]->propertyid = $unitPricesByProppricingId[$propertyPrice->proppricingid]['propertyid'];
             } else {
-                $propertyPrices[$key]->homeid = null;
+                $propertyPrices[$key]->unitid = null;
                 $propertyPrices[$key]->propertyid = null;
             }
         }

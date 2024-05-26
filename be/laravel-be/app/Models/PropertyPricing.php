@@ -12,4 +12,9 @@ class PropertyPricing extends Model
     protected $primaryKey = 'proppricingid';
 
     protected $fillable = ['proppricingid', 'max_price', 'min_price', 'profit'];
+
+    public function unitdetails()
+    {
+        return $this->belongsTo(UnitDetails::class, 'proppricingid', 'proppricingid');
+    }
 }

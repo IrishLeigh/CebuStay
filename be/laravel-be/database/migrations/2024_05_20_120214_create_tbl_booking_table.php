@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->increments('bookingid');
             $table->unsignedInteger('userid');
             $table->unsignedInteger('propertyid');
+            $table->unsignedInteger('unitid');
             $table->unsignedInteger('bookerid');
             $table->unsignedInteger('guestid');
             $table->unsignedInteger('pid')->nullable(true);
@@ -27,9 +28,11 @@ return new class extends Migration {
             $table->time('arrival_time');
             $table->string('status');
             $table->date('booking_date');
+            $table->enum('type', ['reservation', 'booking']);
 
             $table->foreign('userid')->references('userid')->on('users');
             $table->foreign('propertyid')->references('propertyid')->on('property');
+            $table->foreign('unitid')->references('unitid')->on('unitdetails');
             $table->foreign('bookerid')->references('bookerid')->on('tbl_booker');
             $table->foreign('guestid')->references('guestid')->on('tbl_guest');
             $table->foreign('pid')->references('pid')->on('tbl_payment');
