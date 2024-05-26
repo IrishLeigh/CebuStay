@@ -268,13 +268,13 @@ class BookingController extends CORS
             'property.property_name', // Select property_name from property table
             'property.property_type', // Select property_type from property table
             'property.property_desc', // Select property_desc from property table
+            'property.unit_type', // Select unit_type from property table
             'tbl_guest.guestname' // Select guestname from tbl_guest table
         )
             ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->join('tbl_guest', 'tbl_booking.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
             ->where('property.userid', $userId)
             ->get();
-
 
         // Format the bookings
         $formattedBookings = $bookings->map(function ($booking) {
@@ -286,6 +286,7 @@ class BookingController extends CORS
                 'property_name' => $booking->property_name,
                 'property_type' => $booking->property_type, // Add property_type
                 'property_desc' => $booking->property_desc, // Add property_desc
+                'unit_type' => $booking->unit_type, // Add unit_type
                 'guestid' => $booking->guestid,
                 'guestname' => $booking->guestname, // Retrieve guestname from the result
                 'checkin_date' => $booking->checkin_date,
@@ -293,7 +294,7 @@ class BookingController extends CORS
                 'total_price' => $booking->total_price,
                 'status' => $booking->status,
                 'type' => $booking->type, // Add type from tbl_booking
-                'booker' => $booker,
+                'booker' => $booker, // Add booker details
             ];
         });
 
