@@ -263,16 +263,20 @@ class BookingController extends CORS
             'tbl_booking.checkout_date',
             'tbl_booking.total_price',
             'tbl_booking.status',
+            'tbl_booking.bookerid',
             'property.property_name', // Select property_name from property table
             'tbl_guest.guestname' // Select guestname from guest table
         )
             ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->join('tbl_guest', 'tbl_booking.guestid', '=', 'tbl_guest.guestid') // Join guest table
+            // ->join('tbl_booker', 'tbl_booking.bookerid', '=', 'tbl_booker.bookerid') // Join booker table
             ->where('property.userid', $userId)
             ->get();
 
+
         // Format the bookings
         $formattedBookings = $bookings->map(function ($booking) {
+            $booker = Booker::find($booking->bookerid);
             return [
                 'bookingid' => $booking->bookingid,
                 'booking_date' => $booking->booking_date,
@@ -284,6 +288,7 @@ class BookingController extends CORS
                 'checkout_date' => $booking->checkout_date,
                 'total_price' => $booking->total_price,
                 'status' => $booking->status,
+                'booker' => $booker, 
             ];
         });
 
