@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Typography, Grid, Container } from "@mui/material";
 import { motion } from "framer-motion";
+import '../../components/Button/NextButton.css'
 import '../../components/Button/NextButton.css'
 
 const data = {
@@ -106,8 +108,21 @@ function AmenityButton({ icon, text, isSelected, onClick }) {
 
 function CategorySection({ category, label, onItemsChange, initialSelectedItems }) {
   const [selectedAmenities, setSelectedAmenities] = useState(initialSelectedItems || []);
+function CategorySection({ category, label, onItemsChange, initialSelectedItems }) {
+  const [selectedAmenities, setSelectedAmenities] = useState(initialSelectedItems || []);
 
   const toggleItemSelection = (itemText) => {
+    const newSelectedAmenities = selectedAmenities.includes(itemText)
+      ? selectedAmenities.filter((item) => item !== itemText)
+      : [...selectedAmenities, itemText];
+
+    setSelectedAmenities(newSelectedAmenities);
+    onItemsChange(category, newSelectedAmenities); // Notify parent component about the updated selected items
+  };
+
+  useEffect(() => {
+    onItemsChange(category, selectedAmenities);
+  }, [selectedAmenities, category, onItemsChange]);
     const newSelectedAmenities = selectedAmenities.includes(itemText)
       ? selectedAmenities.filter((item) => item !== itemText)
       : [...selectedAmenities, itemText];
@@ -140,6 +155,7 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
               <AmenityButton
                 icon={item.icon}
                 text={item.text}
+                isSelected={selectedAmenities.includes(item.text)}
                 isSelected={selectedAmenities.includes(item.text)}
                 onClick={() => toggleItemSelection(item.text)}
               />
@@ -188,6 +204,40 @@ function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}
         <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
           Please click the buttons you choose.
         </Typography>
+        <CategorySection
+          category="basicAmenities"
+          label={"Basic Amenities"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicAmenities}
+        />
+        <CategorySection
+          category="basicServices"
+          label={"Basic Services"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicServices}
+        />
+        <CategorySection
+          category="facilities"
+          label={"Facilities"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.facilities}
+        />
+        {/* Display selected items for each category */}
+        <Typography variant="h6" sx={{ mt: 4 }}>
+          Selected Amenities:
+        </Typography>
+        <Typography variant="body1">
+          Basic Amenities: {selectedAmenities.basicAmenities.join(", ")}
+        </Typography>
+        <Typography variant="body1">
+          Basic Services: {selectedAmenities.basicServices.join(", ")}
+        </Typography>
+        <Typography variant="body1">
+          Facilities: {selectedAmenities.facilities.join(", ")}
+        </Typography>
+        <div className='nextButton-container'>
+          <button className="nextButton" sx={{ color: '#007BFF' }}>Save</button>
+        </div>
         <CategorySection
           category="basicAmenities"
           label={"Basic Amenities"}

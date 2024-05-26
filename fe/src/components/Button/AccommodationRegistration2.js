@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -27,7 +27,10 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
     onSelectedPropertyTypeChange(newSelectedPropertyType);
   };
 
+
+  console.log("Property Type", selectedPropertyType);
   return (
+    <Box mb={5} mt={-9}>
     <Box mb={5} mt={-9}>
       <Container
         maxWidth="md"
@@ -55,6 +58,7 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
             textAlign: "left",
             marginBottom: 5,
             marginTop: 0
+            marginTop: 0
           }}
         >
           What guests can book?
@@ -68,6 +72,8 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
                   variant="contained"
                   sx={{
                     backgroundColor:
+                      selectedPropertyType === type.name ? "#1780CB" : "white",
+                    color: selectedPropertyType === type.name ? "white" : "black",
                       selectedPropertyType === type.name ? "#1780CB" : "white",
                     color: selectedPropertyType === type.name ? "white" : "black",
                     fontFamily: "Poppins, sans-serif",
