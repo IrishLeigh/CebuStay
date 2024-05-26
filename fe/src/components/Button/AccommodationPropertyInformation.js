@@ -156,7 +156,6 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
                 icon={item.icon}
                 text={item.text}
                 isSelected={selectedAmenities.includes(item.text)}
-                isSelected={selectedAmenities.includes(item.text)}
                 onClick={() => toggleItemSelection(item.text)}
               />
             </Grid>
