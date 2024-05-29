@@ -263,16 +263,18 @@ class BookingController extends CORS
             'tbl_booking.checkout_date',
             'tbl_booking.total_price',
             'tbl_booking.status',
+            'tbl_booking.type', // Select type from tbl_booking table
             'tbl_booking.bookerid',
             'property.property_name', // Select property_name from property table
-            'tbl_guest.guestname' // Select guestname from guest table
+            'property.property_type', // Select property_type from property table
+            'property.property_desc', // Select property_desc from property table
+            'property.unit_type', // Select unit_type from property table
+            'tbl_guest.guestname' // Select guestname from tbl_guest table
         )
             ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
-            ->join('tbl_guest', 'tbl_booking.guestid', '=', 'tbl_guest.guestid') // Join guest table
-            // ->join('tbl_booker', 'tbl_booking.bookerid', '=', 'tbl_booker.bookerid') // Join booker table
+            ->join('tbl_guest', 'tbl_booking.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
             ->where('property.userid', $userId)
             ->get();
-
 
         // Format the bookings
         $formattedBookings = $bookings->map(function ($booking) {
@@ -282,13 +284,17 @@ class BookingController extends CORS
                 'booking_date' => $booking->booking_date,
                 'propertyid' => $booking->propertyid,
                 'property_name' => $booking->property_name,
+                'property_type' => $booking->property_type, // Add property_type
+                'property_desc' => $booking->property_desc, // Add property_desc
+                'unit_type' => $booking->unit_type, // Add unit_type
                 'guestid' => $booking->guestid,
                 'guestname' => $booking->guestname, // Retrieve guestname from the result
                 'checkin_date' => $booking->checkin_date,
                 'checkout_date' => $booking->checkout_date,
                 'total_price' => $booking->total_price,
                 'status' => $booking->status,
-                'booker' => $booker, 
+                'type' => $booking->type, // Add type from tbl_booking
+                'booker' => $booker, // Add booker details
             ];
         });
 
@@ -299,8 +305,8 @@ class BookingController extends CORS
     {
         $this->enableCors($request);
         $bookingId = $request->input('bookingid');
-        
-        $booking  = Booking::find($bookingId);
+
+        $booking = Booking::find($bookingId);
         if (!$booking) {
             return response()->json(['message' => 'Booking not found', 'status' => 'error'], 404);
         }
