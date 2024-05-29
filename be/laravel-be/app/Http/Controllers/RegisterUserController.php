@@ -20,8 +20,8 @@ class RegisterUserController extends CORS
         $mail->SMTPAuth = true;
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
-        $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
-        $mail->Password = 'tkuz tiec nnxt zuqj';
+        $mail->Username = 'ludivicombalaterojr@gmail.com';                     //SMTP username
+        $mail->Password = 'smjk vkqa bjsh zwtr';
 
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;

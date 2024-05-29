@@ -133,6 +133,10 @@ class BookingController extends CORS
         $booking = Booking::find($bookingId);
         $pid = $booking->pid;
         $payment = Payment::find($pid);
+        $property = Property::find($booking->propertyid);
+        $location = Location::find($property->propertyid);
+
+        $logoUrl = asset('images/Logo.png');
 
         // $guestName = $guest->guestname;
         $length = $booking->stay_length;
@@ -143,18 +147,20 @@ class BookingController extends CORS
         $status = $booking->status;
         $amount = $payment->amount;
 
+        $formattedDate = date("M d, Y", strtotime($bookingDate));
+
         $mail = new PHPMailer(true);
         $mail->isSMTP();
         $mail->SMTPAuth = true;
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
-        $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
-        $mail->Password = 'tkuz tiec nnxt zuqj';
+        $mail->Username = 'ludivicombalaterojr@gmail.com';                     //SMTP username
+        $mail->Password = 'smjk vkqa bjsh zwtr';
 
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;
 
-        $mail->setFrom('misternonoy11@email.com', $bookerFirstName);
+        $mail->setFrom('ludivicombalaterojr@gmail.com', $bookerFirstName);
         $mail->addAddress($bookerEmail);     //Add a recipient
 
         $mail->isHTML(true);                                  //Set email format to HTML
@@ -233,12 +239,12 @@ class BookingController extends CORS
         <body>
             <div class='container'>
                 <div class='header'>
-                    <img src='Logo.png' alt='CebuStay Logo'>
+                <h1>CebuStay</h1>
                 </div>
                 <div class='content'>
                     <h1>Booking Confirmation</h1>
                     <p>Dear $bookerFirstName $bookerLastName,</p>
-                    <p>We are delighted to inform you that your booking with <strong>PROPERTY NAME</strong> has been successfully confirmed! We greatly appreciate your trust in us and look forward to providing you with an exceptional experience.</p>
+                    <p>We are delighted to inform you that your booking with <strong>" . $property->property_name . " </strong> has been successfully confirmed! We greatly appreciate your trust in us and look forward to providing you with an exceptional experience.</p>
                     <div class='booking-details'>
                         <h2>Booking Details</h2>
                         <table>
@@ -248,19 +254,19 @@ class BookingController extends CORS
                             </tr>
                             <tr>
                                 <th>Service/Reservation</th>
-                                <td>SERVICE NAME</td>
+                                <td>Booking Reservation</td>
                             </tr>
                             <tr>
                                 <th>Date and Time</th>
-                                <td>$bookingDate</td>
+                                <td>$formattedDate</td>
                             </tr>
                             <tr>
                                 <th>Location</th>
-                                <td>LOCATION</td>
+                                <td>" . $property->property_name . "</td>
                             </tr>
                             <tr>
                                 <th>Special Notes</th>
-                                <td>SPECIAL NOTES</td>
+                                <td>" . $booking->special_request . "</td>
                             </tr>
                         </table>
                     </div>
@@ -284,8 +290,8 @@ class BookingController extends CORS
                             </tr>
                             <tr>
                                 <td>$bookingDate</td>
-                                <td>PROPERTY NAME</td>
-                                <td>TYPE</td>
+                                <td>" . $property->property_name . "</td>
+                                <td>" . $property->property_type . "</td>
                                 <td>$checkin</td>
                                 <td>$checkout</td>
                                 <td>$length</td>
@@ -316,6 +322,7 @@ class BookingController extends CORS
         }
     }
 
+    
     public function updateBookingStatus(Request $request)
     {
         $this->enableCors($request);
