@@ -12,6 +12,7 @@ use App\Models\Location;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Models\Payment;
+use App\Models\BookingHistory;
 
 class BookingController extends CORS
 {
@@ -133,6 +134,10 @@ class BookingController extends CORS
         $booking = Booking::find($bookingId);
         $pid = $booking->pid;
         $payment = Payment::find($pid);
+        $property = Property::find($booking->propertyid);
+        $location = Location::find($property->propertyid);
+
+        $logoUrl = asset('images/Logo.png');
 
         // $guestName = $guest->guestname;
         $length = $booking->stay_length;
@@ -143,18 +148,20 @@ class BookingController extends CORS
         $status = $booking->status;
         $amount = $payment->amount;
 
+        $formattedDate = date("M d, Y", strtotime($bookingDate));
+
         $mail = new PHPMailer(true);
         $mail->isSMTP();
         $mail->SMTPAuth = true;
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
-        $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
-        $mail->Password = 'tkuz tiec nnxt zuqj';
+        $mail->Username = 'ludivicombalaterojr@gmail.com';                     //SMTP username
+        $mail->Password = 'smjk vkqa bjsh zwtr';
 
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;
 
-        $mail->setFrom('misternonoy11@email.com', $bookerFirstName);
+        $mail->setFrom('ludivicombalaterojr@gmail.com', $bookerFirstName);
         $mail->addAddress($bookerEmail);     //Add a recipient
 
         $mail->isHTML(true);                                  //Set email format to HTML
@@ -233,12 +240,12 @@ class BookingController extends CORS
         <body>
             <div class='container'>
                 <div class='header'>
-                    <img src='Logo.png' alt='CebuStay Logo'>
+                <h1>CebuStay</h1>
                 </div>
                 <div class='content'>
                     <h1>Booking Confirmation</h1>
                     <p>Dear $bookerFirstName $bookerLastName,</p>
-                    <p>We are delighted to inform you that your booking with <strong>PROPERTY NAME</strong> has been successfully confirmed! We greatly appreciate your trust in us and look forward to providing you with an exceptional experience.</p>
+                    <p>We are delighted to inform you that your booking with <strong>" . $property->property_name . " </strong> has been successfully confirmed! We greatly appreciate your trust in us and look forward to providing you with an exceptional experience.</p>
                     <div class='booking-details'>
                         <h2>Booking Details</h2>
                         <table>
@@ -248,19 +255,19 @@ class BookingController extends CORS
                             </tr>
                             <tr>
                                 <th>Service/Reservation</th>
-                                <td>SERVICE NAME</td>
+                                <td>Booking Reservation</td>
                             </tr>
                             <tr>
                                 <th>Date and Time</th>
-                                <td>$bookingDate</td>
+                                <td>$formattedDate</td>
                             </tr>
                             <tr>
                                 <th>Location</th>
-                                <td>LOCATION</td>
+                                <td>" . $property->property_name . "</td>
                             </tr>
                             <tr>
                                 <th>Special Notes</th>
-                                <td>SPECIAL NOTES</td>
+                                <td>" . $booking->special_request . "</td>
                             </tr>
                         </table>
                     </div>
@@ -284,8 +291,8 @@ class BookingController extends CORS
                             </tr>
                             <tr>
                                 <td>$bookingDate</td>
-                                <td>PROPERTY NAME</td>
-                                <td>TYPE</td>
+                                <td>" . $property->property_name . "</td>
+                                <td>" . $property->property_type . "</td>
                                 <td>$checkin</td>
                                 <td>$checkout</td>
                                 <td>$length</td>
@@ -315,6 +322,7 @@ class BookingController extends CORS
             return 0; // Error occurred while sending email
         }
     }
+
 
     public function updateBookingStatus(Request $request)
     {
@@ -454,8 +462,135 @@ class BookingController extends CORS
 
         return response()->json($booking);
     }
+    public function setCheckin(Request $request)
+    {
+        $bookingid = $request->input('bookingid');
+        $booking = Booking::find($bookingid);
 
+        $booking->type = 'booking';
+        $booking->save();
 
+        return response()->json(['message' => 'Booking checked in successfully', 'status' => 'success']);
+    }
+    public function setCheckOut(Request $request)
+    {
+        $bookingid = $request->input('bookingid');
+        $booking = Booking::find($bookingid);
+
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error'], 404);
+        }
+
+        // Move booking to BookingHistory
+        $bookingHistory = new BookingHistory();
+        $bookingHistory->userid = $booking->userid;
+        $bookingHistory->propertyid = $booking->propertyid;
+        $bookingHistory->unitid = $booking->unitid;
+        $bookingHistory->bookerid = $booking->bookerid;
+        $bookingHistory->guestid = $booking->guestid;
+        $bookingHistory->pid = $booking->pid;
+        $bookingHistory->stay_length = $booking->stay_length;
+        $bookingHistory->guest_count = $booking->guest_count;
+        $bookingHistory->checkin_date = $booking->checkin_date;
+        $bookingHistory->checkout_date = date('Y-m-d H:i:s'); // Set current date and time
+        $bookingHistory->total_price = $booking->total_price;
+        $bookingHistory->special_request = $booking->special_request;
+        $bookingHistory->arrival_time = $booking->arrival_time;
+        $bookingHistory->status = $booking->status;
+        $bookingHistory->type = $booking->type;
+        $bookingHistory->check_type = "Checkout";
+        $bookingHistory->booking_date = $booking->booking_date;
+
+        // Save to BookingHistory
+        $bookingHistory->save();
+
+        // Delete the booking from Booking model
+        $booking->delete();
+
+        // Find the closest next booking by checkin_date for the same unitid
+        $nextBooking = Booking::where('unitid', $booking->unitid)
+            ->where('checkin_date', '>', $booking->checkin_date)
+            ->orderBy('checkin_date', 'asc')
+            ->first();
+
+        if ($nextBooking) {
+            // Check if the next booking's checkin_date is today
+            $today = date('Y-m-d');
+            $nextCheckinDate = date('Y-m-d', strtotime($nextBooking->checkin_date));
+
+            if ($nextCheckinDate == $today) {
+                $nextBooking->type = 'booking';
+            }
+
+            $nextBooking->save();
+        }
+
+        return response()->json(['message' => 'Checkout date set successfully, booking moved to history, and next booking updated', 'status' => 'success']);
+    }
+
+    public function getAllBookingHistoryByProperty(Request $request)
+    {
+        $this->enableCors($request);
+        $userId = $request->input('userid');
+
+        // Fetch all bookings related to properties of the given user
+        $bookinghistory = BookingHistory::select(
+            'tbl_bookinghistory.propertyid',
+            'tbl_bookinghistory.bhid',
+            'tbl_bookinghistory.unitid',
+            'tbl_bookinghistory.booking_date',
+            'tbl_bookinghistory.guestid',
+            'tbl_bookinghistory.checkin_date',
+            'tbl_bookinghistory.checkout_date',
+            'tbl_bookinghistory.total_price',
+            'tbl_bookinghistory.status',
+            'tbl_bookinghistory.stay_length',
+            'tbl_bookinghistory.guest_count',
+            'tbl_bookinghistory.special_request',
+            'tbl_bookinghistory.type', // Select type from tbl_booking table
+            'tbl_bookinghistory.pid',
+            'tbl_bookinghistory.check_type',
+            'tbl_bookinghistory.bookerid',
+            'property.property_name', // Select property_name from property table
+            'property.property_type', // Select property_type from property table
+            'property.property_desc', // Select property_desc from property table
+            'property.unit_type', // Select unit_type from property table
+            'tbl_guest.guestname' // Select guestname from tbl_guest table
+        )
+            ->join('property', 'tbl_bookinghistory.propertyid', '=', 'property.propertyid')
+            ->join('tbl_guest', 'tbl_bookinghistory.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
+            ->where('property.userid', $userId)
+            ->get();
+
+        // Format the bookings
+        $formattedBookings = $bookinghistory->map(function ($booking) {
+            $booker = Booker::find($booking->bookerid);
+            $payment = Payment::find($booking->pid);
+            return [
+                'bhid' => $booking->bhid,
+                'booking_date' => $booking->booking_date,
+                'propertyid' => $booking->propertyid,
+                'unitid' => $booking->unitid,
+                'stay_length' => $booking->stay_length,
+                'special_request' => $booking->special_request,
+                'guest_count' => $booking->guest_count,
+                'property_name' => $booking->property_name,
+                'property_type' => $booking->property_type, // Add property_type
+                'property_desc' => $booking->property_desc, // Add property_desc
+                'unit_type' => $booking->unit_type, // Add unit_type
+                'guestid' => $booking->guestid,
+                'guestname' => $booking->guestname, // Retrieve guestname from the result
+                'checkin_date' => $booking->checkin_date,
+                'checkout_date' => $booking->checkout_date,
+                'total_price' => $booking->total_price,
+                'status' => $booking->status,
+                'type' => $booking->type, // Add type from tbl_booking
+                'booker' => $booker, // Add booker details
+            ];
+        });
+
+        return response()->json($formattedBookings);
+    }
 
 
 
