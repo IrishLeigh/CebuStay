@@ -121,7 +121,7 @@ Route::post('/setcheckout', 'App\Http\Controllers\BookingController@setCheckOut'
 Route::post('/setcheckin', 'App\Http\Controllers\BookingController@setCheckin');
 //AVAILABILITY FUNCTIONS
 Route::get('/getavailableproperties', 'App\Http\Controllers\PropertyController@searchAvailableProperties');
-Route::get('/getavailableunits', 'App\Http\Controllers\PropertyController@searchAvailableUnits');
+Route::get('/getavailableunits', 'App\Http\Controllers\PropertyController@getAvailableUnits');
 
 //Route for USER Manager
 Route::get('/user/properties', 'App\Http\Controllers\UserController@getAllPropertyByUser');
