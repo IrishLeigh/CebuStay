@@ -323,7 +323,7 @@ class BookingController extends CORS
         }
     }
 
-    
+
     public function updateBookingStatus(Request $request)
     {
         $this->enableCors($request);
@@ -467,6 +467,10 @@ class BookingController extends CORS
         $bookingid = $request->input('bookingid');
         $booking = Booking::find($bookingid);
 
+        $booking->type = 'booking';
+        $booking->save();
+
+        return response()->json(['message' => 'Booking checked in successfully', 'status' => 'success']);
     }
     public function setCheckOut(Request $request)
     {
