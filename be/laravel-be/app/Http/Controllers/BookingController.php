@@ -585,6 +585,7 @@ class BookingController extends CORS
                 'total_price' => $booking->total_price,
                 'status' => $booking->status,
                 'type' => $booking->type, // Add type from tbl_booking
+                'check_type' => $booking->check_type,
                 'booker' => $booker, // Add booker details
             ];
         });
