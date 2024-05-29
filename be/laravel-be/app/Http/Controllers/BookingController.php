@@ -12,6 +12,7 @@ use App\Models\Location;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Models\Payment;
+use App\Models\BookingHistory;
 
 class BookingController extends CORS
 {
@@ -454,8 +455,129 @@ class BookingController extends CORS
 
         return response()->json($booking);
     }
+    public function setCheckin(Request $request)
+    {
 
+    }
+    public function setCheckOut(Request $request)
+    {
+        $bookingid = $request->input('bookingid');
+        $booking = Booking::find($bookingid);
 
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error'], 404);
+        }
+
+        // Move booking to BookingHistory
+        $bookingHistory = new BookingHistory();
+        $bookingHistory->userid = $booking->userid;
+        $bookingHistory->propertyid = $booking->propertyid;
+        $bookingHistory->unitid = $booking->unitid;
+        $bookingHistory->bookerid = $booking->bookerid;
+        $bookingHistory->guestid = $booking->guestid;
+        $bookingHistory->pid = $booking->pid;
+        $bookingHistory->stay_length = $booking->stay_length;
+        $bookingHistory->guest_count = $booking->guest_count;
+        $bookingHistory->checkin_date = $booking->checkin_date;
+        $bookingHistory->checkout_date = date('Y-m-d H:i:s'); // Set current date and time
+        $bookingHistory->total_price = $booking->total_price;
+        $bookingHistory->special_request = $booking->special_request;
+        $bookingHistory->arrival_time = $booking->arrival_time;
+        $bookingHistory->status = $booking->status;
+        $bookingHistory->type = $booking->type;
+        $bookingHistory->check_type = "Checkout";
+        $bookingHistory->booking_date = $booking->booking_date;
+
+        // Save to BookingHistory
+        $bookingHistory->save();
+
+        // Delete the booking from Booking model
+        $booking->delete();
+
+        // Find the closest next booking by checkin_date for the same unitid
+        $nextBooking = Booking::where('unitid', $booking->unitid)
+            ->where('checkin_date', '>', $booking->checkin_date)
+            ->orderBy('checkin_date', 'asc')
+            ->first();
+
+        if ($nextBooking) {
+            // Check if the next booking's checkin_date is today
+            $today = date('Y-m-d');
+            $nextCheckinDate = date('Y-m-d', strtotime($nextBooking->checkin_date));
+
+            if ($nextCheckinDate == $today) {
+                $nextBooking->type = 'booking';
+            }
+
+            $nextBooking->save();
+        }
+
+        return response()->json(['message' => 'Checkout date set successfully, booking moved to history, and next booking updated', 'status' => 'success']);
+    }
+
+    public function getAllBookingHistoryByProperty(Request $request)
+    {
+        $this->enableCors($request);
+        $userId = $request->input('userid');
+
+        // Fetch all bookings related to properties of the given user
+        $bookinghistory = BookingHistory::select(
+            'tbl_bookinghistory.propertyid',
+            'tbl_bookinghistory.bhid',
+            'tbl_bookinghistory.unitid',
+            'tbl_bookinghistory.booking_date',
+            'tbl_bookinghistory.guestid',
+            'tbl_bookinghistory.checkin_date',
+            'tbl_bookinghistory.checkout_date',
+            'tbl_bookinghistory.total_price',
+            'tbl_bookinghistory.status',
+            'tbl_bookinghistory.stay_length',
+            'tbl_bookinghistory.guest_count',
+            'tbl_bookinghistory.special_request',
+            'tbl_bookinghistory.type', // Select type from tbl_booking table
+            'tbl_bookinghistory.pid',
+            'tbl_bookinghistory.check_type',
+            'tbl_bookinghistory.bookerid',
+            'property.property_name', // Select property_name from property table
+            'property.property_type', // Select property_type from property table
+            'property.property_desc', // Select property_desc from property table
+            'property.unit_type', // Select unit_type from property table
+            'tbl_guest.guestname' // Select guestname from tbl_guest table
+        )
+            ->join('property', 'tbl_bookinghistory.propertyid', '=', 'property.propertyid')
+            ->join('tbl_guest', 'tbl_bookinghistory.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
+            ->where('property.userid', $userId)
+            ->get();
+
+        // Format the bookings
+        $formattedBookings = $bookinghistory->map(function ($booking) {
+            $booker = Booker::find($booking->bookerid);
+            $payment = Payment::find($booking->pid);
+            return [
+                'bhid' => $booking->bhid,
+                'booking_date' => $booking->booking_date,
+                'propertyid' => $booking->propertyid,
+                'unitid' => $booking->unitid,
+                'stay_length' => $booking->stay_length,
+                'special_request' => $booking->special_request,
+                'guest_count' => $booking->guest_count,
+                'property_name' => $booking->property_name,
+                'property_type' => $booking->property_type, // Add property_type
+                'property_desc' => $booking->property_desc, // Add property_desc
+                'unit_type' => $booking->unit_type, // Add unit_type
+                'guestid' => $booking->guestid,
+                'guestname' => $booking->guestname, // Retrieve guestname from the result
+                'checkin_date' => $booking->checkin_date,
+                'checkout_date' => $booking->checkout_date,
+                'total_price' => $booking->total_price,
+                'status' => $booking->status,
+                'type' => $booking->type, // Add type from tbl_booking
+                'booker' => $booker, // Add booker details
+            ];
+        });
+
+        return response()->json($formattedBookings);
+    }
 
 
 

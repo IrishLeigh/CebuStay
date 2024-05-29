@@ -116,6 +116,8 @@ Route::get('/property/bookings', 'App\Http\Controllers\BookingController@getAllB
 Route::get('/property/bookingId', 'App\Http\Controllers\BookingController@getAllBookingByBookingId');
 
 Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');
+Route::get('/allbookinghistory', 'App\Http\Controllers\BookingController@getAllBookingHistoryByProperty');
+Route::post('/setcheckout', 'App\Http\Controllers\BookingController@setCheckOut');
 
 //AVAILABILITY FUNCTIONS
 Route::get('/getavailableproperties', 'App\Http\Controllers\PropertyController@searchAvailableProperties');
