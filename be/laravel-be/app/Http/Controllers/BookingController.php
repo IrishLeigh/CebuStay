@@ -161,15 +161,147 @@ class BookingController extends CORS
         $mail->Subject = 'Email Verification from CebuStay';
 
         $email_template = "
-        <h2 style='color: #000000;'>Hi $bookerFirstName $bookerLastName,</h2>
-        <h3 style='color: #000000;'>This is your Payment Details: </h3>
-        <h3 style='color: #000000;'>Length of stay: <span style='color: #000000;'>$length</span></h3>
-        <h3 style='color: #000000;'>Number of Guests: <span style='color: #000000;'>$guestCount</span></h3>
-        <h3 style='color: #000000;'>Booking Date: <span style='color: #000000;'>$bookingDate</span></h3>
-        <h3 style='color: #000000;'>Checked In Date: <span style='color: #000000;'>$checkin</span></h3>
-        <h3 style='color: #000000;'>Checked Out Date: <span style='color: #000000;'>$checkout</span></h3>
-        <h3 style='color: #000000;'>Status: <span style='color: #000000;'>$status</span></h3>
-        <h3 style='color: #000000;'>Amount: <span style='color: #000000;'>$amount</span></h3>
+        <!DOCTYPE html>
+        <html lang='en'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Booking Confirmation</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #f4f4f4;
+                }
+                .container {
+                    width: 80%;
+                    margin: auto;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #00aaff;
+                    color: #fff;
+                    padding: 20px;
+                    text-align: center;
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                }
+                .header img {
+                    max-width: 100px;
+                }
+                .content {
+                    padding: 20px;
+                }
+                .content h1 {
+                    text-align: center;
+                    color: #333;
+                }
+                .content p {
+                    font-size: 16px;
+                    line-height: 1.5;
+                    color: #333;
+                }
+                .booking-details, .payment-details {
+                    margin: 20px 0;
+                }
+                .booking-details table, .payment-details table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .booking-details th, .booking-details td, .payment-details th, .payment-details td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                .booking-details th, .payment-details th {
+                    background-color: #f2f2f2;
+                }
+                .footer {
+                    text-align: center;
+                    padding: 20px;
+                    background-color: #00aaff;
+                    color: #fff;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <img src='Logo.png' alt='CebuStay Logo'>
+                </div>
+                <div class='content'>
+                    <h1>Booking Confirmation</h1>
+                    <p>Dear $bookerFirstName $bookerLastName,</p>
+                    <p>We are delighted to inform you that your booking with <strong>PROPERTY NAME</strong> has been successfully confirmed! We greatly appreciate your trust in us and look forward to providing you with an exceptional experience.</p>
+                    <div class='booking-details'>
+                        <h2>Booking Details</h2>
+                        <table>
+                            <tr>
+                                <th>Booking ID</th>
+                                <td>$bookingId</td>
+                            </tr>
+                            <tr>
+                                <th>Service/Reservation</th>
+                                <td>SERVICE NAME</td>
+                            </tr>
+                            <tr>
+                                <th>Date and Time</th>
+                                <td>$bookingDate</td>
+                            </tr>
+                            <tr>
+                                <th>Location</th>
+                                <td>LOCATION</td>
+                            </tr>
+                            <tr>
+                                <th>Special Notes</th>
+                                <td>SPECIAL NOTES</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p>Additionally, we have received your payment for the booking. Thank you for choosing to pay in advance, ensuring a smooth and hassle-free experience for you.</p>
+                    <p>If you have any special requests or require further assistance, feel free to reach out to our customer support team at <a href='mailto:cebstaycustomersupport@gmail.com'>cebstaycustomersupport@gmail.com</a></p>
+                    <p>Thank you once again for choosing <strong>CebuStay</strong>. We are thrilled to serve you and look forward to exceeding your expectations.</p>
+                    <p>Warm regards,<br>CebuStay</p>
+                    <div class='payment-details'>
+                        <h2>Payment Details</h2>
+                        <table>
+                            <tr>
+                                <th>Booking Date</th>
+                                <th>Property Name</th>
+                                <th>Type</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Length of stay</th>
+                                <th># of Guests</th>
+                                <th>Status</th>
+                                <th>Amount Paid</th>
+                            </tr>
+                            <tr>
+                                <td>$bookingDate</td>
+                                <td>PROPERTY NAME</td>
+                                <td>TYPE</td>
+                                <td>$checkin</td>
+                                <td>$checkout</td>
+                                <td>$length</td>
+                                <td>$guestCount</td>
+                                <td>$status</td>
+                                <td>$amount</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class='footer'>
+                    cebustay est 2024
+                </div>
+            </div>
+        </body>
+        </html>
     ";
 
         $mail->Body = $email_template;
@@ -266,6 +398,7 @@ class BookingController extends CORS
             'tbl_booking.status',
             'tbl_booking.stay_length',
             'tbl_booking.guest_count',
+            'tbl_booking.special_request',
             'tbl_booking.type', // Select type from tbl_booking table
             'tbl_booking.bookerid',
             'property.property_name', // Select property_name from property table
@@ -289,6 +422,7 @@ class BookingController extends CORS
                 'propertyid' => $booking->propertyid,
                 'unitid' => $booking->unitid,
                 'stay_length' => $booking->stay_length,
+                'special_request' => $booking->special_request,
                 'guest_count' => $booking->guest_count,
                 'property_name' => $booking->property_name,
                 'property_type' => $booking->property_type, // Add property_type
