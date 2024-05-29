@@ -257,12 +257,15 @@ class BookingController extends CORS
         $bookings = Booking::select(
             'tbl_booking.propertyid',
             'tbl_booking.bookingid',
+            'tbl_booking.unitid',
             'tbl_booking.booking_date',
             'tbl_booking.guestid',
             'tbl_booking.checkin_date',
             'tbl_booking.checkout_date',
             'tbl_booking.total_price',
             'tbl_booking.status',
+            'tbl_booking.stay_length',
+            'tbl_booking.guest_count',
             'tbl_booking.type', // Select type from tbl_booking table
             'tbl_booking.bookerid',
             'property.property_name', // Select property_name from property table
@@ -279,10 +282,14 @@ class BookingController extends CORS
         // Format the bookings
         $formattedBookings = $bookings->map(function ($booking) {
             $booker = Booker::find($booking->bookerid);
+            $payment = Payment::find($booking->pid);
             return [
                 'bookingid' => $booking->bookingid,
                 'booking_date' => $booking->booking_date,
                 'propertyid' => $booking->propertyid,
+                'unitid' => $booking->unitid,
+                'stay_length' => $booking->stay_length,
+                'guest_count' => $booking->guest_count,
                 'property_name' => $booking->property_name,
                 'property_type' => $booking->property_type, // Add property_type
                 'property_desc' => $booking->property_desc, // Add property_desc
