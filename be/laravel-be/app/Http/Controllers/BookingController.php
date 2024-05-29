@@ -457,6 +457,8 @@ class BookingController extends CORS
     }
     public function setCheckin(Request $request)
     {
+        $bookingid = $request->input('bookingid');
+        $booking = Booking::find($bookingid);
 
     }
     public function setCheckOut(Request $request)
