@@ -24,7 +24,7 @@ class Booker extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class, 'bookerid', 'bookerid');
+        return $this->hasMany(Booking::class, 'bookerid', 'bookerid');
     }
 
     public function bookinghistory()
