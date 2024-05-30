@@ -1,0 +1,67 @@
+/* EditName specific CSS */
+.edit-name-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align EditName to the left */
+  margin-bottom: 20px;
+}
+
+.edit-name-input-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.edit-name-label {
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.edit-name-input-wrapper {
+  display: flex;
+  align-items: center; /* Align icon and input vertically */
+}
+
+.edit-phone-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.edit-phone-input {
+  padding: 10px;
+  border: 1px solid #007bff; /* Blue stroke for input box */
+  border-radius: 8px;
+ /* Add margin between input and icon */
+  box-shadow: none; /* Remove box shadow */
+  outline: none; /* Remove default outline */
+  width: 10rem;
+}
+
+.edit-name-input:focus {
+  border-color: #007bff; /* Blue border color on focus */
+}
+
+.edit-name-icon {
+  font-size: 1.5rem;
+  color: #007bff; /* Set icon color */
+}
+
+.edit-name-buttons {
+  display: flex;
+  justify-content: flex-start; /* Align buttons to the left */
+}
+
+.cancel-button {
+  background-color: #eee;
+  color: #007bff; /* Blue text color for cancel button */
+  margin-right: 10px;
+}
+
+.add-button {
+  background-color: #007bff; /* Blue background color for add button */
+  color: white; /* White text color for add button */
+}

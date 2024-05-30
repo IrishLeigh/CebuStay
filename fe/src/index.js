@@ -1,15 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
-import Form from "./Login_User/Form";
-import MenuAppBar from "./components/Header/AppBar";
-import HeaderNoUser from "./components/Header/HeaderNoUser";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
-import AccommodationReservation from "./components/AccommodationReservation";
+import EditProfileUI from "./pages/EditProfileUI/UserProfile";
+
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

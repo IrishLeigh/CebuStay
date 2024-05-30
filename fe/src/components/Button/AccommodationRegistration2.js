@@ -30,7 +30,7 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
 
   console.log("Property Type", selectedPropertyType);
   return (
-    <Box mb={5} mt={-9}>
+    <Box mb={5} mt={-11}>
       <Container
         maxWidth="md"
         sx={{
@@ -56,7 +56,6 @@ export default function PropertyType({ onSelectedPropertyTypeChange, parentSelec
             fontSize: "1.5rem",
             textAlign: "left",
             marginBottom: 5,
-            marginTop: 0
           }}
         >
           What guests can book?

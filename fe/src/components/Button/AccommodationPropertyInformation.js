@@ -179,7 +179,8 @@ function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}
           flexDirection: "column",
           justifyContent: "center",
           textAlign: "left",
-          marginTop: "5rem",
+          marginTop: "2rem",
+          marginBottom: "2rem",
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
@@ -207,7 +208,7 @@ function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}
           initialSelectedItems={selectedAmenities.facilities}
         />
         {/* Display selected items for each category */}
-        <Typography variant="h6" sx={{ mt: 4 }}>
+        {/* <Typography variant="h6" sx={{ mt: 4 }}>
           Selected Amenities:
         </Typography>
         <Typography variant="body1">
@@ -221,7 +222,7 @@ function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}
         </Typography>
         <div className='nextButton-container'>
           <button className="nextButton" sx={{ color: '#007BFF' }}>Save</button>
-        </div>
+        </div> */}
       </Container>
     </>
   );

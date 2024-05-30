@@ -3,11 +3,12 @@ import { Box, Typography, Avatar, Stack, TextField, InputAdornment, Chip, Divide
 import CheckIcon from '@mui/icons-material/Check';
 import Countries from '../../components/Booking/Countries';
 import PhoneNumberInput from '../../components/Booking/PhoneNumber';
+import axios from 'axios';
 
-function BookingGuest(props) {
-  const [email, setEmail] = useState('emailhere@gmail.com');
-  const [firstName, setFirstName] = useState('Irish Leigh');
-  const [lastName, setLastName] = useState('San Juan');
+function BookingGuest({User, onGuestDetailsChange, PropertyData}) {
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const policies = ['Non-refundable', 'Modificable if plans change', 'Maximum 2 Guests']; // Example facilities
   const [selectedCountry, setSelectedCountry] = useState('');
   const services = ['Room service', 'Free Wi-Fi', 'Airport shuttle']; // Example services
@@ -19,6 +20,29 @@ function BookingGuest(props) {
   const [arrival, setArrival] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+
+    if (token) {
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .then((response) => {
+          setEmail(response.data["data"]["email"]);
+          setFirstName(response.data["data"]["firstname"]);
+          setLastName(response.data["data"]["lastname"]);
+          console.log("User: ", response.data["data"]);
+        })
+        .catch((error) => {
+          console.log("Error decoding JWT token:", error);
+          // setUser(null);
+        });
+    } else {
+      setEmail("ncietry");
+          setFirstName("ncietry");
+          setLastName("ncietry");
+    }
+  }, []);
   
   //callback
   const handleCountryChange = (country) => {
@@ -36,7 +60,6 @@ function BookingGuest(props) {
     setPhoneNumber(phone);
   };
   
-
   const handleSpecialRequestChange = (event) => {
     setRequests(event.target.value);
   };
@@ -45,6 +68,14 @@ function BookingGuest(props) {
   //   setArrival(event.target.value);
   // };
 
+ //convert time
+
+ const convertTimeTo12HourFormat = (time) => {
+  const [hours, minutes] = time.split(':');
+  const amPm = hours >= 12 ? 'PM' : 'AM';
+  const twelveHourFormat = `${((hours + 11) % 12) + 1}:${minutes} ${amPm}`;
+  return twelveHourFormat;
+};
   const getInitial = (email) => {
     return email ? email.charAt(0).toUpperCase() : '';
   };
@@ -83,6 +114,7 @@ function BookingGuest(props) {
       setGuestName('');
     }
   }, [bookingFor, firstName, lastName]);
+
   useEffect(() => {
     const guestDetails = {
       email,
@@ -97,8 +129,11 @@ function BookingGuest(props) {
       phoneNumber,
       countryCode,
     };
-    props.onGuestDetailsChange(guestDetails);
+    onGuestDetailsChange(guestDetails);
   }, [email, firstName, lastName, selectedCountry, countryCode, bookingFor, guestName, guestEmail, arrivalTime, requests, phoneNumber]);
+
+console.log("User nga capital U",User);
+console.log("PropertyData",PropertyData);
 
   return (
     <>
@@ -324,7 +359,7 @@ function BookingGuest(props) {
         >
           <Typography sx={{ fontSize: '1.125rem', fontWeight: 'bold' }}>Your arrival time</Typography>
           <Typography sx={{ fontSize: '1rem', mt:'1rem' }}>
-            Your can check-in between PLACE HRE and PLACE HERE
+            Your can check-in between {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_from)} and {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_until)}
           </Typography>
           <Stack direction="column">
             <Typography sx={{ fontSize: '1rem', mt:'1rem' }}>

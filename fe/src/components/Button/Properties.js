@@ -29,7 +29,7 @@ const propertyTypes = [
   },
 ];
 
-export default function Properties({ onSelectedTypeChange, parentSelectedData }) {
+export default function Properties({ onSelectedTypeChange, parentSelectedData  }) {
   const [selectedType, setSelectedType] = useState(parentSelectedData);
 
   // useEffect(() => {
@@ -47,11 +47,15 @@ export default function Properties({ onSelectedTypeChange, parentSelectedData })
   //   console.log("Property:", newSelectedType);
   // };
 
-  const handleClick = (button) => {
-    setSelectedType(selectedType === button ? null : button);
-    onSelectedTypeChange(selectedType === button ? null : button); // Propagate selectedType to parent
-    console.log("Property:", selectedType === button ? null : button); // Log selected property
-  };
+
+// Inside the handleClick function
+const handleClick = (button) => {
+  setSelectedType(selectedType === button ? null : button);
+  console.log("Selected Type after click:", selectedType); // Log the selected type after click
+  onSelectedTypeChange(selectedType === button ? null : button); // Propagate selectedType to parent
+  console.log("Property:", selectedType === button ? null : button); // Log selected property
+};
+
   console.log("selected type sulod: ", selectedType);
   return (
     <Box>
@@ -62,7 +66,9 @@ export default function Properties({ onSelectedTypeChange, parentSelectedData })
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
+          minHeight: "100%",
+          mb:"4rem",
+          mt:"4rem",
         }}
       >
         <Typography
@@ -87,7 +93,7 @@ export default function Properties({ onSelectedTypeChange, parentSelectedData })
           perfect property type to list on CebuStay?
         </Typography>
 
-        <Grid container spacing={2} justifyContent="center">
+        <Grid container spacing={2} justifyContent="center" mb={5}>
           {propertyTypes.map((type, index) => (
             <Grid item xs={12} key={index}>
               <Box>

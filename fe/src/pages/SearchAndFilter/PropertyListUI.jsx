@@ -1,22 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import './Layout.css';
-import SideBar from '../SearchFilterSideBar/SideBar';
-import MainContent from '../components/MainContent';
+import React, { useState } from 'react';
+import './PropertyListUI.css';
+import { accommodationlist, pricinglist } from './components/MainContent';
+import SideBar from './components/SideBar';
+import MainContent from './components/MainContent';
 import axios from 'axios';
-// import { accommodationlist, pricinglist } from '../components/MainContent';
+import { useEffect } from 'react';
 
-const Layout = () => {
+
+const PropertyListUI = () => {
+  const [filters, setFilters] = useState({
+    bedrooms: 'Any',
+    beds: 'Any',
+    bathrooms: 'Any',
+    minPrice: '',
+    maxPrice: '',
+    bookingOptions: []
+  });
+  const [searchData, setSearchData] = useState({
+    destination: '',
+    startDate: new Date(),
+    endDate: null,
+    guestCapacity: '',
+});
   const [selectedAmenities, setSelectedAmenities] = useState([]);
-
   const [accommodationlist, setAccommodationlist] = useState([]);
-const [pricinglist, setPricinglist] = useState([]);
+  const [pricinglist, setPricinglist] = useState([]);
 
 useEffect(() => {
   const fetchProperties = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:8000/api/allproperties');
       const properties = response.data;
-      console.log("response", response);
+
       // Fetch images
       const imglist = await axios.get('http://127.0.0.1:8000/api/getallfirstimg');
       const imgMap = new Map();
@@ -73,26 +88,7 @@ useEffect(() => {
 
   fetchProperties();
 }, []);
-
-
-
   
-
-  const [filters, setFilters] = useState({
-    bedrooms: 'Any',
-    beds: 'Any',
-    bathrooms: 'Any',
-    minPrice: '',
-    maxPrice: '',
-    bookingOptions: []
-  });
-
-  const [searchData, setSearchData] = useState({
-    destination: '',
-    startDate: new Date(),
-    endDate: null,
-    guestCapacity: '',
-});
 
   const handleFilterChange = (newFilters) => {
     setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
@@ -110,4 +106,4 @@ useEffect(() => {
   );
 };
 
-export default Layout;
+export default PropertyListUI;

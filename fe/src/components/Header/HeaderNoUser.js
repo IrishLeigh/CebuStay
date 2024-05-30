@@ -5,6 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
+import './NavigationBar.css';
 
 const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
 

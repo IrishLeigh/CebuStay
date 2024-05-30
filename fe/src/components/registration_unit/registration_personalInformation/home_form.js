@@ -6,10 +6,24 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import FormPropsTextFields from "../../textfield";
 import TextField from "@mui/material/TextField";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 export default function SimplePaper({ onPropertyInformationChange, parentPropertyInfo }) {
   const [propertyData, setPropertyData] = useState(parentPropertyInfo);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
+  // Function to check if all fields are filled
+  const validateForm = () => {
+    return (
+      propertyData.propertyName &&
+      propertyData.propertyDescription &&
+      propertyData.numberOfUnits &&
+      propertyData.gettingToProperty
+    );
+  };
+
+  // Function to handle changes in form fields
   const handleChange = (newValue, field) => {
     setPropertyData((prevState) => ({
       ...prevState,
@@ -20,7 +34,10 @@ export default function SimplePaper({ onPropertyInformationChange, parentPropert
     if (typeof onPropertyInformationChange === "function") {
       onPropertyInformationChange({ ...propertyData, [field]: newValue });
     }
+
   };
+
+
   console.log("Property Information suood:", propertyData);
 
   return (
@@ -32,8 +49,8 @@ export default function SimplePaper({ onPropertyInformationChange, parentPropert
               display: "flex",
               flexDirection: "column",
               textAlign: "left",
-              mt: 10,
-              mb: 15,
+              mt: "4rem",
+              mb: "8rem",
             }}
           >
             <Typography sx={{ fontSize: "2rem" }} fontWeight="bold" mb={2}>
@@ -54,44 +71,67 @@ export default function SimplePaper({ onPropertyInformationChange, parentPropert
                 noValidate
                 autoComplete="off"
               >
-                <FormPropsTextFields
-                  name="Property Name"
-                  width="100%"
+                <TextField
+                  id="property-name"
+                  label="Property Name"
+                  error={!propertyData.propertyName}
+                  helperText={!propertyData.propertyName && "Property Name is required"}
+                  fullWidth
                   value={propertyData.propertyName}
-                  onChange={(value) => handleChange(value, "propertyName")}
+                  onChange={(e) => handleChange(e.target.value, "propertyName")}
                 />
                 <TextField
                   id="property-description"
                   label="Property Description"
                   multiline
                   rows={6}
-                  sx={{ width: "100%" }} // Set width to 100%
+                  fullWidth
+                  error={!propertyData.propertyDescription}
+                  helperText={!propertyData.propertyDescription && "Property Description is required"}
                   placeholder="Say Something about your listing here.."
                   value={propertyData.propertyDescription}
-                  onChange={(e) =>
-                    handleChange(e.target.value, "propertyDescription")
-                  }
+                  onChange={(e) => handleChange(e.target.value, "propertyDescription")}
                 />
-                <FormPropsTextFields
-                  name="Number of Units"
-                  width="100%"
+                <TextField
+                  type = "number"
+                  id="number-of-units"
+                  label="Number of Units"
+                  error={!propertyData.numberOfUnits}
+                  helperText={!propertyData.numberOfUnits && "Number of Units is required"}
+                  fullWidth
                   value={propertyData.numberOfUnits}
-                  onChange={(value) => handleChange(value, "numberOfUnits")}
+                  onChange={(e) => handleChange(e.target.value, "numberOfUnits")}
                 />
                 <TextField
                   id="getting-to-property"
                   label="Getting to Your Property"
                   multiline
                   rows={6}
-                  sx={{ width: "100%" }} // Set width to 100%
+                  fullWidth
+                  error={!propertyData.gettingToProperty}
+                  helperText={!propertyData.gettingToProperty && "Getting to Your Property is required"}
                   placeholder="Please let guests know the best ways to reach your property"
                   value={propertyData.gettingToProperty}
-                  onChange={(e) =>
-                    handleChange(e.target.value, "gettingToProperty")
-                  }
+                  onChange={(e) => handleChange(e.target.value, "gettingToProperty")}
                 />
+               
               </Box>
             </Paper>
+            {/* Snackbar for form validation */}
+            <Snackbar
+              open={!validateForm()}
+              autoHideDuration={6000}
+              onClose={() => setOpenSnackbar(false)}
+            >
+              <MuiAlert
+                elevation={6}
+                variant="filled"
+                onClose={() => setOpenSnackbar(false)}
+                severity="error"
+              >
+                Please fill in all fields.
+              </MuiAlert>
+            </Snackbar>
           </Box>
         </Grid>
       </Grid>

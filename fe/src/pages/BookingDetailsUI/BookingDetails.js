@@ -3,23 +3,44 @@ import { AppBar, Toolbar, Typography, Grid, Box, TextareaAutosize, Card } from '
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import Divider from '@mui/material/Divider';
 import {Stack} from '@mui/material';
+import Chip from '@mui/material/Chip';
 
+function BookingDetails({  lengthStay, setLengthStay,onPriceChange  , PropertyData, guestCapacity,checkin_date, checkout_date }) {
+ 
+  const [price, setPrice] = useState(parseFloat((PropertyData.property_unitpricing.min_price + PropertyData.property_unitpricing.min_price * 0.12).toFixed(2)));
+  const [vat, setVat] = useState(parseFloat((PropertyData.property_unitpricing.min_price  * 0.12).toFixed(2)));
+  const [allServices, setAllServices] = useState([]);
 
+    //convert time
 
-function BookingDetails({ basePrice, setBasePrice, guests, setGuests, lengthStay, setLengthStay,onPriceChange  }) {
-  const facilities = ['Wifi', 'Air conditioning', 'Breakfast included'];
-  const [price, setPrice] = useState(parseFloat((basePrice + basePrice * 0.12).toFixed(2)));
-  const [vat, setVat] = useState(parseFloat((basePrice * 0.12).toFixed(2)));
+    const convertTimeTo12HourFormat = (time) => {
+      const [hours, minutes] = time.split(':');
+      const amPm = hours >= 12 ? 'PM' : 'AM';
+      const twelveHourFormat = `${((hours + 11) % 12) + 1}:${minutes} ${amPm}`;
+      return twelveHourFormat;
+    };
 
   // Recalculate VAT and price whenever basePrice changes
   useEffect(() => {
-    const calculatedVat = parseFloat((basePrice * 0.12).toFixed(2));
-    const totalPrice = parseFloat((basePrice + calculatedVat).toFixed(2));
+    const calculatedVat = (PropertyData.property_unitpricing.min_price * 0.12).toFixed(2);
+    const totalPrice = (parseFloat(PropertyData.property_unitpricing.min_price) + parseFloat(calculatedVat)).toFixed(2);
     setVat(calculatedVat);
     setPrice(totalPrice);
     // Invoke the callback to pass the updated price to the parent component
-    onPriceChange(totalPrice);
-  }, [basePrice, onPriceChange]);
+    onPriceChange(parseFloat(totalPrice));
+    console.log("Price", price);
+  }, [PropertyData.property_unitpricing.min_price, onPriceChange]);
+  
+//get the services
+  useEffect(() => {
+    const services = [
+      ...PropertyData.property_facilities.map(facility => facility.facilities_name),
+      ...PropertyData.property_services.map(service => service.service_name),
+      ...PropertyData.property_amenities.map(amenity => amenity.amenity_name)
+    ];
+    setAllServices(services);
+  }, [PropertyData]);
+
   return (
     <>
       {/* <AppBar position="static">
@@ -41,23 +62,39 @@ function BookingDetails({ basePrice, setBasePrice, guests, setGuests, lengthStay
 
 
               <Typography sx={{ fontSize: "1rem" }} ml={1}>
-                Accommodation Type
+                {PropertyData.property_details.property_type}
               </Typography>
               <Typography sx={{ fontSize: "1.5rem" }} ml={1} fontWeight="bold" pt={0.5}>
-                Accommodation Name
+              {PropertyData.property_details.property_name}
               </Typography>
               <Typography sx={{ fontSize: "1rem" }} ml={1} pt={0.5}>
-                123 Street, City, Province, Zip Code
+                {PropertyData.property_address.address} , {PropertyData.property_address.zipcode}
               </Typography>
-              <Box sx={{ display: 'flex', paddingTop: '1rem', marginLeft: '0.5rem' }}>
-                <ReviewsIcon sx={{ color: '#ff5722', fontSize: '1.5rem' }} /> {/* Change color and size here */}
+              {/* <Box sx={{ display: 'flex', paddingTop: '1rem', marginLeft: '0.5rem' }}>
+                <ReviewsIcon sx={{ color: '#ff5722', fontSize: '1.5rem' }} /> 
                 <Typography sx={{ fontSize: "1rem" }} pl={0.5}>200 reviews</Typography>
+              </Box> */}
+               <Box  pt={1}>
+                <Stack direction="row" spacing={2} flexWrap="wrap">
+                  {allServices.map((service, index) => (
+                    <Chip label={service} key={index} sx={{backgroundColor: '#16B4DD', color:"#FFFF",}}/>
+                  ))}
+                </Stack>
               </Box>
-              {facilities.map((facility, index) => (
+              
+              {/* {PropertyData.property_services.map((facility, index) => (
                 <Typography sx={{ fontSize: "0.75rem" }} ml={1} pt={0.5} key={index}>
-                  {facility}
+                  <Stack direction="row" spacing={1}>
+                    <Chip label= {facility.service_name}/>
+                  </Stack>
+                 
                 </Typography>
               ))}
+               {PropertyData.property_amenities.map((facility, index) => (
+                <Typography sx={{ fontSize: "0.75rem" }} ml={1} pt={0.5} key={index}>
+                  {facility.amenity_name}
+                </Typography>
+              ))} */}
             </Card>
             {/* Booking Details */}
             <Card 
@@ -76,19 +113,24 @@ function BookingDetails({ basePrice, setBasePrice, guests, setGuests, lengthStay
               <div sx={{ display: 'flex', alignItems: 'center' }}>
                 <Box sx={{ display: 'column', paddingTop: '0.5rem', marginLeft: '0.5rem' }}>
                   <Typography sx={{ fontSize: "1.125rem" }}  pl={0.5}>Check-in</Typography>
-                  <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} pl={0.5}>12/02/25</Typography>
+                  <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} pl={0.5}>{checkin_date}</Typography>
                   <div style={{ display: 'flex' }}>
-                    <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} pl={0.5}>7:30 A.M.</Typography>-
-                    <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} pl={0.5}>7:30 A.M.</Typography>
+                  <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} pl={0.5}>
+                    {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_from)} -
+                    {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_until)}
+                  </Typography>
+
                   </div>
                 </Box>
                 <Divider orientation="vertical" flexItem />
                 <Box sx={{ display: 'column', paddingTop: '0.5rem', marginLeft: '0.5rem' }}>
                   <Typography sx={{ fontSize: "1rem" }} pl={0.5}>Check-out</Typography>
-                  <Typography sx={{ fontSize: "1.125rem", fontWeight: 'bold' }} pl={0.5}>12/02/25</Typography>
+                  <Typography sx={{ fontSize: "1.125rem", fontWeight: 'bold' }} pl={0.5}>{checkout_date}</Typography>
                   <div style={{ display: 'flex' }}>
-                    <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} pl={0.5}>7:30 A.M.</Typography>-
-                    <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} mb={0.5} pl={0.5}>7:30 A.M.</Typography>
+                  <Typography sx={{ fontSize: "1rem", fontWeight: 'bold' }} pl={0.5}>
+                    {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_out_from)} -
+                    {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_out_until)}
+                  </Typography>
                   </div>
                 </Box>
               </div>
@@ -103,7 +145,7 @@ function BookingDetails({ basePrice, setBasePrice, guests, setGuests, lengthStay
                 Number of Guests:
               </Typography>
               <Typography sx={{ fontSize: "1.125rem" , fontWeight:'bold'}}  ml={1} pt={0.5} >
-                {guests} guests
+                {guestCapacity} guests
               </Typography>
             </Card>
             
@@ -126,7 +168,7 @@ function BookingDetails({ basePrice, setBasePrice, guests, setGuests, lengthStay
                     Base Price
                   </Typography>
                   <Typography gutterBottom sx={{fontSize: "1rem" , color:'grey'}} component="div">
-                    Php {basePrice}
+                    Php {PropertyData.property_unitpricing.min_price}
                   </Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>

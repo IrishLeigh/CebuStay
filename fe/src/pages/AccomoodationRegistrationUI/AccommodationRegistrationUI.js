@@ -19,16 +19,23 @@ import AnimatePage from "./AnimatedPage";
 import PaymentMethods from "../../components/registration_unit/registration_pMethods/PaymentMethods";
 import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
 import "./RegistrationUnitBG.css";
-import {Modal , Backdrop, CircularProgress, Box, Typography, Fade} from "@mui/material";
+import {
+  Modal,
+  Backdrop,
+  CircularProgress,
+  Box,
+  Typography,
+  Fade,
+} from "@mui/material";
 import { useUser } from "../../components/UserProvider";
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
@@ -39,8 +46,35 @@ export default function AccommodationRegistrationUI() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState();
   const { loginUser } = useUser();
+  const [validSteps, setValidSteps] = useState(Array(13).fill(false));
+  // State variables for form data
+  const { addressData, mapVal } = useData();
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedPropertyType, setSelectedPropertyType] = useState("");
+  const [propertyInfo, setPropertyInfo] = useState({});
+  const [unitDetailsData, setUnitDetailsData] = useState({
+    roomDetails: [
+      { roomType: "Bedroom", quantity: 0 },
+      { roomType: "Bathroom", quantity: 0 },
+      { roomType: "Living Room", quantity: 0 },
+      { roomType: "Kitchen", quantity: 0 },
+    ],
+    guestCapacity: "",
+  });
 
-  
+  const [bedroomDetails, setBedroomDetailsData] = useState({});
+  const [houseRulesData, setHouseRulesData] = useState({});
+  const [policiesData, setPoliciesData] = useState({});
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [locationDetails, setLocationDetails] = useState({});
+  const [selectedAmenities, setSelectedAmenities] = useState({
+    basicAmenities: [],
+    basicServices: [],
+    facilities: [],
+  });
+  const [unitPricing, setUnitPricing] = useState({});
+  const [hostData, setHostData] = useState({});
+  const [paymentData, setPaymentData] = useState({});
 
   useEffect(() => {
     // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
@@ -64,26 +98,6 @@ export default function AccommodationRegistrationUI() {
       setUser(null);
     }
   }, []);
-  // State variables for form data
-  const { addressData, mapVal } = useData();
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedPropertyType, setSelectedPropertyType] = useState("");
-  const [propertyInfo, setPropertyInfo] = useState({});
-  const [unitDetailsData, setUnitDetailsData] = useState({});
-  const [bedroomDetails, setBedroomDetailsData] = useState({});
-  const [houseRulesData, setHouseRulesData] = useState({});
-  const [policiesData, setPoliciesData] = useState({});
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [locationDetails, setLocationDetails] = useState({});
-  const [selectedAmenities, setSelectedAmenities] = useState({
-    basicAmenities: [],
-    basicServices: [],
-    facilities: [],
-  });
-  // New added
-  const [unitPricing, setUnitPricing] = useState({});
-  const [hostData, setHostData] = useState({});
-  const [paymentData, setPaymentData] = useState({});
 
   // Functions to handle step navigation
   const nextStep = () => {
@@ -94,8 +108,6 @@ export default function AccommodationRegistrationUI() {
     setStep(step - 1);
   };
 
-
-  
   // Function to handle form submission
   const handleSubmit = async () => {
     try {
@@ -119,7 +131,7 @@ export default function AccommodationRegistrationUI() {
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid:user.userid,
+          userid: user.userid,
           property_name: propertyInfo.propertyName,
           property_type: selectedType,
           property_desc: propertyInfo.propertyDescription,
@@ -139,6 +151,7 @@ export default function AccommodationRegistrationUI() {
             roomDetails: unitDetailsData.roomDetails,
           }
         );
+        const unitId = resUnitid.data.unitid;
         if (resUnitid.data.unitid) {
           const resBedInsert = await axios.post(
             "http://127.0.0.1:8000/api/bedroomtype",
@@ -151,44 +164,49 @@ export default function AccommodationRegistrationUI() {
             const formdata = new FormData();
             console.log("naa propertyid?", resPropertid.data.propertyid);
             console.log("naa selectimage?", resUnitid.data.unitid);
-          
+
             // Append propertyid to formdata
             formdata.append("propertyid", resPropertid.data.propertyid);
-          
+
             console.log("FORMDATA selectImages:", selectedImages);
-          
+
             // Check if selectedImages is an array
             if (!Array.isArray(selectedImages)) {
               console.error("selectedImages is not an array.");
               return;
             }
-          console.log("Is AN Array:");
+            console.log("Is AN Array:");
             // Function to convert URL to File
             async function urlToFile(url, filename) {
               const response = await fetch(url);
               const blob = await response.blob();
               return new File([blob], filename, { type: blob.type });
             }
-          
+
             try {
               // Convert each image object to a File object and append to FormData
-              await Promise.all(selectedImages.map(async (image) => {
-                if (!image.url || !image.name) {
-                  console.error("selectedImages item is missing URL or name.", image);
-                  return;
-                }
-          
-                const file = await urlToFile(image.url, image.name);
-                formdata.append("files[]", file);
-                console.log("FORMDATA selectimagesforloop:", file);
-              }));
+              await Promise.all(
+                selectedImages.map(async (image) => {
+                  if (!image.url || !image.name) {
+                    console.error(
+                      "selectedImages item is missing URL or name.",
+                      image
+                    );
+                    return;
+                  }
+
+                  const file = await urlToFile(image.url, image.name);
+                  formdata.append("files[]", file);
+                  console.log("FORMDATA selectimagesforloop:", file);
+                })
+              );
             } catch (error) {
               console.error("Error converting URL to file:", error);
               return;
             }
-          
+
             console.log("FORMDATA after processing:", formdata);
-          
+
             // Debugging: Log the contents of FormData
             for (let pair of formdata.entries()) {
               console.log(pair[0] + ":", pair[1]);
@@ -312,14 +330,14 @@ export default function AccommodationRegistrationUI() {
                     );
                     if (booking_policies.data.status === "success") {
                       console.log("booking_policies: ", booking_policies.data);
-                      const homeid = resPropertid.data.homeid;
+                      // const homeid = resPropertid.data.homeid;
                       const max_price = 0;
                       const min_price = unitPricing.basePrice;
                       const profit = unitPricing.profit;
                       const unit_pricing = await axios.post(
                         "http://127.0.0.1:8000/api/propertypricing",
                         {
-                          homeid: homeid,
+                          unitid: unitId,
                           max_price: max_price,
                           min_price: min_price,
                           profit: profit,
@@ -398,7 +416,7 @@ export default function AccommodationRegistrationUI() {
                               const manager = await axios.post(
                                 "http://127.0.0.1:8000/api/becomeManager",
                                 {
-                                  userid:user.userid,
+                                  userid: user.userid,
                                 }
                               );
                               console.log("Manager:", manager.data);
@@ -422,15 +440,10 @@ export default function AccommodationRegistrationUI() {
                               localStorage.removeItem("paymentData");
                               localStorage.removeItem("basePrice");
 
-                              console.log("Successfully removed localstorage")
-                              
+                              console.log("Successfully removed localstorage");
+
                               // setOpen(false); // Close the circular progress
                               // setModalMessage("Successfully Registered");
-
-  
-                        
-                      
-
                             }
                           }
                         }
@@ -451,14 +464,12 @@ export default function AccommodationRegistrationUI() {
       setModalMessage("Submission failed. Please try again later.");
     } finally {
       // Hide modal and reset loading state after a delay
-    
     }
   };
   // Callback functions to handle form data changes
   const handleSelectedTypeChange = (type) => {
     setSelectedType(type);
   };
-
   const handleSelectedPropertyTypeChange = useCallback((propertyType) => {
     // Handle the change in the parent component
     setSelectedPropertyType(propertyType);
@@ -553,32 +564,32 @@ export default function AccommodationRegistrationUI() {
     paymentData /* Add other form data dependencies here */,
   ]);
 
-  // UseEffect to retrieve form data from localStorage on component mount
-  useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem("registrationFormData"));
-    if (savedData) {
-      setSelectedType(savedData.selectedType);
-      setSelectedPropertyType(savedData.selectedPropertyType);
-      setPropertyInfo(savedData.propertyInfo);
-      setUnitDetailsData(savedData.unitDetailsData);
-      setBedroomDetailsData(savedData.bedroomDetails);
-      setHouseRulesData(savedData.houseRulesData);
-      setPoliciesData(savedData.policiesData);
-      setSelectedImages(savedData.selectedImages);
-      setLocationDetails(savedData.locationDetails);
-      setSelectedAmenities(savedData.selectedAmenities);
-      setUnitPricing(savedData.unitPricing);
-      setHostData(savedData.hostData);
-      setPaymentData(savedData.paymentData);
-      // Add more form data state variables as needed
-      // Set other form data state variables...
-    }
-  }, []);
+  // // UseEffect to retrieve form data from localStorage on component mount
+  // useEffect(() => {
+  //   const savedData = JSON.parse(localStorage.getItem("registrationFormData"));
+  //   if (savedData) {
+  //     setSelectedType(savedData.selectedType);
+  //     setSelectedPropertyType(savedData.selectedPropertyType);
+  //     setPropertyInfo(savedData.propertyInfo);
+  //     setUnitDetailsData(savedData.unitDetailsData);
+  //     setBedroomDetailsData(savedData.bedroomDetails);
+  //     setHouseRulesData(savedData.houseRulesData);
+  //     setPoliciesData(savedData.policiesData);
+  //     setSelectedImages(savedData.selectedImages);
+  //     setLocationDetails(savedData.locationDetails);
+  //     setSelectedAmenities(savedData.selectedAmenities);
+  //     setUnitPricing(savedData.unitPricing);
+  //     setHostData(savedData.hostData);
+  //     setPaymentData(savedData.paymentData);
+  //     // Add more form data state variables as needed
+  //     // Set other form data state variables...
+  //   }
+  // }, []);
 
   //   console.log("Property Data From Parent", propertyInfo);
   // console.log("Propertyselctedtype  from Parents: ", selectedPropertyType);
   // console.log("Property Type from Parent: ", selectedType);
-  // console.log("Unitdetaisl data from Parent: ", unitDetailsData);
+  console.log("Unitdetaisl data from Parent: ", unitDetailsData);
   // console.log("Bedroom Dteails:", bedroomDetails);
   console.log("House Rulese Data:", houseRulesData);
   // console.log("Policies Data:", policiesData);
@@ -592,14 +603,16 @@ export default function AccommodationRegistrationUI() {
   // console.log("Payment method from Parent: ", paymentData);
   console.log("userid", user && user["userid"]);
 
-
   return (
     <div className="registration-page">
       <Container maxWidth="xl" sx={{ overflowX: "hidden" }}>
         {step === 1 && (
           <div>
             <AnimatePage>
-              <Properties onSelectedTypeChange={handleSelectedTypeChange} parentSelectedData = {selectedType} />
+              <Properties
+                onSelectedTypeChange={handleSelectedTypeChange}
+                parentSelectedData={selectedType}
+              />
             </AnimatePage>
             <div
               className="stepperFooter"
@@ -615,7 +628,8 @@ export default function AccommodationRegistrationUI() {
           <div>
             <AnimatePage>
               <PropertyType
-                onSelectedPropertyTypeChange={handleSelectedPropertyTypeChange} parentSelectedPropertyType = {selectedPropertyType}
+                onSelectedPropertyTypeChange={handleSelectedPropertyTypeChange}
+                parentSelectedPropertyType={selectedPropertyType}
               />
             </AnimatePage>
             <div
@@ -635,8 +649,8 @@ export default function AccommodationRegistrationUI() {
           <div>
             <AnimatePage>
               <SimplePaper
-                onPropertyInformationChange={handlePropertyInformationChange} 
-                parentPropertyInfo = {propertyInfo}
+                onPropertyInformationChange={handlePropertyInformationChange}
+                parentPropertyInfo={propertyInfo}
               />
             </AnimatePage>
             <div
@@ -655,8 +669,10 @@ export default function AccommodationRegistrationUI() {
         {step === 4 && (
           <div>
             <AnimatePage>
-              <UnitInfo_2 onRoomDetailsChange={handleRoomDetailsChange}
-              parentUnitDetailsData={unitDetailsData} />
+              <UnitInfo_2
+                onRoomDetailsChange={handleRoomDetailsChange}
+                parentUnitDetailsData={unitDetailsData}
+              />
             </AnimatePage>
             <div
               className="stepperFooter"
@@ -676,7 +692,7 @@ export default function AccommodationRegistrationUI() {
             <AnimatePage>
               <BedroomDetails
                 onBedroomDetailsChange={handleBedRoomDetailsChange}
-                parentBedroomDetails ={bedroomDetails}
+                parentBedroomDetails={bedroomDetails}
               />
             </AnimatePage>
 
@@ -696,7 +712,10 @@ export default function AccommodationRegistrationUI() {
         {step === 6 && (
           <div>
             <AnimatePage>
-              <AccommodationUploadPhotos onImagesChange={handleImagesChange} parentImages = {selectedImages}/>
+              <AccommodationUploadPhotos
+                onImagesChange={handleImagesChange}
+                parentImages={selectedImages}
+              />
             </AnimatePage>
 
             <div
@@ -757,7 +776,8 @@ export default function AccommodationRegistrationUI() {
         {step === 9 && (
           <div className="animationContainer">
             <AnimatePage>
-              <HouseRules onHouseRulesDataChange={handleHouseRulesDataChange} 
+              <HouseRules
+                onHouseRulesDataChange={handleHouseRulesDataChange}
                 parentHouseRules={houseRulesData}
               />
             </AnimatePage>
@@ -854,8 +874,8 @@ export default function AccommodationRegistrationUI() {
             </div>
           </div>
         )}
-          {/* Modal for displaying messages */}
-      {/* <Modal
+        {/* Modal for displaying messages */}
+        {/* <Modal
         open={!!modalMessage}
         onClose={() => setModalMessage("")}
         aria-labelledby="modal-title"
@@ -873,35 +893,38 @@ export default function AccommodationRegistrationUI() {
           </button>
         </div>
       </Modal> */}
-          {/* Loading indicator */}
-          <Backdrop open={open}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <Modal
-  aria-labelledby="transition-modal-title"
-  aria-describedby="transition-modal-description"
-  open={!!modalMessage}
-  onClose={() => setModalMessage("")}
-  closeAfterTransition
-  slots={{ backdrop: Backdrop }}
->
-  <Fade in={!!modalMessage}>
-    <Box sx={style}>
-      <Typography id="transition-modal-title" variant="h6" component="h2">
-        {modalMessage}
-      </Typography>
-      <button
-        onClick={() => {
-          setModalMessage("");
-          window.location.href = '/'; // Redirect to homepage
-        }}
-      >
-        Go to Homepage
-      </button>
-    </Box>
-  </Fade>
-</Modal>
-
+        {/* Loading indicator */}
+        <Backdrop open={open}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          open={!!modalMessage}
+          onClose={() => setModalMessage("")}
+          closeAfterTransition
+          slots={{ backdrop: Backdrop }}
+        >
+          <Fade in={!!modalMessage}>
+            <Box sx={style}>
+              <Typography
+                id="transition-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                {modalMessage}
+              </Typography>
+              <button
+                onClick={() => {
+                  setModalMessage("");
+                  window.location.href = "/"; // Redirect to homepage
+                }}
+              >
+                Go to Homepage
+              </button>
+            </Box>
+          </Fade>
+        </Modal>
       </Container>
     </div>
   );

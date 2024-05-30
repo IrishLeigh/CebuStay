@@ -39,8 +39,8 @@ const AccommodationPropertyType = () => {
           display: "flex",
           flexDirection: "column",
           textAlign: "left",
-          mt: 12,
-          mb: 12
+          marginTop: "2rem",
+          marginBottom: "2rem",
         }}
       >
         <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">

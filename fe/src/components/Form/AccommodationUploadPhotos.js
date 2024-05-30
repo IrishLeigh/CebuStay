@@ -7,12 +7,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
 import { Box } from "@mui/material";
 
-const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
+const AccommodationUploadPhotos = ({ onImagesChange, parentImages }) => {
   const [selectedImages, setSelectedImages] = useState([]);
 
-  // Load images from parent data on component mount
   useEffect(() => {
-    console.log("Parent images:", parentImages); // Debugging line
     if (parentImages && parentImages.length > 0) {
       setSelectedImages(parentImages);
     }
@@ -24,7 +22,7 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
 
     const oversizedImages = [];
     const newImages = Array.from(imageFiles).map((file) => {
-      if (file.size > 5 * 1024 * 1024) { // Corrected size check to 5MB
+      if (file.size > 5 * 1024 * 1024) {
         oversizedImages.push(file.name);
         return null;
       }
@@ -33,6 +31,7 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
         url: URL.createObjectURL(file),
       };
     });
+
     if (oversizedImages.length > 0) {
       alert(`Image(s) ${oversizedImages.join(", ")} size cannot exceed 5MB`);
     }
@@ -42,7 +41,6 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
 
     const updatedImages = [...selectedImages, ...uniqueImages];
     setSelectedImages(updatedImages);
-    // localStorage.setItem("selectedImages", JSON.stringify(updatedImages));
   };
 
   const onDrop = (acceptedFiles) => {
@@ -58,19 +56,16 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
 
     const updatedImages = [...selectedImages, ...uniqueImages];
     setSelectedImages(updatedImages);
-    // localStorage.setItem("selectedImages", JSON.stringify(updatedImages));
   };
 
   const handleDeleteImage = (index) => {
     const updatedImages = [...selectedImages];
     updatedImages.splice(index, 1);
     setSelectedImages(updatedImages);
-    // localStorage.setItem("selectedImages", JSON.stringify(updatedImages));
   };
 
   const handleDeleteAllImages = () => {
     setSelectedImages([]);
-    // localStorage.removeItem("selectedImages");
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -79,13 +74,22 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
   });
 
   useEffect(() => {
-    console.log("Selected images updated:", selectedImages); // Debugging line
     onImagesChange(selectedImages);
   }, [selectedImages, onImagesChange]);
 
   return (
-    <Box>
-      <Container maxWidth="lg">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "left",
+        minHeight: "100vh",
+        padding: "2rem",
+        boxSizing: "border-box",
+      }}
+    >
+      <Container maxWidth="lg" sx={{ padding: 0 }}>
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} md={6}>
             <Box
@@ -94,10 +98,9 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "left",
-                minHeight: "100vh",
                 padding: "1rem",
-                mt: -2,
-                mb: 12,
+                width: "100%",
+                boxSizing: "border-box",
               }}
             >
               <Typography
@@ -106,20 +109,22 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
                   fontWeight: "bold",
                   marginBottom: "1rem",
                 }}
+                align="left"
               >
                 Upload your photos
               </Typography>
-              <Typography>
+              <Typography align="left">
                 Upload at most 5 photos of your property. The more you upload, the
                 more likely you are to get bookings. You can add more later.
               </Typography>
               <Paper
                 elevation={3}
                 sx={{
-                  height: "auto",
-                  padding: 3,
+                  width: "100%",
+                  maxWidth: "32rem",
+                  padding: "1rem",
                   marginTop: "2rem",
-                  position: "relative",
+                  boxSizing: "border-box",
                 }}
               >
                 <div
@@ -131,7 +136,8 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
                     alignItems: "center",
                     justifyContent: "center",
                     width: "calc(100% - 60px)",
-                    height: "30%",
+                    height: "10rem",
+                    marginBottom: "1rem",
                   }}
                 >
                   {selectedImages.length === 0 ? (
@@ -159,9 +165,10 @@ const AccommodationUploadPhotos = ({ onImagesChange , parentImages }) => {
                   <ul
                     style={{
                       overflowY: "auto",
-                      maxHeight: "calc(100% - 150px)",
+                      maxHeight: "200px",
                       listStyleType: "none",
                       padding: 0,
+                      margin: 0,
                     }}
                   >
                     {selectedImages.map((image, index) => (

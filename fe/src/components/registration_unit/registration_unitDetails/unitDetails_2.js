@@ -13,7 +13,7 @@ import Grid from "@mui/material/Grid";
 import { useData } from "../registration_location/contextAddressData";
 import { useEffect } from "react";
 
-export default function UnitInfo_2({ onRoomDetailsChange, parentsUnitDetailsData }) {
+export default function UnitInfo_2({ onRoomDetailsChange, parentUnitDetailsData }) {
   const { totalQTY } = useData();
   const [unitDetailsData, setUnitDetailsData] = useState({
     roomDetails: [
@@ -24,13 +24,15 @@ export default function UnitInfo_2({ onRoomDetailsChange, parentsUnitDetailsData
     ],
     guestCapacity: "",
   });
+  
 
     // Mount parent's data when the component is initialized
     useEffect(() => {
-      if (parentsUnitDetailsData) {
-        setUnitDetailsData(parentsUnitDetailsData);
+      if (parentUnitDetailsData) {
+        setUnitDetailsData(parentUnitDetailsData);
       }
-    }, [parentsUnitDetailsData]);
+    }, [parentUnitDetailsData]);
+    
 
   const totalBedrooms = unitDetailsData.roomDetails.reduce((total, room) => {
     if (room.roomType === "Bedroom") {
@@ -94,10 +96,13 @@ export default function UnitInfo_2({ onRoomDetailsChange, parentsUnitDetailsData
   };
 
   const handleGuestCapacityChange = (value) => {
+    // Update guest capacity in the state
     setUnitDetailsData({ ...unitDetailsData, guestCapacity: value });
-    // Call the callback immediately after changing guest capacity
-    onRoomDetailsChange(unitDetailsData);
+  
+    // Pass the updated state to the callback function
+    onRoomDetailsChange({ ...unitDetailsData, guestCapacity: value });
   };
+  
 
   return (
     <Container maxWidth="lg">
@@ -110,8 +115,8 @@ export default function UnitInfo_2({ onRoomDetailsChange, parentsUnitDetailsData
               alignItems: "center",
               minHeight: "100vh",
               padding: "1rem",
-              mt: 12,
-              mb: 12
+              mt: "4rem",
+              mb: "8rem"
             }}
           >
             
