@@ -14,15 +14,9 @@ import '../../../components/Button/NextButton.css'
 export default function BedroomDetails({ onBedroomDetailsChange, parentBedroomDetails }) {
 
   const { bedroomQTY } = useData();
-  const [bedrooms, setBedrooms] = useState("");
+  const [bedrooms, setBedrooms] = useState(parentBedroomDetails && Array.isArray(parentBedroomDetails) ? parentBedroomDetails : []);
 
-useEffect(() => {
-  if (parentBedroomDetails && parentBedroomDetails.length > 0) {
-    setBedrooms(parentBedroomDetails);
-  } else {
-    initializeBedrooms(bedroomQTY);
-  }
-})
+
   // Function to initialize bedrooms based on number of rooms
   const initializeBedrooms = (numRooms) => {
     const initialBedrooms = Array.from({ length: numRooms }, () => ({
@@ -77,7 +71,7 @@ useEffect(() => {
               minHeight: "100vh",
               padding: "1rem",
               mt: "4rem",
-              mb: ""
+              mb: "8rem"
             }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

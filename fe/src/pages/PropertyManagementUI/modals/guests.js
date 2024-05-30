@@ -41,40 +41,86 @@ const EditReservationModal = ({ open, handleClose, reservation }) => {
     return null;
   }
 
-  const handleCheckIn = () => {
-
+  const handleCheckIn = async () => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`; // Get the date in YYYY-MM-DD format
   
-    console.log("Checked-in");
+      console.log("Formatted Date:", formattedDate);
+      console.log("Check-in:", reservation.checkin_date);
+      console.log("Checkout:", reservation.checkout_date);
+  
+      // Ensure reservation data is valid
+      if (!reservation || !reservation.bookingid || !reservation.checkin_date || !reservation.checkout_date) {
+        alert("Reservation data is incomplete.");
+        return;
+      }
+  
+      // Check if today is on or after the check-in date and on or before the checkout date
+      if (formattedDate >= reservation.checkin_date && formattedDate <= reservation.checkout_date) {
+        const checkinres = await axios.post("http://127.0.0.1:8000/api/setcheckin", {
+          bookingid: reservation.bookingid
+        });
+  
+        if (checkinres.data.status === "success") {
+          console.log(checkinres.data.message);
+          alert("Guest checked in successfully.");
+        } else {
+          console.error("Error checking in:", checkinres.data.message);
+          alert("An error occurred during check-in. Please try again.");
+        }
+  
+        console.log("Checked-in");
+      } else {
+        alert("Cannot check-in before check-in date or after checkout date.");
+      }
+    } catch (error) {
+      console.error("Error during check-in:", error);
+      alert("An error occurred during check-in. Please try again.");
+    }
   };
+  
 
   const handleCheckOut = async () => {
-    
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-
-    console.log("Formatted Date:", formattedDate)
-    console.log("Checkout:", reservation.checkout_date)
-
-    if(formattedDate === reservation.checkout_date) {
-      const checkoutStat = await axios.post(
-        "http://127.0.0.1:8000/api/setcheckout",
-        {
-          bookingid: reservation.bookingid
-          //butang diri ang bookingid
-      }
-      );
-      console.log("Checked-out",checkoutStat.data);
-      
-    }else{
-        alert("Cannot check-out before check-in");
-    }
-       
+   
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`; // Get the date in YYYY-MM-DD format
   
-    
+      console.log("Formatted Date:", formattedDate);
+      console.log("Checkout:", reservation.checkout_date);
+  
+      // Ensure reservation data is valid
+      if (!reservation || !reservation.bookingid || !reservation.checkout_date) {
+        alert("Reservation data is incomplete.");
+        return;
+      }
+  
+    // Check if today is on or before the checkout date and not before the check-in date
+    if (formattedDate >= reservation.checkin_date || formattedDate <= reservation.checkout_date) {
+      const checkoutStat = await axios.post("http://127.0.0.1:8000/api/setcheckout", {
+        bookingid: reservation.bookingid
+      });
+      alert("Guest Successfully Checked-out!")
+      
+      console.log("Checked-out", checkoutStat.data);
+      handleClose();
+    } else {
+      alert("Cannot check-out before check-in or after checkout date.");
+    }
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    console.log("BOOKING ID:", reservation.bookingid);
+    alert("An error occurred during checkout. Please try again.");
+  }
   };
+  
 
   const calulateNights =() => {
     const date1 = new Date(checkIn);
@@ -187,7 +233,7 @@ const EditReservationModal = ({ open, handleClose, reservation }) => {
                   <TableCell>{reservation.stay_length}</TableCell>
                   <TableCell> Php {reservation.total_price}</TableCell>
                   <TableCell>{reservation.status}</TableCell>
-                  <TableCell>--</TableCell>
+                  <TableCell>{reservation.type === "booking" ? "Checked-in" : "Upcoming"}</TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1}>
                       <Chip label="Checked-in" variant="outlined" sx={{ backgroundColor: '#4CAF50', color: '#FFFFFF', borderColor: '#4CAF50', '&:hover': { backgroundColor: '#388E3C' }}} onClick={handleCheckIn} />

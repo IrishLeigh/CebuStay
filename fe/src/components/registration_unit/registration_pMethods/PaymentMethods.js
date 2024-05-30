@@ -55,7 +55,7 @@ export default function PaymentMethods({ onPaymentDataChange }) {
           display: "flex",
           flexDirection: "column",
           textAlign: "left",
-          mt: 12,
+          mt: "4rem",
           mb: 12
         }}
       >

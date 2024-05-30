@@ -108,8 +108,71 @@ export default function AccommodationRegistrationUI() {
     setStep(step - 1);
   };
 
+  //validation
+  const isFormComplete = () => {
+    // Check if all required fields are filled out
+    if (
+      !selectedType ||
+      !selectedPropertyType ||
+      !propertyInfo ||
+      !unitDetailsData ||
+      !bedroomDetails ||
+      !houseRulesData ||
+      !policiesData ||
+      !selectedImages ||
+      !locationDetails ||
+      !selectedAmenities ||
+      !unitPricing ||
+      !hostData ||
+      !paymentData
+    ) {
+      return false; // Form is incomplete
+    }
+    return true; // Form is complete
+  };
   // Function to handle form submission
   const handleSubmit = async () => {
+      setOpen(true);
+     // Check if the form is complete
+     const formComplete = isFormComplete();
+
+     if (formComplete) {
+       // Proceed with form submission
+       // Add your submission logic here
+     } else {
+       // Determine the first incomplete section
+       let incompleteSection = '';
+       if (!selectedType) {
+         incompleteSection = 'Selected Type';
+       } else if (!selectedPropertyType) {
+         incompleteSection = 'Selected Property Type';
+       } else if (!propertyInfo) {
+         incompleteSection = 'Property Information';
+       } else if (!unitDetailsData) {
+         incompleteSection = 'Unit Details';
+       } else if (!bedroomDetails) {
+         incompleteSection = 'Bedroom Details';
+       } else if (!houseRulesData) {
+         incompleteSection = 'House Rules';
+       } else if (!policiesData) {
+         incompleteSection = 'Policies';
+       } else if (!selectedImages) {
+         incompleteSection = 'Selected Images';
+       } else if (!locationDetails) {
+         incompleteSection = 'Location Details';
+       } else if (!selectedAmenities) {
+         incompleteSection = 'Selected Amenities';
+       } else if (!unitPricing) {
+         incompleteSection = 'Unit Pricing';
+       } else if (!hostData) {
+         incompleteSection = 'Host Data';
+       } else if (!paymentData) {
+         incompleteSection = 'Payment Data';
+       }
+ 
+       // Show modal indicating that the form is incomplete
+       setModalMessage(`Please go to '${incompleteSection}' and complete the form.`);
+     }
     try {
       // Perform Axios request to send form data to the server
       // const response = await axios.post("your-api-endpoint", {
@@ -439,6 +502,8 @@ export default function AccommodationRegistrationUI() {
                               localStorage.removeItem("policiesData");
                               localStorage.removeItem("paymentData");
                               localStorage.removeItem("basePrice");
+                              localStorage.removeItem('street');
+                              localStorage.removeItem('postalCode');
 
                               console.log("Successfully removed localstorage");
 

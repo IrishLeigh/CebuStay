@@ -82,11 +82,13 @@ const AccommodationUploadPhotos = ({ onImagesChange, parentImages }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "left",
+        // justifyContent: "center",
+        // alignItems: "left",
         minHeight: "100vh",
         padding: "2rem",
         boxSizing: "border-box",
+        mt: "4rem",
+        mb: 12
       }}
     >
       <Container maxWidth="lg" sx={{ padding: 0 }}>

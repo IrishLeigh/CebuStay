@@ -58,8 +58,8 @@ export default function Policies({ onPoliciesDataChange }) {
               display: "flex",
               flexDirection: "column",
               textAlign: "left",
-              mt: 12,
-              mb: 12
+              mt: "4rem",
+              mb: "8rem"
             }}
           >
             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2}}>

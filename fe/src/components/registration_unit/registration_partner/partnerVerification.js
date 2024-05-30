@@ -42,8 +42,8 @@ export default function PartnerVerification({ onHostDataChange }) {
       sx={{
         minHeight: "100vh",
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        // justifyContent: "center",
+        // alignItems: "center",
       }}
     >
       <Box
@@ -51,7 +51,7 @@ export default function PartnerVerification({ onHostDataChange }) {
           display: "flex",
           flexDirection: "column",
           textAlign: "left",
-          mt: 12,
+          mt: "4rem",
           mb: 12
         }}
       >

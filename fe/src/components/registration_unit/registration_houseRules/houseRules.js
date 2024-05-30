@@ -31,8 +31,8 @@ export default function HouseRules({ onHouseRulesDataChange, parentHouseRules })
               display: "flex",
               flexDirection: "column",
               textAlign: "left",
-              mt: 12,
-              mb: 12
+              mt: "4rem",
+              mb: "8rem"
             }}
           >
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>

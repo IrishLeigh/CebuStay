@@ -58,6 +58,9 @@ const AddressForm = () => {
         setAddPin({ lat, lng });
 
         location({ street, postalCode });
+
+        // Scroll to the map section
+        document.getElementById("map-section").scrollIntoView({ behavior: "smooth" });
       } else {
         console.error("No results found in the geocoding response.");
       }
@@ -70,13 +73,15 @@ const AddressForm = () => {
     <Container maxWidth="lg">
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={12} md={6}>
-          <Box
+        <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              mt: 12,
-              mb: 12
+              display: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "100vh",
+              padding: "1rem",
+              mt: "4rem",
+              mb: "8rem"
             }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -117,14 +122,16 @@ const AddressForm = () => {
           </Box>
 
 
-          {addPin && (
-            <AccommodationPropertyMap
-              location={addPin}
-              onMapValChange={(mapVal) =>
-                setAddressData({ ...addressData, mapVal })
-              }
-            />
-          )}
+          <div id="map-section">
+            {addPin && (
+              <AccommodationPropertyMap
+                location={addPin}
+                onMapValChange={(mapVal) =>
+                  setAddressData({ ...addressData, mapVal })
+                }
+              />
+            )}
+          </div>
         </Grid>
       </Grid>
     </Container>

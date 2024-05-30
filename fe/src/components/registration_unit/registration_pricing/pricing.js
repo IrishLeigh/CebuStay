@@ -62,8 +62,8 @@ export default function UnitPricing({ handleUnitPricing }) {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          mt: 12,
-          mb: 12
+          // mt: "1rem",
+          mb: "8rem"
         }}
       >
         <Paper

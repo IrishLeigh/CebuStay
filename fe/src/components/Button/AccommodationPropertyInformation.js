@@ -180,7 +180,7 @@ function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}
           justifyContent: "center",
           textAlign: "left",
           marginTop: "2rem",
-          marginBottom: "2rem",
+          marginBottom: "8rem",
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>

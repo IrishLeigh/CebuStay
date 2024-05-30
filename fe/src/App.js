@@ -9,7 +9,6 @@ import EditName from './components/EditName';
 import ForgotPassword from './ForgotPassword_User/ForgotPassword';
 import EditPhone from './components/EditPhone';
 import LocationRegistration from './components/registration_unit/registration_location/location';
-import LandingPage from './pages/Landing_Page/landing';
 import { useData } from './components/registration_unit/registration_location/contextAddressData';
 import { BrowserRouter, Routes, Route ,useLocation } from 'react-router-dom';
 import OTP from "./components/OTP";
@@ -37,6 +36,7 @@ import LandingPageUI from './pages/LandingPage/LandingPageUI';
 import PropertyListUI from './pages/SearchAndFilter/PropertyListUI';
 import ViewPropertyListingUI from './pages/PropertyDetailsUI/ViewPropertyListingUI';
 import CalendarUI from './pages/PropertyManagementUI/calendarUI';
+import EditProfileUI from './pages/EditProfileUI/EditProfileUI';
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -96,7 +96,7 @@ function App() {
             
             {/* Private Routes */}
             <Route element={<PrivateRoutes token={token} />} >
-              <Route element={<EditProfile />} path='/profile' exact/>
+              <Route element={<EditProfileUI />} path='/profile' exact/>
               <Route element={<EditProfile2 />} path='/profile/edit-name' exact/>
               <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/>
               <Route path="/list-your-property" element={<AccommodationRegistrationUI />} exact/> 

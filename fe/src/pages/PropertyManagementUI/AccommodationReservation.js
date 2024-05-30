@@ -29,6 +29,7 @@ const AccommodationReservation = () => {
   const [open, setOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [checkOut, setCheckOut] = useState([]);
+  const [checkIns, setCheckIns] = useState([]);
   const [propertyData, setPropertyData] = useState([]);
   const [user, setUser] = useState(null);
   const [activeComponent, setActiveComponent] = useState("all"); // New state variable
@@ -66,6 +67,7 @@ const AccommodationReservation = () => {
           }
         );
         setPropertyData(propertyres.data);
+        setCheckIns(propertyres.data);
       } catch (error) {
         console.error(error);
       }
@@ -182,7 +184,7 @@ const AccommodationReservation = () => {
           </TableContainer>
         );
       case "checked in":
-        return <CheckedIn data={filteredData} />;
+        return <CheckedIn data={checkIns} />;
       case "checked out":
         return <Checkouts data={checkOut} />;
       case "cancelled":

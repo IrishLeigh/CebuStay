@@ -5,7 +5,6 @@ import reportWebVitals from "./reportWebVitals";
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
-import EditProfileUI from "./pages/EditProfileUI/UserProfile";
 
 
 

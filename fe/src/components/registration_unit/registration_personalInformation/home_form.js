@@ -11,7 +11,7 @@ import MuiAlert from '@mui/material/Alert';
 
 export default function SimplePaper({ onPropertyInformationChange, parentPropertyInfo }) {
   const [propertyData, setPropertyData] = useState(parentPropertyInfo);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+  // const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // Function to check if all fields are filled
   const validateForm = () => {
@@ -118,7 +118,7 @@ export default function SimplePaper({ onPropertyInformationChange, parentPropert
               </Box>
             </Paper>
             {/* Snackbar for form validation */}
-            <Snackbar
+            {/* <Snackbar
               open={!validateForm()}
               autoHideDuration={6000}
               onClose={() => setOpenSnackbar(false)}
@@ -131,7 +131,7 @@ export default function SimplePaper({ onPropertyInformationChange, parentPropert
               >
                 Please fill in all fields.
               </MuiAlert>
-            </Snackbar>
+            </Snackbar> */}
           </Box>
         </Grid>
       </Grid>

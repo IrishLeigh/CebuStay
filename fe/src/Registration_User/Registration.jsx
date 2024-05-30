@@ -37,20 +37,20 @@ const Registration = () => {
       }
 
       // Check if email already exists
-      const emailCheckResponse = await axios.post(
-        "http://127.0.0.1:8000/api/registeruser",
-        {
-          firstname,
-          lastname,
-          email,
-          password,
-        }
-      );
+      // const emailCheckResponse = await axios.post(
+      //   "http://127.0.0.1:8000/api/registeruser",
+      //   {
+      //     firstname,
+      //     lastname,
+      //     email,
+      //     password,
+      //   }
+      // );
 
-      if (emailCheckResponse.data.exists) {
-        setError("This email already exists. Please use a different email."); // Set error message
-        return;
-      }
+      // if (emailCheckResponse.data.exists) {
+      //   setError("This email already exists. Please use a different email."); // Set error message
+      //   return;
+      // }
 
       var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
       if (!passwordRegex.test(password)) {
