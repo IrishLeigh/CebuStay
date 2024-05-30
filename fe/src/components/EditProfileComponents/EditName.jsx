@@ -101,6 +101,7 @@ import { MdPerson } from 'react-icons/md';
 import './EditName.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../UserProvider';
+import axios from 'axios';
 
 const EditName = ({onCancel}) => {
   const [firstname, setFirstname] = useState('');
@@ -113,40 +114,77 @@ const EditName = ({onCancel}) => {
   // console.log("User:", user);
   const userId = 8;
 
-  useEffect(() => {
-    // Simulate fetching profile data
-    setTimeout(() => {
+  // useEffect(() => {
+  //   // Simulate fetching profile data
+  //   setTimeout(() => {
+  //     try {
+  //       // Assuming dummy data for testing
+  //       const dummyData = {
+  //         firstname: 'John',
+  //         lastname: 'Doe'
+  //       };
+  //       setFirstname(dummyData.firstname);
+  //       setLastname(dummyData.lastname);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       setError("Error fetching profile data.");
+  //       console.error(error);
+  //       setLoading(false);
+  //     }
+  //   }, 1000);
+  // }, []);
+
+  console.log("User:", user.userid);
+    useEffect(() => {
+    const fetchProfile = async () => {
       try {
-        // Assuming dummy data for testing
-        const dummyData = {
-          firstname: 'John',
-          lastname: 'Doe'
-        };
-        setFirstname(dummyData.firstname);
-        setLastname(dummyData.lastname);
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        // console.log("Response Data another:", response.data);
+        setFirstname(response.data.firstname);
+        setLastname(response.data.lastname);
         setLoading(false);
       } catch (error) {
         setError("Error fetching profile data.");
         console.error(error);
         setLoading(false);
       }
-    }, 1000);
+    };
+
+    fetchProfile();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Simulate updating profile data
-      setTimeout(() => {
-        // Assuming successful update for testing
-        setSuccessMessage('Data updated successfully!');
-        navigate('/EditProfile');
-      }, 1000);
+      console.log("User:", user.userid);
+      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+        userid: user.userid, // Assuming userId is defined somewhere in your frontend code
+        firstname: firstname,
+        lastname: lastname,
+      });
+      // console.log('update profile', response.data);
+      setSuccessMessage('Data updated successfully!');
+      // navigate('/profile');
     } catch (error) {
       console.error(error);
       setError('Failed to update data. Please try again later.');
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     // Simulate updating profile data
+  //     setTimeout(() => {
+  //       // Assuming successful update for testing
+  //       setSuccessMessage('Data updated successfully!');
+  //       navigate('/EditProfile');
+  //     }, 1000);
+  //   } catch (error) {
+  //     console.error(error);
+  //     setError('Failed to update data. Please try again later.');
+  //   }
+  // };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;

@@ -16,7 +16,7 @@ import './NavigationBar.css'; // Import the CSS file from '../NavigationBar.css'
 import { useNavigate, Link } from 'react-router-dom';
 
 const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
-const settings = ['Profile', 'Account', 'Bookings', 'Listing','Logout'];
+const settings = ['Profile', 'Your Listings','Logout'];
 
 function HeaderAdmin({ token, setToken }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -55,9 +55,6 @@ function HeaderAdmin({ token, setToken }) {
           navigate('/profile');
         }
         break;
-      case 'Bookings':
-        navigate('/reservation');
-        break;
       case 'Listing':
       navigate('/listings');
       break;
@@ -95,11 +92,11 @@ function HeaderAdmin({ token, setToken }) {
               </Button>
             ))}
 
-            {/* <button className="property-listing">
+            <button className="property-listing">
               <Link to="/list-your-property" style={{ textDecoration: 'none', color: 'inherit' }}>
                 List your property
               </Link>
-            </button> */}
+            </button>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>

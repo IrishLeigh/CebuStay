@@ -51,7 +51,7 @@ const UserDetails = ({ open, handleClose, reservation }) => {
   const { checkIn, checkOut } = reservation;
 
   const checkInParts = getDateParts(checkIn);
-
+console.log('chicken',reservation)
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
@@ -68,7 +68,7 @@ const UserDetails = ({ open, handleClose, reservation }) => {
           p: 4,
         }}
       >
-        <img src="/guestHeader.png" alt="Guest Header" style={{ width: '54rem', marginBottom: '-0.5rem' }} />
+        <img src="/guestHeader.png" alt="Guest Header" style={{ width: '100.025%', marginBottom: '-0.5rem' }} />
         <Paper sx={{ p: 4 }}>
           <Typography sx={{ fontSize: '2rem', color: '#16B4DD', fontWeight: 'bold' }}>
             Booking Details
@@ -180,8 +180,8 @@ const UserDetails = ({ open, handleClose, reservation }) => {
           {/* Add form fields to edit the reservation */}
           <TextField
             fullWidth
-            label="Full Name"
-            defaultValue={reservation.guestname}
+            label={`${reservation.first_name} ${reservation.last_name}`}
+            defaultValue={`${reservation.first_name} ${reservation.last_name}`}
             sx={{ mt: 2 }}
           />
           <TextField
@@ -192,7 +192,7 @@ const UserDetails = ({ open, handleClose, reservation }) => {
           />
          <TextField
     fullWidth
-    label="Phone Number"
+    label={reservation.phone}
     defaultValue={reservation.booker ? reservation.booker.phonenum : ''}
     sx={{ mt: 2 }}
 />
@@ -215,7 +215,7 @@ const UserDetails = ({ open, handleClose, reservation }) => {
             Save
           </Button> */}
         </Paper>
-        <img src="/guestFooter.png" alt="Guest Footer" style={{ width: '54.1rem', marginTop: '-0.5rem',  }} />
+        <img src="/guestFooter.png" alt="Guest Footer" style={{ width: '100.92%', marginTop: '-0.5rem', marginLeft: '-0.25rem'  }} />
       </Box>
     </Modal>
   );

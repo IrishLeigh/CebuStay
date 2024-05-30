@@ -50,6 +50,30 @@ function Day(props) {
 export default function WeekPicker({ unitTypes }) {
   const unitId = unitTypes.unitid;
   let [bookedDates, setBookedDates] = React.useState([]);
+  const [user, setUser] = React.useState({});
+
+  React.useEffect(() => {
+    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+    const token = localStorage.getItem("auth_token");
+
+    // console.log("Token:", token);
+    if (token) {
+      const jwtToken = token.split("=")[1];
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .then((response) => {
+          setUser(response.data["data"]);
+          // loginUser(response.data.data);
+          console.log("RESPONSE DATA: ", response.data["data"]);
+        })
+        .catch((error) => {
+          alert("Error decoding JWT token:", error);
+          setUser(null);
+        });
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +82,7 @@ export default function WeekPicker({ unitTypes }) {
           "http://127.0.0.1:8000/api/property/bookings",
           {
             params: {
-              userid: 6,
+              userid: user.userid,
             },
           }
         );

@@ -101,6 +101,7 @@
 import React, { useEffect, useState } from 'react';
 import './EditPhone.css';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useUser } from '../UserProvider';
 
 const EditPhone = ({ onCancel }) => {
@@ -111,23 +112,62 @@ const EditPhone = ({ onCancel }) => {
   const { user } = useUser();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Simulate fetching profile data
-    setTimeout(() => {
+  // useEffect(() => {
+  //   // Simulate fetching profile data
+  //   setTimeout(() => {
+  //     try {
+  //       // Assuming dummy data for testing
+  //       const dummyData = {
+  //         cellnumber: '0912-345-6789'
+  //       };
+  //       setCellphoneNumber(dummyData.cellnumber);
+  //     } catch (error) {
+  //       setError("Error fetching profile data.");
+  //       console.error(error);
+  //     }
+  //   }, 1000);
+  // }, []);
+
+  // const validatePhoneNumber = (number) => {
+  //   const phoneRegex = /^09\d{2}-\d{3}-\d{4}$/;
+  //   return phoneRegex.test(number);
+  // };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!validatePhoneNumber(cellphone_number)) {
+  //     setSuccessMessage('Please enter a valid cellphone number format (e.g., 09xx-xxx-xxxx).');
+  //     return;
+  //   }
+  //   try {
+  //     // Simulate updating profile data
+  //     setTimeout(() => {
+  //       setSuccessMessage('Phone number updated successfully!');
+  //       navigate('/EditProfile');
+  //     }, 1000);
+  //   } catch (error) {
+  //     console.error(error);
+  //     setError('Failed to update data. Please try again later.');
+  //   }
+  // };
+
+
+    useEffect(() => {
+    const fetchProfile = async () => {
       try {
-        // Assuming dummy data for testing
-        const dummyData = {
-          cellnumber: '0912-345-6789'
-        };
-        setCellphoneNumber(dummyData.cellnumber);
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        setCellphoneNumber(response.data.cellnumber);
       } catch (error) {
         setError("Error fetching profile data.");
         console.error(error);
       }
-    }, 1000);
+    };
+
+    fetchProfile();
   }, []);
 
   const validatePhoneNumber = (number) => {
+    // Regular expression for validating Philippine cellphone number format
     const phoneRegex = /^09\d{2}-\d{3}-\d{4}$/;
     return phoneRegex.test(number);
   };
@@ -135,15 +175,18 @@ const EditPhone = ({ onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validatePhoneNumber(cellphone_number)) {
+      // setError('Please enter a valid cellphone number format (e.g., 999-999-999).');
       setSuccessMessage('Please enter a valid cellphone number format (e.g., 09xx-xxx-xxxx).');
       return;
     }
     try {
-      // Simulate updating profile data
-      setTimeout(() => {
-        setSuccessMessage('Phone number updated successfully!');
-        navigate('/EditProfile');
-      }, 1000);
+      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+        userid: user.userid, // Assuming userId is defined somewhere in your frontend code
+        cellnumber: cellphone_number,
+      });
+      // console.log('update profile', response.data);
+      setSuccessMessage('Phone number updated successfully!');
+      navigate('/Profile');
     } catch (error) {
       console.error(error);
       setError('Failed to update data. Please try again later.');

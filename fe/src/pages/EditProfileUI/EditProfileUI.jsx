@@ -6,6 +6,7 @@ import { MdPerson, MdHistory, MdStar } from 'react-icons/md';
 import EditName from "../../components/EditProfileComponents/EditName";
 import EditPhone from "../../components/EditProfileComponents/EditPhone";
 import UserBookingHistory from "../../components/UserBookingHistory/UserBookingHistory";
+import axios from "axios";
 
 // const EditProfile3 = () => {
 //   const [profile, setProfile] = useState(null);
@@ -95,13 +96,54 @@ const EditProfileUI = () => {
     ]
   };
 
+  // useEffect(() => {
+  //   // Simulate API call
+  //   setTimeout(() => {
+  //     setProfile(dummyProfileData);
+  //     setLoading(false);
+  //   }, 1000); // Simulating 1 second delay
+  // }, []);
+
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setProfile(dummyProfileData);
-      setLoading(false);
-    }, 1000); // Simulating 1 second delay
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        console.log("Response Data:", response.data); // Log the entire response object
+        console.log("Response Data Email:", response.data.userid); // Log the entire response object
+        setProfile(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching profile data.");
+        console.error(error);
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
   }, []);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get("http://localhost/api/loadProfile.php", {
+          params: {
+            userid: 1 // Replace with the logged in user's id
+          }
+        });
+        console.log("Response Data:", response.data); // Log the entire response object
+        console.log("Response Data Email:", response.data.userid); // Log the entire response object
+        setProfile(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching profile data.");
+        console.error(error);
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -116,9 +158,9 @@ const EditProfileUI = () => {
 
   const renderProfileDetails = () => (
     <div>
-      <div className="edit-section">
+      <div className="edit-section" >
         <h2 className="edit-section-header" style={{ fontFamily: 'Poppins' }}>USER DETAILS</h2>
-        <div className="edit-container">
+        <div className="edit-container" >
           <div
             className="edit-detail-container"
             style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }}
@@ -163,7 +205,7 @@ const EditProfileUI = () => {
           </div>
         </div>
      
-        <h2 className="edit-section-header" style={{ fontFamily: 'Poppins' }}>PAYMENT METHODS</h2>
+        {/* <h2 className="edit-section-header" style={{ fontFamily: 'Poppins' }}>PAYMENT METHODS</h2>
         <div className="edit-container">
           {profile.paymentMethods.map((method, index) => (
             <div
@@ -178,14 +220,14 @@ const EditProfileUI = () => {
               <span className="edit-edit-text">Edit</span>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
 
   return (
-    <div className="edit-profile-container">
-      <div className="edit-sidebar">
+    <div className="edit-profile-container" >
+      <div className="edit-sidebar" >
         <div
           className={`edit-sidebar-item ${currentView === 'profile' ? 'active' : ''}`}
           onClick={() => setCurrentView('profile')}

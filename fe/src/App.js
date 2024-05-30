@@ -96,9 +96,9 @@ function App() {
             
             {/* Private Routes */}
             <Route element={<PrivateRoutes token={token} />} >
-              <Route element={<EditProfileUI />} path='/profile' exact/>
-              <Route element={<EditProfile2 />} path='/profile/edit-name' exact/>
-              <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/>
+              <Route element={<EditProfileUI />} path='/account' exact/>
+              {/* <Route element={<EditProfile2 />} path='/profile/edit-name' exact/>
+              <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/> */}
               <Route path="/list-your-property" element={<AccommodationRegistrationUI />} exact/> 
                {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}
               

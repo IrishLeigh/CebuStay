@@ -34,6 +34,7 @@ export default function UserBookingHistory() {
           }
         });
         setUpcomingBookings(upcoming_current.data);
+        console.log("Upcoming:",upcoming_current.data);
       } catch (error) {
         console.error(error);
       }
@@ -275,11 +276,11 @@ export default function UserBookingHistory() {
             COMPLETED
           </button>
         </li>
-        <li className={`tab-item ${activeTab === 'CANCELLED' ? 'active' : ''}`}>
+        {/* <li className={`tab-item ${activeTab === 'CANCELLED' ? 'active' : ''}`}>
           <button className="tab-link" onClick={() => handleTabClick('CANCELLED')}>
             CANCELLED
           </button>
-        </li>
+        </li> */}
       </ul>
     </div>
   </div>

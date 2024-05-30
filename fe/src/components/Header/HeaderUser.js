@@ -19,7 +19,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import './NavigationBar.css'; // Import the CSS file from '../NavigationBar.css';
 
 const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
-const settings = ['Profile', 'Account', 'Your Bookings', 'Your Listings', 'Logout'];
+const settings = ['Account', 'Your Listings', 'Logout'];
 
 function HeaderUser({ token, setToken }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -54,13 +54,10 @@ function HeaderUser({ token, setToken }) {
 
   const handleSettings = (setting) => {
     switch (setting) {
-      case 'Profile':
+      case 'Account':
         if (token) {
-          navigate('/profile');
+          navigate('/account');
         }
-        break;
-      case 'Your Bookings':
-        navigate('/reservation');
         break;
       case 'Your Listings':
         navigate('/listings');
