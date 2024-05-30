@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './UserBookingHistory.css';
 import UserDetails from '../EditProfileComponents/UserDetails';
 
@@ -6,6 +6,57 @@ export default function UserBookingHistory() {
     const [activeTab, setActiveTab] = useState('UPCOMING');
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [user, setUser] = useState(null);
+    const [upcomingBookings, setUpcomingBookings] = useState([]);
+    const [completedBookings, setCompletedBookings] = useState([]);
+    // Token
+    useEffect(() => {
+      const token = localStorage.getItem("auth_token");
+      if (token) {
+        axios
+          .post("http://127.0.0.1:8000/api/decodetoken", { token })
+          .then((response) => {
+            setUser(response.data["data"]);
+          })
+          .catch((error) => {
+            alert("Error decoding JWT token:", error);
+            setUser(null);
+          });
+      } else {
+        setUser(null);
+      }
+    }, []);
+
+    useEffect(() => {
+        const fetchUserBookings = async () => {
+          try{
+            const upcoming_current = await axios.get('http://127.0.0.1:8000/api/user/bookings', {
+              params: {
+                userid: user.userid // Replace with the logged in user's id
+              }
+            });
+
+            setUpcomingBookings(upcoming_current.data);
+          } catch(error) {
+            console.error(error);
+          }
+        }
+
+        const fetchUserBookingHistory = async () => {
+          try{
+            const history = await axios.get('http://127.0.0.1:8000/api/user/bookinghistory', {
+              params: {
+                userid: user.userid // Replace with the logged in user's id
+              }
+            });
+            setCompletedBookings(history.data);
+        } catch(error) {
+          console.error(error);
+        }
+      }
+        fetchUserBookings();
+        fetchUserBookingHistory();
+    }, []);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -22,7 +73,7 @@ export default function UserBookingHistory() {
     };
 
     
-    const upcomingBookings = [
+    const upcomingBssookings = [
         {
             id: 1,
             date: 'January 11, 2022 - January 12, 2023',
@@ -75,7 +126,7 @@ export default function UserBookingHistory() {
         }
     ];
 
-    const completedBookings = [
+    const completedsssBookings = [
         {
             id: 6,
             date: 'January 13, 2022 - January 14, 2023',

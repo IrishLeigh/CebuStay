@@ -1,12 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './UserBookingHistory.css';
 import UserDetails from '../EditProfileComponents/UserDetails';
-
+import axios from 'axios';
 export default function UserBookingHistory() {
     const [activeTab, setActiveTab] = useState('UPCOMING');
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true); // State to track loading
+    const [upcomingBookings, setUpcomingBookings] = useState([]);
+    const [completedBookings, setCompletedBookings] = useState([]);
+    // Token
 
+    const getUser = async () => {
+      const token = localStorage.getItem("auth_token");
+      if (token) {
+        const userres = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+          token
+        });
+        console.log(userres.data["data"].userid);
+        setUser(userres.data["data"]);
+      } else {
+        setUser(null);
+      }
+    };
+  
+    const fetchUserBookings = async (userId) => {
+      console.log("loggedin user id: ", userId);
+      try {
+        const upcoming_current = await axios.get('http://127.0.0.1:8000/api/user/bookings', {
+          params: {
+            userid: userId // Replace with the logged in user's id
+          }
+        });
+        setUpcomingBookings(upcoming_current.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    const fetchUserBookingHistory = async (userId) => {
+      try {
+        const history = await axios.get('http://127.0.0.1:8000/api/user/bookinghistory', {
+          params: {
+            userid: userId // Replace with the logged in user's id
+          }
+        });
+        setCompletedBookings(history.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        await getUser();
+        setLoading(false); // Set loading to false after getUser completes
+      };
+  
+      fetchData();
+    }, []);
+  
+    useEffect(() => {
+      if (!loading && user && user.userid) {
+        const fetchAllUserData = async () => {
+          await fetchUserBookings(user.userid);
+          await fetchUserBookingHistory(user.userid);
+        };
+  
+        fetchAllUserData();
+      }
+    }, [loading, user]);
+    
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -22,7 +87,7 @@ export default function UserBookingHistory() {
     };
 
     
-    const upcomingBookings = [
+    const upcomingBasdaookings = [
         {
             id: 1,
             date: 'January 11, 2022 - January 12, 2023',
@@ -75,7 +140,7 @@ export default function UserBookingHistory() {
         }
     ];
 
-    const completedBookings = [
+    const completedasdaBookings = [
         {
             id: 6,
             date: 'January 13, 2022 - January 14, 2023',
