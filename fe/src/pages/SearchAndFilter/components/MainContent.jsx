@@ -105,7 +105,7 @@ const MainContent = ({
     // Add delay before setting loading to false
     const delay = setTimeout(() => {
       setLoading(false);
-    }, 5000); // 1 second delay
+    }, 1000); // 1 second delay
 
     return () => clearTimeout(delay); // Cleanup function
   }, []); // Run only on component mount

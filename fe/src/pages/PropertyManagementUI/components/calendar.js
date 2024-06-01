@@ -77,6 +77,7 @@ export default function WeekPicker({ unitTypes }) {
 
   React.useEffect(() => {
     const fetchData = async () => {
+      if (!user) return; 
       try {
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/property/bookings",
@@ -94,7 +95,7 @@ export default function WeekPicker({ unitTypes }) {
       }
     };
     fetchData();
-  }, [unitId]);
+  }, [user]);
 
   // Sort booked dates by checkin_date
   bookedDates.sort((a, b) => dayjs(a.checkin_date).isBefore(dayjs(b.checkin_date)) ? -1 : 1);

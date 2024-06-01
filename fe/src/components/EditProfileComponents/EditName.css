@@ -6,6 +6,16 @@
   margin-bottom: 20px;
 }
 
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
 .edit-name-input-container {
   display: flex;
   flex-direction: column;

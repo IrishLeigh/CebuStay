@@ -10,7 +10,7 @@ import {
   IconButton
 } from "@mui/material";
 import { Edit as EditIcon } from "@mui/icons-material";
-import EditReservationModal from "../modals/guests";
+import EditReservationModal from "../modals/EditReservationModal";
 
 const CheckedIn = ({ data }) => {
   const [open, setOpen] = useState(false);

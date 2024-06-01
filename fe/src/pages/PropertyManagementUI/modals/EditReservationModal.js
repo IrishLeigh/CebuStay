@@ -147,7 +147,7 @@ const EditReservationModal = ({ open, handleClose, reservation }) => {
           p: 4,
         }}
       >
-        <img src="/guestHeader.png" alt="Guest Header" style={{ width: '54rem', marginBottom: '-0.5rem' }} />
+        <img src="/guestHeader.png" alt="Guest Header" style={{ width: '100%', marginBottom: '-0.5rem' }} />
         <Paper sx={{ p: 4 }}>
           <Typography sx={{ fontSize: '2rem', color: '#16B4DD', fontWeight: 'bold' }}>
             Booking Details
@@ -289,7 +289,7 @@ const EditReservationModal = ({ open, handleClose, reservation }) => {
             Save
           </Button> */}
         </Paper>
-        <img src="/guestFooter.png" alt="Guest Footer" style={{ width: '54.1rem', marginTop: '-0.5rem',  }} />
+        <img src="/guestFooter.png" alt="Guest Footer" style={{ width: '100.9%', marginTop: '-0.5rem', marginLeft: '-.25rem'  }} />
       </Box>
     </Modal>
   );

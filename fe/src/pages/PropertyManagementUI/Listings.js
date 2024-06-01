@@ -28,15 +28,35 @@ const Listings = () => {
   const [selectedListings, setSelectedListings] = useState([]);
   const [open, setOpen] = useState(false);
   const [currentListing, setCurrentListing] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .then((response) => {
+          setUser(response.data["data"]);
+          console.log("RESPONSE DATA: ", response.data["data"]);
+        })
+        .catch((error) => {
+          alert("Error decoding JWT token:", error);
+          setUser(null);
+        });
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   useEffect(() => {
       const fetchData = async () => {
+        if (!user) return; 
         try {
           const propertyres = await axios.get(
             "http://127.0.0.1:8000/api/user/properties",
             {
               params: {
-                userid: 6,
+                userid: user.userid,
               },
             }
           );
@@ -48,7 +68,7 @@ const Listings = () => {
         }
       };
       fetchData();
-    }, []);
+    }, [user]);
 
   const handleOpen = (listing) => {
     setCurrentListing(listing);
@@ -61,6 +81,10 @@ const Listings = () => {
   };
 
   const handleCheckboxClick = (event, id) => {
+    if (!selectedListings) {
+      alert("No listing Yet, Add Yours Now!");
+      return;
+    }; 
     if (event.target.checked) {
       setSelectedListings([...selectedListings, id]);
     } else {

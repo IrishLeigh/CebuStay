@@ -6,7 +6,7 @@ import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useUser } from "../components/UserProvider";
 
 
-const Form = ({setToken}) => {
+const LoginUI = ({setToken}) => {
   const { loginUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +15,7 @@ const Form = ({setToken}) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [emptyEmail, setEmptyEmail] = useState(false);
   const [emptyPassword, setEmptyPassword] = useState(false);
+  const [user, setUser] = useState([]);
   const navigate = useNavigate(); // Use useNavigate for navigation
 
   const togglePasswordVisibility = () => {
@@ -26,6 +27,29 @@ const Form = ({setToken}) => {
     // Store the "Remember me" option in local storage
     localStorage.setItem("remember_me", !rememberMe);
   };
+
+  useEffect(() => {
+    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+    const token = localStorage.getItem("auth_token");
+
+    // console.log("Token:", token);
+    if (token) {
+      const jwtToken = token.split("=")[1];
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .then((response) => {
+          setUser(response.data["data"]);
+          loginUser(response.data.data);
+          console.log("RESPONSE DATA: ", response.data["data"]);
+        })
+        .catch((error) => {
+          alert("Error decoding JWT token:", error);
+          setUser(null);
+        });
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -227,7 +251,7 @@ const Form = ({setToken}) => {
               </svg>
               Google
             </button>
-            <button className="btn apple">
+            {/* <button className="btn apple">
               <svg
                 version="1.1"
                 height="20"
@@ -259,7 +283,7 @@ const Form = ({setToken}) => {
                 </g>
               </svg>
               Apple
-            </button>
+            </button> */}
           </div>
         </form>
 
@@ -269,4 +293,4 @@ const Form = ({setToken}) => {
   );
 };
 
-export default Form;
+export default LoginUI;

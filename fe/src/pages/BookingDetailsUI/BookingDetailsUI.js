@@ -7,7 +7,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-function BookinghDetailsUI() {
+function BookingDetailsUI() {
   const [price, setPrice] = useState();
  
   const [lengthStay, setLengthStay] = useState(2);
@@ -286,4 +286,4 @@ function BookinghDetailsUI() {
   );
 }
 
-export default BookinghDetailsUI;
+export default BookingDetailsUI;

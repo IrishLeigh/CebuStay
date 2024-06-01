@@ -13,6 +13,7 @@ const CalendarUI = () => {
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedUnitType, setSelectedUnitType] = useState("");
     const [unitTypes, setUnitTypes] = useState([]);
+    const [user, setUser] = useState(null);
 
     const handlePropertyChange = (event) => {
         const propertyData = event.target.value;
@@ -23,25 +24,44 @@ const CalendarUI = () => {
         setSelectedUnitType(event.target.value);
         setUnitTypes(event.target.value);
     };
+    useEffect(() => {
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+          axios
+            .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+            .then((response) => {
+              setUser(response.data["data"]);
+              console.log("RESPONSE DATA: ", response.data["data"]);
+            })
+            .catch((error) => {
+              alert("Error decoding JWT token:", error);
+              setUser(null);
+            });
+        } else {
+          setUser(null);
+        }
+      }, []);
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!user) return;
             try {
                 const propertyres = await axios.get(
                     "http://127.0.0.1:8000/api/property/bookings",
                     {
                         params: {
-                            userid: 6,
+                            userid: user.userid,
                         },
                     }
                 );
                 setPropertyData(propertyres.data);
+                console.log('Calendar',propertyres.data);
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
-    }, []);
+    }, [user]);
 
     return (
         <div style={{ display: "flex" }}>
@@ -51,12 +71,13 @@ const CalendarUI = () => {
                     <div style={{ paddingTop: "2rem", margin: "0 auto" }}>
                         <Paper style={{ padding: "1rem", width: selectedProperty ? "18rem" : "18rem", margin: "0 auto", }}>
                             <div style={{ display: "flex", alignContent: "center" }}>
-                                <FormControl style={{ marginRight: "10px" }}>
+                            <FormControl style={{ marginRight: "10px" }}>
                                     <InputLabel style={{ minWidth: "10rem" }}>Select Property</InputLabel>
                                     <Select
                                         value={selectedProperty}
                                         onChange={handlePropertyChange}
                                         style={{ minWidth: "10rem" }}
+                                        // disabled = {!propertyData ? false : true}
                                     >
                                         {propertyData
                                             .filter((property, index, self) =>
@@ -77,6 +98,7 @@ const CalendarUI = () => {
                                         value={selectedUnitType}
                                         onChange={handleUnitTypeChange}
                                         style={{ minWidth: "7rem" }}
+                                        // disabled = {!propertyData ? false : true}
                                     >
                                         {propertyData
                                             .filter((unit, index, self) =>
@@ -95,7 +117,16 @@ const CalendarUI = () => {
                             </div>
                         </Paper>
                     </div>
-                    {!selectedUnitType && (
+                    {propertyData.length === 0 ? (
+                        <>
+                        <Paper sx={{ p: 2, width: '50rem', margin: '0 auto', mt: 5 }}>
+                        <Typography variant="h6" align="center">
+                            No Guests Have Booked Yet
+                        </Typography>
+                    </Paper>
+                        </>
+                    ): (<>
+                     {!selectedUnitType && (
                         <Paper sx={{ p: 2, width: '50rem', margin: '0 auto', mt: 5 }}>
                             <Typography variant="h6" align="center">
                                 Please select a property and unit number
@@ -103,6 +134,8 @@ const CalendarUI = () => {
                         </Paper>
                     )}
                     {selectedUnitType && <WeekPicker unitTypes={unitTypes} />} 
+                    </>)}
+                   
 
                 </Container>
             </div>

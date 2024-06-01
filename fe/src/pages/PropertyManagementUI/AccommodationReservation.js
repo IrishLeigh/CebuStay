@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { Edit as EditIcon } from "@mui/icons-material";
 import Sidebar from "../../components/Sidebar";
-import EditReservationModal from "./modals/guests";
+import EditReservationModal from "./modals/EditReservationModal";
 import axios from "axios";
 import Checkouts from "./components/checkout"; // Assuming you have this component
 import Cancelled from "./components/cancelled"; // Assuming you have this component
@@ -35,13 +35,31 @@ const AccommodationReservation = () => {
   const [activeComponent, setActiveComponent] = useState("all"); // New state variable
 
   // Token
+  // useEffect(() => {
+  //   const token = localStorage.getItem("auth_token");
+  //   if (token) {
+  //     axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token })
+  //       .then((response) => {
+  //         setUser(response.data["data"]);
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
+  //         setUser(null);
+  //       });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
+
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
     if (token) {
       axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token })
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
         .then((response) => {
           setUser(response.data["data"]);
+          console.log("RESPONSE DATA: ", response.data["data"]);
         })
         .catch((error) => {
           alert("Error decoding JWT token:", error);
@@ -54,15 +72,16 @@ const AccommodationReservation = () => {
 
   // Get the bookings
   useEffect(() => {
-    if (!user) return;
+
 
     const fetchData = async () => {
+      if (!user) return; 
       try {
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/property/bookings",
           {
             params: {
-              userid: 6,
+              userid: user.userid,
             },
           }
         );

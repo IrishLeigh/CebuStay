@@ -2,8 +2,8 @@ import { DataProvider } from './components/registration_unit/registration_locati
 import NavigationBar from './components/NavigationBar';
 import EditProfile2 from './EditProfileName_User/EditProfile2';
 import EditProfile3 from './EditProfileNumber_User/EditProfile3';
-import Registration from './Registration_User/Registration';
-import Form from './Login_User/Form';
+import RegistrationUI from './Registration_User/RegistrationUI';
+import LoginUI from './Login_User/LoginUI';
 import EditProfile from './ProfilePage_User/EditProfile';
 import EditName from './components/EditName';
 import ForgotPassword from './ForgotPassword_User/ForgotPassword';
@@ -22,7 +22,7 @@ import axios from 'axios';
 import QuiltedImageList from "./Properties_Listing/PropListing";
 import Sidebar from "./components/Sidebar";
 import React from "react";
-import Listings from "./pages/PropertyManagementUI/AccommodationListings";
+import Listings from "./pages/PropertyManagementUI/Listings";
 import AccommodationReservation from "./pages/PropertyManagementUI/AccommodationReservation";
 import Layout from './Layout/Layout';
 import LayoutLandingPage from './components/LandingPage/LayoutLandingPage';
@@ -34,8 +34,8 @@ import PaymentVerification from './components/PaymentVerification/PaymentVerific
 import HeaderAdmin from './components/Header/HeaderAdmin';
 import LandingPageUI from './pages/LandingPage/LandingPageUI';
 import PropertyListUI from './pages/SearchAndFilter/PropertyListUI';
-import ViewPropertyListingUI from './pages/PropertyDetailsUI/ViewPropertyListingUI';
-import CalendarUI from './pages/PropertyManagementUI/calendarUI';
+import ViewPropertyUI from './pages/PropertyDetailsUI/ViewPropertyUI';
+import CalendarUI from './pages/PropertyManagementUI/CalendarUI';
 import EditProfileUI from './pages/EditProfileUI/EditProfileUI';
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
@@ -83,12 +83,12 @@ function App() {
               token ? <HeaderUser token={token} setToken={setToken} /> : <HeaderNoUser setToken={setToken} />
             )}
           <Routes>
-            <Route path="/login" element={<Form setToken={setToken} />} />
+            <Route path="/login" element={<LoginUI setToken={setToken} />} />
             <Route path="/" element={<LandingPageUI />} />
-            <Route path="/register" element={<Registration />} />
+            <Route path="/register" element={<RegistrationUI />} />
             <Route path="/login/forgot-password" element={<ForgotPassword />} />
             <Route path="/edit-name" element={<EditName />} />
-            <Route path="/forgot-password/register" element={<Registration />} />
+            <Route path="/forgot-password/register" element={<RegistrationUI />} />
             <Route path="/forgot-password/otp" element={<OTP />} />
             <Route path="/forgot-password" element={<ForgotPass />} />
             <Route path="/accommodation"  element={<PropertyListUI />} />
@@ -103,7 +103,7 @@ function App() {
                {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}
               
               <Route path="/reservation" element={<AccommodationReservation />} />
-              <Route path="/accommodation/property/:propertyid" element={<ViewPropertyListingUI />} />
+              <Route path="/accommodation/property/:propertyid" element={<ViewPropertyUI />} />
               <Route path="/accommodation/booking/:propertyid" element={<BookingDetailsUI />} />
               <Route path="/listings" element={<Listings />}  exact/>
               <Route path="/calendar" element={<CalendarUI />} />

@@ -10,7 +10,7 @@ import {
   MdVisibilityOff,
 } from "react-icons/md";
 import OTPRegistration from "../components/OTP_Registration";
-const Registration = () => {
+const RegistrationUI = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -250,4 +250,4 @@ const Registration = () => {
   );
 };
 
-export default Registration;
+export default RegistrationUI;
