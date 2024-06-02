@@ -1,0 +1,95 @@
+/* Navbar */
+
+body{
+
+  margin:0;
+  padding: 0;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff; /* Change as needed */
+  padding: 10px 20px;
+  box-shadow: 0 2px 6px rgba(1, 0, 0, 0.2); /* Increased opacity and blur radius */
+}
+
+
+/* Text Links */
+.navbar-text {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  
+}
+
+.navbar-text a {
+  margin-left: 20px;
+  color: #333333; /* Change as needed */
+  text-decoration: none;
+  color: #1780CB
+}
+
+/* Sign In Button */
+.sign-in {
+  background-color: #F9CC41; /* Yellow background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  border: none; /* Remove border */
+  margin-left: 20px; /* Add space between links and button */
+}
+.sign-up {
+  background-color: #F9CC41; /* Yellow background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  border: none; /* Remove border */
+  margin-left: 20px; /* Add space between links and button */
+}
+
+/* Sign In Button */
+.sign-in,
+.sign-up,
+.property-listing {
+  background-color: #F9CC41; /* Yellow background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  border: none; /* Remove border */
+  margin-left: 20px; /* Add space between links and button */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.sign-in:hover,
+.sign-up:hover{
+  background-color: #A334CF   ; /* Darker yellow on hover */
+  color: #ffffff;
+}
+
+.property-listing:hover {
+  background-color: #ADC939   ; /* Darker yellow on hover */
+  color: #ffffff;
+}
+
+
+
+.sign-in:active,
+.sign-up:active,
+.property-listing:active {
+  background-color: #C5890C; /* Even darker yellow on click */
+}
+
+.property-listing {
+  background-color: #A334CF; /* Yellow background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  border: none; /* Remove border */
+  margin-left: 1.5rem; /* Add space between links and button */
+  margin-right: 1.5rem;
+}
+/* Logo */
+.logo img {
+  height: 40px; /* Adjust the height as needed */
+}

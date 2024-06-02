@@ -77,7 +77,7 @@ const EditProfile2 = () => {
             <div className="edit-detail-container phonenumber">
               <div className="edit-detail-label">Phone Number</div>
               <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.cellnumber}</div>
-              <Link to="/EditPhone">
+              <Link to="/profile/edit-phone">
                 <span className="edit-edit-text" >Edit</span>
               </Link>
             </div>

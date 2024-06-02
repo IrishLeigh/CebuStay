@@ -9,13 +9,17 @@ import Layout from '../../Layout/Layout';
 
 const LayoutLandingPage = () => {
   return (
-    <div>
+    <>
+     <div>
       <Landing />
       <Explore />
       <Popular />
       <Hidden />
-      <Footer />
+     
     </div>
+    <Footer />
+    </>
+   
   );
 };
 

@@ -4,10 +4,10 @@ const Footer = () => {
   return (
     <div>
       <div className="footer">
-      <img className="footer-child" alt="" src="/background.png" style={{ width: "1500px", height: "700px" }}/>
+      <img className="footer-child" alt="" src="/background.png" style={{ width: "100%", height: "100%" }}/>
     </div>
     </div>
   )
 }
 
-export default Footer
+export default Footer;

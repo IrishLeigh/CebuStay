@@ -12,7 +12,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Button from "@mui/material/Button";
 import ReservationForm from "./Reservation";
 import axios from "axios";
-
+import { useParams } from "react-router-dom";
 function srcset(image, size, rows = 1, cols = 1) {
   return {
     src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
@@ -23,58 +23,59 @@ function srcset(image, size, rows = 1, cols = 1) {
 }
 
 export default function QuiltedImageList() {
+  const {propertyid} = useParams();
   const [checkInDate, setCheckInDate] = useState(null);
   const [checkOutDate, setCheckOutDate] = useState(null);
   const [showReservationForm, setShowReservationForm] = useState(false);
 
-  // const [propertyImages, setPropertyImages] = useState([]);
-  // const [propertyInfo, setPropertyInfo] = useState(null); // Initialize as null
+  const [property_images, setPropertyImages] = useState([]);
+  const [propertyInfo, setPropertyInfo] = useState(null); // Initialize as null
   const [loading, setLoading] = useState(true); // Loading state
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const propertyId = 60; // Replace with the ID of the property you want to fetch
-  //     try {
-  //       const res = await axios.get(
-  //         `http://127.0.0.1:8000/api/getfiles/${propertyId}`
-  //       );
-  //       if (res.data) {
-  //         // Transform the image data
-  //         const images = res.data.img.map((image, index) => ({
-  //           id: image.id,
-  //           src: image.src,
-  //           rows: index === 0 ? 2 : 1,
-  //           cols: index === 0 ? 2 : 1,
-  //         }));
+  useEffect(() => {
+    const fetchData = async () => {
+      const propertyId = propertyid; // Replace with the ID of the property you want to fetch
+      try {
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/getfiles/${propertyId}`
+        );
+        if (res.data) {
+          // Transform the image data
+          const images = res.data.img.map((image, index) => ({
+            id: image.id,
+            src: image.src,
+            rows: index === 0 ? 2 : 1,
+            cols: index === 0 ? 2 : 1,
+          }));
 
-  //         // Set the transformed images to state
-  //         setPropertyImages(images);
-  //         console.log("PROPERTY IMAGES", images);
-  //         const res2 = await axios.get(
-  //           "http://127.0.0.1:8000/api/getproperty",
-  //           {
-  //             params: {
-  //               propertyid: propertyId,
-  //             },
-  //           }
-  //         );
-  //         if (res2.data) {
-  //           console.log("FULL PROPERTY INFO", res2.data);
-  //           setPropertyInfo(res2.data);
-  //           console.log(
-  //             "property name",
-  //             res2.data.property_details.property_name
-  //           );
-  //         }
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     } finally {
-  //       setLoading(false); // Set loading to false after data is fetched
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+          // Set the transformed images to state
+          setPropertyImages(images);
+          console.log("PROPERTY IMAGES", images);
+          const res2 = await axios.get(
+            "http://127.0.0.1:8000/api/getproperty",
+            {
+              params: {
+                propertyid: propertyId,
+              },
+            }
+          );
+          if (res2.data) {
+            console.log("FULL PROPERTY INFO", res2.data);
+            setPropertyInfo(res2.data);
+            console.log(
+              "property name",
+              res2.data.property_details.property_name
+            );
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
+      }
+    };
+    fetchData();
+  }, []);
 
   const [guestReview, setGuestReview] = useState({
     cleanliness: 0,
@@ -132,7 +133,7 @@ export default function QuiltedImageList() {
   //   );
   // }
 
-  const propertyInfo = {
+  const property_Infooooooo = {
     property_details: {
       propertyid: 60,
       property_name: "GardenBert",
@@ -514,25 +515,25 @@ export default function QuiltedImageList() {
     </>
   );
 }
-const property_images = [
-  {
-    id: 132,
-    src: "https://drive.google.com/thumbnail?id=1SvJFWaxbMkDnjvemhQWmr0VOGvZhbxb0",
-  },
-  {
-    id: 136,
-    src: "https://drive.google.com/thumbnail?id=1jtRFdO-jnsvOyvFh6tgW7vx5VlviK6oD",
-  },
-  {
-    id: 137,
-    src: "https://drive.google.com/thumbnail?id=1Ft6hiOwuPoTKyIz-xgSbGS_qfsFu1Fvd",
-  },
-  {
-    id: 138,
-    src: "https://drive.google.com/thumbnail?id=1SLTFennA-9Vcueawn9KCRSTw8kWsC12t",
-  },
-  {
-    id: 139,
-    src: "https://drive.google.com/thumbnail?id=1HXBjDcLXETGT4JzQuSN0wKtzel8nOvCk",
-  },
-];
+// const property_images = [
+//   {
+//     id: 132,
+//     src: "https://drive.google.com/thumbnail?id=1SvJFWaxbMkDnjvemhQWmr0VOGvZhbxb0",
+//   },
+//   {
+//     id: 136,
+//     src: "https://drive.google.com/thumbnail?id=1jtRFdO-jnsvOyvFh6tgW7vx5VlviK6oD",
+//   },
+//   {
+//     id: 137,
+//     src: "https://drive.google.com/thumbnail?id=1Ft6hiOwuPoTKyIz-xgSbGS_qfsFu1Fvd",
+//   },
+//   {
+//     id: 138,
+//     src: "https://drive.google.com/thumbnail?id=1SLTFennA-9Vcueawn9KCRSTw8kWsC12t",
+//   },
+//   {
+//     id: 139,
+//     src: "https://drive.google.com/thumbnail?id=1HXBjDcLXETGT4JzQuSN0wKtzel8nOvCk",
+//   },
+// ];

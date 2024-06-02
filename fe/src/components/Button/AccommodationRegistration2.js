@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -9,7 +9,7 @@ const propertyTypes = [
   {
     name: "Entire Room",
     description:
-      " Guests are able to use the entire place and do not have to share this with the host or other guests.",
+      "Guests are able to use the entire place and do not have to share this with the host or other guests.",
   },
   {
     name: "Private Room",
@@ -18,14 +18,19 @@ const propertyTypes = [
   },
 ];
 
-export default function Properties() {
-  const [selectedType, setSelectedType] = useState(null);
+export default function PropertyType({ onSelectedPropertyTypeChange, parentSelectedPropertyType }) {
+  const [selectedPropertyType, setSelectedPropertyType] = useState(parentSelectedPropertyType);
+
   const handleClick = (button) => {
-    setSelectedType(selectedType === button ? null : button);
+    const newSelectedPropertyType = selectedPropertyType === button ? null : button;
+    setSelectedPropertyType(newSelectedPropertyType);
+    onSelectedPropertyTypeChange(newSelectedPropertyType);
   };
 
+
+  console.log("Property Type", selectedPropertyType);
   return (
-    <Box>
+    <Box mb={5} mt={-11}>
       <Container
         maxWidth="md"
         sx={{
@@ -64,8 +69,8 @@ export default function Properties() {
                   variant="contained"
                   sx={{
                     backgroundColor:
-                      selectedType === type.name ? "#1780CB" : "white",
-                    color: selectedType === type.name ? "white" : "black",
+                      selectedPropertyType === type.name ? "#1780CB" : "white",
+                    color: selectedPropertyType === type.name ? "white" : "black",
                     fontFamily: "Poppins, sans-serif",
                     width: "100%",
                     height: 80,

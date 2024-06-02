@@ -7,6 +7,8 @@ import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
 import Tooltip from "@mui/material/Tooltip";
 import { CssBaseline } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function ReservationForm() {
   const [isImageOpen, setIsImageOpen] = useState(false);
@@ -17,10 +19,17 @@ export default function ReservationForm() {
     pricePerNight: "$100",
     booked: 5,
   });
+  const {propertyid} = useParams();
+  const navigate = useNavigate();
 
   const handleImageClick = () => {
     setIsImageOpen(true);
   };
+
+  const handleBook = () => {
+    navigate(`/accommodation/booking/${propertyid}`);
+  };
+
 
   const [hovered, setHovered] = useState(false);
 
@@ -447,9 +456,11 @@ export default function ReservationForm() {
                     <td>{roomData.pricePerNight}</td>
                     <td>{roomData.booked}</td>
                     <td>
-                      <Button variant="contained" color="primary">
-                        Book Now
-                      </Button>
+                      
+                        <Button variant="contained" color="primary" onClick={handleBook}>
+                          Book Now
+                        </Button>
+                
                     </td>
                   </tr>
                 </tbody>
