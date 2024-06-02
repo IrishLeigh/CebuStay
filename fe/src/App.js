@@ -35,7 +35,7 @@ import HeaderAdmin from './components/Header/HeaderAdmin';
 import LandingPageUI from './pages/LandingPage/LandingPageUI';
 import PropertyListUI from './pages/SearchAndFilter/PropertyListUI';
 import ViewPropertyUI from './pages/PropertyDetailsUI/ViewPropertyUI';
-import CalendarUI from './pages/PropertyManagementUI/CalendarUI';
+import CalendarUI from  './pages/PropertyManagementUI/calendarUI';
 import EditProfileUI from './pages/EditProfileUI/EditProfileUI';
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
