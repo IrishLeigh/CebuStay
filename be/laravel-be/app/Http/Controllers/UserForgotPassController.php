@@ -38,7 +38,7 @@ class UserForgotPassController extends CORS
             'message' => 'Password updated successfully.',
             'user' => $user,
         ]);
-    
+
     }
 
     public function sendEmail($firstname, $lastname, $email, $verify_token)
@@ -77,24 +77,32 @@ class UserForgotPassController extends CORS
             return 0; // Error occurred while sending email
         }
     }
-
+    private function generateVerificationCode()
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $code = '';
+        for ($i = 0; $i < 6; $i++) {
+            $code .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $code;
+    }
     public function resendEmailCode(Request $request)
     {
         $this->enableCors($request);
         $email = $request->input('email');
         $user = UserModel::where('email', $email)->first();
         if ($user->isverified == 1) {
-            $verify_token = md5(rand());
-        $user->verificationtoken = $verify_token;
-        $tokenExpiration = Carbon::now()->addMinutes(5);
-        $user->verification_token_expires_at = $tokenExpiration;
-        $this->sendEmail($user->firstname, $user->lastname, $user->email, $verify_token);
-        $user->save();
-        return response()->json(['message' => 'Verification Code Resent.', 'status' => 'success']);
-        }else{
+            $verify_token = $this->generateVerificationCode();
+            $user->verificationtoken = $verify_token;
+            $tokenExpiration = Carbon::now()->addMinutes(5);
+            $user->verification_token_expires_at = $tokenExpiration;
+            $this->sendEmail($user->firstname, $user->lastname, $user->email, $verify_token);
+            $user->save();
+            return response()->json(['message' => 'Verification Code Resent.', 'status' => 'success']);
+        } else {
             return response()->json(['message' => 'Failed to send email.', 'status' => 'error']);
         }
-        
+
     }
 
 }
