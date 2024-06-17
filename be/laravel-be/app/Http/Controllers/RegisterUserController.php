@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserModel;
 
+use Illuminate\Support\Facades\Hash;
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -96,7 +98,7 @@ class RegisterUserController extends CORS
         $user->firstname = $request->input('firstname');
         $user->lastname = $request->input('lastname');
         $user->email = $request->input('email');
-        $user->password = $request->input('password');
+        $user->password = Hash::make($request->input('password'));
         $verify_token = md5(rand());
         $user->verificationtoken = $verify_token;
 

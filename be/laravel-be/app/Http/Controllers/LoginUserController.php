@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\UserModel;
 use Firebase\JWT\JWT;
@@ -22,34 +23,33 @@ class LoginUserController extends CORS
         if (!$user) {   //if email doesn't exist
             return response()->json(['message' => 'Password incorrect.', 'status' => 'error']);     //return error
         }
-        if ($user->password != $password) {   //if password doesn't match
+        if (!Hash::check($password, $user->password)) {   //if password doesn't match
             return response()->json(['message' => 'Password incorrect.', 'status' => 'error']);    //return error
         }
-        if ($user->isverified == 1) {
-            if ($user->email == $email && $user->password == $password) {
-                $userid = $user->userid;
-                $key = "6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f";
-                $token = JWT::encode(
-                    array(
-                        'iat' => time(),
-                        'nbf' => time(),
-                        'exp' => time() + 86400,
-                        'data' => array(
-                            'userid' => $userid,
-                            'firstname' => $user->firstname,
-                            'lastname' => $user->lastname,
-                            'email' => $user->email,
-                            'password' => $user->password,
-                        )
-                    ),
-                    $key,
-                    'HS256'
-                );
-                return response()->json(['message' => 'Login successful.', 'status' => 'success', 'token' => $token]);
-            }
-        } else {
+        if ($user->isverified != 1) {
             return response()->json(['message' => 'Email not verified.', 'status' => 'error']);
         }
+    
+        // Generate JWT token
+        $userid = $user->userid;
+        $key = "6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f";
+        $token = JWT::encode(
+            [
+                'iat' => time(),
+                'nbf' => time(),
+                'exp' => time() + 86400,
+                'data' => [
+                    'userid' => $userid,
+                    'firstname' => $user->firstname,
+                    'lastname' => $user->lastname,
+                    'email' => $user->email,
+                ]
+            ],
+            $key,
+            'HS256'
+        );
+    
+        return response()->json(['message' => 'Login successful.', 'status' => 'success', 'token' => $token]);
     }
 
     public function decodeToken(Request $request)
