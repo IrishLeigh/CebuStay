@@ -9,7 +9,7 @@
   }
   
   .otp-Form {
-    width: 230px;
+    width: 300px;
     height: auto; /* Adjusted height to accommodate dynamic content */
     background-color: rgb(255, 255, 255);
     display: flex;
