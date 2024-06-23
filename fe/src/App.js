@@ -29,7 +29,7 @@ import LayoutLandingPage from './components/LandingPage/LayoutLandingPage';
 import PropListing from './Properties_Listing/PropListing';
 import ReservationForm from './Properties_Listing/Reservation';
 import BookingDetailsUI from './pages/BookingDetailsUI/BookingDetailsUI';
-import AccommodationRegistrationUI from './pages/AccomoodationRegistrationUI/AccommodationRegistrationUI';
+import AccommodationRegistrationUI from './pages/AccommodationRegistrationUI/AccommodationRegistrationUI';
 import PaymentVerification from './components/PaymentVerification/PaymentVerification';
 import HeaderAdmin from './components/Header/HeaderAdmin';
 import LandingPageUI from './pages/LandingPage/LandingPageUI';
