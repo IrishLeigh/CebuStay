@@ -114,7 +114,7 @@ const RegistrationUI = () => {
   };
 
   return (
-    <div className="center-container">
+    <div className="center-container" style={{height:'100vh'}}>
       {!verificationSent && (
         <div className="registration-container">
           <div style={{ textAlign: "Left" }}>
@@ -122,13 +122,15 @@ const RegistrationUI = () => {
               style={{
                 fontSize: "30px",
                 fontWeight: "600",
-                fontFamily: "Open Sans",
                 textAlign: "center",
                 color: "#1780CB",
+                marginBottom:'-20px'
               }}
             >
               Create Account
             </h2>
+            <p style={{color:'gray', textAlign:'center', marginBottom:'2rem'}}>Sign up now and get full access to our app</p>
+
             <p
               style={{
                 fontSize: "18px",
@@ -148,7 +150,7 @@ const RegistrationUI = () => {
                     className="input"
                     placeholder="First Name"
                     onChange={(e) => setFirstname(e.target.value)}
-                    style={{ width: "9.8rem" }}
+                    style={{ width: "9.2rem" }}
                   />
                 </div>
               </div>
@@ -160,7 +162,7 @@ const RegistrationUI = () => {
                     className="input"
                     placeholder="Last Name"
                     onChange={(e) => setLastname(e.target.value)}
-                    style={{ width: "9.8rem" }}
+                    style={{ width: "9.2rem" }}
                   />
                 </div>
               </div>
