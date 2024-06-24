@@ -15,12 +15,12 @@
   margin-bottom: 5rem; /* Added margin bottom */
 }
 
-
 .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Poppins', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Poppins", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .form button {
@@ -50,7 +50,6 @@
   height: 100%;
   padding: 0 10px; /* Adjust padding as needed */
 }
-
 
 .input:focus {
   outline: none;
@@ -84,7 +83,7 @@
 
 .button-submit {
   margin: 20px 0 10px 0;
-  background-color: #1780CB;
+  background-color: #1780cb;
   border: none;
   color: white;
   font-size: 15px;
