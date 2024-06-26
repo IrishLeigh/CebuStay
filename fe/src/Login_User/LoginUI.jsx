@@ -4,6 +4,7 @@ import "./Form.css";
 import { Link, useNavigate } from "react-router-dom";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useUser } from "../components/UserProvider";
+import { Button, Snackbar, CircularProgress } from "@mui/material";
 
 const LoginUI = ({ setToken }) => {
   const { loginUser } = useUser();
@@ -15,10 +16,27 @@ const LoginUI = ({ setToken }) => {
   const [emptyEmail, setEmptyEmail] = useState(false);
   const [emptyPassword, setEmptyPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [open, setOpen] = React.useState(false);
   const [user, setUser] = useState([]);
   const navigate = useNavigate(); // Use useNavigate for navigation
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const action = (
+    <Button color="secondary" size="small" onClick={handleClose}>
+      UNDO
+    </Button>
+  );
 
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
@@ -86,7 +104,6 @@ const LoginUI = ({ setToken }) => {
 
     setLoading(true); // Start loading
     setLoginError("");
-    setSnackbarVisible(false);
 
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/login", {
@@ -108,8 +125,6 @@ const LoginUI = ({ setToken }) => {
 
         // console.log("Login successful! User iS: ", response.data);
         // console.log(response.data["message"]);
-        setSnackbarMessage("Login successful!");
-        setSnackbarVisible(true);
         // console.log("Login successful!");
 
         navigate("/landing"); // Correct usage of navigate function
@@ -147,10 +162,6 @@ const LoginUI = ({ setToken }) => {
       setRememberMe(true);
     }
   }, []);
-
-  const handleSnackbarClose = () => {
-    setSnackbarVisible(false);
-  };
 
   const buttonStyle = {
     background: "#1780CB",
@@ -276,8 +287,19 @@ const LoginUI = ({ setToken }) => {
           </div>
 
           <button style={buttonStyle} onClick={handleSubmit} disabled={loading}>
-            {loading ? <div style={loaderStyle}></div> : "Login to Continue"}
+            {loading ? (
+              <CircularProgress size={24} style={loaderStyle} />
+            ) : (
+              "Login to Continue"
+            )}
           </button>
+          <Snackbar
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message="Successfully Logged In"
+            action={action}
+          />
 
           <p className="p">
             Don't have an account?
