@@ -59,6 +59,8 @@ Route::post('/houseRules', 'App\Http\Controllers\HouseruleController@create');
 // Route::post('/location', [LocationController::class, 'create']);
 Route::post('/location', 'App\Http\Controllers\LocationController@create');
 Route::get('/getlocations', 'App\Http\Controllers\LocationController@getAllLocation');
+Route::get('/getlocation', 'App\Http\Controllers\LocationController@getLocation');
+Route::get('/getdirection', 'App\Http\Controllers\LocationController@getDirection');
 
 // Route for updating password based on email
 // Route::get('/forgotPass', [UserForgotPassController::class, 'changePass']);
