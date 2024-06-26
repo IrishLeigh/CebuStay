@@ -18,13 +18,16 @@ const RegistrationUI = () => {
   const [confirmpassword, setConfirmpassword] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
     useState(false);
   const [error, setError] = useState(""); // State for error message
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    setLoading(true); // Start loading
+
     try {
       if (!firstname || !lastname || !email || !password || !confirmpassword) {
         setError("Please fill in all the required fields"); // Set error message
@@ -91,7 +94,7 @@ const RegistrationUI = () => {
         // account_created,
         // is_verified,
       });
-      if(res.data.message === "Email already in use."){
+      if (res.data.message === "Email already in use.") {
         setError("This email already exists. Please use a different email."); // Set error message
         return;
       }
@@ -102,6 +105,8 @@ const RegistrationUI = () => {
     } catch (error) {
       console.error("Error validating password and email:", error);
       console.error("Error occurred while submitting data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,6 +116,30 @@ const RegistrationUI = () => {
 
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisibility(!confirmPasswordVisibility);
+  };
+
+  const buttonStyle = {
+    background: "#1780CB",
+    position: "relative",
+    padding: "10px 20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "50px",
+    width: "450px", // Adjust width to your preference
+    cursor: "pointer",
+    border: "none",
+    color: "white",
+    fontSize: "16px",
+  };
+
+  const loaderStyle = {
+    border: "4px solid rgb(178, 190, 181)",
+    borderTopColor: "transparent",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    animation: loading ? "spin 1s linear infinite" : "none",
   };
 
   return (
@@ -135,8 +164,7 @@ const RegistrationUI = () => {
                 color: "#7f7f7f",
                 textAlign: "center",
               }}
-            >
-            </p>
+            ></p>
           </div>
           <form className="form">
             <div className="flex-row">
@@ -224,18 +252,33 @@ const RegistrationUI = () => {
 
             {/* Display error message in red color */}
             {error && (
-              <p style={{ color: "red", textAlign: "center", margin: "5px",fontSize:'15px' }}>
+              <p
+                style={{
+                  color: "red",
+                  textAlign: "center",
+                  margin: "5px",
+                  fontSize: "15px",
+                }}
+              >
                 {error}
               </p>
             )}
 
             <button
+              style={buttonStyle}
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? <div style={loaderStyle}></div> : "Create Account"}
+            </button>
+
+            {/* <button
               className="button-submit"
               style={{ background: "#1780CB" }}
               onClick={handleSubmit}
             >
               Create Account
-            </button>
+            </button> */}
           </form>
           <p className="p">
             Already have an account?{" "}
