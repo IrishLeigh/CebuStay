@@ -355,7 +355,7 @@ export default function ViewPropertyUI() {
 
   return (
     <div style={{ backgroundColor: "#F4F7FA" }}>
-      <Container maxWidth="xl" >
+      <Container maxWidth="lg" >
         <CssBaseline />
         {loading ? (
           <div>Loading...</div>
