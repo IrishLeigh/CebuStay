@@ -5,6 +5,7 @@ import reportWebVitals from "./reportWebVitals";
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
+import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
 
 
 
@@ -15,7 +16,7 @@ root.render(
 <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <App/>
+          <SinglePropertyUI/>
           </UserProvider>
       </DataProvider>
     </BrowserRouter>
