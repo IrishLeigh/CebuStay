@@ -2,7 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Adjusted height */
+  margin-bottom: 2rem;
+  margin-top: -2rem;
 }
 
 .registration-container {
@@ -11,7 +12,6 @@
   width: 450px;
   border-radius: 20px;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Adding shadow effect */
-  margin-top: 10rem;
 }
 
 .form {

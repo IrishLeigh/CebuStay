@@ -190,13 +190,16 @@ const LoginUI = ({ setToken }) => {
   return (
     <div className="formContainer">
       <div className="form-container">
-        <div style={{ textAlign: "center" }}>
-          <h2 style={{ fontWeight: "600", fontFamily: "Open Sans" }}>
-            Login to your account
-          </h2>
+        <div style={{ textAlign: 'center' }}>
+        <h2 style={{ fontSize: "30px",
+                fontWeight: "600",
+                textAlign: "center",
+                color: "#1780CB",
+                marginBottom:'-10px'}}>Welcome Back</h2>
+        <p style={{color:'gray'}}>Log in to continue</p>
+
         </div>
         <form className="form">
-          {/* Email Input */}
           <div className="email">
             <label style={{ marginRight: "85%", fontWeight: "10px" }}>
               Email

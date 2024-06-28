@@ -4,6 +4,10 @@
   align-items: center;
   height: 100%; /* Adjusted height */
 }
+body {
+  background: linear-gradient(135deg, #e0f7fa 50%, #ffffff 50%);
+  font-family: 'Poppins', sans-serif;
+}
 
 .form-container {
   background-color: #ffffff;
@@ -13,6 +17,13 @@
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Adding shadow effect */
   margin-top: 5rem; /* Adjusted margin */
   margin-bottom: 5rem; /* Added margin bottom */
+}
+
+
+* {
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+
 }
 
 .form {
