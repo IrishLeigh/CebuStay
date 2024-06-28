@@ -19,12 +19,17 @@
     border-radius: 10px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
   }
+  *{
+    font-family: 'Poppins', sans-serif;
+
+  }
   
   .form-container .logo-container {
     text-align: center;
     font-weight: 600;
-    font-size: 24px;
-    color: #1780CB;
+    font-size: 16px;
+    font: poppins;    
+    color: rgb(51, 48, 48);
   }
   
   .form-container .form {

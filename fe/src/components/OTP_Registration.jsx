@@ -170,7 +170,7 @@ const OTPRegistration = () => {
   }
   return (
     <div className="center-container">
-      <form className="otp-Form" onSubmit={handleSubmit}>
+      <form className="otp-Form" onSubmit={handleSubmit} style={{width:'320px'}}>
         {showVerifyButton && (
           <>
             <span className="mainHeading" style={{ fontSize: '25px' }}>Enter OTP</span>

@@ -154,7 +154,7 @@ const ForgotPass = () => {
         {!emailSent ? (
           <>
             <div className="logo-container">
-              Forgot Password
+              Please Enter Your Email
             </div>
             <form className="form">
               <div className="form-group">
@@ -176,7 +176,8 @@ const ForgotPass = () => {
             </form>
             <div className="signup-link">
               <p className="p">
-                Already have an account? <Link to="/login" className="span">Sign In</Link>
+                Already have an account?
+                 <Link to="/login" className="span" style={{color:'rgb(127, 129, 255)'}}>Sign In</Link>
               </p>
             </div>
           </>
