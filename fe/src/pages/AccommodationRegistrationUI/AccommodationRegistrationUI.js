@@ -14,11 +14,12 @@ import Policies from "../../components/registration_unit/registration_bookingPol
 import AccommodationPropertyInformation from "../../components/Button/AccommodationPropertyInformation";
 import UnitPricing from "../../components/registration_unit/registration_pricing/pricing";
 import { useData } from "../../components/registration_unit/registration_location/contextAddressData";
-import "./Registration.css"; // Import CSS file
-import AnimatePage from "./AnimatedPage";
+import "../AccommodationRegistrationUI/css/Registration.css"; // Import CSS file
+// import AnimatePage from "./AnimatedPage";
+import AnimatePage from "../AccommodationRegistrationUI/components/AnimatedPage";
 import PaymentMethods from "../../components/registration_unit/registration_pMethods/PaymentMethods";
 import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
-import "./RegistrationUnitBG.css";
+import "../AccommodationRegistrationUI/css/RegistrationUnitBG.css";
 import {
   Modal,
   Backdrop,

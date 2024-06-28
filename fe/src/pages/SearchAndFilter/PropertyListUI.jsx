@@ -5,6 +5,9 @@ import SideBar from './components/SideBar';
 import MainContent from './components/MainContent';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { Container } from '@mui/material';
+import SortMenu from './components/SortMenu';
+import BannerOffers from './components/BannerOffers';
 
 
 const PropertyListUI = () => {
@@ -99,10 +102,12 @@ useEffect(() => {
   };
 
   return (
-    <div className="layout-container">
+    <Container maxWidth="lg">
+      <BannerOffers/>
+      <SortMenu/>
       <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
       <MainContent selectedAmenities={selectedAmenities} accommodations={accommodationlist} filters={filters} pricinglist={pricinglist} searchData={searchData} setSearchData={setSearchData} />
-    </div>
+    </Container>
   );
 };
 

@@ -19,6 +19,7 @@ body {
   margin-bottom: 5rem; /* Added margin bottom */
 }
 
+
 * {
   font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
@@ -29,7 +30,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Poppins', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Poppins", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .form button {
@@ -59,7 +61,6 @@ body {
   height: 100%;
   padding: 0 10px; /* Adjust padding as needed */
 }
-
 
 .input:focus {
   outline: none;
@@ -93,7 +94,7 @@ body {
 
 .button-submit {
   margin: 20px 0 10px 0;
-  background-color: #1780CB;
+  background-color: #1780cb;
   border: none;
   color: white;
   font-size: 15px;
@@ -133,4 +134,13 @@ body {
 
 .btn:hover {
   border: 1px solid #2d79f3;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
