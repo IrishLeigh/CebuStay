@@ -1,30 +1,113 @@
-import React from "react";
+// import React from "react";
+// import "../css/BannerOffers.css"; // Import your CSS file
+// import { Box } from "@mui/material";
+// import DarkModeIcon from '@mui/icons-material/DarkMode';
+// import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+// import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+// import Search from "../../../components/LandingPage/SearchLanding";
+
+
+// const handleSearchAvailability = ({ startDate, endDate, guestCapacity }) => {
+//   setAvailability({ startDate, endDate });
+//   setGuestCapacity(guestCapacity);
+//   fetchProperties(startDate, endDate, guestCapacity);
+//   setCheckin_date(startDate);
+//   setCheckout_date(endDate);
+// };
+
+// export default function BannerOffers() {
+  
+//   return (
+//       <><Search onSearch={handleSearchAvailability} />
+//       <Box className="bannerOffers">
+//       <Box className="perfectStay-cntr">
+//         <p className="perfectStay">Find and Book your Perfect</p>
+//       </Box>
+//       <Box className="offers-cntr">
+//         <Box className="offers">
+//           <DarkModeIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
+//           <p>Earn rewards on every night you stay</p>
+//         </Box>
+//         <Box className="offers">
+//           <LocalOfferIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
+//           <p>Save more with Member Prices</p>
+//         </Box>
+//         <Box className="offers">
+//           <CalendarMonthIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
+//           <p>Free cancellation options if plans change</p>
+//         </Box>
+//       </Box>
+//     </Box></>
+//   );
+// }
+
+import React, { useState } from "react";
 import "../css/BannerOffers.css"; // Import your CSS file
 import { Box } from "@mui/material";
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import axios from 'axios';
+import Search from "./Search";
 
-export default function BannerOffers() {
+export default function BannerOffers({ accommodations }) {
+  const [guestCapacity, setGuestCapacity] = useState(null);
+  const [availability, setAvailability] = useState({ startDate: null, endDate: null });
+  const [checkin_date, setCheckin_date] = useState(null);
+  const [checkout_date, setCheckout_date] = useState(null);
+
+  const fetchProperties = async (checkin_date, checkout_date, guest_count) => {
+  const formattedCheckinDate = new Date(checkin_date).toISOString().slice(0, 10);
+  const formattedCheckoutDate = new Date(checkout_date).toISOString().slice(0, 10);
+
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/getavailableproperties', {
+        params: {
+          checkin_date: formattedCheckinDate,
+          checkout_date: formattedCheckoutDate,
+          guest_count
+        }
+      });
+      const availablePropertyIds = response.data.map(item => item.propertyid);
+      const filteredAccommodations = accommodations.filter(accommodation =>
+        availablePropertyIds.includes(accommodation.propertyid)
+      );
+      // Do something with filteredAccommodations if needed
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSearchAvailability = ({ startDate, endDate, guestCapacity }) => {
+    setAvailability({ startDate, endDate });
+    setGuestCapacity(guestCapacity);
+    fetchProperties(startDate, endDate, guestCapacity);
+    setCheckin_date(startDate);
+    setCheckout_date(endDate);
+  };
+
   return (
-    <Box className="bannerOffers">
-      <Box className="perfectStay-cntr">
-        <p className="perfectStay">Find and Book your Perfect</p>
+    <>
+      <Search onSearch={handleSearchAvailability} />
+      <Box className="bannerOffers">
+        <Box className="perfectStay-cntr">
+          <p className="perfectStay">Find and Book your Perfect</p>
+        </Box>
+        <Box className="offers-cntr">
+          <Box className="offers">
+            <DarkModeIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
+            <p>Earn rewards on every night you stay</p>
+          </Box>
+          <Box className="offers">
+            <LocalOfferIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
+            <p>Save more with Member Prices</p>
+          </Box>
+          <Box className="offers">
+            <CalendarMonthIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
+            <p>Free cancellation options if plans change</p>
+          </Box>
+        </Box>
       </Box>
-      <Box className="offers-cntr">
-        <Box className="offers">
-          <DarkModeIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
-          <p>Earn rewards on every night you stay</p>
-        </Box>
-        <Box className="offers">
-          <LocalOfferIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
-          <p>Save more with Member Prices</p>
-        </Box>
-        <Box className="offers">
-          <CalendarMonthIcon className="offers-icon" sx={{ color: 'white', fontSize: { xs: '2rem', md: '3rem' } }} />
-          <p>Free cancellation options if plans change</p>
-        </Box>
-      </Box>
-    </Box>
+    </>
   );
 }
