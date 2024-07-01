@@ -3,7 +3,7 @@ import './loader.css';
 
 const Loader = () => {
   return (
-    <div className="loader">
+    <div className="loader" style={{width:'17rem'}}>
       <div className="wrapper">
         <div className="circle"></div>
         <div className="line-1"></div>
