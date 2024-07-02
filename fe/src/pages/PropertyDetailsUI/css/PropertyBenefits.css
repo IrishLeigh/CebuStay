@@ -1,0 +1,21 @@
+.amenity-cntr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: left;
+  
+}
+.each-amenity{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: Poppins, sans-serif;
+  border-radius: 12px;
+  border: 1px solid #ccc; 
+  padding: 20px;
+  margin-top: 1rem;
+  width: 15%;
+}
+

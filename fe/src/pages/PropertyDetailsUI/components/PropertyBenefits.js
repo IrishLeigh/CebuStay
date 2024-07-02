@@ -24,11 +24,9 @@ export default function ViewProperty() {
   };
 
   return (
-    <Container>
       <Box>
         <Box className="sort-menu">
           <button className="sort-btn" onClick={() => setView(null)}>
-            Properties
           </button>
           <button className="sort-btn" onClick={() => setView("amenities")}>
             Property Amenities
@@ -48,6 +46,6 @@ export default function ViewProperty() {
         </Box>
         {renderView()}
       </Box>
-    </Container>
+   
   );
 }

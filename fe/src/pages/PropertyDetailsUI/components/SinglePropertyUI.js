@@ -8,7 +8,7 @@ import HeaderUser from "../../../components/Header/HeaderUser";
 import ReservationSection from "./ReservationSection";
 import ImageGallery from "./ImageGallery";
 import dayjs from "dayjs";
-import ViewProperty from "./Button";
+import ViewProperty from "./PropertyBenefits";
 
 export default function SinglePropertyUI() {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -29,7 +29,7 @@ export default function SinglePropertyUI() {
     const fetchData = async () => {
       const propertyId = 116; // Replace with the ID of the property you want to fetch
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/getfiles/116`);
+        const res = await axios.get(`http://127.0.0.1:8000/api/getfiles/${propertyId}`);
         if (res.data) {
           // Transform the image data
           const images = res.data.img.map((image, index) => ({
@@ -105,6 +105,8 @@ export default function SinglePropertyUI() {
             </Grid>
           </Grid>
           <PropertyInfo />
+          {/* kani i delete lang ni */}
+          <ViewProperty/>
         </div>
       </Container>
     </div>
