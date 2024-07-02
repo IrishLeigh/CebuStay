@@ -8,6 +8,7 @@ import HeaderUser from "../../../components/Header/HeaderUser";
 import ReservationSection from "./ReservationSection";
 import ImageGallery from "./ImageGallery";
 import dayjs from "dayjs";
+import ViewProperty from "./Button";
 
 export default function SinglePropertyUI() {
   const [propertyImages, setPropertyImages] = useState([]);
