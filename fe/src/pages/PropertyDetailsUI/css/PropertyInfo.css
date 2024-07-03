@@ -1,0 +1,106 @@
+/* Ensure the parent has a height defined */
+.parent {
+  height: 100vh; /* Example: full viewport height */
+}
+
+.info-cntr {
+  background-color: #ffff;
+  width: 100%;
+  height: 35%; /* Height is 35% of the parent element */
+  /* border-radius: 12px; */
+  padding: 20px;
+  font-family: Poppins, sans-serif;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.info-title-cntr{
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  font-family: Poppins, sans-serif;
+  
+}
+
+.rooms {
+  border: 1px solid #ccc; 
+  padding: 40px;
+  width: 16.66%;
+  height: 150px; /* Ensure all rooms have the same height */
+  border-radius: 12px;
+  font-family: Poppins, sans-serif;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center;
+  justify-content: center; */
+  box-sizing: border-box;
+}
+
+.rooms-details {
+  font-size: 0.8rem;
+  font-family: Poppins, sans-serif;
+  margin-top: 0.5rem;
+ 
+}
+
+.rooms-name {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  font-family: Poppins, sans-serif;
+}
+
+.rooms-cntr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  
+}
+
+.gallery-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.rooms-gallery-cntr {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  width: calc(100% - 60px); /* Adjust to account for button width */
+  margin-top: 0.5rem;
+}
+
+.gallery-image {
+  width: 350px;
+  height: 200px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 12px;
+}
+
+.scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.scroll-button.left {
+  left: 0;
+}
+
+.scroll-button.right {
+  right: 0;
+}
+
+.scroll-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+}

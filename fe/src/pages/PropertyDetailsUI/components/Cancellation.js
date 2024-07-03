@@ -1,58 +1,62 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { Divider, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useParams } from "react-router-dom";
 import Container from "@mui/material/Container";
 import ArrowRight from "@mui/icons-material/Send";
-import "../css/PropertyBenefits.css";
 
-const amenitiesIcons = {
-  Toiletries: "toiletries.png",
-  "Air Conditioning": "aircon.png",
-  "Wi-Fi": "wifi.png",
-  "Mini Bar": "minibar.png",
-  Workspace: "workspace.png",
-  Television: "tv.png",
-  Refrigerator: "refrigerator.png",
-  Microwave: "microwave.png",
+const bookingpolicyid = "bookingpolicyid";
+const cancel_days = "cancel_days";
+const is_cancel_plan = "is_cancel_plan";
+const modification_plan = "modifcation_plan";
+const non_refundable = "non_refundable";
+const offer_discount = "offer_discount";
+
+const Cancellation = ({ cancellation = [] }) => {
+  return (
+    <Paper className="info-cntr" sx={{ borderRadius: "12px", padding: "16px" }}>
+      <div
+        className="info-title-cntr"
+        style={{ display: "flex", alignItems: "center" }}
+      >
+        <ArrowRight sx={{ color: "#16B4DD" }} />
+        <div
+          style={{ marginLeft: "8px", fontSize: "18px", fontWeight: "bold" }}
+        >
+          Cancellation
+        </div>
+      </div>
+      <Divider sx={{ width: "100%", color: "#ccc", marginY: "16px" }} />
+      <div>
+        {cancellation ? (
+          <div>
+            <div>bookingpolicyid: {cancellation[bookingpolicyid]}</div>
+            <div>cancel_days: {cancellation[cancel_days]}</div>
+            <div>is_cancel_plan: {cancellation[is_cancel_plan]}</div>
+            <div>modifcation_plan: {cancellation[modification_plan]}</div>
+            <div>non_refundable: {cancellation[non_refundable]}</div>
+            <div>offer_discount: {cancellation[offer_discount]}</div>
+          </div>
+        ) : (
+          <div>No house rules available.</div>
+        )}
+      </div>
+    </Paper>
+  );
 };
 
-const Amenities = ({ amenities = [] }) => (
-  <Paper className="info-cntr" sx={{ borderRadius: "12px" }}>
-    <div className="info-title-cntr">
-      <ArrowRight sx={{ color: "#16B4DD" }} />
-      <div>Amenities</div>
-    </div>
-    <Divider sx={{ width: "100%", color: "#ccc" }} />
-    <div className="amenity-cntr">
-      {/* // Render the list of amenities */}
-      {amenities.map((amenity) => (
-        <div className="each-amenity" key={amenity.amenity_name}>
-          <img
-            src={amenitiesIcons[amenity.amenity_name]}
-            alt={amenity.amenity_name}
-            style={{ width: "24px", height: "24px", marginRight: "8px" }}
-          />
-          <div className="rooms-name">{amenity.amenity_name}</div>
-        </div>
-      ))}
-    </div>
-  </Paper>
-);
-
-export default function PropertyViewAmenities() {
+export default function PropertyCancellation() {
   const { propertyid } = useParams();
-  const [loading, setLoading] = useState(true); // Loading state
-  const [propertyInfo, setPropertyInfo] = useState();
+  const [loading, setLoading] = useState(true);
+  const [propertyInfo, setPropertyInfo] = useState({});
   const [propertyImages, setPropertyImages] = useState([]);
 
   //fetchdata for Property ID
   useEffect(() => {
     const fetchData = async () => {
-      const propertyId = 116; // Replace with the ID of the property you want to fetch
+      const propertyId = 117; // Replace with the ID of the property you want to fetch
       try {
         const res = await axios.get(
           `http://127.0.0.1:8000/api/getfiles/${propertyId}`
@@ -95,34 +99,18 @@ export default function PropertyViewAmenities() {
     };
     fetchData();
   }, [propertyid]); // Update useEffect dependency
-
-  useEffect(() => {
-    const fetchAmenities = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/getamenities",
-          {
-            params: {
-              propertyid: propertyid,
-            },
-          }
-        );
-        console.log(response.data);
-        setPropertyInfo(response.data);
-      } catch (error) {
-        console.error("Error fetching amenities data:", error);
-      }
-    };
-
-    fetchAmenities();
-  }, [propertyid]);
-
   return (
     <div>
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <Amenities amenities={propertyInfo.property_amenities} />
+        <Cancellation
+          cancellation={
+            propertyInfo.property_bookingpolicy
+              ? propertyInfo.property_bookingpolicy
+              : null
+          }
+        />
       )}
     </div>
   );

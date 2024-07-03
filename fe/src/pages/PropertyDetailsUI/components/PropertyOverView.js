@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/SinglePropertyUI.css";
-import { Avatar, Box, Button, Stack } from "@mui/material";
+import { Avatar, Box, Button, Paper, Stack } from "@mui/material";
 import Location from '@mui/icons-material/LocationOn';
 import ArrowRight from '@mui/icons-material/KeyboardDoubleArrowRight';
 import Divider from '@mui/material/Divider';
@@ -12,7 +12,7 @@ import GirlIcon from '@mui/icons-material/Face3';
 export default function PropertyOverView() {
 
   return (
-    <Box className="overview-container">
+    <Paper className="overview-container" sx={{borderRadius:'12px'}}>
       {/* <Box sx={{ p: 1 }}> */}
         <div className="overview-title" >
           Marion Gonnabathula's Residence
@@ -91,6 +91,6 @@ export default function PropertyOverView() {
 
        
         
-    </Box>
+    </Paper>
   );
 }

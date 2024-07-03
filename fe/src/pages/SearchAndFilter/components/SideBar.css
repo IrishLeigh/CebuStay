@@ -5,6 +5,8 @@
     padding: 1rem;
     margin-top: 5px;
     border-radius: 8px;
+    box-shadow: #000;
+    border-color: #000;
 }
 
 .text-lg {
@@ -106,7 +108,7 @@
 }
 
 .gap-2 > * {
-    margin-right: 0.5rem; /* Adjust as needed */
+    margin-right: 0.2rem; /* Adjust as needed */
     margin-bottom: 0.5rem; /* Adjust as needed */
 }
 
@@ -196,7 +198,7 @@
 .bg-white.button {
     background-color: #fff !important;
     color: #4299e1 !important;
-    border: 1px solid #4299e1 !important;
+    border: 1px solid #4299e1 !important; 
 }
 
 /* Hover style for default buttons */
@@ -294,54 +296,6 @@ input[type='range']:hover {
     flex-wrap: wrap; /* Wrap items onto multiple lines */
 }
 
-
-/*Checkbox*/
-/* .custom-checkbox {
-    position: relative;
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    margin-left: 8px;
-  }
-  
-  .custom-checkbox input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 24px;
-    width: 24px;
-    background-color: #ccc;
-    border-radius: 4px;
-    transition: 0.3s;
-  }
-  
-  .custom-checkbox input:checked + .checkmark {
-    background-color: #4caf50;
-    transform: scale(1.1);
-  }
-  
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-    left: 8px;
-    top: 4px;
-    width: 8px;
-    height: 16px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
-  }
-  
-  .custom-checkbox input:checked + .checkmark:after {
-    display: block;
-  } */
   .wrap-check-51 input[type="checkbox"] {
     display: none;
     visibility: hidden;
@@ -394,6 +348,77 @@ input[type='range']:hover {
     opacity: 1;
     transform: rotate(45deg) scale(1);
   }
+
+  .property-type {
+    margin-top: 1.5rem;
+}
+
+.property-type h3 {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.property-type .checkbox-list {
+    margin-top: 0.5rem;
+}
+
+.property-type .checkbox-list .checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.property-type .checkbox-list .checkbox-item label {
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.property-type .checkbox-list .checkbox-item input[type="checkbox"] {
+    display: none;
+}
+
+.property-type .checkbox-list .checkbox-item .custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+.property-type .checkbox-list .checkbox-item .custom-checkbox:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.25rem;
+}
+
+.property-type .checkbox-list .checkbox-item input[type="checkbox"]:checked + .custom-checkbox:before {
+    background-color: #4299e1;
+}
+
+.property-type .see-more {
+    margin-top: 0.5rem;
+    text-align: left;
+}
+
+.property-type .see-more button {
+    background-color: transparent;
+    color: #4299e1;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.property-type .see-more button:hover {
+    text-decoration: underline;
+}
+
   
   @-moz-keyframes jelly-42 {
     from {

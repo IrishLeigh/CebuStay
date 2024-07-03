@@ -116,7 +116,7 @@ function App() {
           <Route path="/reservation" element={<AccommodationReservation />} />
           <Route
             path="/accommodation/property/:propertyid"
-            element={<SinglePropertyUI />}
+            element={<ViewPropertyUI />}
           />
           <Route
             path="/accommodation/booking/:propertyid"

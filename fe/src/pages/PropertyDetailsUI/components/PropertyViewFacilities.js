@@ -2,40 +2,48 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import { Typography } from "@mui/material";
+import { Typography, Divider } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useParams } from "react-router-dom";
 import Container from "@mui/material/Container";
+import ArrowRight from "@mui/icons-material/Send";
+import "../css/PropertyBenefits.css";
 
-const Facilities = ({ facilities = [] }) => {
-  console.log("gfcgfgf", facilities);
-  return (
-    <Paper
-      elevation={0}
-      style={{
-        marginTop: "20px",
-        textAlign: "left",
-        padding: "10px",
-        boxShadow: "0 0 0 1px #D4CFCF",
-      }}
-    >
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", minHeight: "300px" }}>
-          {facilities.map((facility) => (
-            <div
-              style={{ width: "50%", display: "flex", alignItems: "center" }}
-              key={facility.amenityid}
-            >
-              <Typography style={{ marginRight: "8px" }}>
-                {facility.facilities_name}
-              </Typography>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Paper>
-  );
+const facilitiesIcons = {
+  "Swimming Pool": "swimmingpool.png",
+  Gym: "gym.png",
+  "Wellness Facilities": "wellness.png",
+  "Game Room": "gameroom.png",
+  "Sports Facilities": "sports.png",
+  Parking: "parking.png",
+  "Business Center": "businesscenter.png",
 };
+
+const Facilities = ({ facilities = [] }) => (
+  <Paper className="info-cntr" sx={{ borderRadius: "12px" }}>
+    <div className="info-title-cntr">
+      <ArrowRight sx={{ color: "#16B4DD" }} />
+      <div>Facilities</div>
+    </div>
+    <Divider sx={{ width: "100%", color: "#ccc" }} />
+    <div className="amenity-cntr">
+      {facilities.length === 0 ? (
+        <div>No Facilities Available</div>
+      ) : (
+        facilities.map((facility) => (
+          <div className="each-amenity" key={facility.facilities_name}>
+            <img
+              src={facilitiesIcons[facility.facilities_name]}
+              alt={facility.facilities_name}
+              style={{ width: "24px", height: "24px", marginRight: "8px" }}
+            />
+            <div className="rooms-name">{facility.facilities_name}</div>
+          </div>
+        ))
+      )}
+    </div>
+  </Paper>
+);
 
 export default function PropertyViewFacilities() {
   const { propertyid } = useParams();
@@ -46,7 +54,7 @@ export default function PropertyViewFacilities() {
   //fetchdata for Property ID
   useEffect(() => {
     const fetchData = async () => {
-      const propertyId = propertyid; // Replace with the ID of the property you want to fetch
+      const propertyId = 116; // Replace with the ID of the property you want to fetch
       try {
         const res = await axios.get(
           `http://127.0.0.1:8000/api/getfiles/${propertyId}`
@@ -91,14 +99,12 @@ export default function PropertyViewFacilities() {
   }, [propertyid]); // Update useEffect dependency
 
   return (
-    <Container>
+    <div>
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <Grid>
-          <Facilities facilities={propertyInfo.property_facilities} />
-        </Grid>
+        <Facilities facilities={propertyInfo.property_facilities} />
       )}
-    </Container>
+    </div>
   );
 }
