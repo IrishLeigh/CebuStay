@@ -6,7 +6,7 @@ import { DataProvider } from "./components/registration_unit/registration_locati
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
 import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
-
+import Sample from "./pages/AccountManagement/Sample";
 
 
 
@@ -17,7 +17,7 @@ root.render(
 <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <SinglePropertyUI/>
+          <Sample/>
           </UserProvider>
       </DataProvider>
     </BrowserRouter>
