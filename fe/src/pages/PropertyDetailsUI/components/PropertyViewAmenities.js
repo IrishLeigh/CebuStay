@@ -20,10 +20,32 @@ const amenitiesIcons = {
   Microwave: "microwave.png",
 };
 
-const Amenities = ({ amenities = [] }) => {
-  if (amenities.length === 0) {
-    return null; // Or you can return a loading spinner or a message indicating loading state
-  }
+const Amenities = ({ amenities = [] }) => (
+  <Paper className="info-cntr" sx={{ borderRadius: "12px" }}>
+    <div className="info-title-cntr">
+      <ArrowRight sx={{ color: "#16B4DD" }} />
+      <div>Amenities</div>
+    </div>
+    <Divider sx={{ width: "100%", color: "#ccc" }} />
+    <div className="amenity-cntr">
+      {/* Render the list of amenities or a message if no amenities are available */}
+      {amenities.length > 0 ? (
+        amenities.map((amenity) => (
+          <div className="each-amenity" key={amenity.amenity_name}>
+            <img
+              src={amenitiesIcons[amenity.amenity_name]}
+              alt={amenity.amenity_name}
+              style={{ width: "24px", height: "24px", marginRight: "8px" }}
+            />
+            <div className="rooms-name">{amenity.amenity_name}</div>
+          </div>
+        ))
+      ) : (
+        <div className="no-amenities">No Amenities Available</div>
+      )}
+    </div>
+  </Paper>
+);
 
   return (
     <Paper className="info-cntr" sx={{ borderRadius: "12px" }}>
