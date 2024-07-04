@@ -1,0 +1,26 @@
+.account-management {
+    display: flex;
+    height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: margin-left 0.3s ease; /* Add transition for smooth sidebar open/close effect */
+}
+
+.sidebar-open {
+    margin-left: 250px; /* Width of sidebar when it's open */
+}
+
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0; /* No margin when sidebar is closed on smaller screens */
+    }
+
+    .sidebar-open {
+        margin-left: 0; /* Ensure content takes full width when sidebar is closed */
+    }
+}
