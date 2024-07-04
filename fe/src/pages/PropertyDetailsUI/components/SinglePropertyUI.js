@@ -114,8 +114,6 @@ export default function SinglePropertyUI() {
             </Grid>
           </Grid>
           <PropertyInfo />
-          {/* kani i delete lang ni */}
-          <ViewProperty />
         </div>
       </Container>
     </div>

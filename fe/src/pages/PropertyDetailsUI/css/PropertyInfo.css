@@ -12,6 +12,7 @@
   font-family: Poppins, sans-serif;
   margin-top: 1%;
   margin-bottom: 1%;
+  scrollbar-width: none;
 }
 
 .info-title-cntr{
