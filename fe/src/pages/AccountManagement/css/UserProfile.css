@@ -4,12 +4,16 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 0;
+  margin: 0; /* Ensure no margin */
+  padding: 0; /* Ensure no padding */
 }
 
 .account-banner-container {
   width: 100%;
   height: 400px; /* Default height for resolutions above 1920px */
   position: relative;
+  margin: 0; /* Ensure no margin */
+  padding: 0; /* Ensure no padding */
 }
 
 .account-banner-image {
