@@ -33,16 +33,20 @@ const Facilities = ({ facilities = [] }) => (
     </div>
     <Divider sx={{ width: "100%", color: "#ccc" }} />
     <div className="amenity-cntr">
-      {facilities.map((facility) => (
-        <div className="each-amenity" key={facility.facilities_name}>
-          <img
-            src={facilitiesIcons[facility.facilities_name]}
-            alt={facility.facilities_name}
-            style={{ width: "24px", height: "24px", marginRight: "8px" }}
-          />
-          <div className="rooms-name">{facility.facilities_name}</div>
-        </div>
-      ))}
+      {facilities.length > 0 ? (
+        facilities.map((facility) => (
+          <div className="each-amenity" key={facility.facilities_name}>
+            <img
+              src={facilitiesIcons[facility.facilities_name]}
+              alt={facility.facilities_name}
+              style={{ width: "24px", height: "24px", marginRight: "8px" }}
+            />
+            <div className="rooms-name">{facility.facilities_name}</div>
+          </div>
+        ))
+      ) : (
+        <div className="no-facilities">No Facilities Available</div>
+      )}
     </div>
   </Paper>
 );
