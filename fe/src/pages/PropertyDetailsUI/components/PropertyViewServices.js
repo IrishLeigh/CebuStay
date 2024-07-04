@@ -31,17 +31,22 @@ const Services = ({ services = [] }) => {
         <div>Services</div>
       </div>
       <Divider sx={{ width: "100%", color: "#ccc" }} />
+
       <div className="amenity-cntr">
-        {services.map((service) => (
-          <div className="each-amenity" key={service.service_name}>
-            <img
-              src={servicesIcons[service.service_name]}
-              alt={service.service_name}
-              style={{ width: "24px", height: "24px", marginRight: "8px" }}
-            />
-            <div className="rooms-name">{service.service_name}</div>
-          </div>
-        ))}
+        {services.length > 0 ? (
+          services.map((service) => (
+            <div className="each-amenity" key={service.service_name}>
+              <img
+                src={servicesIcons[service.service_name]}
+                alt={service.service_name}
+                style={{ width: "24px", height: "24px", marginRight: "8px" }}
+              />
+              <div className="rooms-name">{service.service_name}</div>
+            </div>
+          ))
+        ) : (
+          <div className="no-services">No Services Available</div>
+        )}
       </div>
     </Paper>
   );
