@@ -1,12 +1,13 @@
 /* General styles */
 .full-height {
     min-height: 100vh;
-    width: 81vw; /* Take full width of any screen */
-    margin-left:15rem;
+    width: 100%; /* Take full width of any screen */
+    /* width: 81vw; /* Take full width of any screen 
+    margin-left:15rem; */
 }
 
 .bg-light {
-    background-color: #f0f4f8; /* Adjust color as needed */
+    background-color: #E8E8E8; /* Adjust color as needed */
 }
 
 .bg-gradient {
@@ -77,11 +78,11 @@
 }
 
 .bg-red {
-    background-color: #dc2626; /* Red background */
+    background-color: #EE414B; /* Red background */
 }
 
 .bg-lime {
-    background-color: #84cc16; /* Lime background */
+    background-color: #ADC939; /* Lime background */
 }
 
 /* Input styles */

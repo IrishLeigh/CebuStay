@@ -30,7 +30,7 @@ function HeaderNoUser() {
     <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black', }} m={0} p={0}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <div className="logo">
+          <div className="header-logo">
             <img src="Logo.png" alt="Logo" /> 
           </div>
 

@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
 import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
 import Sample from "./pages/AccountManagement/Sample";
+import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 
 
 
@@ -17,7 +18,7 @@ root.render(
 <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <Sample/>
+          <App/>
           </UserProvider>
       </DataProvider>
     </BrowserRouter>

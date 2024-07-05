@@ -1,5 +1,4 @@
 
-
 // import React, { useState } from 'react';
 // import '../css/AccountSidebar.css';
 // import { FaUser, FaCalendarCheck, FaStar, FaBars } from 'react-icons/fa';
@@ -69,7 +68,7 @@ const AccountSidebar = ({activeItem, handleItemClick}) => {
     };
 
     return (
-        <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <div className={`account-sidebar ${sidebarOpen ? 'open' : ''}`}>
             <div className="sidebar-toggle" onClick={toggleSidebar}>
                 <FaBars />
             </div>

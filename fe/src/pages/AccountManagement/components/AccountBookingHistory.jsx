@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../css/AccountBookingHistory.css';
 import { MdMenuOpen, MdSearch} from 'react-icons/md';
+import HeaderAccountMgnt from '../../../components/Header/HeaderAccountMgnt';
 
 export default function BookingHistory() {
     const [selectedButton, setSelectedButton] = useState('UPCOMING');
@@ -49,7 +50,9 @@ export default function BookingHistory() {
 
     return (
         <div className="full-height bg-light">
-            <div style={{ background: 'linear-gradient(to right,  #16B4DD, #A0F9FF, #4FF3FE)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', marginTop: '-0.8rem', width: '63rem', marginLeft: '1rem' }}>
+            
+            <HeaderAccountMgnt/>
+            <div style={{ background: 'linear-gradient(to right,  #16B4DD, #A0F9FF, #4FF3FE)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%'}}>
                 <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Booking History</h1>
                 <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Lorem ipsum dolor sit amet</p>
             </div>
@@ -63,8 +66,8 @@ export default function BookingHistory() {
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem', position: 'relative' }}>
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
-                            <MdSearch style={{ position: 'absolute', left: '0.5rem', color: 'purple', fontSize: '1.8rem', marginTop:'1.2rem' }} />
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' ,}}>
+                            <MdSearch style={{ position: 'absolute', left: '0.5rem', color: 'purple', fontSize: '1.8rem', marginTop:'1.2rem'}} />
                             <input
                                 type="text"
                                 placeholder="Search here"
@@ -75,7 +78,8 @@ export default function BookingHistory() {
                                     outline: 'none',
                                     height: '3rem',
                                     width: '100%',
-                                    marginBottom: '-1rem'
+                                    marginBottom: '-1rem',
+                                    border:"none"
                                 }}
                             />
                         </div>
@@ -91,7 +95,8 @@ export default function BookingHistory() {
                                 height: '3rem',
                                 cursor: 'pointer',
                                 marginBottom: '-1rem',
-                                backgroundColor: 'white'
+                                backgroundColor: 'white',
+                                border: 'none',
                             }}
                         >
                             <MdMenuOpen style={{ height: '2rem' }}></MdMenuOpen>
@@ -141,7 +146,7 @@ export default function BookingHistory() {
                     </div>
                 </div>
 
-                <div style={{ position: 'relative', width: '63rem', backgroundColor: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', borderRadius: '0.5rem', overflow: 'hidden', textAlign: 'center' }}>
+                <div style={{ position: 'relative', width: '100%', backgroundColor: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', borderRadius: '0.5rem', overflow: 'hidden', textAlign: 'center' }}>
                     <div style={{
                         position: 'absolute',
                         top: 0,
@@ -153,7 +158,7 @@ export default function BookingHistory() {
                         borderRadius: '0.5rem 0 0 0',
                         zIndex: 1
                     }}></div>
-                    <table style={{ width: '63rem', textAlign: 'center' }}>
+                    <table style={{ width: '100%', textAlign: 'center' }}>
                         <thead style={{ backgroundColor: '#f0f0f0', textAlign: 'center' }}>
                             <tr>
                                 <th style={{ padding: '0.5rem 1rem', textAlign: 'center', fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Booking ID</th>

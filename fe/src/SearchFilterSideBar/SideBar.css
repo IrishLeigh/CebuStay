@@ -1,3 +1,4 @@
+
 /* Sidebar.css */
 .bg-white {
     background-color: #ffffff;
@@ -277,7 +278,7 @@ input[type='range']:hover {
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     font-size: .75rem;
-    width: fit-content;
+    width: auto;
 }
 .light-blue {
     background-color: aqua;
