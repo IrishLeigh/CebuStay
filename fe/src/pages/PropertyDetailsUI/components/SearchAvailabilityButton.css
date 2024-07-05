@@ -1,0 +1,56 @@
+/* Search.css */
+
+.search-box-availability 
+{
+    display: flex;
+    /* justify-content: left; */
+    align-items: center;
+    background-color: #F9CC41;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 10px;
+    padding: 10px;
+    width: clamp(20rem, 50vw, 50rem);
+    margin-bottom: 1rem;
+    height: 5rem;
+    margin-left: -1px;
+}
+
+
+
+.input-field-availability {
+    flex: 1;
+    padding: 10px;
+    margin: 5px; /* Added margin */
+    border: none;
+    outline: none;
+    border-radius: .5rem;
+    stroke: #16B4DD;
+    border-bottom: 1px solid #ccc; /* Add a bottom border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Add a box shadow to the bottom */   
+    width: clamp(3rem, 10vw, 10rem); 
+    height: 3rem;
+}
+
+.search-button-availability {
+    background-color: #1780CB;
+    border-radius: 8px;
+    color: white;
+    padding: 10px;
+    border: none;
+    outline: none;
+    height: 60px;
+    width: 10rem;
+    width: clamp(5rem, 30vw, 10rem);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Add a box shadow to the bottom */    
+}
+.search-button-availability:hover {
+    background-color: #15A1C6;
+}
+
+.search-icon-availability {
+    width: clamp(2rem, 10vw, 10rem);
+    height: 24px;
+}

@@ -1,0 +1,28 @@
+/* CustomCarousel.css */
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px; /* Adjust position as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.carousel-indicators li {
+    margin: 0 5px; /* Adjust spacing between indicators */
+    cursor: pointer;
+    opacity: 0.5; /* Adjust opacity for inactive indicators */
+}
+
+.carousel-indicators img {
+    width: 50px; /* Adjust size of indicator images */
+    height: 50px; /* Adjust size of indicator images */
+    border-radius: 5%; /* Makes the indicator images circular */
+}
+
+.carousel-indicators .active {
+    opacity: 1; /* Adjust opacity for active indicator */
+}
