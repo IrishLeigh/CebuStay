@@ -1,0 +1,94 @@
+.edit-profile-cntr {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+  margin: 0; /* Ensure no margin */
+  padding: 0; /* Ensure no padding */
+}
+
+.account-banner-container {
+  width: 100%;
+  height: 400px; /* Default height for resolutions above 1920px */
+  position: relative;
+  margin: 0; /* Ensure no margin */
+  padding: 0; /* Ensure no padding */
+}
+
+.account-banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-details-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 2rem;
+  z-index: 2; /* Ensure the user details container is above the banner */
+  margin-top: -250px; /* Move it up to overlap the banner */
+}
+
+
+.avatar-details-container {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2rem;
+  margin-top: 8rem;
+}
+
+.user-name {
+  font-size: 1.3rem;
+  font-family: Poppins, sans-serif;
+  font-weight: bold;
+}
+
+.user-id {
+  font-size: 1rem;
+  font-family: Poppins, sans-serif;
+  color: #6a6a6a;
+}
+
+.logout-btn-container {
+  margin-left: auto;
+}
+
+.logout-btn {
+  background-color: #ee414b;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  margin-top: 8rem;
+}
+
+.logout-btn:hover {
+  background-color: #cc3940;
+}
+
+/* Adjust  for resolutions below 1920px */
+@media (max-width: 1900px) {
+  .account-banner-container {
+    height: 300px; /* Adjusted height for resolutions below 1920px */
+  }
+}
