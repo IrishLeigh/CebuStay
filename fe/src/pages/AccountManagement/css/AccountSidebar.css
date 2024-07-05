@@ -1,13 +1,14 @@
-.sidebar {
-    width: 250px;
+.account-sidebar {
+    /* width: 250px; */
     height: 100%;
-    background-color: #f8f8f8;
+    background-color: #ffffff;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    position: fixed;
+    /* position: fixed;
     top: 0;
-    left: 0;
+    left: 0; */
+  
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
 }
@@ -20,7 +21,8 @@
 .main-menu {
     font-size: 1.2em;
     color: grey;
-    margin: 20px 0;
+    /* margin: 20px 0; */
+    margin: 2.2rem 0;
 }
 
 .sidebar-menu {
@@ -43,8 +45,8 @@
 
 .menu-item:hover,
 .menu-item.active {
-    color: purple;
-    border-right: 4px solid purple;
+    color: #A334CF;
+    border-right: 4px solid #A334CF;
 }
 
 .sidebar.open {

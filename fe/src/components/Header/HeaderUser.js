@@ -88,8 +88,8 @@ function HeaderUser({ token, setToken }) {
       <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <div className="logo">
-              <img src="Logo.png" alt="Logo" />
+            <div className="header-logo">
+              <img src="Logo.png" alt="Logo"/>
             </div>
 
             <Box sx={{ flexGrow: 1 }} />
