@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UserModel;
 use App\Models\EditUserProfile;
 use App\Http\Controllers\RegisterUserController;
-
+use Illuminate\Support\Facades\Hash;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Carbon\Carbon;
@@ -31,7 +31,7 @@ class UserForgotPassController extends CORS
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
-        $user->password = $request->input('password');
+        $user->password = Hash::make($request->input('password'));
         $user->save();
 
         return response()->json([

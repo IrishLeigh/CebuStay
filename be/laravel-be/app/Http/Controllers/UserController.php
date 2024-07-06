@@ -8,6 +8,7 @@ use App\Models\Property;
 use App\Models\Location;
 use App\Models\PropertyPaymentMethods;
 use App\Models\BookingPolicy;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends CORS
 {
@@ -44,18 +45,33 @@ class UserController extends CORS
     public function update(Request $request, $userId)
     {
         $user = UserModel::find($userId);
-
+    
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
+    
+        // $user->firstname = $request->input('firstname', $user->firstname);
+        // $user->lastname = $request->input('lastname', $user->lastname);
+        // $user->email = $request->input('email', $user->email);
 
-        $user->firstname = $request->input('firstname', $user->firstname);
-        $user->lastname = $request->input('lastname', $user->lastname);
-        $user->email = $request->input('email', $user->email);
-        $user->password = $request->input('password', $user->password);
+        if ($request->input('firstname')) {
+            $user->firstname = $request->input('firstname', $user->firstname);
+        }
 
+        if ($request->input('lastname')) {
+            $user->lastname = $request->input('lastname', $user->lastname);
+        }
+
+        if ($request->input('email')) {
+            $user->email = $request->input('email', $user->email);
+        }
+    
+        if ($request->input('password')) {
+            $user->password = Hash::make($request->input('password'));
+        }
+    
         $user->save();
-
+    
         return response()->json($user);
     }
 
