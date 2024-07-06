@@ -61,6 +61,9 @@ Route::post('/location', 'App\Http\Controllers\LocationController@create');
 Route::get('/getlocations', 'App\Http\Controllers\LocationController@getAllLocation');
 Route::get('/getlocation', 'App\Http\Controllers\LocationController@getLocation');
 Route::get('/getdirection', 'App\Http\Controllers\LocationController@getDirection');
+// routes/web.php or routes/api.php
+Route::get('/search', [LocationController::class, 'search']);
+
 
 // Route for updating password based on email
 // Route::get('/forgotPass', [UserForgotPassController::class, 'changePass']);

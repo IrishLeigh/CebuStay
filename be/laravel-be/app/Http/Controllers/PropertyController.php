@@ -13,7 +13,8 @@ use App\Models\UnitRooms;
 use App\Models\Amenity;
 use App\Models\Facilities;
 use App\Models\Service;
-
+use App\Models\PropertyOwner;
+use App\Models\PropertyOwnership;
 
 class PropertyController extends CORS
 {
@@ -78,14 +79,15 @@ class PropertyController extends CORS
         $property_services = Service::select('serviceid', 'service_name')->where('propertyid', $request->input('propertyid'))->get();
         $property_bookingpolicy = BookingPolicy::select('bookingpolicyid', 'is_cancel_plan', 'cancel_days', 'non_refundable', 'modification_plan', 'offer_discount')->where('propertyid', $request->input('propertyid'))->first();
         $property_houserules = DB::table('house_rules')->select('houserulesid', 'smoking_allowed', 'pets_allowed', 'parties_events_allowed', 'noise_restrictions', 'quiet_hours_start', 'quiet_hours_end', 'custom_rules', 'check_in_from', 'check_in_until', 'check_out_from', 'check_out_until')->where('propertyid', $request->input('propertyid'))->get();
-        $property_home = DB::table('home')->select('homeid', 'proppricingid', 'isoccupied')->where('propertyid', $request->input('propertyid'))->first();
+        // $property_home = DB::table('home')->select('homeid', 'proppricingid', 'isoccupied')->where('propertyid', $request->input('propertyid'))->first();
         $property_unitdetails = DB::table('unitdetails')->where('propertyid', $request->input('propertyid'))->first();
         $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $property_unitdetails->proppricingid)->first();
         $unitid = $property_unitdetails->unitid;
         $unitrooms = DB::table('unitrooms')->select('unitroomid', 'roomname', 'quantity')->where('unitid', $unitid)->get();
         $unitroomsCollection = collect($unitrooms);
         $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
-
+        $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
+        $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
         $unitbedroom_beds = DB::table('bedroomtype')->where('unitroomid', $unitbedroom->unitroomid)->get();
         $unitbeds = [];
 
@@ -121,6 +123,10 @@ class PropertyController extends CORS
             'unitrooms' => $unitrooms,
             'unitbeds' => $unitbeds
         ];
+        $property_owner = [
+            'property_ownership' => $propownid,
+            'property_owner' => $property_ownerdetails
+        ];
 
         return response()->json([
             "property_details" => $property_info,
@@ -133,6 +139,7 @@ class PropertyController extends CORS
             "property_services" => $property_services,
             "property_houserules" => $property_houserules,
             "property_bookingpolicy" => $property_bookingpolicy,
+            "property_owner" => $property_owner
         ]);
     }
 
