@@ -31,4 +31,16 @@ class BookingHistory extends Model
         'check_type',
         'booking_date'
     ];
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'propertyid', 'propertyid');
+    }
+
+    public function booker()
+    {
+        return $this->belongsTo(Booker::class, 'bookerid', 'bookerid');
+    }
+
+
 }

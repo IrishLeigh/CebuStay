@@ -59,6 +59,8 @@ Route::post('/houseRules', 'App\Http\Controllers\HouseruleController@create');
 // Route::post('/location', [LocationController::class, 'create']);
 Route::post('/location', 'App\Http\Controllers\LocationController@create');
 Route::get('/getlocations', 'App\Http\Controllers\LocationController@getAllLocation');
+Route::get('/getlocation', 'App\Http\Controllers\LocationController@getLocation');
+Route::get('/getdirection', 'App\Http\Controllers\LocationController@getDirection');
 
 // Route for updating password based on email
 // Route::get('/forgotPass', [UserForgotPassController::class, 'changePass']);
@@ -116,6 +118,8 @@ Route::get('/property/bookings', 'App\Http\Controllers\BookingController@getAllB
 Route::get('/property/bookingId', 'App\Http\Controllers\BookingController@getAllBookingByBookingId');
 
 Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');
+Route::get('/user/bookinghistory', 'App\Http\Controllers\BookingController@getUserBookingHistory');
+
 Route::get('/allbookinghistory', 'App\Http\Controllers\BookingController@getAllBookingHistoryByProperty');
 Route::post('/setcheckout', 'App\Http\Controllers\BookingController@setCheckOut');
 Route::post('/setcheckin', 'App\Http\Controllers\BookingController@setCheckin');

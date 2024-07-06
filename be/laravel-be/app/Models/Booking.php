@@ -48,7 +48,7 @@ class Booking extends Model
 
     public function booker()
     {
-        return $this->hasOne(Booker::class, 'bookerid', 'userid');
+        return $this->belongsTo(Booker::class, 'bookerid', 'bookerid');
     }
 
     public function guest()

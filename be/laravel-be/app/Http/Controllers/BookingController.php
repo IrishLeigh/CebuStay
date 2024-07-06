@@ -365,28 +365,74 @@ class BookingController extends CORS
 
         $userid = $request->input('userid');
 
-        // Eager load the property and location relationships
-        $bookings = Booking::with(['property.location'])
-            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'status')
+        // Eager load the property, location, and booker relationships
+        $bookings = Booking::with(['property.location', 'booker'])
+            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid')
             ->where('userid', $userid)
             ->get();
 
-        // Format the response to include the additional property and location data
+        // Format the response to include the additional property and booker data
         $formattedBookings = $bookings->map(function ($booking) {
             return [
-                'bookingid' => $booking->bookingid,
-                'booking_date' => $booking->booking_date,
-                'property_name' => $booking->property->property_name,
-                'property_type' => $booking->property->property_type,
-                'address' => $booking->property->location->address,
-                'guest_count' => $booking->guest_count,
-                'total_price' => $booking->total_price,
-                'status' => $booking->status,
+                'id' => $booking->bookingid,
+                'date' => $booking->booking_date,
+                'name' => $booking->property->property_name,
+                'type' => $booking->property->property_type,
+                'location' => $booking->property->location->address,
+                'guests' => $booking->guest_count,
+                'amount' => $booking->total_price,
+                'status' => $booking->type === 'booking' ? 'Checked In' : 'Booked',
+                'checkIn' => $booking->checkin_date,
+                'checkOut' => $booking->checkout_date,
+                'special_request' => $booking->special_request,
+                'first_name' => $booking->booker->firstname,
+                'last_name' => $booking->booker->lastname,
+                'email' => $booking->booker->email,
+                'phone' => $booking->booker->phonenum
             ];
         });
 
         return response()->json($formattedBookings);
     }
+
+
+    public function getUserBookingHistory(Request $request)
+    {
+        $this->enableCors($request);
+
+        $userid = $request->input('userid');
+
+        // Eager load the property, location, and booker relationships
+        $bookings = BookingHistory::with(['property.location', 'booker'])
+            ->select('bhid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'status', 'check_type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid')
+            ->where('userid', $userid)
+            ->get();
+
+        // Format the response to include the additional property and booker data
+        $formattedBookings = $bookings->map(function ($booking) {
+            return [
+                'id' => $booking->bhid,
+                'date' => $booking->booking_date,
+                'type' => $booking->property->property_type,
+                'name' => $booking->property->property_name,
+                'location' => $booking->property->location->address,
+                'guests' => $booking->guest_count,
+                'amount' => $booking->total_price,
+                'status' => $booking->check_type,
+                'checkIn' => $booking->checkin_date,
+                'checkOut' => $booking->checkout_date,
+                'special_request' => $booking->special_request,
+                'first_name' => $booking->booker->firstname,
+                'last_name' => $booking->booker->lastname,
+                'email' => $booking->booker->email,
+                'phone' => $booking->booker->phonenum
+            ];
+        });
+
+        return response()->json($formattedBookings);
+    }
+
+
 
     public function getAllBookingByProperty(Request $request)
     {

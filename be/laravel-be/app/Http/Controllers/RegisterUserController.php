@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserModel;
 
+use Illuminate\Support\Facades\Hash;
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -13,6 +15,16 @@ use Carbon\Carbon;
 class RegisterUserController extends CORS
 {
 
+    private function generateVerificationCode()
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $code = '';
+        for ($i = 0; $i < 6; $i++) {
+            $code .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $code;
+    }
+
     public function sendEmail($firstname, $lastname, $email, $verify_token)
     {
         $mail = new PHPMailer(true);
@@ -20,13 +32,13 @@ class RegisterUserController extends CORS
         $mail->SMTPAuth = true;
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
-        $mail->Username = 'ludivicombalaterojr@gmail.com';                     //SMTP username
-        $mail->Password = 'smjk vkqa bjsh zwtr';
+        $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
+        $mail->Password = 'zwnx vmxk vghl igzt';
 
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;
 
-        $mail->setFrom('misternonoy11@email.com', $firstname);
+        $mail->setFrom('cebustay@gmail.com', "CebuStay");
         $mail->addAddress($email);     //Add a recipient
 
         $mail->isHTML(true);                                  //Set email format to HTML
@@ -41,11 +53,9 @@ class RegisterUserController extends CORS
         $mail->Body = $email_template;
         try {
             $mail->send();
-            // echo "na send";
             return 1; // Email sent successfully
 
         } catch (Exception $e) {
-            // echo "wala na send";
             return 0; // Error occurred while sending email
         }
     }
@@ -53,7 +63,7 @@ class RegisterUserController extends CORS
     {
         $email = $request->input('email');
         $user = UserModel::where('email', $email)->first();
-        $verify_token = md5(rand());
+        $verify_token = $this->generateVerificationCode();
         $user->verificationtoken = $verify_token;
         $tokenExpiration = Carbon::now()->addMinutes(5);
         $user->verification_token_expires_at = $tokenExpiration;
@@ -77,7 +87,7 @@ class RegisterUserController extends CORS
                 $existingUser->firstname = $request->input('firstname');
                 $existingUser->lastname = $request->input('lastname');
                 $existingUser->password = $request->input('password');
-                $verify_token = md5(rand());
+                $verify_token = $this->generateVerificationCode();
                 $existingUser->verificationtoken = $verify_token;
 
                 // Set token expiration time (e.g., 24 hours from now)
@@ -96,8 +106,8 @@ class RegisterUserController extends CORS
         $user->firstname = $request->input('firstname');
         $user->lastname = $request->input('lastname');
         $user->email = $request->input('email');
-        $user->password = $request->input('password');
-        $verify_token = md5(rand());
+        $user->password = Hash::make($request->input('password'));
+        $verify_token = $this->generateVerificationCode();
         $user->verificationtoken = $verify_token;
 
         // Set token expiration time (e.g., 24 hours from now)
