@@ -71,4 +71,28 @@ class LocationController extends CORS
             'direction' => $direction->property_directions
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        // Fetch top 5 results from Location model by address
+        $locationResults = Location::where('address', 'LIKE', "%{$query}%")
+            ->take(5)
+            ->get(['locationid', 'address']); // Adjust fields as needed
+
+        // Fetch top 5 results from Property model by name
+        $propertyResults = Property::where('property_name', 'LIKE', "%{$query}%")
+            ->take(5)
+            ->get(['propertyid', 'property_name']); // Adjust fields as needed
+
+        // Combine the results
+        $results = [
+            'locations' => $locationResults,
+            'properties' => $propertyResults
+        ];
+
+        return response()->json($results);
+    }
+
 }
