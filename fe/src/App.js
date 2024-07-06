@@ -38,6 +38,7 @@ import ViewPropertyUI from "./pages/PropertyDetailsUI/ViewPropertyUI";
 import CalendarUI from "./pages/PropertyManagementUI/calendarUI";
 import EditProfileUI from "./pages/EditProfileUI/EditProfileUI";
 import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
+import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -103,7 +104,7 @@ function App() {
 
         {/* Private Routes */}
         <Route element={<PrivateRoutes token={token} />}>
-          <Route element={<EditProfileUI />} path="/account" exact />
+          <Route element={<AccountManagement />} path="/account" exact />
           {/* <Route element={<EditProfile2 />} path='/profile/edit-name' exact/>
               <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/> */}
           <Route

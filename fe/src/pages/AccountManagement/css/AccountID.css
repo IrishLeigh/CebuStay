@@ -38,7 +38,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.save-btn {
+.save-btn-withChanges {
   background-color: #16B4DD;
   color: #fff;
   border-radius: 8px;
@@ -50,13 +50,14 @@
   transition: background-color 0.3s ease;
   font-size: 1rem;
   width: 9rem;
+  cursor: pointer;
 }
 
-.save-btn:hover {
+.save-btn-withChanges:hover {
   background-color: #0f9ed8;
 }
 
-.cancel-btn {
+.cancel-btn-withChanges {
   background-color: #ffff;
   color: #16B4DD;
   border-radius: 8px;
@@ -68,10 +69,43 @@
   transition: background-color 0.3s ease;
   font-size: 1rem;
   width: 9rem;
+  cursor: pointer;
 }
 
-.cancel-btn:hover {
+.cancel-btn-withChanges:hover {
   background-color: #EE414B;
   color: #ffff;
   border: 1px solid #fff;
 }
+
+.save-btn-withoutChanges {
+  background-color: #6A6A6A;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  width: 9rem;
+  cursor: not-allowed;
+}
+
+
+.cancel-btn-withoutChanges {
+  background-color: #ffff;
+  color: #6A6A6A;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid #6A6A6A;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  width: 9rem;
+  cursor: not-allowed;
+}
+

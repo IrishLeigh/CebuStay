@@ -4,8 +4,13 @@ import AccountID from "./AccountID";
 import PersonalInformation from "./PersonalInformation";
 import AccountSignIn from "./AccountSignIn";
 import HeaderAccountMgnt from "../../../components/Header/HeaderAccountMgnt";
+import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress from MUI
 
-export default function UserProfile() {
+export default function UserProfile({ profile }) {
+  if (!profile) {
+    return <CircularProgress />; // Render a loader while profile data is loading or null
+  }
+
   return (
     <>
       <HeaderAccountMgnt/>
@@ -27,8 +32,8 @@ export default function UserProfile() {
               className="avatar-image"
             />
             <div className="user-details">
-              <div className="user-name">IRISH LEIGH B SAN JUAN</div>
-              <div className="user-id">#12345</div>
+              <div className="user-name"> {(profile.firstname + " " + profile.lastname).toUpperCase()}</div>
+              <div className="user-id">#{profile.userid}</div>
             </div>
           </div>
           <div className="logout-btn-container">
@@ -37,9 +42,9 @@ export default function UserProfile() {
         </div>
 
         {/* Components starts Here */}
-        <AccountID />
+        <AccountID profile={profile} />
         <PersonalInformation />
-        <AccountSignIn />
+        <AccountSignIn  profile={profile} />
       </div>
     </>
   );
