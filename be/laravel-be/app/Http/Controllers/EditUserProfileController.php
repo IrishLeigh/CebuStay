@@ -43,8 +43,18 @@ class EditUserProfileController extends CORS
         if ($request->has('email')) {
             $user->email = $request->input('email');
         }
+        if ($request->has('birthday')) {
+            $user->birthday = $request->input('birthday');
+        }
+        if ($request->has('country')) {
+            $user->country = $request->input('country');
+        }
 
         if ($request->input('password')) {
+            $oldPassword = $request->input('old_password');
+            if (!Hash::check($oldPassword, $user->password)) {
+                return response()->json(['message' => 'Incorrect old password.'], 400);
+            }
             $user->password = Hash::make($request->input('password'));
         }
 

@@ -21,6 +21,8 @@ return new class extends Migration {
             $table->boolean('isverified')->default(false);
             $table->string('verificationtoken')->nullable();
             $table->datetime('verification_token_expires_at')->nullable();
+            $table->date('birthday')->nullable(); 
+            $table->string('country')->nullable(); 
             $table->timestamps();
         });
     }
