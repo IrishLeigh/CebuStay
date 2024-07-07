@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../css/AccountID.css";
-import { Divider, TextField, InputAdornment, Paper, IconButton, Typography } from "@mui/material";
+import {
+  Divider,
+  TextField,
+  InputAdornment,
+  Paper,
+  IconButton,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Lock from "@mui/icons-material/Lock";
@@ -11,10 +20,13 @@ export default function AccountSignIn({ profile }) {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [profilePassword, setProfilePassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [profilePassword, setProfilePassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   // Update current password from profile
   useEffect(() => {
@@ -23,27 +35,54 @@ export default function AccountSignIn({ profile }) {
     }
   }, [profile]);
 
- // Track changes to enable/disable the save button
- useEffect(() => {
-  setIsChanged(
-    newPassword.length > 0 &&
-    newPassword === confirmNewPassword
-  );
-}, [newPassword, confirmNewPassword,]);
+  // Track changes to enable/disable the save button
+  useEffect(() => {
+    setIsChanged(newPassword.length > 0 && newPassword === confirmNewPassword);
+  }, [newPassword, confirmNewPassword]);
 
-  const handleToggleShowCurrentPassword = () => setShowCurrentPassword((prev) => !prev);
+  const handleToggleShowCurrentPassword = () =>
+    setShowCurrentPassword((prev) => !prev);
   const handleToggleShowNewPassword = () => setShowNewPassword((prev) => !prev);
-  const handleToggleShowConfirmNewPassword = () => setShowConfirmNewPassword((prev) => !prev);
+  const handleToggleShowConfirmNewPassword = () =>
+    setShowConfirmNewPassword((prev) => !prev);
 
   const handleSavePassword = async (e) => {
-    
+    e.preventDefault();
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        {
+          userid: profile.userid,
+          old_password: currentPassword, // Assuming currentPassword is the old password
+          password: newPassword,
+        }
+      );
+      // console.log("Password changed successfully");
+      setSnackbarMessage("Password Successfully Changed");
+      setSnackbarSeverity("success");
+      setIsChanged(false); // Reset the state after saving
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch (error) {
+      console.error(error.response.data.message);
+      // Handle error state or display an error message to the user
+      setSnackbarMessage("Failed to update password. Please try again later.");
+      setSnackbarSeverity("error");
+    } finally {
+      setSnackbarOpen(true); // Always open the snackbar
+    }
   };
 
   const handleCancel = () => {
     setCurrentPassword(profile.currentPassword);
-    setNewPassword('');
-    setConfirmNewPassword('');
+    setNewPassword("");
+    setConfirmNewPassword("");
     setIsChanged(false); // Reset the state after cancelling
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -169,20 +208,38 @@ export default function AccountSignIn({ profile }) {
 
         <div className="account-btn-cntr">
           <button
-            className={`save-btn ${isChanged ? 'save-btn-withChanges' : 'save-btn-withoutChanges'}`}
+            className={`save-btn ${
+              isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+            }`}
             onClick={handleSavePassword}
             disabled={!isChanged}
           >
             Save
           </button>
           <button
-            className={`cancel-btn ${isChanged ? 'cancel-btn-withChanges' : 'cancel-btn-withoutChanges'}`}
+            className={`cancel-btn ${
+              isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+            }`}
             onClick={handleCancel}
             disabled={!isChanged}
           >
             Cancel
           </button>
         </div>
+
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </div>
     </Paper>
   );

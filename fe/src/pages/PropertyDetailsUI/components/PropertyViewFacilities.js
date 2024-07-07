@@ -27,9 +27,7 @@ const Facilities = ({ facilities = [] }) => (
     </div>
     <Divider sx={{ width: "100%", color: "#ccc" }} />
     <div className="amenity-cntr">
-      {facilities.length === 0 ? (
-        <div>No Facilities Available</div>
-      ) : (
+      {facilities.length > 0 ? (
         facilities.map((facility) => (
           <div className="each-amenity" key={facility.facilities_name}>
             <img
@@ -40,6 +38,8 @@ const Facilities = ({ facilities = [] }) => (
             <div className="rooms-name">{facility.facilities_name}</div>
           </div>
         ))
+      ) : (
+        <div className="no-facilities">No Facilities Available</div>
       )}
     </div>
   </Paper>

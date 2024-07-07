@@ -3,9 +3,8 @@
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: left;
-  
 }
-.each-amenity{
+.each-amenity {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,9 +12,73 @@
   font-weight: bold;
   font-family: Poppins, sans-serif;
   border-radius: 12px;
-  border: 1px solid #ccc; 
+  border: 1px solid #ccc;
   padding: 20px;
   margin-top: 1rem;
   width: 15%;
 }
 
+.no-amenities {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  font-size: 16px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.no-facilities {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  font-size: 16px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.no-services {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  font-size: 16px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.no-houserules {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  font-size: 16px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.no-cancellation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  font-size: 16px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 16px;
+}

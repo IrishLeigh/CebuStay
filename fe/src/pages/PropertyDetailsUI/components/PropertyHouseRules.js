@@ -60,7 +60,7 @@ const HouseRules = ({ houserules = [] }) => {
             </div>
           </div>
         ) : (
-          <div>No house rules available.</div>
+          <div className="no-houserules">No House Rules Available</div>
         )}
       </div>
     </Paper>

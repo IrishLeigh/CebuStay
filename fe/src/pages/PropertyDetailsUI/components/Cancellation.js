@@ -40,7 +40,7 @@ const Cancellation = ({ cancellation = [] }) => {
             <div>offer_discount: {cancellation[offer_discount]}</div>
           </div>
         ) : (
-          <div>No house rules available.</div>
+          <div className="no-cancellation">No Cancellation Available.</div>
         )}
       </div>
     </Paper>
