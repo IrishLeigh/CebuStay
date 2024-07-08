@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './SideBar.css';
+import '../css/SideBar.css';
+
 
 const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   const [activeButtons, setActiveButtons] = useState([]);
