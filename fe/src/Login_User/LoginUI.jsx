@@ -176,6 +176,7 @@ const LoginUI = ({ setToken }) => {
     border: "none",
     color: "white",
     fontSize: "16px",
+    borderRadius: "10px",
   };
 
   const loaderStyle = {
@@ -190,14 +191,19 @@ const LoginUI = ({ setToken }) => {
   return (
     <div className="formContainer">
       <div className="form-container">
-        <div style={{ textAlign: 'center' }}>
-        <h2 style={{ fontSize: "30px",
-                fontWeight: "600",
-                textAlign: "center",
-                color: "#1780CB",
-                marginBottom:'-10px'}}>Welcome Back</h2>
-        <p style={{color:'gray'}}>Log in to continue</p>
-
+        <div style={{ textAlign: "center" }}>
+          <h2
+            style={{
+              fontSize: "30px",
+              fontWeight: "600",
+              textAlign: "center",
+              color: "#1780CB",
+              marginBottom: "-10px",
+            }}
+          >
+            Welcome Back
+          </h2>
+          <p style={{ color: "gray" }}>Log in to continue</p>
         </div>
         <form className="form">
           <div className="email">
@@ -313,7 +319,7 @@ const LoginUI = ({ setToken }) => {
           <p className="p line">Or With</p>
           {/* Google Sign In Button */}
           <div className="flex-row">
-            <button className="btn google">
+            <button className="btn-google">
               <svg
                 version="1.1"
                 width="20"
