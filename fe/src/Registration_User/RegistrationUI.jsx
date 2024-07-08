@@ -126,11 +126,12 @@ const RegistrationUI = () => {
     alignItems: "center",
     justifyContent: "center",
     height: "50px",
-    width: "450px", // Adjust width to your preference
+    width: "100%", // Adjust width to your preference
     cursor: "pointer",
     border: "none",
     color: "white",
     fontSize: "16px",
+    borderRadius: "10px",
   };
 
   const loaderStyle = {
@@ -143,7 +144,7 @@ const RegistrationUI = () => {
   };
 
   return (
-    <div className="center-container" style={{height:'100vh'}}>
+    <div className="center-container" style={{ height: "100vh" }}>
       {!verificationSent && (
         <div className="registration-container">
           <div style={{ textAlign: "Left" }}>
@@ -153,12 +154,20 @@ const RegistrationUI = () => {
                 fontWeight: "600",
                 textAlign: "center",
                 color: "#1780CB",
-                marginBottom:'-20px'
+                marginBottom: "-20px",
               }}
             >
               Create Account
             </h2>
-            <p style={{color:'gray', textAlign:'center', marginBottom:'2rem'}}>Sign up now and get full access to our app</p>
+            <p
+              style={{
+                color: "gray",
+                textAlign: "center",
+                marginBottom: "2rem",
+              }}
+            >
+              Sign up now and get full access to our app
+            </p>
 
             <p
               style={{
