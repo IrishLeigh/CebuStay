@@ -31,7 +31,7 @@ export default function SinglePropertyUI() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const propertyId = 116; // Replace with the ID of the property you want to fetch
+      const propertyId = 117; // Replace with the ID of the property you want to fetch
       try {
         const res = await axios.get(
           `http://127.0.0.1:8000/api/getfiles/${propertyId}`
@@ -47,7 +47,7 @@ export default function SinglePropertyUI() {
 
           // Set the transformed images to state
           setPropertyImages(images);
-          console.log("PROPERTY IMAGES", images);
+          // console.log("PROPERTY IMAGES", images);
           const res2 = await axios.get(
             "http://127.0.0.1:8000/api/getproperty",
             {
@@ -59,11 +59,11 @@ export default function SinglePropertyUI() {
           if (res2.data) {
             console.log("FULL PROPERTY INFO", res2.data);
             setPropertyInfo(res2.data);
-            console.log(
-              "property name",
-              res2.data.property_details.property_name
-            );
-            console.log("BOANG KAAA:", res2.property.data);
+            // console.log(
+            //   "property name",
+            //   res2.data.property_details.property_name
+            // );
+            // console.log("BOANG KAAA:", res2.property.data);
           }
         }
       } catch (err) {
@@ -98,7 +98,7 @@ export default function SinglePropertyUI() {
           </div>
           <Grid container spacing={2}>
             <Grid item xs={8}>
-              <PropertyOverView />
+              <PropertyOverView propertyinfo={propertyInfo} />
             </Grid>
             <Grid item xs={4}>
               {/* Content for 40% width */}
@@ -110,12 +110,14 @@ export default function SinglePropertyUI() {
                 handleReserveClick={handleReserveClick}
                 guestCount={guestCount}
                 handleGuestCountChange={handleGuestCountChange}
+                propertyinfo={propertyInfo}
               />
             </Grid>
           </Grid>
-          <PropertyInfo />
-          {/* kani i delete lang ni */}
-          <ViewProperty />
+          <PropertyInfo
+            propertyInfo={propertyInfo}
+            propertyImages={propertyImages}
+          />
         </div>
       </Container>
     </div>
