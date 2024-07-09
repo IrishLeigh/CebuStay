@@ -147,6 +147,10 @@ class PropertyController extends CORS
     {
         $this->enableCors($request);
 
+        // Retrieve all house rules and booking policies
+        $property_hr = DB::table('house_rules')->get();
+        $property_bp = DB::table('booking_policy')->get();
+
         // Retrieve properties
         $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')->get();
 
@@ -170,7 +174,18 @@ class PropertyController extends CORS
             $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
         }
 
-        // Add guest_capacity, bedroomcount, bathroomcount, and bedcount to properties list
+        // Create an associative array for house rules and booking policies
+        $houseRulesByPropertyId = [];
+        foreach ($property_hr as $rule) {
+            $houseRulesByPropertyId[$rule->propertyid][] = $rule;
+        }
+
+        $bookingPoliciesByPropertyId = [];
+        foreach ($property_bp as $policy) {
+            $bookingPoliciesByPropertyId[$policy->propertyid][] = $policy;
+        }
+
+        // Add guest_capacity, bedroomcount, bathroomcount, bedcount, house rules, and booking policies to properties list
         foreach ($properties as $property) {
             $propertyId = $property->propertyid;
 
@@ -182,8 +197,6 @@ class PropertyController extends CORS
             $bedroomCount = 0;
             // Bathroom Count
             $bathroomCount = 0;
-            // Bed Count
-
 
             if (isset($unitRoomsByUnitId[$unitDetailsByPropertyId[$propertyId]->unitid])) {
                 foreach ($unitRoomsByUnitId[$unitDetailsByPropertyId[$propertyId]->unitid] as $unitRoom) {
@@ -197,7 +210,14 @@ class PropertyController extends CORS
 
             $property->bedroomcount = $bedroomCount;
             $property->bathroomcount = $bathroomCount;
+
+            // House Rules
+            $property->house_rules = isset($houseRulesByPropertyId[$propertyId]) ? $houseRulesByPropertyId[$propertyId] : [];
+
+            // Booking Policies
+            $property->booking_policies = isset($bookingPoliciesByPropertyId[$propertyId]) ? $bookingPoliciesByPropertyId[$propertyId] : [];
         }
+
         $bedCount = 0;
         foreach ($properties as $property) {
             $propertyId = $property->propertyid;
@@ -210,14 +230,15 @@ class PropertyController extends CORS
                             $bedCount += $bedroomType->singlebed + $bedroomType->bunkbed + $bedroomType->largebed + $bedroomType->superlargebed;
                         }
                     }
-
                 }
             }
             $property->bedcount = $bedCount;
             $bedCount = 0;
         }
+
         return response()->json($properties);
     }
+
 
     public function getAllPropertiesByUser(Request $request)
     {
