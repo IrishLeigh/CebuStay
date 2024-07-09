@@ -107,6 +107,90 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   <h3 className="font-semibold" style={{ textAlign: 'left' }}>Rooms and Beds</h3>
   <hr className="my-2" />
 
+  <div className="flex flex-col" style={{ marginTop: '1rem' }}>
+    <label className="text-sm">Bedrooms:</label>
+    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', marginLeft:'-4.7rem' }}>
+      {['Any', 1, 2, 3, 4, '5+'].map((bedroom, index) => (
+        <button
+          key={index}
+          style={{
+            border: '1px solid #d1d5db',
+            borderRadius: '0.25rem',
+            color: '#4b5563',
+            height: '1.8rem',
+            width: '1.8rem',
+            backgroundColor: filters.bedrooms === bedroom ? '#e5e7eb' : '#fff',
+            outline: 'none',
+            fontSize: '0.5rem',
+            textAlign: 'center',
+            cursor: 'pointer'
+          }}
+          onClick={() => handleBedroomsChange({ target: { value: bedroom } })}
+        >
+          {bedroom}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div className="flex flex-col" style={{ marginTop: '1rem' }}>
+    <label className="text-sm">Beds:</label>
+    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', marginLeft:'-2.3rem' }}>
+      {['Any', 1, 2, 3, 4, '5+'].map((bed, index) => (
+        <button
+          key={index}
+          style={{
+            border: '1px solid #d1d5db',
+            borderRadius: '0.25rem',
+            color: '#4b5563',
+            height: '1.8rem',
+            width: '1.8rem',
+            backgroundColor: filters.beds === bed ? '#e5e7eb' : '#fff',
+            outline: 'none',
+            fontSize: '0.5rem',
+            textAlign: 'center',
+            cursor: 'pointer'
+          }}
+          onClick={() => handleBedsChange({ target: { value: bed } })}
+        >
+          {bed}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div className="flex flex-col" style={{ marginTop: '1rem' }}>
+    <label className="text-sm">Bathrooms:</label>
+    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', marginLeft:'-4.9rem'}}>
+      {['Any', 1, 2, 3, 4, '5+'].map((bathroom, index) => (
+        <button
+          key={index}
+          style={{
+            border: '1px solid #d1d5db',
+            borderRadius: '0.25rem',
+            color: '#4b5563',
+            height: '1.8rem',
+            width: '1.8rem',
+            backgroundColor: filters.bathrooms === bathroom ? '#e5e7eb' : '#fff',
+            outline: 'none',
+            fontSize: '0.5rem',
+            textAlign: 'center',
+            cursor: 'pointer',
+          }}
+          onClick={() => handleBathroomsChange({ target: { value: bathroom } })}
+        >
+          {bathroom}
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+      {/* <div className="mt-6">
+  <h3 className="font-semibold" style={{ textAlign: 'left' }}>Rooms and Beds</h3>
+  <hr className="my-2" />
+
   <div className="flex items-center gap-2" style={{ marginTop: '1rem' }}>
     <label className="text-sm">Bedrooms:</label>
     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -184,7 +268,7 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
       ))}
     </div>
   </div>
-</div>
+</div> */}
 
 
 
