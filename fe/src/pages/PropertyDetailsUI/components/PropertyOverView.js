@@ -9,18 +9,19 @@ import GirlIcon from '@mui/icons-material/Face3';
 
 
 
-export default function PropertyOverView() {
+export default function PropertyOverView({propertyInfo}) {
+  console.log("PROPERTY INFO", propertyInfo);
 
   return (
     <Paper className="overview-container" sx={{borderRadius:'12px'}}>
       {/* <Box sx={{ p: 1 }}> */}
         <div className="overview-title" >
-          Marion Gonnabathula's Residence
+          {propertyInfo.property_details.property_name}
         </div>
         <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem" }}>
           <Location sx={{ color: "#16B4DD", marginRight: "0.1rem" }} />
           <div className="overview-text">
-            #2 Sherwood Loop, Nichols Park Subdivision, Guadalupe
+            {propertyInfo.property_address.address}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", marginTop: "2rem" }}>
@@ -36,7 +37,7 @@ export default function PropertyOverView() {
           <ArrowRight sx={{  marginLeft: "0.5rem" }} />
         </div>
         <div className="overview-text" style={{ marginTop: "2rem" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          {propertyInfo.property_details.property_desc}
         </div>
 
         <Divider variant ="middle" sx={{ mt: "2rem", mb: "2rem" }}/>

@@ -3,7 +3,7 @@ import axios from 'axios';
 import MapComponent from './MapComponent'; // Adjust the import path based on your project structure
 import { Paper, CircularProgress, Typography } from '@mui/material';
 
-export default function Directions() {
+export default function Directions(propertyid) {
   // Example coordinates for demonstration
   const initialPosition = {
     lat: 10.2746259,
@@ -15,7 +15,7 @@ export default function Directions() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const propertyId = 120; // Replace with the ID of the property you want to fetch
+      const propertyId = propertyid; // Replace with the ID of the property you want to fetch
       try {
         const reslocation = await axios.get("http://127.0.0.1:8000/api/getlocation", {
           params: {

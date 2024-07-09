@@ -13,7 +13,7 @@ import ViewProperty from "./PropertyBenefits";
 import AvailabilityTable from "./AvailabilityTable";
 import SearchAvailabilityButton from "./SearchAvailabilityButton";
 
-export default function MultiPropertyUI() {
+export default function MultiPropertyUI( propertyid) {
     const [propertyImages, setPropertyImages] = useState([]);
     const [propertyInfo, setPropertyInfo] = useState({});
     const [loading, setLoading] = useState(true); // Loading state
@@ -34,7 +34,7 @@ export default function MultiPropertyUI() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const propertyId = 116; // Replace with the ID of the property you want to fetch
+            const propertyId = propertyid.propertyid; // Replace with the ID of the property you want to fetch
             try {
                 const res = await axios.get(
                     `http://127.0.0.1:8000/api/getfiles/${propertyId}`
@@ -83,7 +83,11 @@ export default function MultiPropertyUI() {
             <HeaderUser />
             <Container maxWidth="lg">
                 <div>
-                    <ImageGallery images={propertyImages} />
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <>
+                        <ImageGallery images={propertyImages} />
                     <div
                         style={{
                             height: "clamp(2rem, 5vw, 2rem)",
@@ -101,11 +105,11 @@ export default function MultiPropertyUI() {
                     </div>
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
-                            <PropertyOverView />
+                            <PropertyOverView propertyInfo={propertyInfo} />
                         </Grid>
                         <Grid item xs={4} sx={{ mt: 2.5 }}>
 
-                            <Directions />
+                            <Directions propertyid = {propertyid.propertyid} />
                         </Grid>
                     </Grid>
 
@@ -121,8 +125,10 @@ export default function MultiPropertyUI() {
                     </div>
                     
                     <div>
-                    <AvailabilityTable propertyid = {116}/>
+                    <AvailabilityTable propertyid = {propertyid.propertyid}/>
                     </div>
+                        </>
+                    )}
                         
                       
                 </div>
