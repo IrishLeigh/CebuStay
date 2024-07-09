@@ -29,7 +29,7 @@ const MainContent = ({
   // Dummy data for accommodations
   const dummyAccommodations = [
     {
-      propertyid: 1,
+      propertyid: 59,
       property_name: "Luxury Villa",
       property_desc: "A beautiful luxury villa with stunning views.",
       amenities: ["Pool", "Wi-Fi", "Aircon", "Gym", "Sauna"],
@@ -42,7 +42,7 @@ const MainContent = ({
       src: "https://via.placeholder.com/300" // Placeholder image
     },
     {
-      propertyid: 2,
+      propertyid: 116,
       property_name: "Cozy Apartment",
       property_desc: "A cozy apartment in the city center.",
       amenities: ["Wi-Fi", "Heating", "Washer", "Dryer"],
@@ -55,7 +55,7 @@ const MainContent = ({
       src: "https://via.placeholder.com/300" // Placeholder image
     },
     {
-      propertyid: 3,
+      propertyid: 118,
       property_name: "Modern Condo",
       property_desc: "A modern condo with all amenities.",
       amenities: ["Wi-Fi", "Heating", "Parking", "Elevator"],
@@ -68,7 +68,7 @@ const MainContent = ({
       src: "https://via.placeholder.com/300" // Placeholder image
     },
     {
-      propertyid: 4,
+      propertyid: 119,
       property_name: "Beach House",
       property_desc: "A stunning beach house with ocean views.",
       amenities: ["Wi-Fi", "Pool", "Beach Access", "BBQ Grill"],
@@ -81,7 +81,7 @@ const MainContent = ({
       src: "https://via.placeholder.com/300" // Placeholder image
     },
     {
-      propertyid: 5,
+      propertyid: 120,
       property_name: "Mountain Cabin",
       property_desc: "A cozy cabin in the mountains.",
       amenities: ["Wi-Fi", "Fireplace", "Hot Tub", "Pet Friendly"],
@@ -94,7 +94,7 @@ const MainContent = ({
       src: "https://via.placeholder.com/300" // Placeholder image
     },
     {
-      propertyid: 6,
+      propertyid: 118,
       property_name: "Downtown Loft",
       property_desc: "A stylish loft in the heart of downtown.",
       amenities: ["Wi-Fi", "Heating", "Parking", "Gym"],
@@ -161,8 +161,8 @@ const MainContent = ({
   ];
   
   const dummyPricingList = [
-    { propertyid: 1, min_price: 5000 },
-    { propertyid: 2, min_price: 3000 },
+    { propertyid: 118, min_price: 5000 },
+    { propertyid: 119, min_price: 3000 },
     { propertyid: 3, min_price: 4000 },
     { propertyid: 4, min_price: 7000 },
     { propertyid: 5, min_price: 4500 },

@@ -18,7 +18,7 @@ export default function PricingAndPolicyMobile() {
                       Guests
                     </Typography>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src="./check.png" style={{ width: '1rem', }} />
+                      <img src="/check.png" style={{ width: '1rem', }} />
                       <Typography variant="body1" sx={{ textAlign: 'center', fontFamily: 'Poppins' }}>
                         2
                       </Typography>
@@ -33,7 +33,7 @@ export default function PricingAndPolicyMobile() {
                       Price/Night
                     </Typography>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src="./check.png" style={{ width: '1rem', }} />
+                      <img src="/check.png" style={{ width: '1rem', }} />
                       <Typography variant="body1" sx={{ textAlign: 'center', fontFamily: 'Poppins' }}>
                         Php 1,435
                       </Typography>
@@ -48,13 +48,13 @@ export default function PricingAndPolicyMobile() {
                       Refund Policy
                     </Typography>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src="./check.png" style={{ width: '1rem', }} />
+                      <img src="/check.png" style={{ width: '1rem', }} />
                       <Typography variant="body1" sx={{ textAlign: 'center', fontFamily: 'Poppins' }}>
                         Non-refundable
                       </Typography>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src="./check.png" style={{ width: '1rem', }} />
+                      <img src="/check.png" style={{ width: '1rem', }} />
                       <Typography variant="body1" sx={{ textAlign: 'center', fontFamily: 'Poppins' }}>
                         Pay in advance
                       </Typography>

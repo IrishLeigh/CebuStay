@@ -71,7 +71,7 @@ export default function PricingAndPolicy() {
             <Grid container sx={{ display: 'flex', justifyContent: 'center', p: 0.5, marginTop: '0.5rem' }}>
                 <Grid item xs={3}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src="./check.png" alt="Bedroom" style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
+                        <img src="/check.png" alt="Bedroom" style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
                         <Typography variant="body1"
                             sx={{
                                 textAlign: 'left',
@@ -92,7 +92,7 @@ export default function PricingAndPolicy() {
                 </Grid>
                 <Grid item xs={4}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src="./check.png" alt="Bedroom" style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
+                        <img src="/check.png" alt="Bedroom" style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
                         <Typography variant="body1"
                             sx={{
                                 textAlign: 'left',
@@ -112,7 +112,7 @@ export default function PricingAndPolicy() {
                 </Grid>
                 <Grid item xs={5}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src="./check.png" alt="Bedroom" style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
+                        <img src="/check.png"  style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
                         <Typography variant="body1"
                             sx={{
                                 textAlign: 'left',
@@ -130,7 +130,7 @@ export default function PricingAndPolicy() {
                             }}>Non-refundable</Typography>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src="./check.png" alt="Bedroom" style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
+                        <img src="/check.png"  style={{ maxWidth: '1.5rem', width: 'clamp(.5rem, 35%, 100%)' }} />
                         <Typography variant="body1"
                             sx={{
                                 textAlign: 'left',
