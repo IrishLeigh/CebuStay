@@ -13,7 +13,7 @@ import ViewProperty from "./PropertyBenefits";
 import AvailabilityTable from "./AvailabilityTable";
 import SearchAvailabilityButton from "./SearchAvailabilityButton";
 
-export default function MultiPropertyUI( propertyid) {
+export default function MultiPropertyUI(propertyid) {
     const [propertyImages, setPropertyImages] = useState([]);
     const [propertyInfo, setPropertyInfo] = useState({});
     const [loading, setLoading] = useState(true); // Loading state
@@ -72,65 +72,59 @@ export default function MultiPropertyUI( propertyid) {
             } catch (err) {
                 console.log(err);
             } finally {
-                setLoading(false); 
+                setLoading(false);
             }
         };
         fetchData();
-    }, []); 
+    }, []);
 
     return (
         <div>
             <HeaderUser />
             <Container maxWidth="lg">
                 <div>
-                    {loading ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <>
-                        <ImageGallery images={propertyImages} />
-                    <div
-                        style={{
-                            height: "clamp(2rem, 5vw, 2rem)",
-                            display: "flex",
-                            marginTop: "-16px",
-                        }}
-                    >
-                        <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
-                        <div style={{ flex: "1 0 0", background: "#ADC939" }} />
-                        <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
-                        <div style={{ flex: "1 0 0", background: "#F77D1E" }} />
-                        <div style={{ flex: "1 0 0", background: "#EE414B" }} />
-                        <div style={{ flex: "1 0 0", background: "#A334CF" }} />
-                        <div style={{ flex: "1 0 0", background: "#1780CB" }} />
-                    </div>
-                    <Grid container spacing={2}>
-                        <Grid item xs={8}>
-                            <PropertyOverView propertyInfo={propertyInfo} />
-                        </Grid>
-                        <Grid item xs={4} sx={{ mt: 2.5 }}>
+                <ImageGallery images={propertyImages} />
+                            <div
+                                style={{
+                                    height: "clamp(2rem, 5vw, 2rem)",
+                                    display: "flex",
+                                    marginTop: "-16px",
+                                }}
+                            >
+                                <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
+                                <div style={{ flex: "1 0 0", background: "#ADC939" }} />
+                                <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
+                                <div style={{ flex: "1 0 0", background: "#F77D1E" }} />
+                                <div style={{ flex: "1 0 0", background: "#EE414B" }} />
+                                <div style={{ flex: "1 0 0", background: "#A334CF" }} />
+                                <div style={{ flex: "1 0 0", background: "#1780CB" }} />
+                            </div>
+                            <Grid container spacing={2}>
+                                <Grid item xs={8}>
+                                    <PropertyOverView propertyinfo={propertyInfo} />
+                                </Grid>
+                                <Grid item xs={4} sx={{ mt: 2.5 }}>
 
-                            <Directions propertyid = {propertyid.propertyid} />
-                        </Grid>
-                    </Grid>
+                                    <Directions propertyid={propertyid.propertyid} />
+                                </Grid>
+                            </Grid>
 
-                    <div style={{marginBottom: "1rem"}}>
-                    <ViewProperty />
-                    </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <ViewProperty />
+                            </div>
 
-                    <div style={{width: '100%', height: '0.1rem', boxSizing: "border-box", margin: 0, padding: 0,  backgroundColor: "#A334CF"}}>
-                        {/* Design is still not Sure */}
-                    </div>
-                    <div>
-                        <SearchAvailabilityButton />
-                    </div>
-                    
-                    <div>
-                    <AvailabilityTable propertyid = {propertyid.propertyid}/>
-                    </div>
-                        </>
-                    )}
-                        
-                      
+                            <div style={{ width: '100%', height: '0.1rem', boxSizing: "border-box", margin: 0, padding: 0, backgroundColor: "#A334CF" }}>
+                                {/* Design is still not Sure */}
+                            </div>
+                            <div>
+                                <SearchAvailabilityButton />
+                            </div>
+
+                            <div>
+                                <AvailabilityTable propertyid={propertyid.propertyid} />
+                            </div>
+
+
                 </div>
             </Container>
         </div>
