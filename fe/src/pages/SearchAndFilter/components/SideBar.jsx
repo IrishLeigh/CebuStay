@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import '../css/SideBar.css';
 
-
 const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   const [activeButtons, setActiveButtons] = useState([]);
   const [selectedBookingOptions, setSelectedBookingOptions] = useState([]);
@@ -36,6 +35,7 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
       return updatedOptions;
     });
   };
+  
 
   const handlePropertyTypeChange = (type) => {
     setSelectedPropertyTypes((prevTypes) => {
@@ -68,14 +68,14 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
         <hr className="my-2" style={{ marginTop: '-1rem' }} />
         <div className="flex flex-wrap gap-2">
           <button className={`button ${activeButtons.includes('Wi-Fi') && 'light-blue'}`} onClick={() => toggleAmenity('Wi-Fi')}>Wi-Fi</button>
-          <button className={`button ${activeButtons.includes('TV') && 'light-blue'}`} onClick={() => toggleAmenity('TV')}>TV</button>
+          <button className={`button ${activeButtons.includes('Television') && 'light-blue'}`} onClick={() => toggleAmenity('Television')}>TV</button>
           <button className={`button ${activeButtons.includes('Kitchen') && 'light-blue'}`} onClick={() => toggleAmenity('Kitchen')}>Kitchen</button>
           <button className={`button ${activeButtons.includes('Spa') && 'light-blue'}`} onClick={() => toggleAmenity('Spa')}>Spa</button>
           <button className={`button ${activeButtons.includes('Fitness Center') && 'light-blue'}`} onClick={() => toggleAmenity('Fitness Center')}>Fitness Center</button>
           <button className={`button ${activeButtons.includes('Breakfast') && 'light-blue'}`} onClick={() => toggleAmenity('Breakfast')}>Breakfast</button>
           <button className={`button ${activeButtons.includes('Parking') && 'light-blue'}`} onClick={() => toggleAmenity('Parking')}>Parking</button>
           <button className={`button ${activeButtons.includes('Heating') && 'light-blue'}`} onClick={() => toggleAmenity('Heating')}>Heating</button>
-          <button className={`button ${activeButtons.includes('Aircon') && 'light-blue'}`} onClick={() => toggleAmenity('Aircon')}>Aircon</button>
+          <button className={`button ${activeButtons.includes('Air Conditioning') && 'light-blue'}`} onClick={() => toggleAmenity('Air Conditioning')}>Aircon</button>
         </div>
       </div>
 
@@ -197,33 +197,33 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
           <label className="cbx" htmlFor="cbx-51-1"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
-          <span>Self Check-in</span>
-          <input id="cbx-51-2" type="checkbox" checked={selectedBookingOptions.includes('Self Check-in')} onChange={() => handleBookingOptionChange('Self Check-in')} />
+          <span>Allow Smoking</span>
+          <input id="cbx-51-2" type="checkbox" checked={selectedBookingOptions.includes('Allow Smoking')} onChange={() => handleBookingOptionChange('Allow Smoking')} />
           <label className="cbx" htmlFor="cbx-51-2"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
-          <span>Free Cancellation</span>
-          <input id="cbx-51-3" type="checkbox" checked={selectedBookingOptions.includes('Free Cancellation')} onChange={() => handleBookingOptionChange('Free Cancellation')} />
+          <span>Party Events Allowed</span>
+          <input id="cbx-51-3" type="checkbox" checked={selectedBookingOptions.includes('Party Events Allowed')} onChange={() => handleBookingOptionChange('Party Events Allowed')} />
           <label className="cbx" htmlFor="cbx-51-3"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
-          <span>Instant Book</span>
-          <input id="cbx-51-4" type="checkbox" checked={selectedBookingOptions.includes('Instant Book')} onChange={() => handleBookingOptionChange('Instant Book')} />
+          <span>Noise Restrictions</span>
+          <input id="cbx-51-4" type="checkbox" checked={selectedBookingOptions.includes('Noise Restrictions')} onChange={() => handleBookingOptionChange('Noise Restrictions')} />
           <label className="cbx" htmlFor="cbx-51-4"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
-          <span>Smoking Allowed</span>
-          <input id="cbx-51-5" type="checkbox" checked={selectedBookingOptions.includes('Smoking Allowed')} onChange={() => handleBookingOptionChange('Smoking Allowed')} />
+          <span>Cancellation Plan</span>
+          <input id="cbx-51-5" type="checkbox" checked={selectedBookingOptions.includes('Cancellation Plan')} onChange={() => handleBookingOptionChange('Cancellation Policy')} />
           <label className="cbx" htmlFor="cbx-51-5"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
-          <span>Noise Restrictions</span>
-          <input id="cbx-51-6" type="checkbox" checked={selectedBookingOptions.includes('Noise Restrictions')} onChange={() => handleBookingOptionChange('Noise Restrictions')} />
+          <span>Refund Policy</span>
+          <input id="cbx-51-6" type="checkbox" checked={selectedBookingOptions.includes('Refund Policy')} onChange={() => handleBookingOptionChange('Refund Policy')} />
           <label className="cbx" htmlFor="cbx-51-6"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
           <span>Modification Plan</span>
-          <input id="cbx-51-7" type="checkbox" checked={selectedBookingOptions.includes('Modification Plan')} onChange={() => handleBookingOptionChange('Modification Plan')} />
+          <input id="cbx-51-7" type="checkbox" checked={selectedBookingOptions.includes('Modification Plan')} onChange={() => handleBookingOptionChange('Modification Policy')} />
           <label className="cbx" htmlFor="cbx-51-7"></label>
         </div>
       </div>

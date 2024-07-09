@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../css/Search.css';
 import { MdSearch } from 'react-icons/md';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import BedIcon from '@mui/icons-material/Bed';
+import axios from 'axios';
 
 export default function Search({ onSearch }) {
     const [startDate, setStartDate] = useState(new Date());
@@ -16,10 +18,23 @@ export default function Search({ onSearch }) {
         onSearch({ startDate, endDate, guestCapacity: guestCapacity || null });
     };
 
-    const fetchSuggestions = async (input) => {
-        // Mock function to simulate fetching suggestions
-        const mockSuggestions = ['Laris', 'Lew York', 'London', 'Lolo', 'Love', 'Lokyo'];
-        setSuggestions(mockSuggestions.filter(s => s.toLowerCase().includes(input.toLowerCase())));
+    const fetchSuggestions = async (query) => {
+        if (!query) {
+            setSuggestions([]);
+            return;
+        }
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/search?query=${query}`);
+            const combinedSuggestions = [
+                ...response.data.locations.map(loc => ({ type: 'Location', name: loc })),
+                ...response.data.properties.map(prop => ({ type: 'Property', name: prop }))
+            ];
+            setSuggestions(combinedSuggestions);
+            // console.log('Search results:', combinedSuggestions);
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+            setSuggestions([]);
+        }
     };
 
     const handleInputChange = (e) => {
@@ -32,15 +47,30 @@ export default function Search({ onSearch }) {
         }
     };
 
+    const debouncedFetchResults = useCallback(debounce(fetchSuggestions, 300), []);
+
+    useEffect(() => {
+        if (query) {
+            debouncedFetchResults(query);
+        } else {
+            setSuggestions([]);
+        }
+
+        return () => {
+            debouncedFetchResults.cancel();
+        };
+    }, [query]);
+
     const handleSuggestionClick = (suggestion) => {
-        setQuery(suggestion);
-        setSuggestions([]);
+        setQuery(suggestion.name.address || suggestion.name.property_name);
+        setSuggestions([]); // Force clearing the suggestions list
     };
 
     return (
         <div>
             <div className="max-w-4xl mx-auto p-4" style={{ width: '71rem', marginTop: '2rem' }}>
                 <div className="search-box">
+                    <div style={{ display: 'flex', alignItems: 'column',  }}>
                     <input
                         type="text"
                         placeholder="Search Destination"
@@ -49,26 +79,31 @@ export default function Search({ onSearch }) {
                         value={query}
                         onChange={handleInputChange}
                     />
-                    {/* <div className="suggestions-container"> */}
-                        {suggestions.length > 0 && (
-                            <ul className="suggestions-list">
-                                {suggestions.map((suggestion, index) => (
-                                    <li
-                                        key={index}
-                                        className="suggestion-item"
-                                        onClick={() => handleSuggestionClick(suggestion)}
-                                    >
-                                        <LocationOnIcon className="location-icon" />
-                                        <div className="suggestion-text">
-                                            {/* //Add here ludi replace lang suggestions ug kanang span  */}
-                                            {suggestion}
-                                            <span className="suggestion-description">Here something</span>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    {/* </div> */}
+                    
+                    {suggestions.length > 0 && (
+                         <ul className="suggestions-list"  style={{ top: '12rem' }}>
+                         {suggestions.map((suggestion, index) => (
+                             <li
+                                 key={index}
+                                 className="suggestion-item"
+                                 
+                                 onClick={() => handleSuggestionClick(suggestion)}
+                             >
+                                 {suggestion.type === 'Location' ? (
+                                     <LocationOnIcon className="location-icon" />
+                                 ) : (
+                                     <BedIcon className="location-icon" />
+                                 )}
+                                 <div className="suggestion-text">
+                                     {suggestion.name.address || suggestion.name.property_name}
+                                     <span className="suggestion-description">{suggestion.type}</span>
+                                 </div>
+                             </li>
+                         ))}
+                     </ul>
+                    )}
+                    </div>
+                    
                     <DatePicker
                         selected={startDate}
                         onChange={date => setStartDate(date)}
@@ -105,4 +140,19 @@ export default function Search({ onSearch }) {
             </div>
         </div>
     );
+}
+
+// Custom debounce function
+function debounce(func, wait) {
+    let timeout;
+  
+    function debounced(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    }
+  
+    debounced.cancel = () => clearTimeout(timeout);
+  
+    return debounced;
 }

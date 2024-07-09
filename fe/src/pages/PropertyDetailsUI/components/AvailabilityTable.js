@@ -74,13 +74,13 @@ export default function AvailabilityTable(propertyid) {
     const renderRoomImage = (roomName) => {
         switch (roomName.toLowerCase()) {
             case 'bedroom':
-                return './bedroom.png';
+                return '/bedroom.png';
             case 'bathroom':
-                return './bedroom.png';
+                return '/bathroom1.png';
             case 'living room':
-                return './bedroom.png';
+                return '/livingroom.png';
             case 'kitchen':
-                return './bedroom.png';
+                return '/kitchen.png';
             default:
                 return null;
         }
@@ -89,11 +89,13 @@ export default function AvailabilityTable(propertyid) {
     const renderBedImage = (bedType) => {
         switch (bedType.toLowerCase()) {
             case 'singlebed':
-                return './bedroom.png';
+                return '/singlebed.png';
             case 'bunkbed':
-                return './bedroom.png';
+                return '/bunkbed.png';
+            case 'largebed':
+                return '/bedroom.png';
             case 'superlargebed':
-                return './bedroom.png';
+                return '/bedroom.png';
             default:
                 return null;
         }
@@ -121,7 +123,7 @@ export default function AvailabilityTable(propertyid) {
                             <Grid item xs={6} sx={{ margin: '0', padding: '0' }} ref={rightColumnRef}>
                                 <Grid container >
                                     <Grid item xs={12} ref={firstGridRef} >
-                                        <Paper sx={{ display: 'flex', margin: '0 auto', paddingRight: '0'}}>
+                                        <Paper sx={{ display: 'flex', margin: '0 auto', paddingRight: '0' }}>
                                             {isMobile ?
                                                 <>
                                                     <PricingAndPolicyMobile />

@@ -5,13 +5,12 @@ import './CustomCarousel.css'; // Your custom CSS for Carousel
 
 function CarouselFadeExample( height) {
     const [index, setIndex] = useState(0);
-    const images = ["image1.png", "image2.png", "image3.png", "image4.png"]; // Array of image paths
+    const images = ["/image1.png", "/image2.png", "/image3.png", "/image4.png"]; // Array of image paths
     const numImages = images.length;
 
     const handleSelect = (selectedIndex, e) => {
         setIndex(selectedIndex >= numImages ? 0 : selectedIndex);
     };
-console.log('Height',height.height)
     return (
         <Carousel activeIndex={index} onSelect={handleSelect} indicators={false}>
             {images.map((image, idx) => (

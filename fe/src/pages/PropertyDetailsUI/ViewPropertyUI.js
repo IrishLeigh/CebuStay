@@ -15,6 +15,8 @@ import { useLocation } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ImageGallery from "./components/ImageGallery";
+import SinglePropertyUI from "./components/SinglePropertyUI";
+import MultiPropertyUI from "./components/MultiPropertyUI";
 
 function srcset(image, size, rows = 1, cols = 1) {
   return {
@@ -262,7 +264,6 @@ export default function ViewPropertyUI() {
   const [loading, setLoading] = useState(true); // Loading state
   const location = useLocation();
   const { guestCapacity, checkin_date, checkout_date } = location.state;
-
   //fetchdata for Property ID
   useEffect(() => {
     const fetchData = async () => {
@@ -280,7 +281,6 @@ export default function ViewPropertyUI() {
 
           // Set the transformed images to state
           setPropertyImages(images);
-          console.log("PROPERTY IMAGES", images);
           const res2 = await axios.get(
             "http://127.0.0.1:8000/api/getproperty",
             {
@@ -292,11 +292,6 @@ export default function ViewPropertyUI() {
           if (res2.data) {
             console.log("FULL PROPERTY INFO", res2.data);
             setPropertyInfo(res2.data);
-            console.log(
-              "property name",
-              res2.data.property_details.property_name
-            );
-            console.log("BOANG KAAA:", res2.property.data)
           }
         }
       } catch (err) {
@@ -364,7 +359,7 @@ export default function ViewPropertyUI() {
           <div>Loading...</div>
         ) : (
           <div>
-            <div>
+            {/* <div>
               <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
                 <ImageGallery images={propertyImages} />
               </div>
@@ -413,7 +408,12 @@ export default function ViewPropertyUI() {
                 checkin_date={checkin_date}
                 checkout_date={checkout_date}
               />
-            )}
+            )} */}
+            {propertyInfo.property_details.property_type === "Home" ? (
+              <><SinglePropertyUI propertyid={propertyid} /></>
+            ) : (
+              <><MultiPropertyUI propertyid={propertyid} /></>
+              )}
           </div>
 
         )}

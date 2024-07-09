@@ -10,7 +10,7 @@ import ImageGallery from "./ImageGallery";
 import dayjs from "dayjs";
 import ViewProperty from "./PropertyBenefits";
 
-export default function SinglePropertyUI() {
+export default function SinglePropertyUI(propertyid) {
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyInfo, setPropertyInfo] = useState({});
   const [loading, setLoading] = useState(true); // Loading state
@@ -31,7 +31,7 @@ export default function SinglePropertyUI() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const propertyId = 117; // Replace with the ID of the property you want to fetch
+      const propertyId = propertyid.propertyid; // Replace with the ID of the property you want to fetch
       try {
         const res = await axios.get(
           `http://127.0.0.1:8000/api/getfiles/${propertyId}`
