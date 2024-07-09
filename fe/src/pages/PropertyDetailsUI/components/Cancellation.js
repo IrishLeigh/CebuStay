@@ -32,12 +32,30 @@ const Cancellation = ({ cancellation = [] }) => {
       <div>
         {cancellation ? (
           <div>
-            <div>bookingpolicyid: {cancellation[bookingpolicyid]}</div>
-            <div>cancel_days: {cancellation[cancel_days]}</div>
-            <div>is_cancel_plan: {cancellation[is_cancel_plan]}</div>
-            <div>modifcation_plan: {cancellation[modification_plan]}</div>
-            <div>non_refundable: {cancellation[non_refundable]}</div>
-            <div>offer_discount: {cancellation[offer_discount]}</div>
+            {/* <div>bookingpolicyid: {cancellation[bookingpolicyid]}</div> */}
+            {/* <div>
+              cancel_days:{" "}
+              {cancellation[cancel_days] === null
+                ? "N/A"
+                : cancellation[cancel_days]}
+            </div> */}
+            <div>
+              Cancellation Policy:{" "}
+              {cancellation[is_cancel_plan] === 0
+                ? "No Cancellation"
+                : "Cancellation Days:" + cancellation[cancel_days]}
+            </div>
+            <div>
+              Modifcation Policy:{" "}
+              {cancellation[modification_plan] === 0 ? "N/A" : "There is..."}
+            </div>
+            <div>
+              Refund Policy: {cancellation[non_refundable] === 0 ? "No" : "Yes"}
+            </div>
+            <div>
+              Dicount Offers:{" "}
+              {cancellation[offer_discount] === 0 ? "No" : "Yes"}
+            </div>
           </div>
         ) : (
           <div className="no-cancellation">No Cancellation Available.</div>
@@ -47,58 +65,23 @@ const Cancellation = ({ cancellation = [] }) => {
   );
 };
 
-export default function PropertyCancellation() {
-  const { propertyid } = useParams();
+export default function PropertyCancellation({ propertyinfo }) {
   const [loading, setLoading] = useState(true);
   const [propertyInfo, setPropertyInfo] = useState({});
-  const [propertyImages, setPropertyImages] = useState([]);
 
-  //fetchdata for Property ID
   useEffect(() => {
-    const fetchData = async () => {
-      const propertyId = 117; // Replace with the ID of the property you want to fetch
-      try {
-        const res = await axios.get(
-          `http://127.0.0.1:8000/api/getfiles/${propertyId}`
-        );
-        if (res.data) {
-          // Transform the image data
-          const images = res.data.img.map((image, index) => ({
-            id: image.id,
-            src: image.src,
-            rows: index === 0 ? 2 : 1,
-            cols: index === 0 ? 2 : 1,
-          }));
-
-          // Set the transformed images to state
-          setPropertyImages(images);
-          console.log("PROPERTY IMAGES", images);
-          const res2 = await axios.get(
-            "http://127.0.0.1:8000/api/getproperty",
-            {
-              params: {
-                propertyid: propertyId,
-              },
-            }
-          );
-          if (res2.data) {
-            console.log("FULL PROPERTY INFO", res2.data);
-            setPropertyInfo(res2.data);
-            console.log(
-              "property name",
-              res2.data.property_details.property_name
-            );
-            console.log("BOANG KAAA:", res2.property.data);
-          }
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false); // Set loading to false after data is fetched
+    try {
+      if (propertyinfo) {
+        setPropertyInfo(propertyinfo);
+        // console.log("PROPERTY INFO", propertyinfo);
       }
-    };
-    fetchData();
-  }, [propertyid]); // Update useEffect dependency
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [propertyinfo]);
+
   return (
     <div>
       {loading ? (
