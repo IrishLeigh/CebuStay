@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Paper from "@mui/material/Paper";
 import { Divider, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { useParams } from "react-router-dom";
-import Container from "@mui/material/Container";
 import ArrowRight from "@mui/icons-material/Send";
+import {
+  AccessTime,
+  Hotel,
+  Pets,
+  SmokeFree,
+  EventNote,
+  NaturePeople,
+  NoMeetingRoom,
+} from "@mui/icons-material";
 
 // Constants for house rule properties
 const check_in_from = "check_in_from";
@@ -21,7 +27,90 @@ const quiet_hours_end = "quiet_hours_end";
 const quiet_hours_start = "quiet_hours_start";
 const smoking_allowed = "smoking_allowed";
 
-const HouseRules = ({ houserules = [] }) => {
+// Icon mapping for house rules
+const iconMap = {
+  [check_in_from]: <AccessTime sx={{ color: "#16B4DD" }} />,
+  [check_in_until]: <AccessTime sx={{ color: "#16B4DD" }} />,
+  [check_out_from]: <AccessTime sx={{ color: "#16B4DD" }} />,
+  [check_out_until]: <AccessTime sx={{ color: "#16B4DD" }} />,
+  [custom_rules]: <EventNote sx={{ color: "#16B4DD" }} />,
+  [houserulesid]: <Hotel sx={{ color: "#16B4DD" }} />,
+  [noise_restrictions]: <NaturePeople sx={{ color: "#16B4DD" }} />,
+  [parties_events_allowed]: <NoMeetingRoom sx={{ color: "#16B4DD" }} />,
+  [pets_allowed]: <Pets sx={{ color: "#16B4DD" }} />,
+  [quiet_hours_end]: <AccessTime sx={{ color: "#16B4DD" }} />,
+  [quiet_hours_start]: <AccessTime sx={{ color: "#16B4DD" }} />,
+  [smoking_allowed]: <SmokeFree sx={{ color: "#16B4DD" }} />,
+};
+
+const formatTime = (timeString) =>
+  timeString
+    ? new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : "N/A";
+
+const HouseRules = ({ houserules = {} }) => {
+  const rulesArray = [
+    {
+      label: "Check-in",
+      value: `${formatTime(houserules[check_in_from]) ?? "N/A"} - ${
+        formatTime(houserules[check_in_until]) ?? "N/A"
+      }`,
+      icon: iconMap[check_in_from],
+    },
+    {
+      label: "Check-out",
+      value: `${formatTime(houserules[check_out_from]) ?? "N/A"} - ${
+        formatTime(houserules[check_out_until]) ?? "N/A"
+      }`,
+      icon: iconMap[check_out_from],
+    },
+    {
+      label: "Quiet Hours",
+      value: `${formatTime(houserules[quiet_hours_start]) ?? "N/A"} - ${
+        formatTime(houserules[quiet_hours_end]) ?? "N/A"
+      }`,
+      icon: iconMap[quiet_hours_start],
+    },
+    {
+      label: "House rules ID",
+      value: houserules[houserulesid] ?? "N/A",
+      icon: iconMap[houserulesid],
+    },
+    {
+      label: "Custom rules",
+      value: houserules[custom_rules] ?? "N/A",
+      icon: iconMap[custom_rules],
+    },
+    {
+      label: "Noise restrictions",
+      value: houserules[noise_restrictions] ?? "None",
+      icon: iconMap[noise_restrictions],
+    },
+    {
+      label: "Parties/events allowed",
+      value: houserules[parties_events_allowed] ? "Yes" : "No",
+      icon: iconMap[parties_events_allowed],
+    },
+    {
+      label: "Pets allowed",
+      value: houserules[pets_allowed] ? "Yes" : "No",
+      icon: iconMap[pets_allowed],
+    },
+    {
+      label: "Smoking allowed",
+      value: houserules[smoking_allowed] ? "Yes" : "No",
+      icon: iconMap[smoking_allowed],
+    },
+  ];
+
+  const chunkedRules = [];
+  for (let i = 0; i < rulesArray.length; i += 3) {
+    chunkedRules.push(rulesArray.slice(i, i + 3));
+  }
+
   return (
     <Paper className="info-cntr" sx={{ borderRadius: "12px", padding: "16px" }}>
       <div
@@ -36,31 +125,60 @@ const HouseRules = ({ houserules = [] }) => {
         </div>
       </div>
       <Divider sx={{ width: "100%", color: "#ccc", marginY: "16px" }} />
-      <div>
-        {houserules ? (
-          <div>
-            <div>Check-in from: {houserules[check_in_from]}</div>
-            <div>Check-in until: {houserules[check_in_until]}</div>
-            <div>Check-out from: {houserules[check_out_from]}</div>
-            <div>Check-out until: {houserules[check_out_until]}</div>
-            <div>Custom rules: {houserules[custom_rules]}</div>
-            <div>House rules ID: {houserules[houserulesid]}</div>
-            <div>
-              Noise restrictions: {houserules[noise_restrictions] ?? "None"}
-            </div>
-            <div>
-              Parties/events allowed:{" "}
-              {houserules[parties_events_allowed] ? "Yes" : "No"}
-            </div>
-            <div>Pets allowed: {houserules[pets_allowed] ? "Yes" : "No"}</div>
-            <div>Quiet hours end: {houserules[quiet_hours_end]}</div>
-            <div>Quiet hours start: {houserules[quiet_hours_start]}</div>
-            <div>
-              Smoking allowed: {houserules[smoking_allowed] ? "Yes" : "No"}
-            </div>
-          </div>
+      <div className="amenity-cntr">
+        {rulesArray.length > 0 ? (
+          <Grid container spacing={3}>
+            {chunkedRules.map((ruleChunk, index) => (
+              <Grid key={index} item>
+                <Grid
+                  sx={{
+                    padding: "16px",
+                    borderRadius: "8px",
+                    height: 200,
+                    width: 357,
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+                    border: "1px solid #DDDDDD",
+                  }}
+                >
+                  {ruleChunk.map((rule, subIndex) => (
+                    <div key={subIndex} style={{ marginBottom: "45px" }}>
+                      <div key={subIndex} style={{ marginBottom: "45px" }}>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontWeight: "bold",
+                              marginRight: "8px",
+                              fontFamily: "poppins",
+                            }}
+                          >
+                            {rule.icon} {rule.label}
+                          </span>
+                          <span
+                            style={{
+                              fontWeight: "normal",
+                              marginLeft: "auto",
+                              fontFamily: "poppins",
+                            }}
+                          >
+                            {rule.value}
+                          </span>
+                        </Typography>
+                      </div>
+                    </div>
+                  ))}
+                </Grid>
+              </Grid>
+            ))}
+          </Grid>
         ) : (
-          <div className="no-houserules">No House Rules Available</div>
+          <Typography>No House Rules Available</Typography>
         )}
       </div>
     </Paper>
@@ -75,7 +193,6 @@ export default function PropertyHouseRules({ propertyinfo }) {
     try {
       if (propertyinfo) {
         setPropertyInfo(propertyinfo);
-        // console.log("PROPERTY INFO", propertyinfo);
       }
     } catch (err) {
       console.log(err);
@@ -93,7 +210,7 @@ export default function PropertyHouseRules({ propertyinfo }) {
           houserules={
             propertyInfo.property_houserules
               ? propertyInfo.property_houserules[0]
-              : null
+              : {}
           }
         />
       )}
