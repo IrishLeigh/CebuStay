@@ -87,9 +87,7 @@ const Cancellation = ({ cancellation = {} }) => {
             </Grid>
           </Grid>
         ) : (
-          <Typography variant="body1" className="no-cancellation">
-            No Cancellation Available.
-          </Typography>
+          <div className="no-cancellation">No Cancellation Available.</div>
         )}
       </div>
     </Paper>
