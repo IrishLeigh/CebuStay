@@ -82,3 +82,31 @@
   border-radius: 8px;
   margin-top: 16px;
 }
+
+.policy-grid {
+  padding: 16px;
+  border-radius: 8px;
+  height: 200px;
+  width: 480px;
+  background-color: #fff;
+  border: 1px solid #dddddd;
+}
+
+.policy-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 45px;
+}
+
+.policy-item span {
+  font-family: "Poppins", sans-serif;
+}
+
+.policy-item .bold {
+  font-weight: bold;
+}
+
+.policy-item .normal {
+  font-weight: normal;
+  margin-left: auto;
+}

@@ -1,26 +1,35 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Paper from "@mui/material/Paper";
 import { Divider, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { useParams } from "react-router-dom";
-import Container from "@mui/material/Container";
 import ArrowRight from "@mui/icons-material/Send";
+import AccessTime from "@mui/icons-material/AccessTime";
+import Hotel from "@mui/icons-material/Hotel";
+import EventNote from "@mui/icons-material/EventNote";
+import NaturePeople from "@mui/icons-material/NaturePeople";
+import NoMeetingRoom from "@mui/icons-material/NoMeetingRoom";
+import "../css/PropertyBenefits.css";
 
 const bookingpolicyid = "bookingpolicyid";
 const cancel_days = "cancel_days";
 const is_cancel_plan = "is_cancel_plan";
-const modification_plan = "modifcation_plan";
+const modification_plan = "modification_plan";
 const non_refundable = "non_refundable";
 const offer_discount = "offer_discount";
 
-const Cancellation = ({ cancellation = [] }) => {
+const iconMap = {
+  [bookingpolicyid]: <Hotel sx={{ color: "#16B4DD" }} />,
+  [cancel_days]: <AccessTime sx={{ color: "#16B4DD" }} />,
+  [is_cancel_plan]: <EventNote sx={{ color: "#16B4DD" }} />,
+  [modification_plan]: <EventNote sx={{ color: "#16B4DD" }} />,
+  [non_refundable]: <NaturePeople sx={{ color: "#16B4DD" }} />,
+  [offer_discount]: <NoMeetingRoom sx={{ color: "#16B4DD" }} />,
+};
+
+const Cancellation = ({ cancellation = {} }) => {
   return (
-    <Paper className="info-cntr" sx={{ borderRadius: "12px", padding: "16px" }}>
-      <div
-        className="info-title-cntr"
-        style={{ display: "flex", alignItems: "center" }}
-      >
+    <Paper className="info-cntr">
+      <div className="info-title-cntr">
         <ArrowRight sx={{ color: "#16B4DD" }} />
         <div
           style={{ marginLeft: "8px", fontSize: "18px", fontWeight: "bold" }}
@@ -29,36 +38,58 @@ const Cancellation = ({ cancellation = [] }) => {
         </div>
       </div>
       <Divider sx={{ width: "100%", color: "#ccc", marginY: "16px" }} />
-      <div>
-        {cancellation ? (
-          <div>
-            {/* <div>bookingpolicyid: {cancellation[bookingpolicyid]}</div> */}
-            {/* <div>
-              cancel_days:{" "}
-              {cancellation[cancel_days] === null
-                ? "N/A"
-                : cancellation[cancel_days]}
-            </div> */}
-            <div>
-              Cancellation Policy:{" "}
-              {cancellation[is_cancel_plan] === 0
-                ? "No Cancellation"
-                : "Cancellation Days:" + cancellation[cancel_days]}
-            </div>
-            <div>
-              Modifcation Policy:{" "}
-              {cancellation[modification_plan] === 0 ? "N/A" : "There is..."}
-            </div>
-            <div>
-              Refund Policy: {cancellation[non_refundable] === 0 ? "No" : "Yes"}
-            </div>
-            <div>
-              Dicount Offers:{" "}
-              {cancellation[offer_discount] === 0 ? "No" : "Yes"}
-            </div>
-          </div>
+      <div className="amenity-cntr">
+        {Object.keys(cancellation).length > 0 ? (
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <div className="policy-grid">
+                <div className="policy-item">
+                  <span className="bold">
+                    {iconMap[bookingpolicyid]} Cancellation Policy:
+                  </span>
+                  <span className="normal">
+                    {cancellation[is_cancel_plan] === 0 ? "No" : "Yes"}
+                  </span>
+                </div>
+                <div className="policy-item">
+                  <span className="bold">
+                    {iconMap[modification_plan]} Modification Policy:
+                  </span>
+                  <span className="normal">
+                    {cancellation[modification_plan] === 0
+                      ? "Not Allowed"
+                      : "Allowed"}
+                  </span>
+                </div>
+              </div>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <div className="policy-grid">
+                <div className="policy-item">
+                  <span className="bold">
+                    {iconMap[non_refundable]} Refund Policy:
+                  </span>
+                  <span className="normal">
+                    {cancellation[non_refundable] === 0
+                      ? "Not Allowed"
+                      : "Allowed"}
+                  </span>
+                </div>
+                <div className="policy-item">
+                  <span className="bold">
+                    {iconMap[offer_discount]} Discount Offers:
+                  </span>
+                  <span className="normal">
+                    {cancellation[offer_discount] === 0 ? "No" : "Yes"}
+                  </span>
+                </div>
+              </div>
+            </Grid>
+          </Grid>
         ) : (
-          <div className="no-cancellation">No Cancellation Available.</div>
+          <Typography variant="body1" className="no-cancellation">
+            No Cancellation Available.
+          </Typography>
         )}
       </div>
     </Paper>
@@ -73,7 +104,6 @@ export default function PropertyCancellation({ propertyinfo }) {
     try {
       if (propertyinfo) {
         setPropertyInfo(propertyinfo);
-        // console.log("PROPERTY INFO", propertyinfo);
       }
     } catch (err) {
       console.log(err);
@@ -91,7 +121,7 @@ export default function PropertyCancellation({ propertyinfo }) {
           cancellation={
             propertyInfo.property_bookingpolicy
               ? propertyInfo.property_bookingpolicy
-              : null
+              : {}
           }
         />
       )}
