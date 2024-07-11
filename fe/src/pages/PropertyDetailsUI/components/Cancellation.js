@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
-import { Divider, Typography } from "@mui/material";
+import { Divider } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import ArrowRight from "@mui/icons-material/Send";
 import AccessTime from "@mui/icons-material/AccessTime";
