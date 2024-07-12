@@ -6,14 +6,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BedIcon from '@mui/icons-material/Bed';
 import axios from 'axios';
-
-export default function Search({ onSearch }) {
+import { useNavigate } from 'react-router-dom';
+export default function Search({ onSearch, accommodations, setAccommodationList  }) {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(null);
     const [guestCapacity, setGuestCapacity] = useState('');
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-
+    const navigate = useNavigate();
     const handleSearch = () => {
         onSearch({ startDate, endDate, guestCapacity: guestCapacity || null });
     };
@@ -48,8 +48,8 @@ export default function Search({ onSearch }) {
     };
 
     const debouncedFetchResults = useCallback(debounce(fetchSuggestions, 300), []);
-
     useEffect(() => {
+        
         if (query) {
             debouncedFetchResults(query);
         } else {
@@ -64,7 +64,22 @@ export default function Search({ onSearch }) {
     const handleSuggestionClick = (suggestion) => {
         setQuery(suggestion.name.address || suggestion.name.property_name);
         setSuggestions([]); // Force clearing the suggestions list
+        console.log('Suggestion clicked:', suggestion);
+        if(suggestion.type === 'Location') {
+            const filteredAccommodations = accommodations.filter(acc => acc.address === suggestion.name.address);
+            setAccommodationList(filteredAccommodations);
+        } else {
+            const checkin_date = startDate;
+            const checkout_date = endDate;
+            const state = {
+                guestCapacity,
+                checkin_date,
+                checkout_date
+            };
+            navigate(`/accommodation/property/${suggestion.name.propertyid}`, { state });
+        }
     };
+    
 
     return (
         <div>
