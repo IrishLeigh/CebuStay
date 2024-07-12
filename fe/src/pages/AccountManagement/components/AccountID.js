@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import "../css/AccountID.css";
-import { Divider, TextField, InputAdornment, Paper, CircularProgress } from "@mui/material";
+import { Divider, TextField, InputAdornment, Paper, CircularProgress, Snackbar, Alert } from "@mui/material";
 import AccountCircle from '@mui/icons-material/PermIdentity';
-import axios from 'axios'; // Import axios for making HTTP requests
+import axios from 'axios';
 
-export default function AccountID({ profile }) {
+export default function AccountID({ profile, onUpdateProfile }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [isChanged, setIsChanged] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [editedProfile, setEditedProfile] = useState(null); // State to hold edited profile data
 
   useEffect(() => {
     if (profile) {
@@ -19,23 +23,39 @@ export default function AccountID({ profile }) {
   useEffect(() => {
     if (profile) {
       setIsChanged(firstName !== profile.firstname || lastName !== profile.lastname);
+      setEditedProfile({
+        ...profile,
+        firstname: firstName,
+        lastname: lastName
+      });
     }
   }, [firstName, lastName, profile]);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleSaveName = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${profile.userid}`, {
-        // Assuming profile.userid exists for updating the profile
         userid: profile.userid,
         firstname: firstName,
         lastname: lastName,
       });
-      console.log("Saved:", { firstName, lastName });
-      setIsChanged(false); // Reset the state after saving
+
+      setSnackbarMessage("Personal information updated successfully!");
+      setSnackbarSeverity("success");
+      setIsChanged(false);
+      if (onUpdateProfile) {
+        onUpdateProfile(editedProfile); // Pass updated profile back to parent component
+      }
     } catch (error) {
+      setSnackbarMessage("Failed to update data. Please try again later.");
+      setSnackbarSeverity("error");
       console.error('Failed to update data. Please try again later.', error);
-      // Handle error state or display an error message to the user
+    } finally {
+      setSnackbarOpen(true);
     }
   };
 
@@ -43,12 +63,12 @@ export default function AccountID({ profile }) {
     if (profile) {
       setFirstName(profile.firstname);
       setLastName(profile.lastname);
-      setIsChanged(false); // Reset the state after cancelling
+      setIsChanged(false);
     }
   };
 
   if (!profile) {
-    return <CircularProgress />; // Render a loader while profile data is loading or null
+    return <CircularProgress />;
   }
 
   return (
@@ -119,6 +139,19 @@ export default function AccountID({ profile }) {
             Cancel
           </button>
         </div>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </div>
     </Paper>
   );

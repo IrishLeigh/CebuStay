@@ -1,19 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../css/UserProfile.css";
 import AccountID from "./AccountID";
 import PersonalInformation from "./PersonalInformation";
 import AccountSignIn from "./AccountSignIn";
 import HeaderAccountMgnt from "../../../components/Header/HeaderAccountMgnt";
-import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress from MUI
+import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from "react-router-dom";
 
-export default function UserProfile({ profile }) {
-  if (!profile) {
-    return <CircularProgress />; // Render a loader while profile data is loading or null
-  }
+export default function UserProfile({ profile, setToken }) {
+  const [currentProfile, setCurrentProfile] = useState(profile);
+  const navigate = useNavigate();
+  const handleProfileUpdate = (updatedProfile) => {
+    setCurrentProfile(updatedProfile);
+  };
+
+  useEffect(() => {
+    setCurrentProfile(profile);
+  }, [profile]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    navigate('/login');
+  };
+
 
   return (
     <>
-      <HeaderAccountMgnt/>
+      {!currentProfile ? (
+        <CircularProgress />
+      ) : (
+      
+        <>
+        <HeaderAccountMgnt/>
       <div className="edit-profile-cntr">
         
         {/* Banner Starts Here */}
@@ -32,20 +50,21 @@ export default function UserProfile({ profile }) {
               className="avatar-image"
             />
             <div className="user-details">
-              <div className="user-name"> {(profile.firstname + " " + profile.lastname).toUpperCase()}</div>
-              <div className="user-id">#{profile.userid}</div>
+              <div className="user-name"> {(currentProfile.firstname + " " + currentProfile.lastname).toUpperCase()}</div>
+              <div className="user-id">#{currentProfile.userid}</div>
             </div>
           </div>
           <div className="logout-btn-container">
-            <button className="logout-btn">Log out</button>
+            <button className="logout-btn" onClick={handleLogout}>Log out</button>
           </div>
         </div>
 
         {/* Components starts Here */}
-        <AccountID profile={profile} />
-        <PersonalInformation />
-        <AccountSignIn  profile={profile} />
-      </div>
+        <AccountID profile={currentProfile} onUpdateProfile={handleProfileUpdate} />
+        <PersonalInformation profile={currentProfile} onUpdateProfile={handleProfileUpdate}/>
+        <AccountSignIn  profile={currentProfile} />
+      </div></>
+      )}
     </>
   );
 }
