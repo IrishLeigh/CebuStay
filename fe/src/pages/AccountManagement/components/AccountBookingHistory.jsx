@@ -1,14 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/AccountBookingHistory.css';
 import { MdMenuOpen, MdSearch} from 'react-icons/md';
 import HeaderAccountMgnt from '../../../components/Header/HeaderAccountMgnt';
-
-export default function BookingHistory() {
+import axios from 'axios';
+export default function BookingHistory({profile}) {
     const [selectedButton, setSelectedButton] = useState('UPCOMING');
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
+    const [upcomingData, setUpcomingData] = useState([]);
+    const [completedData, setCompletedData] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+                const userid = profile.userid;
+                const response = await axios.get('http://127.0.0.1:8000/api/user/bookings', {
+                    params: {
+                        userid: userid
+                    }
+                });
+                setUpcomingData(response.data);
+                console.log(response.data);
+                // console.log(profile.userid);
+                
+                    const response_complete = await axios.get('http://127.0.0.1:8000/api/user/bookinghistory', {
+                        params: {
+                            userid: userid
+                        }
+                    });
+                    setCompletedData(response_complete.data);
+                    console.log(response_complete.data);
+                
+            } catch(error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, []);
 
-    const upcomingData = [
+    const upcominsgData = [
         { id: '#CJKK23', date: '12/11/2022', name: 'Sunset Resort', location: 'Miami, FL', guest: 'Michael Johnson', type: 'Suite', amount: '$200', status: 'Upcoming' },
         { id: '#DJUI45', date: '05/12/2022', name: 'Mountain Lodge', location: 'Denver, CO', guest: 'Sarah Parker', type: 'Cabin', amount: '$250', status: 'Upcoming' },
     ];
@@ -17,7 +46,7 @@ export default function BookingHistory() {
         { id: '#BHJG87', date: '15/10/2022', name: 'The Grand Hotel', location: 'New York, NY', guest: 'Emily Clark', type: 'Double Room', amount: '$150', status: 'Cancelled' },
     ];
 
-    const completedData = [
+    const completedDdata = [
         { id: '#AHGA68', date: '23/09/2022', name: 'Hotel California', location: 'Los Angeles, CA', guest: 'Jacob Marcus', type: 'Single Room', amount: '$100', status: 'Completed' },
         { id: '#EJKL89', date: '19/01/2023', name: 'Beachside Inn', location: 'San Diego, CA', guest: 'Chris Evans', type: 'Single Room', amount: '$300', status: 'Completed' },
     ];
