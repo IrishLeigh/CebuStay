@@ -169,7 +169,7 @@ const AccountManagement = () => {
                 {/* Main Content */}
                 <Grid item xs={10} style={{  transition: 'margin-left 0.3s ease' , backgroundColor: ''}}>
                     {activeItem === 'account' && <UserProfile  profile={profile} />}
-                    {activeItem === 'bookings' && <BookingHistory />}
+                    {activeItem === 'bookings' && <BookingHistory profile={profile} />}
                     {/* Add more conditional rendering based on activeItem */}
                 </Grid>
             </Grid>
