@@ -53,8 +53,9 @@ class Booking extends Model
 
     public function guest()
     {
-        return $this->hasOne(Guest::class, 'guestid', 'userid');
+        return $this->belongsTo(Guest::class, 'guestid', 'guestid');
     }
+
 
 
 }
