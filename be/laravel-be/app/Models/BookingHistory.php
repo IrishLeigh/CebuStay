@@ -42,5 +42,9 @@ class BookingHistory extends Model
         return $this->belongsTo(Booker::class, 'bookerid', 'bookerid');
     }
 
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class, 'guestid', 'guestid');
+    }
 
 }

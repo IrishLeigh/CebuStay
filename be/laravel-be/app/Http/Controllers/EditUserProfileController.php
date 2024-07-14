@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserModel;
 use App\Models\EditUserProfile;
+use Illuminate\Support\Facades\Hash;
 
 class EditUserProfileController extends CORS
 {
@@ -41,6 +42,20 @@ class EditUserProfileController extends CORS
         }
         if ($request->has('email')) {
             $user->email = $request->input('email');
+        }
+        if ($request->has('birthday')) {
+            $user->birthday = $request->input('birthday');
+        }
+        if ($request->has('country')) {
+            $user->country = $request->input('country');
+        }
+
+        if ($request->input('password')) {
+            $oldPassword = $request->input('old_password');
+            if (!Hash::check($oldPassword, $user->password)) {
+                return response()->json(['message' => 'Incorrect old password.'], 400);
+            }
+            $user->password = Hash::make($request->input('password'));
         }
 
         $user->save();

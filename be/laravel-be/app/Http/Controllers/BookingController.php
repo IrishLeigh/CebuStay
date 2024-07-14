@@ -365,13 +365,13 @@ class BookingController extends CORS
 
         $userid = $request->input('userid');
 
-        // Eager load the property, location, and booker relationships
-        $bookings = Booking::with(['property.location', 'booker'])
-            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid')
+        // Eager load the property, location, booker, and guest relationships
+        $bookings = Booking::with(['property.location', 'booker', 'guest'])
+            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
             ->where('userid', $userid)
             ->get();
 
-        // Format the response to include the additional property and booker data
+        // Format the response to include the additional property, booker, and guest data
         $formattedBookings = $bookings->map(function ($booking) {
             return [
                 'id' => $booking->bookingid,
@@ -388,12 +388,15 @@ class BookingController extends CORS
                 'first_name' => $booking->booker->firstname,
                 'last_name' => $booking->booker->lastname,
                 'email' => $booking->booker->email,
-                'phone' => $booking->booker->phonenum
+                'phone' => $booking->booker->phonenum,
+                'guest' => $booking->guest->guestname
             ];
         });
 
         return response()->json($formattedBookings);
     }
+
+
 
 
     public function getUserBookingHistory(Request $request)
@@ -403,8 +406,8 @@ class BookingController extends CORS
         $userid = $request->input('userid');
 
         // Eager load the property, location, and booker relationships
-        $bookings = BookingHistory::with(['property.location', 'booker'])
-            ->select('bhid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'status', 'check_type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid')
+        $bookings = BookingHistory::with(['property.location', 'booker', 'guest'])
+            ->select('bhid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'status', 'check_type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
             ->where('userid', $userid)
             ->get();
 
@@ -425,7 +428,8 @@ class BookingController extends CORS
                 'first_name' => $booking->booker->firstname,
                 'last_name' => $booking->booker->lastname,
                 'email' => $booking->booker->email,
-                'phone' => $booking->booker->phonenum
+                'phone' => $booking->booker->phonenum,
+                'guest' => $booking->guest->guestname
             ];
         });
 

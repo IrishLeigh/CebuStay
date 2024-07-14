@@ -19,6 +19,11 @@ class Guest extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class, 'guestid', 'guestid');
+        return $this->hasOne(Booking::class, 'guestid', 'guestid');
+    }
+
+    public function bookinghistory()
+    {
+        return $this->hasOne(BookingHistory::class, 'guestid', 'guestid');
     }
 }
