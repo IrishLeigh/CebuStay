@@ -13,17 +13,16 @@ import {
   Typography,
   Box,
   Stack,
-  Button
+  Button,
 } from "@mui/material";
 import { Edit as EditIcon } from "@mui/icons-material";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "./components/sidebar";
 import EditReservationModal from "./modals/EditReservationModal";
 import axios from "axios";
 import Checkouts from "./components/checkout"; // Assuming you have this component
 import Cancelled from "./components/cancelled"; // Assuming you have this component
 import CheckedIn from "./components/checkedin";
 import Upcoming from "./components/upcoming"; // Assuming you have this component
-
 
 const AccommodationReservation = () => {
   const [open, setOpen] = useState(false);
@@ -72,10 +71,8 @@ const AccommodationReservation = () => {
 
   // Get the bookings
   useEffect(() => {
-
-
     const fetchData = async () => {
-      if (!user) return; 
+      if (!user) return;
       try {
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/property/bookings",
@@ -182,15 +179,29 @@ const AccommodationReservation = () => {
                         <div>{reservation.booker.phonenum}</div>
                       </div>
                     </TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>{reservation.property_name}</TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>{reservation.property_type}</TableCell>
+                    <TableCell sx={{ fontSize: "1rem" }}>
+                      {reservation.property_name}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "1rem" }}>
+                      {reservation.property_type}
+                    </TableCell>
                     <TableCell sx={{ fontSize: "1rem" }}>
                       {reservation.checkin_date} to {reservation.checkout_date}
                     </TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>{reservation.guest_count}</TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>{reservation.total_price}</TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>{reservation.status}</TableCell>
-                    <TableCell sx={{ fontSize: "1rem" }}>{reservation.type === "booking" ? "Checked-in" : "Upcoming"}</TableCell>
+                    <TableCell sx={{ fontSize: "1rem" }}>
+                      {reservation.guest_count}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "1rem" }}>
+                      {reservation.total_price}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "1rem" }}>
+                      {reservation.status}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: "1rem" }}>
+                      {reservation.type === "booking"
+                        ? "Checked-in"
+                        : "Upcoming"}
+                    </TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleOpen(reservation)}>
                         <EditIcon />
@@ -268,9 +279,9 @@ const AccommodationReservation = () => {
                   color: "blue",
                   border: "1px solid blue",
                   borderRadius: "0.5rem",
-                  '&:hover': {
+                  "&:hover": {
                     backgroundColor: "lightblue",
-                  }
+                  },
                 }}
               >
                 All
@@ -283,9 +294,9 @@ const AccommodationReservation = () => {
                   color: "blue",
                   border: "1px solid blue",
                   borderRadius: "0.5rem",
-                  '&:hover': {
+                  "&:hover": {
                     backgroundColor: "lightblue",
-                  }
+                  },
                 }}
               >
                 Checked In
@@ -298,9 +309,9 @@ const AccommodationReservation = () => {
                   color: "blue",
                   border: "1px solid blue",
                   borderRadius: "0.5rem",
-                  '&:hover':{
+                  "&:hover": {
                     backgroundColor: "lightblue",
-                  }
+                  },
                 }}
               >
                 Checked Out
@@ -314,9 +325,9 @@ const AccommodationReservation = () => {
                   color: "blue",
                   border: "1px solid blue",
                   borderRadius: "0.5rem",
-                  '&:hover': {
+                  "&:hover": {
                     backgroundColor: "lightblue",
-                  }
+                  },
                 }}
               >
                 Cancelled
@@ -329,17 +340,15 @@ const AccommodationReservation = () => {
                   color: "blue",
                   border: "1px solid blue",
                   borderRadius: "0.5rem",
-                  '&:hover': {
+                  "&:hover": {
                     backgroundColor: "lightblue",
-                  }
+                  },
                 }}
               >
                 Upcoming
               </Button>
             </Stack>
-            <Paper p={2}>
-              {renderComponent()}
-            </Paper>
+            <Paper p={2}>{renderComponent()}</Paper>
 
             <EditReservationModal
               open={open}

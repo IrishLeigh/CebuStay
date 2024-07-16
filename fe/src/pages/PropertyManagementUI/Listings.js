@@ -16,12 +16,12 @@ import {
   Button,
   Toolbar,
   Typography,
-  Grid
+  Grid,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import Sidebar from "../../components/Sidebar";
+// import Sidebar from "../../components/Sidebar";
 import axios from "axios";
-
+import Sidebar from "./components/sidebar";
 
 const Listings = () => {
   const [propertyData, setPropertyData] = useState([]);
@@ -49,26 +49,26 @@ const Listings = () => {
   }, []);
 
   useEffect(() => {
-      const fetchData = async () => {
-        if (!user) return; 
-        try {
-          const propertyres = await axios.get(
-            "http://127.0.0.1:8000/api/user/properties",
-            {
-              params: {
-                userid: user.userid,
-              },
-            }
-          );
-  
-          console.log("Propertydata: ", propertyres.data);
-          setPropertyData(propertyres.data.userproperties);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-      fetchData();
-    }, [user]);
+    const fetchData = async () => {
+      if (!user) return;
+      try {
+        const propertyres = await axios.get(
+          "http://127.0.0.1:8000/api/user/properties",
+          {
+            params: {
+              userid: user.userid,
+            },
+          }
+        );
+
+        console.log("Propertydata: ", propertyres.data);
+        setPropertyData(propertyres.data.userproperties);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [user]);
 
   const handleOpen = (listing) => {
     setCurrentListing(listing);
@@ -84,7 +84,7 @@ const Listings = () => {
     if (!selectedListings) {
       alert("No listing Yet, Add Yours Now!");
       return;
-    }; 
+    }
     if (event.target.checked) {
       setSelectedListings([...selectedListings, id]);
     } else {
@@ -118,12 +118,12 @@ const Listings = () => {
 
   return (
     <Grid container>
-    {/* Sidebar */}
-    <Grid item xs={2}>
-      <Sidebar />
-    </Grid>
-    {/* Main Content */}
-    <Grid
+      {/* Sidebar */}
+      <Grid item xs={2}>
+        <Sidebar />
+      </Grid>
+      {/* Main Content */}
+      <Grid
         item
         xs={10}
         sx={{
@@ -136,8 +136,6 @@ const Listings = () => {
           marginRight: "auto",
         }}
       >
-
-        
         <Box
           sx={{
             display: "flex", // Change from "column" to "flex"
@@ -146,31 +144,27 @@ const Listings = () => {
             marginRight: "auto",
           }}
         >
-
-          <Typography 
-          sx={{
-            fontSize: "2rem",
-            fontWeight: "bold",
-            justifyContent: "center",
-            textAlign: "left",
-            mt:2,
-            ml:4,
-            pb:2,
-            
-          }}
-        >
+          <Typography
+            sx={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              justifyContent: "center",
+              textAlign: "left",
+              mt: 2,
+              ml: 4,
+              pb: 2,
+            }}
+          >
             Property Listings
           </Typography>
           <Container
-                sx={{
-                  justifyContent: "center",
-                  textAlign: "left",
-                  m:1, 
-                  
-                }}
-              >
-            <Toolbar
-            >
+            sx={{
+              justifyContent: "center",
+              textAlign: "left",
+              m: 1,
+            }}
+          >
+            <Toolbar>
               <Button
                 variant="contained"
                 color="secondary"
@@ -181,62 +175,95 @@ const Listings = () => {
                 Delete Selected
               </Button>
             </Toolbar>
-            <TableContainer component={Paper} sx={{ width: "100%"}}>
-            <Table aria-label="listings table" sx={{ minWidth: 800 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      indeterminate={
-                        selectedListings.length > 0 &&
-                        selectedListings.length < propertyData.length
-                      }
-                      checked={
-                        propertyData.length > 0 &&
-                        selectedListings.length === propertyData.length
-                      }
-                      onChange={handleSelectAllClick}
-                    />
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>Property</TableCell>
-                  <TableCell sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>Id</TableCell>
-                  <TableCell sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>Address</TableCell>
-                  <TableCell sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>Payment Method</TableCell>
-                  <TableCell sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>Cancellation Policy</TableCell>
-                  <TableCell sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {propertyData && propertyData.map((listing) => (
-                  <TableRow key={listing.propertyid}>
+            <TableContainer component={Paper} sx={{ width: "100%" }}>
+              <Table aria-label="listings table" sx={{ minWidth: 800 }}>
+                <TableHead>
+                  <TableRow>
                     <TableCell padding="checkbox">
                       <Checkbox
+                        indeterminate={
+                          selectedListings.length > 0 &&
+                          selectedListings.length < propertyData.length
+                        }
                         checked={
-                          selectedListings.indexOf(listing.propertyid) !== -1
+                          propertyData.length > 0 &&
+                          selectedListings.length === propertyData.length
                         }
-                        onChange={(event) =>
-                          handleCheckboxClick(event, listing.propertyid)
-                        }
+                        onChange={handleSelectAllClick}
                       />
                     </TableCell>
-                    <TableCell sx={{ fontSize: "1.125rem" }}>{listing.property_name}</TableCell>
-                    <TableCell sx={{ fontSize: "1.125rem" }}>{listing.propertyid}</TableCell>
-                    <TableCell sx={{ fontSize: "1.125rem" }}>{listing.address}</TableCell>
-                    <TableCell sx={{ fontSize: "1.125rem" }}>{listing.paymentmethod}</TableCell>
-                    <TableCell sx={{ fontSize: "1.125rem" }}>
-                      {listing.is_cancel_plan ? "Yes" : "No"}
+                    <TableCell
+                      sx={{ fontSize: "1.125rem", fontWeight: "bold" }}
+                    >
+                      Property
                     </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleOpen(listing)}>
-                        <EditIcon />
-                      </IconButton>
+                    <TableCell
+                      sx={{ fontSize: "1.125rem", fontWeight: "bold" }}
+                    >
+                      Id
+                    </TableCell>
+                    <TableCell
+                      sx={{ fontSize: "1.125rem", fontWeight: "bold" }}
+                    >
+                      Address
+                    </TableCell>
+                    <TableCell
+                      sx={{ fontSize: "1.125rem", fontWeight: "bold" }}
+                    >
+                      Payment Method
+                    </TableCell>
+                    <TableCell
+                      sx={{ fontSize: "1.125rem", fontWeight: "bold" }}
+                    >
+                      Cancellation Policy
+                    </TableCell>
+                    <TableCell
+                      sx={{ fontSize: "1.125rem", fontWeight: "bold" }}
+                    >
+                      Actions
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
+                </TableHead>
+                <TableBody>
+                  {propertyData &&
+                    propertyData.map((listing) => (
+                      <TableRow key={listing.propertyid}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={
+                              selectedListings.indexOf(listing.propertyid) !==
+                              -1
+                            }
+                            onChange={(event) =>
+                              handleCheckboxClick(event, listing.propertyid)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "1.125rem" }}>
+                          {listing.property_name}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "1.125rem" }}>
+                          {listing.propertyid}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "1.125rem" }}>
+                          {listing.address}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "1.125rem" }}>
+                          {listing.paymentmethod}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "1.125rem" }}>
+                          {listing.is_cancel_plan ? "Yes" : "No"}
+                        </TableCell>
+                        <TableCell>
+                          <IconButton onClick={() => handleOpen(listing)}>
+                            <EditIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
             {/* Edit Modal */}
             <Modal open={open} onClose={handleClose}>
