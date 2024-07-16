@@ -8,18 +8,17 @@ import { UserProvider } from "./components/UserProvider";
 import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
 import Sample from "./pages/AccountManagement/Sample";
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
-
-
+import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-
-<BrowserRouter>
+    <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <App/>
-          </UserProvider>
+          <App />
+          {/* <Sidebar /> */}
+        </UserProvider>
       </DataProvider>
     </BrowserRouter>
   </React.StrictMode>
