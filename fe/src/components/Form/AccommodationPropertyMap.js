@@ -51,35 +51,21 @@ const MapForm = ({ google, location}) => {
   }, [location]);
 
   return (
-    <Container
-      maxWidth="sm"
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "1rem", // Adjusted padding
-      }}
-    >
+    <Container >
       <div
-        style={{ width: "100%", maxWidth: "50rem", marginBottom: "10rem" }}
+        style={{ width: "100%"}}
       >
-        {" "}
-        {/* Adjusted maxWidth */}
-        <Typography sx={{ fontSize: "2rem", mb: 2, textAlign: "left" , }} fontWeight="bold">
+        <Typography sx={{ fontSize: "2rem", textAlign: "left" , }} fontWeight="bold">
           Pin your exact location
         </Typography>
         <Paper
           elevation={3}
           sx={{
-            p: "1rem",
             borderRadius: ".5rem",
-            padding: "2rem",
+            padding: "1rem",
+            width: "100%",
           }}
         >
-          {" "}
-          {/* Adjusted padding */}
           <Map
             google={google}
             zoom={14}
@@ -104,7 +90,7 @@ const MapForm = ({ google, location}) => {
             onClick={resetPosition}
             style={{ fontSize: "1rem", marginTop: "1rem" }}
           >
-            {" "}
+
             {/* Adjusted fontSize */}
             Reset
           </Button>
