@@ -7,7 +7,7 @@ import { Grid } from "@mui/material";
 
 const propertyTypes = [
   {
-    name: "Entire Room",
+    name: "Entire Property",
     description:
       "Guests are able to use the entire place and do not have to share this with the host or other guests.",
   },

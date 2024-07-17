@@ -9,6 +9,7 @@ import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropert
 import Sample from "./pages/AccountManagement/Sample";
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
+import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,9 +17,8 @@ root.render(
     <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <App />
-          {/* <Sidebar /> */}
-        </UserProvider>
+          <App/>
+          </UserProvider>
       </DataProvider>
     </BrowserRouter>
   </React.StrictMode>

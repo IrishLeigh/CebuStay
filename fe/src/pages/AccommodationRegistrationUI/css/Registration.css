@@ -4,9 +4,9 @@
   bottom: 0;
   left: 0;
   width: 100vw; /* Set width to auto to adjust based on content */
-  background-color: #ffffff;
+  background-color: transparent;
   padding: 1.5em; /* Padding in em for responsiveness */
-  box-shadow: 0px -0.25em 0.625em rgba(0, 0, 0, 0.1); /* Shadow box */
+  /* box-shadow: 0px -0.25em 0.625em rgba(0, 0, 0, 0.1); Shadow box */
   display: flex;
   justify-content: space-between;
   overflow-x: hidden; /* Hide horizontal overflow */
