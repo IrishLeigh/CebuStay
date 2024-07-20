@@ -19,9 +19,8 @@ import {
   Grid,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-// import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 import axios from "axios";
-import Sidebar from "./components/sidebar";
 
 const Listings = () => {
   const [propertyData, setPropertyData] = useState([]);
@@ -170,7 +169,10 @@ const Listings = () => {
                 color="secondary"
                 startIcon={<DeleteIcon />}
                 onClick={handleDelete}
-                disabled={selectedListings.length === 0}
+                disabled={
+                  selectedListings !== undefined &&
+                  selectedListings.length === 0
+                }
               >
                 Delete Selected
               </Button>
@@ -182,11 +184,14 @@ const Listings = () => {
                     <TableCell padding="checkbox">
                       <Checkbox
                         indeterminate={
+                          selectedListings !== undefined &&
                           selectedListings.length > 0 &&
+                          selectedListings !== undefined &&
                           selectedListings.length < propertyData.length
                         }
                         checked={
-                          propertyData.length > 0 &&
+                          propertyData !== undefined &&
+                          selectedListings !== undefined &&
                           selectedListings.length === propertyData.length
                         }
                         onChange={handleSelectAllClick}
@@ -225,7 +230,7 @@ const Listings = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {propertyData &&
+                  {propertyData !== undefined &&
                     propertyData.map((listing) => (
                       <TableRow key={listing.propertyid}>
                         <TableCell padding="checkbox">
