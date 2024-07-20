@@ -3,7 +3,6 @@
 .header .title {
   /* background-image: url("C:\Kaye\capstone1\CebuStayNew\CebuStay\fe\public\ReservationBanner.png"); */ /*kani nga path kay sa ako rani*/
   /* background-image: url("ReservationBanner.png"); */ /*ako lang sa comment kay mo error diri sa ako*/
-  /* background-color: #a334cf; */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -76,7 +75,7 @@
   padding: 0.5rem;
   z-index: 10;
   width: 10rem;
-  /* top: 3rem; */
+  top: 3rem;
   left: 50%;
   transform: translateX(-50%);
 }
