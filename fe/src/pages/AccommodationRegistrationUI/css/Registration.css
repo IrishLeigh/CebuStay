@@ -4,12 +4,13 @@
   bottom: 0;
   left: 0;
   width: 100vw; /* Set width to auto to adjust based on content */
-  background-color: #ffffff;
+  background-color: transparent;
   padding: 1.5em; /* Padding in em for responsiveness */
-  box-shadow: 0px -0.25em 0.625em rgba(0, 0, 0, 0.1); /* Shadow box */
+  /* box-shadow: 0px -0.25em 0.625em rgba(0, 0, 0, 0.1); Shadow box */
   display: flex;
   justify-content: space-between;
   overflow-x: hidden; /* Hide horizontal overflow */
+  z-index: 1000;
 }
 
 /* Define styles for the next and previous buttons */
@@ -37,3 +38,11 @@
   margin-left: 2em; /* Add margin between buttons and edges */
   transform: scale(1.1); /* Example transform on hover */
 }
+
+/* Add this to your CSS file */
+.greyed-out {
+  background-color: #f0f0f0; /* Light grey background */
+  pointer-events: none; /* Prevent interaction */
+  opacity: 0.5; /* Make it semi-transparent */
+}
+

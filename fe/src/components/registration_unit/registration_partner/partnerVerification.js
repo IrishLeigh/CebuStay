@@ -8,12 +8,24 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
-import '../../../components/Button/NextButton.css'
+import Button from '@mui/material/Button';
+import '../../../components/Button/NextButton.css';
 
-export default function PartnerVerification({ onHostDataChange }) {
+export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack,openModal }) {
   const [hostType, setHostType] = useState('');
   const [individualData, setIndividualData] = useState({});
   const [companyData, setCompanyData] = useState({});
+
+  useEffect(() => {
+    if (parentPartnerData) {
+      setHostType(parentPartnerData.hostType || '');
+      if (parentPartnerData.hostType === 'Individual') {
+        setIndividualData(parentPartnerData);
+      } else if (parentPartnerData.hostType === 'Company') {
+        setCompanyData(parentPartnerData);
+      }
+    }
+  }, [parentPartnerData]);
 
   const handleChange = (event) => {
     setHostType(event.target.value);
@@ -27,41 +39,40 @@ export default function PartnerVerification({ onHostDataChange }) {
     setCompanyData(data);
   };
 
-  // Memoize the onHostDataChange function to prevent infinite loops
   const memoizedOnHostDataChange = useCallback(onHostDataChange, []);
 
   useEffect(() => {
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
-    // Only call memoizedOnHostDataChange if the data has actually changed
     memoizedOnHostDataChange(dataToSend);
   }, [hostType, individualData, companyData, memoizedOnHostDataChange]);
 
+  const validateAndProceed = () => {
+    if ((hostType === 'Individual' && Object.keys(individualData).length > 0) ||
+        (hostType === 'Company' && Object.keys(companyData).length > 0)) {
+      const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+      onHostDataChange(dataToSend);
+      openModal();
+  
+    } else {
+      alert("Please provide the necessary information.");
+    }
+  };
+
   return (
     <Container
-      maxWidth="md"
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        // justifyContent: "center",
-        // alignItems: "center",
-      }}
+      maxWidth="lg"
+      className='centered-container'
     >
       <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          textAlign: "left",
-          mt: "4rem",
-          mb: 12
-        }}
+       
       >
-        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
               Compliance and Trust
             </Typography>
 
-            <Typography sx={{ fontSize: "1.5rem",width: "100%" }} mb={2} >
+            <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2} >
               For verification, please tell us who you are.
             </Typography>
           </div>
@@ -121,6 +132,14 @@ export default function PartnerVerification({ onHostDataChange }) {
           </Box>
         </Paper>
       </Box>
+      <div className="stepperFooter">
+        <Button onClick={handleBack} className="stepperPrevious">
+          Back
+        </Button>
+        <Button onClick={validateAndProceed} className="stepperNext">
+          Finish
+        </Button>
+      </div>
     </Container>
   );
 }

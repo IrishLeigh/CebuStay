@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, Typography, Grid, Container } from "@mui/material";
 import { motion } from "framer-motion";
-import '../../components/Button/NextButton.css'
 
+// Sample data (consider moving this to a separate file if it's large)
 const data = {
   basicAmenities: [
     { icon: "toiletries.png", text: "Toiletries" },
@@ -113,7 +113,7 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
       : [...selectedAmenities, itemText];
 
     setSelectedAmenities(newSelectedAmenities);
-    onItemsChange(category, newSelectedAmenities); // Notify parent component about the updated selected items
+    onItemsChange(category, newSelectedAmenities);
   };
 
   useEffect(() => {
@@ -151,7 +151,8 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
   );
 }
 
-function AccommodationPropertyInformation({ onAmenitiesChange, parentAmenities, handleBack, handleNext }) {
+
+function AmenitiesFacilitiesServices({ onAmenitiesChange, parentAmenities, handleNext, handleBack }) {
   const [selectedAmenities, setSelectedAmenities] = useState(parentAmenities);
 
   const handleItemsChange = (category, items) => {
@@ -159,11 +160,11 @@ function AccommodationPropertyInformation({ onAmenitiesChange, parentAmenities, 
       ...prevSelectedAmenities,
       [category]: items,
     }));
+    onAmenitiesChange(category, items);
   };
 
   const handleSave = () => {
-    console.log("Save changes", selectedAmenities);
-
+    console.log("Selected Amenities from child:", selectedAmenities);
     onAmenitiesChange(selectedAmenities);
     handleNext();
   };
@@ -205,27 +206,17 @@ function AccommodationPropertyInformation({ onAmenitiesChange, parentAmenities, 
           onItemsChange={handleItemsChange}
           initialSelectedItems={selectedAmenities.facilities}
         />
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
-        <Button
-            variant="contained"
-            color="primary"
-            onClick={handleBack}
-            sx={{ fontFamily: "Poppins, sans-serif", width: 200, height: 50 }}
-          >
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            sx={{ fontFamily: "Poppins, sans-serif", width: 200, height: 50 }}
-          >
-            Save
-          </Button>
-        </div>
+         <div className="stepperFooter">
+        <Button onClick={handleBack} className="stepperPrevious">
+          Back
+        </Button>
+        <Button onClick={handleSave} className="stepperNext">
+          Next
+        </Button>
+      </div>
       </Container>
     </>
   );
 }
 
-export default AccommodationPropertyInformation;
+export default AmenitiesFacilitiesServices;

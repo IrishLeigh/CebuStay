@@ -1,13 +1,47 @@
-
-/* Assuming your image file is in the same directory as your CSS file */
-.registration-page {
-  
-  /* Set the background image */
-  background-image: url("/public/RegisterBG.png");
-  /* Set background size to cover the entire container */
-  background-size: cover;
-  /* Center the background image */
-  background-position: center;
-  /* Set background attachment to fixed to ensure the image remains fixed while scrolling */
-  background-attachment: fixed;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
 }
+
+.registration-body {
+  background-image: url("/public/RegisterBG.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.accommodation-registration-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: white; /* Ensure the header has a background */
+}
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+
+  margin-bottom: 4rem;
+}
+
+
