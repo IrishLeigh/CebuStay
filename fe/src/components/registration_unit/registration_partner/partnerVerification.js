@@ -11,7 +11,7 @@ import CompanyHost from './companyHost';
 import Button from '@mui/material/Button';
 import '../../../components/Button/NextButton.css';
 
-export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack }) {
+export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack,openModal }) {
   const [hostType, setHostType] = useState('');
   const [individualData, setIndividualData] = useState({});
   const [companyData, setCompanyData] = useState({});
@@ -51,7 +51,8 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
         (hostType === 'Company' && Object.keys(companyData).length > 0)) {
       const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
       onHostDataChange(dataToSend);
-      handleSubmit();
+      openModal();
+  
     } else {
       alert("Please provide the necessary information.");
     }

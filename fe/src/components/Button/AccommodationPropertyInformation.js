@@ -151,24 +151,22 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
   );
 }
 
-function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}) {
-  const [selectedAmenities, setSelectedAmenities] = useState(parentAmmenities);
+function AccommodationPropertyInformation({ onAmenitiesChange, parentAmenities, handleBack, handleNext }) {
+  const [selectedAmenities, setSelectedAmenities] = useState(parentAmenities);
 
   const handleItemsChange = (category, items) => {
-    setSelectedAmenities((prevSelectedAmenities) => {
-      const updatedAmenities = {
-        ...prevSelectedAmenities,
-        [category]: items,
-      };
-      localStorage.setItem(category, JSON.stringify(updatedAmenities[category]));
-      return updatedAmenities;
-    });
-    onAmenitiesChange(category, items); // Notify parent component about the updated selected items
+    setSelectedAmenities((prevSelectedAmenities) => ({
+      ...prevSelectedAmenities,
+      [category]: items,
+    }));
   };
 
-  useEffect(() => {
-    localStorage.setItem("selectedAmenities", JSON.stringify(selectedAmenities));
-  }, [selectedAmenities]);
+  const handleSave = () => {
+    console.log("Save changes", selectedAmenities);
+
+    onAmenitiesChange(selectedAmenities);
+    handleNext();
+  };
 
   return (
     <>
@@ -207,22 +205,24 @@ function AccommodationPropertyInformation({ onAmenitiesChange ,parentAmmenities}
           onItemsChange={handleItemsChange}
           initialSelectedItems={selectedAmenities.facilities}
         />
-        {/* Display selected items for each category */}
-        {/* <Typography variant="h6" sx={{ mt: 4 }}>
-          Selected Amenities:
-        </Typography>
-        <Typography variant="body1">
-          Basic Amenities: {selectedAmenities.basicAmenities.join(", ")}
-        </Typography>
-        <Typography variant="body1">
-          Basic Services: {selectedAmenities.basicServices.join(", ")}
-        </Typography>
-        <Typography variant="body1">
-          Facilities: {selectedAmenities.facilities.join(", ")}
-        </Typography>
-        <div className='nextButton-container'>
-          <button className="nextButton" sx={{ color: '#007BFF' }}>Save</button>
-        </div> */}
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+        <Button
+            variant="contained"
+            color="primary"
+            onClick={handleBack}
+            sx={{ fontFamily: "Poppins, sans-serif", width: 200, height: 50 }}
+          >
+            Back
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            sx={{ fontFamily: "Poppins, sans-serif", width: 200, height: 50 }}
+          >
+            Save
+          </Button>
+        </div>
       </Container>
     </>
   );

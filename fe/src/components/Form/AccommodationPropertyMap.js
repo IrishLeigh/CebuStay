@@ -99,7 +99,6 @@ const MapForm = ({ google, location}) => {
             onClick={saveLocation}
             style={{ fontSize: "1rem", marginTop: "1rem" }}
           >
-            {" "}
             {/* Adjusted fontSize */}
             Save Location
           </Button>

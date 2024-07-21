@@ -10,6 +10,7 @@
   display: flex;
   justify-content: space-between;
   overflow-x: hidden; /* Hide horizontal overflow */
+  z-index: 1000;
 }
 
 /* Define styles for the next and previous buttons */
@@ -37,3 +38,11 @@
   margin-left: 2em; /* Add margin between buttons and edges */
   transform: scale(1.1); /* Example transform on hover */
 }
+
+/* Add this to your CSS file */
+.greyed-out {
+  background-color: #f0f0f0; /* Light grey background */
+  pointer-events: none; /* Prevent interaction */
+  opacity: 0.5; /* Make it semi-transparent */
+}
+
