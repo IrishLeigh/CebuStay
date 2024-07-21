@@ -1,9 +1,9 @@
 import React from "react";
 import { Modal, Button, Typography, Box } from "@mui/material";
 
-const ConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
+const ConfirmationModal = ({ isOpen, closeModal, handleSubmit, onConfirm }) => {
   return (
-    <Modal open={isOpen} onClose={onClose}>
+    <Modal open={isOpen} onClose={closeModal}>
       <Box sx={{ 
         position: 'absolute',
         top: '50%',
@@ -22,11 +22,11 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
           Are you sure you want to submit the form?
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-          <Button variant="contained" color="primary" onClick={onConfirm}>
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
             Yes, Submit
           </Button>
           <Box sx={{ mx: 1 }} />
-          <Button variant="contained" onClick={onClose}>
+          <Button variant="contained" onClick={closeModal}>
             Cancel
           </Button>
         </Box>

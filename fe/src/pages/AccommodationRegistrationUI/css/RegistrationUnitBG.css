@@ -11,6 +11,8 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
+  justify-content: center;
+  align-items: center;
 }
 
 .accommodation-registration-page {
@@ -34,6 +36,8 @@ body {
   justify-content: center;
   padding: 20px;
   width: 100%;
+
+  margin-bottom: 4rem;
 }
 
 

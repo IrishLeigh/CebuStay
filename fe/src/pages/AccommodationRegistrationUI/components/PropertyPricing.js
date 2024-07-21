@@ -20,7 +20,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export default function UnitPricing({ handleUnitPricing, parentUnitPricing, handleNext, handleBack }) {
+export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, handleNext, handleBack }) {
   const pesoSign = "\u20B1";
   const [priceEntered, setPriceEntered] = useState(false);
   const [basePrice, setBasePrice] = useState(parentUnitPricing?.basePrice || "");
@@ -47,12 +47,11 @@ export default function UnitPricing({ handleUnitPricing, parentUnitPricing, hand
     setPriceUnit({ basePrice, profit: profitValue });
   }, [basePrice]);
 
-  useEffect(() => {
-    handleUnitPricing(priceUnit);
-  }, [priceUnit, handleUnitPricing]);
+
 
   const validateAndProceed = () => {
-    if (priceEntered && basePrice) {
+    if (basePrice) {
+      onUnitPricingChange(priceUnit)
       handleNext();
     } else {
       alert("Please enter a valid price.");

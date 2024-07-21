@@ -1,4 +1,3 @@
-// Policies.js
 import React, { useState, useEffect } from 'react';
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -10,7 +9,7 @@ import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import { Button, Container } from "@mui/material";
 import AnimatePage from './AnimatedPage';
 
-export default function Policies({ onPoliciesDataChange, parentPolicies, handleNext, handleBack }) {
+export default function Policies({ onPoliciesDataChange, parentPoliciesData, handleNext, handleBack }) {
   const initialPoliciesData = {
     standardCancellation: false,
     nonRefundableRate: false,
@@ -19,15 +18,17 @@ export default function Policies({ onPoliciesDataChange, parentPolicies, handleN
     cancellationDays: ''
   };
 
-  const [policiesData, setPoliciesData] = useState(parentPolicies);
+  const [policiesData, setPoliciesData] = useState(initialPoliciesData);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Update local state when parentPolicies change
-    if (parentPolicies) {
-      setPoliciesData(parentPolicies);
+    // Update local state when parentPoliciesData change
+    if (parentPoliciesData) {
+      setPoliciesData(parentPoliciesData);
+    } else {
+      setPoliciesData(initialPoliciesData); // Ensure it falls back to initialPoliciesData if parentPoliciesData is undefined
     }
-  }, [parentPolicies]);
+  }, [parentPoliciesData]);
 
   const handleDaysChange = (newValue) => {
     setPoliciesData(prevData => ({
@@ -81,7 +82,7 @@ export default function Policies({ onPoliciesDataChange, parentPolicies, handleN
 
                     <Checkbox
                       name="standardCancellation"
-                      checked={policiesData.standardCancellation}
+                      checked={policiesData.standardCancellation || false} // Default to false if undefined
                       onChange={handleCheckboxChange}
                       color="secondary"
                     /> Standard Cancellation Plan
@@ -95,7 +96,7 @@ export default function Policies({ onPoliciesDataChange, parentPolicies, handleN
                         <TextFieldOutlineShort
                           width="150"
                           label="Number of Days"
-                          value={policiesData.cancellationDays}
+                          value={policiesData.cancellationDays || ''} // Default to empty string if undefined
                           onDaysChange={handleDaysChange}
                         />
                         <br />
@@ -107,21 +108,21 @@ export default function Policies({ onPoliciesDataChange, parentPolicies, handleN
                     )}
                     <Checkbox
                       name="nonRefundableRate"
-                      checked={policiesData.nonRefundableRate}
+                      checked={policiesData.nonRefundableRate || false} // Default to false if undefined
                       onChange={handleCheckboxChange}
                       color="secondary"
                     /> Non-refundable Rate Plan
                     <br />
                     <Checkbox
                       name="modificationPlan"
-                      checked={policiesData.modificationPlan}
+                      checked={policiesData.modificationPlan || false} // Default to false if undefined
                       onChange={handleCheckboxChange}
                       color="secondary"
                     /> Modification Plan
                     <br />
                     <Checkbox
                       name="offerDiscounts"
-                      checked={policiesData.offerDiscounts}
+                      checked={policiesData.offerDiscounts || false} // Default to false if undefined
                       onChange={handleCheckboxChange}
                       color="secondary"
                     /> Offer Discounts

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Button, Typography, Grid, Container, Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Button, Typography, Grid, Container } from "@mui/material";
 import { motion } from "framer-motion";
-import AnimatePage from "./AnimatedPage";
 
+// Sample data (consider moving this to a separate file if it's large)
 const data = {
   basicAmenities: [
     { icon: "toiletries.png", text: "Toiletries" },
@@ -105,25 +105,29 @@ function AmenityButton({ icon, text, isSelected, onClick }) {
 }
 
 function CategorySection({ category, label, onItemsChange, initialSelectedItems }) {
-  const [selectedItems, setSelectedItems] = useState(initialSelectedItems || []);
+  const [selectedAmenities, setSelectedAmenities] = useState(initialSelectedItems || []);
 
   const toggleItemSelection = (itemText) => {
-    const newSelectedItems = selectedItems.includes(itemText)
-      ? selectedItems.filter((item) => item !== itemText)
-      : [...selectedItems, itemText];
+    const newSelectedAmenities = selectedAmenities.includes(itemText)
+      ? selectedAmenities.filter((item) => item !== itemText)
+      : [...selectedAmenities, itemText];
 
-    setSelectedItems(newSelectedItems);
-    onItemsChange(category, newSelectedItems); // Notify parent component about the updated selected items
+    setSelectedAmenities(newSelectedAmenities);
+    onItemsChange(category, newSelectedAmenities);
   };
 
+  useEffect(() => {
+    onItemsChange(category, selectedAmenities);
+  }, [selectedAmenities, category, onItemsChange]);
+
   return (
-    <Box sx={{ mt: 2 , mb: 2}}>
+    <>
       <Typography
         variant="h5"
         sx={{
           fontWeight: "bold",
-          mx: { xs: 2, sm: 10, md: 5 },
-          my: 4,
+          mx: { xs: 2, sm: 10, md: 20 },
+          my: 2,
           textAlign: "left",
         }}
       >
@@ -136,98 +140,83 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
               <AmenityButton
                 icon={item.icon}
                 text={item.text}
-                isSelected={selectedItems.includes(item.text)}
+                isSelected={selectedAmenities.includes(item.text)}
                 onClick={() => toggleItemSelection(item.text)}
               />
             </Grid>
           ))}
         </Grid>
       </div>
-    </Box>
-  );
-}
-
-function AmmenitiesServicesFacilities({ onAmenitiesChange, parentAmenities, handleBack, handleNext }) {
-  const [selectedAmenities, setSelectedAmenities] = useState({
-    basicAmenities: [],
-    basicServices: [],
-    facilities: [],
-  });
-
-  useEffect(() => {
-    setSelectedAmenities(parentAmenities || {
-      basicAmenities: [],
-      basicServices: [],
-      facilities: [],
-    });
-  }, [parentAmenities]);
-
-  // Validate if at least one item is selected in each category
-  const validateAndProceed = () => {
-    const { basicAmenities, basicServices, facilities } = selectedAmenities;
-    if (basicAmenities.length > 0 && basicServices.length > 0 && facilities.length > 0) {
-      // Notify parent component about the updated selected amenities
-      console.log("Selected Amenities:", selectedAmenities);
-      onAmenitiesChange(selectedAmenities);
-      // Proceed to the next step
-      handleNext();
-    } else {
-      alert("Please select at least one item in each category.");
-    }
-  };
-
-  const handleItemsChange = (category, items) => {
-    console.log("Category:", category, "Items:", items);
-    setSelectedAmenities((prevSelectedAmenities) => ({
-      ...prevSelectedAmenities,
-      [category]: items,
-    }));
-  };
-
-  return (
-    <>
-      <AnimatePage>
-        <Container
-          maxWidth="md"
-          className="centered-container"
-        >
-          <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
-            Property Provisions
-          </Typography>
-          <Typography sx={{ fontSize: "1 rem", mb: 2 }}>
-            Please click the buttons you choose.
-          </Typography>
-          <CategorySection
-            category="basicAmenities"
-            label={"Basic Amenities"}
-            onItemsChange={handleItemsChange}
-            initialSelectedItems={selectedAmenities.basicAmenities}
-          />
-          <CategorySection
-            category="basicServices"
-            label={"Basic Services"}
-            onItemsChange={handleItemsChange}
-            initialSelectedItems={selectedAmenities.basicServices}
-          />
-          <CategorySection
-            category="facilities"
-            label={"Facilities"}
-            onItemsChange={handleItemsChange}
-            initialSelectedItems={selectedAmenities.facilities}
-          />
-          
-        </Container>
-        </AnimatePage>
-      <div className="stepperFooter">
-          <Button onClick={handleBack} className="stepperPrevious">
-            Back
-          </Button>
-          <Button onClick={validateAndProceed} className="stepperNext">
-            Next
-          </Button>
-        </div>
     </>
   );
 }
 
-export default AmmenitiesServicesFacilities;
+
+function AmenitiesFacilitiesServices({ onAmenitiesChange, parentAmenities, handleNext, handleBack }) {
+  const [selectedAmenities, setSelectedAmenities] = useState(parentAmenities);
+
+  const handleItemsChange = (category, items) => {
+    setSelectedAmenities((prevSelectedAmenities) => ({
+      ...prevSelectedAmenities,
+      [category]: items,
+    }));
+    onAmenitiesChange(category, items);
+  };
+
+  const handleSave = () => {
+    console.log("Selected Amenities from child:", selectedAmenities);
+    onAmenitiesChange(selectedAmenities);
+    handleNext();
+  };
+
+  return (
+    <>
+      <Container
+        maxWidth="lg"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          textAlign: "left",
+          marginTop: "2rem",
+          marginBottom: "8rem",
+        }}
+      >
+        <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
+          Property Information
+        </Typography>
+        <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
+          Please click the buttons you choose.
+        </Typography>
+        <CategorySection
+          category="basicAmenities"
+          label={"Basic Amenities"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicAmenities}
+        />
+        <CategorySection
+          category="basicServices"
+          label={"Basic Services"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicServices}
+        />
+        <CategorySection
+          category="facilities"
+          label={"Facilities"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.facilities}
+        />
+         <div className="stepperFooter">
+        <Button onClick={handleBack} className="stepperPrevious">
+          Back
+        </Button>
+        <Button onClick={handleSave} className="stepperNext">
+          Next
+        </Button>
+      </div>
+      </Container>
+    </>
+  );
+}
+
+export default AmenitiesFacilitiesServices;
