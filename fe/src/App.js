@@ -23,7 +23,6 @@ import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import React from "react";
 import Listings from "./pages/PropertyManagementUI/Listings";
-import AccommodationReservation from "./pages/PropertyManagementUI/AccommodationReservation";
 import Layout from "./Layout/Layout";
 import LayoutLandingPage from "./components/LandingPage/LayoutLandingPage";
 // import PropListing from './Properties_Listing/PropListing';
@@ -39,6 +38,8 @@ import CalendarUI from "./pages/PropertyManagementUI/calendarUI";
 import EditProfileUI from "./pages/EditProfileUI/EditProfileUI";
 import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
+import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
+
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -109,12 +110,12 @@ function App() {
               <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/> */}
           <Route
             path="/list-your-property"
-            element={<AccommodationRegistrationUI />}
+            element={<AccommodationRegistration />}
             exact
           />
           {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}
 
-          <Route path="/reservation" element={<AccommodationReservation />} />
+          <Route path="/reservation" element={<AccommodationRegistration />} />
           <Route
             path="/accommodation/property/:propertyid"
             element={<ViewPropertyUI />}
