@@ -19,7 +19,7 @@ import {
   Grid,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "./components/sidebar";
 import axios from "axios";
 
 const Listings = () => {
