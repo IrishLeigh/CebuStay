@@ -463,10 +463,12 @@ class BookingController extends CORS
             'property.property_type', // Select property_type from property table
             'property.property_desc', // Select property_desc from property table
             'property.unit_type', // Select unit_type from property table
-            'tbl_guest.guestname' // Select guestname from tbl_guest table
+            'tbl_guest.guestname', // Select guestname from tbl_guest table
+            'location.address as property_address' // Select address from location table
         )
             ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->join('tbl_guest', 'tbl_booking.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
+            ->join('location', 'tbl_booking.propertyid', '=', 'location.propertyid') // Join location table using propertyid
             ->where('property.userid', $userId)
             ->get();
 
@@ -494,11 +496,13 @@ class BookingController extends CORS
                 'status' => $booking->status,
                 'type' => $booking->type, // Add type from tbl_booking
                 'booker' => $booker, // Add booker details
+                'property_address' => $booking->property_address, // Add property_address from location
             ];
         });
 
         return response()->json($formattedBookings);
     }
+
 
     public function getAllBookingByBookingId(Request $request)
     {
@@ -583,7 +587,7 @@ class BookingController extends CORS
         $this->enableCors($request);
         $userId = $request->input('userid');
 
-        // Fetch all bookings related to properties of the given user
+        // Fetch all booking history related to properties of the given user
         $bookinghistory = BookingHistory::select(
             'tbl_bookinghistory.propertyid',
             'tbl_bookinghistory.bhid',
@@ -597,7 +601,7 @@ class BookingController extends CORS
             'tbl_bookinghistory.stay_length',
             'tbl_bookinghistory.guest_count',
             'tbl_bookinghistory.special_request',
-            'tbl_bookinghistory.type', // Select type from tbl_booking table
+            'tbl_bookinghistory.type', // Select type from tbl_bookinghistory table
             'tbl_bookinghistory.pid',
             'tbl_bookinghistory.check_type',
             'tbl_bookinghistory.bookerid',
@@ -605,14 +609,16 @@ class BookingController extends CORS
             'property.property_type', // Select property_type from property table
             'property.property_desc', // Select property_desc from property table
             'property.unit_type', // Select unit_type from property table
-            'tbl_guest.guestname' // Select guestname from tbl_guest table
+            'tbl_guest.guestname', // Select guestname from tbl_guest table
+            'location.address as property_address' // Select address from location table
         )
             ->join('property', 'tbl_bookinghistory.propertyid', '=', 'property.propertyid')
             ->join('tbl_guest', 'tbl_bookinghistory.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
+            ->join('location', 'tbl_bookinghistory.propertyid', '=', 'location.propertyid') // Join location table using propertyid
             ->where('property.userid', $userId)
             ->get();
 
-        // Format the bookings
+        // Format the booking history
         $formattedBookings = $bookinghistory->map(function ($booking) {
             $booker = Booker::find($booking->bookerid);
             $payment = Payment::find($booking->pid);
@@ -634,14 +640,16 @@ class BookingController extends CORS
                 'checkout_date' => $booking->checkout_date,
                 'total_price' => $booking->total_price,
                 'status' => $booking->status,
-                'type' => $booking->type, // Add type from tbl_booking
+                'type' => $booking->type, // Add type from tbl_bookinghistory
                 'check_type' => $booking->check_type,
                 'booker' => $booker, // Add booker details
+                'property_address' => $booking->property_address, // Add property_address from location
             ];
         });
 
         return response()->json($formattedBookings);
     }
+
 
 
 
