@@ -72,7 +72,7 @@ const Sidebar = () => {
         backgroundColor: "#2196f3", // Blue background color
         color: "#ffffff", // White text color
         "& .MuiDrawer-paper": {
-          width: 240,
+          width: "17%",
           boxSizing: "border-box",
           backgroundColor: "#16B4DD", // Blue background color
           color: "#ffffff", // White text color
