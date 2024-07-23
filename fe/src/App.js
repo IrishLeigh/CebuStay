@@ -24,6 +24,7 @@ import Sidebar from "./components/Sidebar";
 import React from "react";
 import Listings from "./pages/PropertyManagementUI/Listings";
 import PropertyManagementListing from "./pages/PropertyListingTable/components/PropertyManagementListing";
+import PropertyManagementListing from "./pages/PropertyListingTable/components/PropertyManagementListing";
 import Layout from "./Layout/Layout";
 import LayoutLandingPage from "./components/LandingPage/LayoutLandingPage";
 // import PropListing from './Properties_Listing/PropListing';
