@@ -40,6 +40,7 @@ import EditProfileUI from "./pages/EditProfileUI/EditProfileUI";
 import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
+import AccommodationReservation from "./pages/PropertyManagementUI/AccommodationReservation";
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -115,7 +116,7 @@ function App() {
           />
           {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}
 
-          <Route path="/reservation" element={<AccommodationRegistration />} />
+          <Route path="/reservation" element={<AccommodationReservation />} />
           <Route
             path="/accommodation/property/:propertyid"
             element={<ViewPropertyUI />}
