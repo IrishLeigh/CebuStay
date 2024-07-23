@@ -9,6 +9,9 @@ import ReservationSection from "./ReservationSection";
 import ImageGallery from "./ImageGallery";
 import dayjs from "dayjs";
 import ViewProperty from "./PropertyBenefits";
+import AvailabilityTable from "./AvailabilityTable";
+import SearchAvailabilityButton from "./SearchAvailabilityButton";
+import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsAndRatingsSingleUnit";
 
 export default function SinglePropertyUI(propertyid) {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -118,6 +121,29 @@ export default function SinglePropertyUI(propertyid) {
             propertyInfo={propertyInfo}
             propertyImages={propertyImages}
           />
+        </div>
+        <div
+          style={{
+            width: "100%",
+            height: "0.1rem",
+            boxSizing: "border-box",
+            margin: 0,
+            padding: 0,
+            backgroundColor: "#A334CF",
+          }}
+        >
+          {/* Design is still not Sure */}
+        </div>
+        <div>
+          <SearchAvailabilityButton />
+        </div>
+
+        <div>
+          <AvailabilityTable propertyid={propertyid.propertyid} />
+        </div>
+
+        <div>
+          <ReviewsAndRatingsSingleUnit />
         </div>
       </Container>
     </div>
