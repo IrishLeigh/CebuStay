@@ -23,6 +23,7 @@ import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import React from "react";
 import Listings from "./pages/PropertyManagementUI/Listings";
+import PropertyManagementListing from "./pages/PropertyListingTable/components/PropertyManagementListing";
 import AccommodationReservation from "./pages/PropertyManagementUI/AccommodationReservation";
 import Layout from "./Layout/Layout";
 import LayoutLandingPage from "./components/LandingPage/LayoutLandingPage";
@@ -123,7 +124,11 @@ function App() {
             path="/accommodation/booking/:propertyid"
             element={<BookingDetailsUI />}
           />
-          <Route path="/listings" element={<Listings />} exact />
+          <Route
+            path="/listings"
+            element={<PropertyManagementListing />}
+            exact
+          />
           <Route path="/calendar" element={<CalendarUI />} />
         </Route>
 
