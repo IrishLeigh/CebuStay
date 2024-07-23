@@ -67,3 +67,19 @@
 .add-review button:hover {
   background-color: #2f99fc;
 }
+
+.review-unit {
+  font-style: italic;
+}
+
+.add-review {
+  margin-top: 20px;
+}
+
+.add-review .MuiTextField-root {
+  margin-bottom: 10px;
+}
+
+.add-review .MuiFormControl-root {
+  margin-bottom: 10px;
+}
