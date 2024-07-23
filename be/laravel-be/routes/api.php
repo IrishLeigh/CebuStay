@@ -79,6 +79,7 @@ Route::put('/updateProfile/{userid}', [EditUserProfileController::class, 'update
 
 //Routes for login
 Route::post('/login', 'App\Http\Controllers\LoginUserController@login');
+Route::post('/auth/google', 'App\Http\Controllers\LoginUserController@googleLogin');
 Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToken');
 
 //Routes for property

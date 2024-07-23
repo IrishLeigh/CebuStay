@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\UserModel;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Google_Client;
 
 class LoginUserController extends CORS
 {
@@ -51,6 +51,52 @@ class LoginUserController extends CORS
     
         return response()->json(['message' => 'Login successful.', 'status' => 'success', 'token' => $token]);
     }
+
+    public function googleLogin(Request $request)
+{
+    $this->enableCors($request);
+
+    $email = $request->input('email');
+    $firstname = $request->input('firstname');
+    $lastname = $request->input('lastname');
+
+    // Check if the user exists by email
+    $user = UserModel::where('email', $email)->first();
+
+    if (!$user) {
+        // Create a new user
+        $randomPassword = bin2hex(random_bytes(8));
+        $user = new UserModel();
+        $user->email = $email;
+        $user->firstname = $firstname;
+        $user->lastname = $lastname;
+        $user->password = Hash::make($randomPassword);
+        $user->isverified = 1; // Assuming Google users are verified
+        $user->google = 1;
+        $user->save();
+    }
+
+    // Generate JWT token
+    $userid = $user->userid;
+    $key = "your-secret-key"; // Replace with your actual secret key
+    $token = JWT::encode(
+        [
+            'iat' => time(),
+            'nbf' => time(),
+            'exp' => time() + 86400, // Token expiration time (1 day)
+            'data' => [
+                'userid' => $userid,
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+                'email' => $user->email,
+            ]
+        ],
+        $key,
+        'HS256'
+    );
+
+    return response()->json(['message' => 'Login successful.', 'status' => 'success', 'token' => $token]);
+}
 
     public function decodeToken(Request $request)
     {
