@@ -100,8 +100,10 @@ Route::get('/allpropertypricing', 'App\Http\Controllers\PropertyPricingControlle
 Route::post('/propertypaymentmethod', 'App\Http\Controllers\PropertyPaymentMethodsController@insertPropertyPaymentMethods');
 
 //UPLOAD IMG
-//UPLOAD ONE IMAGE
-Route::post('/uploadimage', 'App\Http\Controllers\FileController@store');
+//UPLOAD USER PROFILE IMG
+Route::post('/uploaduserimg', 'App\Http\Controllers\FileController@uploadAvatar');
+Route::get('/getuserimg', 'App\Http\Controllers\FileController@getUserAvatar');
+Route::post('/updateavatar', 'App\Http\Controllers\FileController@updateAvatar');
 
 //UPLOAD MULTIPLE IMAGES
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');

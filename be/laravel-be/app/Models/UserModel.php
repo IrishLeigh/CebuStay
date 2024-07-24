@@ -21,4 +21,9 @@ class UserModel extends Model
     {
         return $this->hasMany(Booking::class, 'propertyid', 'propertyid');
     }
+
+    public function avatar()
+    {
+        return $this->hasOne(UserFile::class, 'userid', 'userid');
+    }
 }
