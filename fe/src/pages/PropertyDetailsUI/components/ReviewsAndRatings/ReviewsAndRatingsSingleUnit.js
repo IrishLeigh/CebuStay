@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import "../../css/ReviewsAndRatings.css";
-import ArrowRight from "@mui/icons-material/Send";
-import { Divider } from "@mui/material";
 
 const ReviewsAndRatingsSingleUnit = () => {
   const [review, setReview] = useState({
@@ -31,40 +29,21 @@ const ReviewsAndRatingsSingleUnit = () => {
 
   return (
     <>
-      <div
-        style={{
-          width: "100%",
-          height: "0.1rem",
-          boxSizing: "border-box",
-          margin: "20px 0", // Adds top and bottom margin of 20px
-          padding: 0,
-          backgroundColor: "#A334CF",
-        }}
-      >
-        {/* Design is still not Sure */}
+      <div className="review-header">
+        <span className="review-name">{review.name}</span>
+        <div className="review-rating">
+          {Array.from({ length: 5 }, (_, i) => (
+            <span
+              key={i}
+              className={`star ${i < review.rating ? "filled" : ""}`}
+            >
+              ★
+            </span>
+          ))}
+        </div>
       </div>
-      <div className="review-container">
-        <div className="info-title-cntr">
-          <ArrowRight sx={{ color: "#16B4DD" }} />
-          <div>Review And Rating</div>
-        </div>
-        <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
-        {/* Adds spacing before the divider */}
-        <div className="review-header">
-          <span className="review-name">{review.name}</span>
-          <div className="review-rating">
-            {Array.from({ length: 5 }, (_, i) => (
-              <span
-                key={i}
-                className={`star ${i < review.rating ? "filled" : ""}`}
-              >
-                ★
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="review-text">{review.text}</div>
-        {/* <div className="add-review">
+      <div className="review-text">{review.text}</div>
+      {/* <div className="add-review">
             <h3>Add a Review</h3>
             <input
                 type="text"
@@ -87,7 +66,6 @@ const ReviewsAndRatingsSingleUnit = () => {
             />
             <button onClick={handleAddReview}>Submit</button>
         </div> */}
-      </div>
     </>
   );
 };
