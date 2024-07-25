@@ -9,6 +9,11 @@ import ReservationSection from "./ReservationSection";
 import ImageGallery from "./ImageGallery";
 import dayjs from "dayjs";
 import ViewProperty from "./PropertyBenefits";
+import AvailabilityTable from "./AvailabilityTable";
+import SearchAvailabilityButton from "./SearchAvailabilityButton";
+import ArrowRight from "@mui/icons-material/Send";
+import Divider from "@mui/material/Divider";
+import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsAndRatingsSingleUnit";
 
 export default function SinglePropertyUI(propertyid) {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -118,6 +123,48 @@ export default function SinglePropertyUI(propertyid) {
             propertyInfo={propertyInfo}
             propertyImages={propertyImages}
           />
+        </div>
+        <div
+          style={{
+            width: "100%",
+            height: "0.1rem",
+            boxSizing: "border-box",
+            margin: 0,
+            padding: 0,
+            backgroundColor: "#A334CF",
+          }}
+        >
+          {/* Design is still not Sure */}
+        </div>
+        <div>
+          <SearchAvailabilityButton />
+        </div>
+
+        <div>
+          <AvailabilityTable propertyid={propertyid.propertyid} />
+        </div>
+
+        <div
+          style={{
+            width: "100%",
+            height: "0.1rem",
+            boxSizing: "border-box",
+            margin: "20px 0", // Adds top and bottom margin of 20px
+            padding: 0,
+            backgroundColor: "#A334CF",
+          }}
+        >
+          {/* Design is still not Sure */}
+        </div>
+        <div className="review-container">
+          <div className="info-title-cntr">
+            <ArrowRight sx={{ color: "#16B4DD" }} />
+            <div>Reviews And Ratings</div>
+          </div>
+          <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
+          <div>
+            <ReviewsAndRatingsSingleUnit />
+          </div>
         </div>
       </Container>
     </div>
