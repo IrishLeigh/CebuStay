@@ -83,7 +83,7 @@ export default function MultiPropertyUI(propertyid) {
 
   return (
     <div>
-      <HeaderUser />
+      {/* <HeaderUser /> */}
       <Container maxWidth="lg">
         <div>
           <ImageGallery images={propertyImages} />
@@ -134,9 +134,7 @@ export default function MultiPropertyUI(propertyid) {
           <div>
             <AvailabilityTable propertyid={propertyid.propertyid} />
           </div>
-          {/* <div>
-            <ReviewsAndRatingsMultiUnit />
-          </div> */}
+
           <div
             style={{
               width: "100%",

@@ -82,7 +82,7 @@ export default function SinglePropertyUI(propertyid) {
 
   return (
     <div>
-      <HeaderUser />
+      {/* <HeaderUser /> */}
       <Container maxWidth="lg">
         <div>
           <ImageGallery images={propertyImages} />
