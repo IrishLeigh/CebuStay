@@ -1,15 +1,5 @@
 import React, { useState } from "react";
 import "../../css/ReviewsAndRatings.css";
-import ArrowRight from "@mui/icons-material/Send";
-import {
-  Divider,
-  //   TextField,
-  //   Button,
-  //   MenuItem,
-  //   Select,
-  //   InputLabel,
-  //   FormControl,
-} from "@mui/material";
 
 const ReviewsAndRatingsMultiUnit = () => {
   const [selectedUnit, setSelectedUnit] = useState("Unit 1");
@@ -43,48 +33,27 @@ const ReviewsAndRatingsMultiUnit = () => {
 
   return (
     <>
-      <div
-        style={{
-          width: "100%",
-          height: "0.1rem",
-          boxSizing: "border-box",
-          margin: "20px 0", // Adds top and bottom margin of 20px
-          padding: 0,
-          backgroundColor: "#A334CF",
-        }}
-      >
-        {/* Design is still not Sure */}
+      <div className="review-header">
+        <span className="review-name">{review.name}</span>
+        <div className="review-rating">
+          {Array.from({ length: 5 }, (_, i) => (
+            <span
+              key={i}
+              className={`star ${i < review.rating ? "filled" : ""}`}
+            >
+              ★
+            </span>
+          ))}
+        </div>
       </div>
-      <div className="review-container">
-        <div className="info-title-cntr">
-          <ArrowRight sx={{ color: "#16B4DD" }} />
-          <div>Reviews And Ratings</div>
-          {/* <div>Review And Rating for {review.unit}</div>{" "} */}
-          {/* Display unit in title */}
-        </div>
-        <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
-        {/* Adds spacing before the divider */}
-        <div className="review-header">
-          <span className="review-name">{review.name}</span>
-          <div className="review-rating">
-            {Array.from({ length: 5 }, (_, i) => (
-              <span
-                key={i}
-                className={`star ${i < review.rating ? "filled" : ""}`}
-              >
-                ★
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="review-unit">
-          <span>
-            <strong>Reviewed:</strong> {review.unit}
-          </span>{" "}
-          {/* Display unit */}
-        </div>
-        <div className="review-text">{review.text}</div>
-        {/* <div className="add-review">
+      <div className="review-unit">
+        <span>
+          <strong>Reviewed:</strong> {review.unit}
+        </span>{" "}
+        {/* Display unit */}
+      </div>
+      <div className="review-text">{review.text}</div>
+      {/* <div className="add-review">
           <h3>Add a Review for {selectedUnit}</h3>
           <TextField
             label="Your Name"
@@ -108,7 +77,7 @@ const ReviewsAndRatingsMultiUnit = () => {
               setNewReview({ ...newReview, rating: Number(e.target.value) })
             }
           /> */}
-        {/* <TextField
+      {/* <TextField
             label="Write your review here..."
             variant="outlined"
             fullWidth
@@ -120,9 +89,9 @@ const ReviewsAndRatingsMultiUnit = () => {
               setNewReview({ ...newReview, text: e.target.value })
             }
           /> */}
-        {/* <FormControl fullWidth variant="outlined" margin="normal"> */}
-        {/* <InputLabel>Unit/Room</InputLabel> */}
-        {/* <Select
+      {/* <FormControl fullWidth variant="outlined" margin="normal"> */}
+      {/* <InputLabel>Unit/Room</InputLabel> */}
+      {/* <Select
               value={selectedUnit}
               onChange={(e) => {
                 setSelectedUnit(e.target.value);
@@ -134,12 +103,11 @@ const ReviewsAndRatingsMultiUnit = () => {
               <MenuItem value="Unit 2">Unit 2</MenuItem>
                Add more MenuItems for additional units/rooms 
             </Select> */}
-        {/* </FormControl> */}
-        {/* <Button variant="contained" color="primary" onClick={handleAddReview}>
+      {/* </FormControl> */}
+      {/* <Button variant="contained" color="primary" onClick={handleAddReview}>
             Submit
           </Button> */}
-        {/* </div> */}
-      </div>
+      {/* </div> */}
     </>
   );
 };

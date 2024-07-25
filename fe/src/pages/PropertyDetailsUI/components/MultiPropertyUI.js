@@ -13,6 +13,8 @@ import ViewProperty from "./PropertyBenefits";
 import AvailabilityTable from "./AvailabilityTable";
 import SearchAvailabilityButton from "./SearchAvailabilityButton";
 import ReviewsAndRatingsMultiUnit from "./ReviewsAndRatings/ReviewsAndRatingsMultiUnit";
+import ArrowRight from "@mui/icons-material/Send";
+import Divider from "@mui/material/Divider";
 
 export default function MultiPropertyUI(propertyid) {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -108,14 +110,12 @@ export default function MultiPropertyUI(propertyid) {
               <Directions propertyid={propertyid.propertyid} />
             </Grid>
           </Grid>
-
           <div style={{ marginBottom: "1rem" }}>
             <PropertyInfo
               propertyInfo={propertyInfo}
               propertyImages={propertyImages}
             />
           </div>
-
           <div
             style={{
               width: "100%",
@@ -131,13 +131,35 @@ export default function MultiPropertyUI(propertyid) {
           <div>
             <SearchAvailabilityButton />
           </div>
-
           <div>
             <AvailabilityTable propertyid={propertyid.propertyid} />
           </div>
-
-          <div>
+          {/* <div>
             <ReviewsAndRatingsMultiUnit />
+          </div> */}
+          <div
+            style={{
+              width: "100%",
+              height: "0.1rem",
+              boxSizing: "border-box",
+              margin: "20px 0", // Adds top and bottom margin of 20px
+              padding: 0,
+              backgroundColor: "#A334CF",
+            }}
+          >
+            {/* Design is still not Sure */}
+          </div>
+          <div className="review-container">
+            <div className="info-title-cntr">
+              <ArrowRight sx={{ color: "#16B4DD" }} />
+              <div>Reviews And Ratings</div>
+              {/* <div>Review And Rating for {review.unit}</div>{" "} */}
+              {/* Display unit in title */}
+            </div>
+            <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
+            <div>
+              <ReviewsAndRatingsMultiUnit />
+            </div>
           </div>
         </div>
       </Container>
