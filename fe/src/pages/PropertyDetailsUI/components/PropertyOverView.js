@@ -90,7 +90,7 @@ export default function PropertyOverView({ propertyinfo }) {
             >
               {/* <div className="overview-title">Irish Leigh</div> */}
               <div className="overview-title">
-                {propertyDetail.property_owner.property_owner.displayname}
+                {propertyDetail?.property_owner?.property_owner?.displayname}
               </div>
               <div
                 style={{
@@ -109,7 +109,7 @@ export default function PropertyOverView({ propertyinfo }) {
             and has been living the island-life eve…
           </div> */}
           <div style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
-            {propertyDetail.property_owner.property_owner.describe}
+            {propertyDetail?.property_owner?.property_owner?.describe}
           </div>
           <button className="email-btn">Email Host</button>
         </div>
@@ -121,7 +121,7 @@ export default function PropertyOverView({ propertyinfo }) {
                 <td>Contact</td>
                 {/* <td>09156694676</td> */}
                 <td>
-                  {propertyDetail.property_owner.property_owner.contactnumber}
+                  {propertyDetail?.property_owner?.property_owner?.contactnumber}
                 </td>
               </tr>
               <tr>

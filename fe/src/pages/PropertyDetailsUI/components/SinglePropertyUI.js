@@ -156,7 +156,7 @@ export default function SinglePropertyUI(propertyid) {
         >
           {/* Design is still not Sure */}
         </div>
-        <div className="review-container">
+        <div className="review-container" style={{ marginBottom: "20px" }}>
           <div className="info-title-cntr">
             <ArrowRight sx={{ color: "#16B4DD" }} />
             <div>Reviews And Ratings</div>

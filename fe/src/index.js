@@ -10,6 +10,7 @@ import Sample from "./pages/AccountManagement/Sample";
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -17,8 +18,10 @@ root.render(
     <BrowserRouter>
       <DataProvider>
         <UserProvider>
-          <App/>
-          </UserProvider>
+          <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
+            <App />
+          </GoogleOAuthProvider>
+        </UserProvider>
       </DataProvider>
     </BrowserRouter>
   </React.StrictMode>
