@@ -4,6 +4,8 @@ import "./Form.css";
 import { Link, useNavigate } from "react-router-dom";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useUser } from "../components/UserProvider";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 import { Button, Snackbar, CircularProgress } from "@mui/material";
 
 const LoginUI = ({ setToken }) => {
@@ -18,6 +20,7 @@ const LoginUI = ({ setToken }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [user, setUser] = useState([]);
+  const [loginGoogleError, setLoginGoogleError] = useState('');
   const navigate = useNavigate(); // Use useNavigate for navigation
 
   const handleClick = () => {
@@ -69,7 +72,7 @@ const LoginUI = ({ setToken }) => {
     } else {
       setUser(null);
     }
-  }, []);
+  }, [loginUser]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -111,6 +114,7 @@ const LoginUI = ({ setToken }) => {
         password,
       });
       if (response.data["status"] === "success") {
+        console.log("Login successful!", response.data["token"]);
         const token = response.data["token"];
         localStorage.setItem("auth_token", token);
         setToken(token);
@@ -186,6 +190,50 @@ const LoginUI = ({ setToken }) => {
     width: "20px",
     height: "20px",
     animation: loading ? "spin 1s linear infinite" : "none",
+  };
+
+  const handleGoogleLoginSuccess = async (response) => {
+    const token = response.credential;
+
+    // Decode the JWT token to extract information
+    const decoded = jwtDecode(token);
+    console.log('Decoded Google Token:', decoded);
+
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/auth/google", {
+        email: decoded.email,
+        firstname: decoded.given_name,
+        lastname: decoded.family_name,
+      });
+      if (response.data["status"] === "success") {
+        console.log("Login successful! google", response.data["token"]);
+        const token = response.data["token"];
+        localStorage.setItem("auth_token", token);
+        setToken(token);
+
+        if (rememberMe) {
+          localStorage.setItem("remembered_email", decoded.email);
+        } else {
+          localStorage.removeItem("remembered_email");
+        }
+
+        navigate("/landing"); // Correct usage of navigate function
+      } else {
+        setLoginError("Invalid credentials"); // Update error message for invalid credentials
+        console.log(response.data["message"]);
+        console.log("Login failed");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setLoginGoogleError("Login failed. Please try again.");
+    }
+
+
+  };
+
+  const handleGoogleLoginFailure = () => {
+    console.log('Google Login Failed');
+    setLoginGoogleError('Google login failed.');
   };
 
   return (
@@ -319,7 +367,7 @@ const LoginUI = ({ setToken }) => {
           <p className="p line">Or With</p>
           {/* Google Sign In Button */}
           <div className="flex-row">
-            <button className="btn-google">
+            {/* <button className="btn-google">
               <svg
                 version="1.1"
                 width="20"
@@ -349,7 +397,7 @@ const LoginUI = ({ setToken }) => {
                 ></path>
               </svg>
               Google
-            </button>
+            </button> */}
             {/* <button className="btn apple">
               <svg
                 version="1.1"
@@ -383,6 +431,17 @@ const LoginUI = ({ setToken }) => {
               </svg>
               Apple
             </button> */}
+          </div>
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            {/* Google API Login */}
+            <GoogleLogin
+              clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com"
+              buttonText="Sign in with Google"
+              onSuccess={handleGoogleLoginSuccess}
+              onFailure={handleGoogleLoginFailure}
+              cookiePolicy={'single_host_origin'}
+            />
+            {loginGoogleError && <p>{loginGoogleError}</p>}
           </div>
         </form>
       </div>
