@@ -135,3 +135,8 @@ Route::get('/getavailableunits', 'App\Http\Controllers\PropertyController@getAva
 
 //Route for USER Manager
 Route::get('/user/properties', 'App\Http\Controllers\UserController@getAllPropertyByUser');
+
+//Route for Reviews and Ratings
+Route::post('/reviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@insertReviewsAndRating');
+Route::get('/getreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getReviewsAndRatingByReviewId');
+Route::get('/getallreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getAllReviewsAndRatings');

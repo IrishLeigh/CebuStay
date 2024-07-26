@@ -71,19 +71,19 @@ class LoginUserController extends CORS
         $user->firstname = $firstname;
         $user->lastname = $lastname;
         $user->password = Hash::make($randomPassword);
-        $user->isverified = 1; // Assuming Google users are verified
+        $user->isverified = 1; 
         $user->google = 1;
         $user->save();
     }
 
     // Generate JWT token
     $userid = $user->userid;
-    $key = "your-secret-key"; // Replace with your actual secret key
+    $key = "6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f";
     $token = JWT::encode(
         [
             'iat' => time(),
             'nbf' => time(),
-            'exp' => time() + 86400, // Token expiration time (1 day)
+            'exp' => time() + 86400, 
             'data' => [
                 'userid' => $userid,
                 'firstname' => $user->firstname,
