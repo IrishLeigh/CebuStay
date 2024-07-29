@@ -35,5 +35,6 @@ return [
         'client_secret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
         'refresh_token' => env('GOOGLE_DRIVE_CLIENT_REFRESH_TOKEN'),
         'folder_id' => env('GOOGLE_DRIVE_FOLDER_ID'),
+        'avatar_folderid' => env('GOOGLE_DRIVE_AVATAR_FOLDER_ID'),
     ],
 ];

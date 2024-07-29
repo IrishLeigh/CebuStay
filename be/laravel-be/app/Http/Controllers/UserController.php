@@ -45,11 +45,11 @@ class UserController extends CORS
     public function update(Request $request, $userId)
     {
         $user = UserModel::find($userId);
-    
+
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
-    
+
         // $user->firstname = $request->input('firstname', $user->firstname);
         // $user->lastname = $request->input('lastname', $user->lastname);
         // $user->email = $request->input('email', $user->email);
@@ -65,13 +65,13 @@ class UserController extends CORS
         if ($request->input('email')) {
             $user->email = $request->input('email', $user->email);
         }
-    
+
         if ($request->input('password')) {
             $user->password = Hash::make($request->input('password'));
         }
-    
+
         $user->save();
-    
+
         return response()->json($user);
     }
 
@@ -86,7 +86,7 @@ class UserController extends CORS
             return response()->json(['message' => 'Unauthorized.', 'status' => 'error']);
         }
 
-        $properties = Property::select('propertyid', 'property_name', 'property_type')->where('userid', $userid)->get();
+        $properties = Property::select('propertyid', 'property_name', 'property_type', 'created_at')->where('userid', $userid)->get();
 
         $userProperties = [];
 
@@ -94,18 +94,24 @@ class UserController extends CORS
             $location = Location::select('address')->where('propertyid', $property->propertyid)->first();
             $paymethod = PropertyPaymentMethods::select('paymentmethod')->where('propertyid', $property->propertyid)->first();
             $cancel_policy = BookingPolicy::select('is_cancel_plan')->where('propertyid', $property->propertyid)->first();
+
             $userProperties[] = [
-                'propertyid' => $property->propertyid,
-                'property_name' => $property->property_name,
-                'property_type' => $property->property_type,
+                'id' => $property->propertyid,
+                'name' => $property->property_name,
+                'type' => $property->property_type,
                 'address' => $location ? $location->address : 'No address',
                 'paymentmethod' => $paymethod ? $paymethod->paymentmethod : 'No payment method',
-                'is_cancel_plan' => $cancel_policy ? $cancel_policy->is_cancel_plan : false
+                'is_cancel_plan' => $cancel_policy ? $cancel_policy->is_cancel_plan : false,
+                'status' => 'Active', // For now, return everything as "Active"
+                // 'status' => $property->isActive == true ? 'Active' : 'Inactive'
+                'created_at' => $property->created_at->format('Y-m-d g:ia')
             ];
         }
 
         return response()->json(['message' => 'Success', 'status' => 'success', 'userproperties' => $userProperties]);
     }
+
+
 
 
 }

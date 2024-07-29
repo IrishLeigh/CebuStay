@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 // use Illuminate\Http\Response;
 use App\Models\Property;
+use App\Models\UserFile;
 use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends CORS
@@ -105,11 +106,11 @@ class FileController extends CORS
 
         if ($files == null) {
             return response()->json(['message' => 'Please select at least one file', 'status' => 'error']);
-        } else if (count($files) > 5) { // Check if any file is greater than 15MB
-            return response()->json(['message' => 'The maximum number of files is 5', 'status' => 'error']);
+        } else if (count($files) > 15) {
+            return response()->json(['message' => 'The maximum number of files is 15', 'status' => 'error']);
         }
         foreach ($files as $file) {
-            if ($file->getSize() > 5 * 1024 * 1024) { // 5MB in bytes
+            if ($file->getSize() > 2 * 1024 * 1024) { // 2MB in bytes
                 return response()->json(['message' => 'A file size exceeds the maximum limit of 15MB', 'status' => 'error']);
             }
             if (!in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif'])) {
@@ -201,13 +202,25 @@ class FileController extends CORS
         return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
     }
 
+    public function addCaption(Request $request)
+    {
+        $this->enableCors($request);
+        $id = $request->id;
+        $caption = $request->caption;
+        $file = File::find($id);
+        $file->caption = $caption;
+        $file->save();
+        return response()->json(['status' => 'success', 'message' => 'File caption added']);
+    }
+
     public function getImgByProperty($propertyid)
     {
         $propertyimgs = File::where('propertyid', $propertyid)->get();
         $imglist = $propertyimgs->map(function ($item) {
             return [
                 'id' => $item->id,
-                'src' => $item->file_url
+                'src' => $item->file_url,
+                'caption' => $item->caption
             ];
         });
         return response()->json(['img' => $imglist]);
@@ -237,6 +250,173 @@ class FileController extends CORS
 
         // Return the result
         return response()->json($result);
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $this->enableCors($request);
+        // $validation = $request->validate([
+        //     'file' => 'file|required',
+        //     'file_name' => 'required',
+        // ]);
+
+        $accessToken = $this->token();
+        $userid = $request->userid;
+        $name = $request->file->getClientOriginalName();
+        $path = $request->file->getRealPath();
+        $folderId = \Config('services.google.avatar_folderid');
+
+        $client = new Client();
+
+        try {
+            $metadata = [
+                'name' => $name,
+                'parents' => [$folderId],
+            ];
+
+            $fileContents = file_get_contents($path);
+
+            // Create multipart form data
+            $multipart = [
+                [
+                    'name' => 'metadata',
+                    'contents' => json_encode($metadata),
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
+                ],
+                [
+                    'name' => 'file',
+                    'contents' => $fileContents,
+                    'filename' => $name,
+                ],
+            ];
+
+            // Create a new PSR-7 multipart stream
+            $stream = new Psr7\MultipartStream($multipart);
+
+            $response = $client->request('POST', 'https://www.googleapis.com/upload/drive/v3/files', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'multipart/related; boundary=' . $stream->getBoundary(),
+                ],
+                'body' => $stream,
+            ]);
+
+            $file_id = json_decode($response->getBody()->getContents())->id;
+            $file_url = "https://drive.google.com/thumbnail?id=$file_id";
+            $uploadedfile = new UserFile();
+            $uploadedfile->file_name = $name;
+            $uploadedfile->userid = $userid;
+            $uploadedfile->file_id = $file_id;
+            $uploadedfile->file_url = $file_url;
+            $uploadedfile->save();
+
+            return response()->json(['message' => 'Image uploaded successfully', 'status' => 'success']);
+        } catch (GuzzleException $e) {
+            return response()->json(['message' => 'Failed to upload image', 'status' => 'error']);
+        }
+    }
+
+    public function getUserAvatar(Request $request)
+    {
+        try {
+            $this->enableCors($request);
+            $userid = $request->userid;
+
+            $src_userimg = UserFile::where('userid', $userid)->first();
+            if (!$src_userimg) {
+                return response()->json(['status' => 'error', 'message' => 'No image found']);
+            } else {
+                return response()->json(['status' => 'success', 'src' => $src_userimg->file_url]);
+            }
+
+
+        } catch (GuzzleException $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $this->enableCors($request);
+
+        $accessToken = $this->token();
+        $userid = $request->userid;
+        $name = $request->file->getClientOriginalName();
+        $path = $request->file->getRealPath();
+        $folderId = \Config('services.google.avatar_folderid');
+
+        $client = new Client();
+
+        try {
+            // Find the existing image for the user
+            $existingFile = UserFile::where('userid', $userid)->first();
+            if (!$existingFile) {
+                return response()->json(['message' => 'No existing image found for this user', 'status' => 'error']);
+            }
+
+            // Delete the existing file from Google Drive
+            $deleteResponse = $client->request('DELETE', 'https://www.googleapis.com/drive/v3/files/' . $existingFile->file_id, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                ],
+            ]);
+
+            // Delete the existing file record from the database
+            $existingFile->delete();
+
+            // Upload the new file to Google Drive
+            $metadata = [
+                'name' => $name,
+                'parents' => [$folderId],
+            ];
+
+            $fileContents = file_get_contents($path);
+
+            // Create multipart form data
+            $multipart = [
+                [
+                    'name' => 'metadata',
+                    'contents' => json_encode($metadata),
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
+                ],
+                [
+                    'name' => 'file',
+                    'contents' => $fileContents,
+                    'filename' => $name,
+                ],
+            ];
+
+            // Create a new PSR-7 multipart stream
+            $stream = new Psr7\MultipartStream($multipart);
+
+            $response = $client->request('POST', 'https://www.googleapis.com/upload/drive/v3/files', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'multipart/related; boundary=' . $stream->getBoundary(),
+                ],
+                'body' => $stream,
+            ]);
+
+            $file_id = json_decode($response->getBody()->getContents())->id;
+            $file_url = "https://drive.google.com/thumbnail?id=$file_id";
+
+            // Save the new file record to the database
+            $uploadedfile = new UserFile();
+            $uploadedfile->file_name = $name;
+            $uploadedfile->userid = $userid;
+            $uploadedfile->file_id = $file_id;
+            $uploadedfile->file_url = $file_url;
+            $uploadedfile->save();
+
+            return response()->json(['message' => 'Image updated successfully', 'status' => 'success']);
+        } catch (GuzzleException $e) {
+            return response()->json(['message' => 'Failed to update image', 'status' => 'error']);
+        }
     }
 
 }

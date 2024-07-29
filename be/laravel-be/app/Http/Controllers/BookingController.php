@@ -497,11 +497,13 @@ class BookingController extends CORS
                 'type' => $booking->type, // Add type from tbl_booking
                 'booker' => $booker, // Add booker details
                 'property_address' => $booking->property_address, // Add property_address from location
+                // 'check_type' => $booking->type == 'booking' ? 'checkin' : 'upcoming', // Add check_type based on type
             ];
         });
 
         return response()->json($formattedBookings);
     }
+
 
 
     public function getAllBookingByBookingId(Request $request)

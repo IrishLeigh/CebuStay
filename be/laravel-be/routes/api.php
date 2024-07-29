@@ -79,6 +79,7 @@ Route::put('/updateProfile/{userid}', [EditUserProfileController::class, 'update
 
 //Routes for login
 Route::post('/login', 'App\Http\Controllers\LoginUserController@login');
+Route::post('/auth/google', 'App\Http\Controllers\LoginUserController@googleLogin');
 Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToken');
 
 //Routes for property
@@ -100,8 +101,12 @@ Route::get('/allpropertypricing', 'App\Http\Controllers\PropertyPricingControlle
 Route::post('/propertypaymentmethod', 'App\Http\Controllers\PropertyPaymentMethodsController@insertPropertyPaymentMethods');
 
 //UPLOAD IMG
-//UPLOAD ONE IMAGE
-Route::post('/uploadimage', 'App\Http\Controllers\FileController@store');
+//UPLOAD USER PROFILE IMG
+Route::post('/uploaduserimg', 'App\Http\Controllers\FileController@uploadAvatar');
+Route::get('/getuserimg', 'App\Http\Controllers\FileController@getUserAvatar');
+Route::post('/updateavatar', 'App\Http\Controllers\FileController@updateAvatar');
+Route::post('/addcaption', 'App\Http\Controllers\FileController@addCaption');
+
 
 //UPLOAD MULTIPLE IMAGES
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
@@ -132,3 +137,8 @@ Route::get('/getavailableunits', 'App\Http\Controllers\PropertyController@getAva
 
 //Route for USER Manager
 Route::get('/user/properties', 'App\Http\Controllers\UserController@getAllPropertyByUser');
+
+//Route for Reviews and Ratings
+Route::post('/reviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@insertReviewsAndRating');
+Route::get('/getreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getReviewsAndRatingByReviewId');
+Route::get('/getallreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getAllReviewsAndRatings');
