@@ -1,0 +1,287 @@
+.outer-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.reviews-container {
+  width: 90%;
+  max-width: 1200px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.summary-box {
+  flex: 1;
+  margin: 0 10px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f8f8f8;
+  text-align: center;
+}
+
+.summary-icon {
+  font-size: 24px;
+  color: #007BFF;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.summary-box h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.summary-number {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.average-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-top: -36px;
+}
+.average-number{
+  font-size: 36px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+.average-star {
+  font-size: 30px;
+  color: #ddd;
+}
+
+.average-star.filled {
+  color: #f39c12;
+}
+
+.star-distribution {
+  display: flex;
+  flex-direction: column;
+}
+
+.star-distribution-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.star-rating {
+  flex: 1;
+  font-size: 18px;
+}
+
+.star-visual {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.star {
+  font-size: 18px;
+  color: #ddd;
+}
+
+.star.filled {
+  color: #f39c12;
+}
+
+.star-count {
+  margin-left: auto;
+  font-size: 18px;
+  text-align: right;
+  width: 50px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+  margin: 0 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-button.active {
+  background-color: #007BFF;
+  color: white;
+}
+
+.write-review-button-container {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.write-review-button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.write-review-button:hover {
+  background-color: #0056b3;
+}
+
+.review-input-container {
+  margin-bottom: 20px;
+}
+
+.review-input {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.user-initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007BFF;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  color: #ddd;
+}
+
+.star.filled {
+  color: #f39c12;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.buttons {
+  text-align: right;
+}
+
+.buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submit {
+  background-color: #28a745;
+  color: white;
+}
+
+.submit:hover {
+  background-color: #218838;
+}
+
+.cancel {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 10px;
+}
+
+.cancel:hover {
+  background-color: #c82333;
+}
+
+.reviews-list-container {
+  margin-top: 20px;
+}
+
+.reviews-title {
+  text-align: center;
+  color: #333;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.review {
+  width: 30%;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.review:hover {
+  transform: scale(1.05);
+}
+
+.review-rating .star {
+  font-size: 18px;
+}
+
+.read-more {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.read-more:hover {
+  opacity: 0.9;
+}
