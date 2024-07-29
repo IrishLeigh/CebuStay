@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   InputLabel,
@@ -16,21 +16,11 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import BedIcon from "@mui/icons-material/Bed";
 
-export default function RoomDetails({ isEditing }) {
+export default function RoomDetails({ isEditing, propertyData }) {
   const [guestCapacity, setGuestCapacity] = useState(10);
-  const [unitRooms, setUnitRooms] = useState([
-    { unitroomid: 365, roomname: "Bedroom", quantity: 2 },
-    { unitroomid: 366, roomname: "Bathroom", quantity: 2 },
-    { unitroomid: 367, roomname: "Living Room", quantity: 1 },
-    { unitroomid: 368, roomname: "Kitchen", quantity: 1 },
-  ]);
-  const [unitBeds, setUnitBeds] = useState([
-    { bedroomnum: "1", beds: { largebed: 1 } },
-    { bedroomnum: "2", beds: { singlebed: 1, bunkbed: 1 } },
-    { bedroomnum: "3", beds: { singlebed: 1, bunkbed: 2 } },
-  ]);
+  const [unitRooms, setUnitRooms] = useState([]);
+  const [unitBeds, setUnitBeds] = useState([]);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomQuantity, setNewRoomQuantity] = useState(0);
   const [isAddingRoom, setIsAddingRoom] = useState(false);
@@ -39,6 +29,14 @@ export default function RoomDetails({ isEditing }) {
   const [newBedType, setNewBedType] = useState("");
   const [newBedQuantity, setNewBedQuantity] = useState(0);
   const [openAddBedDialog, setOpenAddBedDialog] = useState(false);
+
+  useEffect(() => {
+    if (propertyData) {
+      setUnitRooms(propertyData.unitrooms || []);
+      setUnitBeds(propertyData.unitbeds || []);
+      setGuestCapacity(propertyData.guest_capacity || '');
+    }
+  }, [propertyData]);
 
   const handleGuestCapacityChange = (event) => {
     setGuestCapacity(event.target.value);
@@ -176,20 +174,13 @@ export default function RoomDetails({ isEditing }) {
                     sx={{ width: "100%" }}
                   />
                 </div>
-                {/* <IconButton
-                  aria-label="add-bed"
-                  onClick={() => handleOpenAddBedDialog(index)}
-                  disabled={!isEditing || room.roomname !== "Bedroom"}
-                >
-                  <AddIcon />
-                </IconButton> */}
-                {/* <IconButton
+                <IconButton
                   aria-label="delete"
                   onClick={() => handleDeleteRoom(index)}
                   disabled={!isEditing}
                 >
                   <DeleteIcon />
-                </IconButton> */}
+                </IconButton>
               </div>
             ))}
             {isEditing && (
@@ -298,44 +289,51 @@ export default function RoomDetails({ isEditing }) {
               >
                 <DeleteIcon />
               </IconButton>
-              <IconButton
-                aria-label="add-bed"
-                onClick={() => handleOpenAddBedDialog(bedroomIndex)}
-                disabled={!isEditing}
-              >
-                <AddIcon />
-              </IconButton>
+              {isEditing && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleOpenAddBedDialog(bedroomIndex)}
+                  startIcon={<AddIcon />}
+                >
+                  Add Bed
+                </Button>
+              )}
             </div>
           ))}
           {isEditing && (
-            <div style={{ marginTop: "1rem" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleOpenAddBedDialog(null)}
-              >
-                Add Bedroom
-              </Button>
-            </div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleOpenAddBedDialog(null)}
+              sx={{ marginTop: "1rem" }}
+            >
+              Add Bedroom
+            </Button>
           )}
         </Grid>
       </Grid>
+
       <Dialog open={openAddBedDialog} onClose={handleCancelAddBed}>
         <DialogTitle>Add Bed</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please enter the details for the new bed.
+            Please enter the bed type and quantity.
           </DialogContentText>
           <Select
-            label="Bed Type"
             value={newBedType}
             onChange={(e) => setNewBedType(e.target.value)}
             fullWidth
-            sx={{ marginTop: "0.5rem" }}
+            displayEmpty
+            sx={{ marginTop: "1rem" }}
           >
-            <MenuItem value="singlebed">Single Bed</MenuItem>
-            <MenuItem value="largebed">Large Bed</MenuItem>
-            <MenuItem value="bunkbed">Bunk Bed</MenuItem>
+            <MenuItem value="">
+              <em>Select Bed Type</em>
+            </MenuItem>
+            <MenuItem value="Single Bed">Single Bed</MenuItem>
+            <MenuItem value="Double Bed">Double Bed</MenuItem>
+            <MenuItem value="Queen Size Bed">Queen Size Bed</MenuItem>
+            <MenuItem value="King Size Bed">King Size Bed</MenuItem>
           </Select>
           <TextField
             label="Quantity"
@@ -347,11 +345,11 @@ export default function RoomDetails({ isEditing }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleAddBed} variant="contained" color="primary">
-            Add
-          </Button>
-          <Button onClick={handleCancelAddBed} variant="outlined" color="secondary">
+          <Button onClick={handleCancelAddBed} color="secondary">
             Cancel
+          </Button>
+          <Button onClick={handleAddBed} color="primary">
+            Add
           </Button>
         </DialogActions>
       </Dialog>

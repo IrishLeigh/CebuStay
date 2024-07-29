@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   FormControlLabel,
   Grid,
@@ -12,41 +13,69 @@ import {
   TextField
 } from "@mui/material";
 
-export default function BasicInfo({ isEditing }) {
-  const [propertyName, setPropertyName] = useState("Sample Property");
-  const [propertyType, setPropertyType] = useState(10);
-  const [unitType, setUnitType] = useState("private-room");
-  const [description, setDescription] = useState("Sample description...");
-  const [directions, setDirections] = useState("Sample directions...");
-  const [street, setStreet] = useState("123 Sample Street");
-  const [postalCode, setPostalCode] = useState("12345");
+export default function BasicInfo({ isEditing, propertyData, propertyAddress, onBasicInfoChange }) {
+  const [propertyName, setPropertyName] = useState("");
+  const [propertyType, setPropertyType] = useState("");
+  const [unitType, setUnitType] = useState("");
+  const [description, setDescription] = useState("");
+  const [directions, setDirections] = useState("");
+  const [street, setStreet] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+
+  useEffect(() => {
+    if (propertyData) {
+      setPropertyName(propertyData.property_name || "");
+      setPropertyType(propertyData.property_type || "");
+      setUnitType(propertyData.unit_type || "");
+      setDescription(propertyData.property_desc || "");
+      setDirections(propertyData.property_directions || "");
+    }
+    if (propertyAddress) {
+      setStreet(propertyAddress.address || "");
+      setPostalCode(propertyAddress.zipcode || "");
+    }
+  }, [propertyData, propertyAddress]);
 
   const handlePropertyNameChange = (event) => {
-    setPropertyName(event.target.value);
+    const newValue = event.target.value;
+    setPropertyName(newValue);
+    onBasicInfoChange({ propertyName: newValue, propertyType, unitType, description, directions, street, postalCode });
   };
 
   const handlePropertyTypeChange = (event) => {
-    setPropertyType(event.target.value);
+    const newValue = event.target.value;
+    setPropertyType(newValue);
+    onBasicInfoChange({ propertyName, propertyType: newValue, unitType, description, directions, street, postalCode });
   };
 
   const handleUnitTypeChange = (event) => {
-    setUnitType(event.target.value);
+    const newValue = event.target.value;
+    setUnitType(newValue);
+    onBasicInfoChange({ propertyName, propertyType, unitType: newValue, description, directions, street, postalCode });
   };
 
   const handleDescriptionChange = (event) => {
-    setDescription(event.target.value);
+    const newValue = event.target.value;
+    setDescription(newValue);
+    onBasicInfoChange({ propertyName, propertyType, unitType, description: newValue, directions, street, postalCode });
   };
 
   const handleDirectionsChange = (event) => {
-    setDirections(event.target.value);
+    const newValue = event.target.value;
+    setDirections(newValue);
+    onBasicInfoChange({ propertyName, propertyType, unitType, description, directions: newValue, street, postalCode });
   };
 
   const handleStreetChange = (event) => {
-    setStreet(event.target.value);
+    const newValue = event.target.value;
+    setStreet(newValue);
+    onBasicInfoChange({ propertyName, propertyType, unitType, description, directions, street: newValue, postalCode });
   };
 
   const handlePostalCodeChange = (event) => {
-    setPostalCode(event.target.value);
+    const newValue = event.target.value;
+    setPostalCode(newValue);
+    onBasicInfoChange({ propertyName, propertyType, unitType, description, directions, street, postalCode: newValue });
   };
 
   return (
@@ -54,7 +83,7 @@ export default function BasicInfo({ isEditing }) {
       <Grid container spacing={2}>
         <Grid item xs={6} sx={{ padding: "1rem" }}>
           <div style={{ marginBottom: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-name">
+            <InputLabel variant="standard" htmlFor="property-name" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Property Name
             </InputLabel>
             <TextField
@@ -68,40 +97,42 @@ export default function BasicInfo({ isEditing }) {
           </div>
 
           <div style={{ marginBottom: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-type-select">
+            <InputLabel variant="standard" htmlFor="property-type-select"  sx={{ fontFamily: "Poppins, sans-serif" }}>
               Property Type
             </InputLabel>
             <Select
+             sx={{ fontFamily: "Poppins, sans-serif" , width: "100%"}}
               labelId="property-type-select-label"
               id="property-type-select"
               value={propertyType}
               onChange={handlePropertyTypeChange}
-              sx={{ width: "100%" }}
               disabled={!isEditing}
             >
-              <MenuItem value={10}>House</MenuItem>
-              <MenuItem value={20}>Condominium</MenuItem>
-              <MenuItem value={30}>Apartment</MenuItem>
-              <MenuItem value={40}>Hotel</MenuItem>
+              <MenuItem value="House"  sx={{ fontFamily: "Poppins, sans-serif" }}>House</MenuItem>
+              <MenuItem value="Condominium"   sx={{ fontFamily: "Poppins, sans-serif" }}>Condominium</MenuItem>
+              <MenuItem value="Apartment"   sx={{ fontFamily: "Poppins, sans-serif" }}>Apartment</MenuItem>
+              <MenuItem value="Hotel"   sx={{ fontFamily: "Poppins, sans-serif" }}>Hotel</MenuItem>
             </Select>
           </div>
           <div>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Unit Type</FormLabel>
+              <FormLabel component="legend" sx={{ fontFamily: "Poppins, sans-serif" }}>Unit Type</FormLabel>
               <RadioGroup
                 row
                 aria-label="unit type"
                 name="unit-type-group"
                 value={unitType}
                 onChange={handleUnitTypeChange}
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+                
               >
-                <FormControlLabel value="private-room" control={<Radio />} label="Private Room" disabled={!isEditing} />
-                <FormControlLabel value="entire-place" control={<Radio />} label="Entire Place" disabled={!isEditing} />
+                <FormControlLabel value="Private Room" control={<Radio />} label="Private Room" disabled={!isEditing}  sx={{ fontFamily: "Poppins, sans-serif" }}/>
+                <FormControlLabel value="Entire Place" control={<Radio />} label="Entire Place" disabled={!isEditing}  sx={{ fontFamily: "Poppins, sans-serif" }}/>
               </RadioGroup>
             </FormControl>
           </div>
           <div style={{ marginTop: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-description">
+            <InputLabel variant="standard" htmlFor="property-description" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Description
             </InputLabel>
             <TextField
@@ -109,14 +140,14 @@ export default function BasicInfo({ isEditing }) {
               multiline
               maxRows={4}
               rows={4}
-              sx={{ width: "100%" }}
+              sx={{ width: "100%" , fontFamily: "Poppins, sans-serif" }}
               value={description}
               onChange={handleDescriptionChange}
               disabled={!isEditing}
             />
           </div>
           <div style={{ marginTop: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-directions">
+            <InputLabel variant="standard" htmlFor="property-directions" sx ={{ fontFamily: "Poppins, sans-serif" }}>
               Directions
             </InputLabel>
             <TextField
@@ -124,7 +155,7 @@ export default function BasicInfo({ isEditing }) {
               multiline
               maxRows={4}
               rows={4}
-              sx={{ width: "100%" }}
+              sx={{ width: "100%", fontFamily: "Poppins, sans-serif" }}
               value={directions}
               onChange={handleDirectionsChange}
               disabled={!isEditing}
@@ -132,19 +163,19 @@ export default function BasicInfo({ isEditing }) {
           </div>
         </Grid>
         <Grid item xs={6} sx={{ padding: "1rem" }}>
-        <div style={{ marginBottom: "1rem" }}>
-         <InputLabel variant="standard" htmlFor="property-name">
-          Address
-        </InputLabel>
-          <TextField
-            value={street}
-            onChange={handleStreetChange}
-            helperText="Enter your street address"
-            fullWidth
-            disabled={!isEditing}
-          />
-        
-        </div>
+          <div style={{ marginBottom: "1rem" }}>
+            <InputLabel variant="standard" htmlFor="property-name" sx={{ fontFamily: "Poppins, sans-serif" }}>
+              Address
+            </InputLabel>
+            <TextField
+              value={street}
+              onChange={handleStreetChange}
+              helperText="Enter your street address"
+              fullWidth
+              disabled={!isEditing}
+              sx={{ fontFamily: "Poppins, sans-serif" }}
+            />
+          </div>
           <TextField
             label="Postal/ZIP Code"
             value={postalCode}
@@ -152,9 +183,17 @@ export default function BasicInfo({ isEditing }) {
             helperText="Enter your postal or ZIP code"
             fullWidth
             disabled={!isEditing}
+            sx={{ fontFamily: "Poppins, sans-serif" }}
           />
         </Grid>
       </Grid>
     </div>
   );
 }
+
+BasicInfo.propTypes = {
+  isEditing: PropTypes.bool.isRequired,
+  propertyData: PropTypes.object.isRequired,
+  propertyAddress: PropTypes.object.isRequired,
+  onBasicInfoChange: PropTypes.func.isRequired,
+};

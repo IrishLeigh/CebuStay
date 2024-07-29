@@ -35,8 +35,6 @@ export default function Photos({ isEditing }) {
     { id: 5, src: "/image5.png", caption: "Caption 5" },
     { id: 6, src: "/image6.png", caption: "Caption 6" },
   ]);
-  const [newImages, setNewImages] = useState([]);
-  const [newImageCaptions, setNewImageCaptions] = useState([]);
   const [isEditingCaption, setIsEditingCaption] = useState(false);
   const [editedCaption, setEditedCaption] = useState("");
 
@@ -84,7 +82,13 @@ export default function Photos({ isEditing }) {
       src: URL.createObjectURL(file),
       caption: `Caption ${images.length + index + 1}`,
     }));
-    setImages((prevImages) => [...prevImages, ...newImagesWithCaptions]);
+    setImages((prevImages) => {
+      if (prevImages.length + newImagesWithCaptions.length > 5) {
+        alert("You can only upload up to 5 cover photos.");
+        return prevImages;
+      }
+      return [...prevImages, ...newImagesWithCaptions];
+    });
   };
 
   const handleDeleteImage = (index) => {
@@ -111,7 +115,7 @@ export default function Photos({ isEditing }) {
           <div className="info-title-cntr">
             <ArrowRight sx={{ color: "#16B4DD" }} />
             <div>Cover Photos</div>
-          </div>  
+          </div>
           <Divider sx={{ width: "100%", color: "#ccc" }} />
           <div className="gallery-wrapper">
             <IconButton onClick={scrollLeft} className="scroll-button left">
@@ -159,7 +163,7 @@ export default function Photos({ isEditing }) {
           <div className="info-title-cntr">
             <ArrowRight sx={{ color: "#16B4DD" }} />
             <div>Gallery</div>
-          </div>  
+          </div>
           <Divider sx={{ width: "100%", color: "#ccc" }} />
           <div className="gallery-wrapper">
             <IconButton onClick={scrollLeft} className="scroll-button left">
@@ -203,11 +207,9 @@ export default function Photos({ isEditing }) {
             </div>
           )}
         </Grid>
-
-        
       </Grid>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth sx={{overflowX: "hidden"}}>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth sx={{ overflowX: "hidden" }}>
         <DialogTitle>
           Image {selectedImageIndex + 1}
           <IconButton
