@@ -5,6 +5,7 @@ import { MdMenuOpen, MdSearch, MdEdit, MdDelete, MdClose} from 'react-icons/md';
 import Sidebar from '../../PropertyManagementUI/components/sidebar';
 import {Grid } from '@mui/material';
 import axios from 'axios';
+import EditPropertyUI from '../../PropertyManagementUI/components/EditPropertyUI';
 export default function PropertyManagementListing() {
     const [selectedButton, setSelectedButton] = useState('ALL');
     const [showDropdown, setShowDropdown] = useState(false);
@@ -21,6 +22,7 @@ export default function PropertyManagementListing() {
     const [deleteItemId, setDeleteItemId] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const [user, setUser] = useState(null);
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
@@ -83,6 +85,13 @@ export default function PropertyManagementListing() {
         setDeleteItemId(id);
         setModalOpen(true);
     };
+    const handleRowClick = (id) => {
+        setSelectedId(id);
+      };
+    
+      const handleClose = () => {
+        setSelectedId(null);
+      };
 
     const confirmDelete = () => {
         // Delete the item from the data
@@ -110,6 +119,8 @@ export default function PropertyManagementListing() {
                 return [];
         }
     };
+
+    console.log("DATA: ", data);
 
     return (
         <Grid container>
@@ -255,7 +266,7 @@ export default function PropertyManagementListing() {
                                 </thead>
                                 <tbody>
                                     {getData().map(item => (
-                                        <tr key={item.id} className="table-row">
+                                        <tr key={item.id} className="table-row" onClick={() => handleRowClick(item.id)}>
                                             <td className="table-cell"><input type="checkbox" /></td>
                                             <td className="table-cell">{item.editable ? <input type="text" value={item.id} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, id: e.target.value } : i))} /> : item.id}</td>
                                             <td className="table-cell">{item.editable ? <input type="text" value={item.name} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, name: e.target.value } : i))} /> : item.name}</td>
@@ -303,42 +314,12 @@ export default function PropertyManagementListing() {
                     )}
 
                     {/* Edit Modal */}
-                    {editModalOpen && (
-                        <div className="modal-overlay">
-                            <div className="modal edit-modal">
-                                <div className="modal-content">
-                                    <span className="close" onClick={handleCancelEdit}><MdClose /></span>
-                                    <h2>Edit Item</h2>
-                                    <div className="edit-form">
-                                        {data.map((item, index) => {
-                                            if (item.id === editItemId) {
-                                                return (
-                                                    <div key={index} className="edit-item">
-                                                        <label className='edit-title'>Property ID:</label>
-                                                        <input type="text" value={item.id} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, id: e.target.value } : i))} />
-                                                        <label  className='edit-title'>Property Name:</label>
-                                                        <input type="text" value={item.name} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, name: e.target.value } : i))} />
-                                                        <label  className='edit-title'>Type:</label>
-                                                        <input type="text" value={item.type} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, type: e.target.value } : i))} />
-                                                        <label  className='edit-title'>Address:</label>
-                                                        <input type="text" value={item.address} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, address: e.target.value } : i))} />
-                                                        <label  className='edit-title'>Date Created:</label>
-                                                        <input type="text" value={item.created_at} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, created_at: e.target.value } : i))} />
-                                                        <label  className='edit-title'>Status:</label>
-                                                        <input type="text" value={item.status} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, status: e.target.value } : i))} />
-                                                        <div className="edit-actions">
-                                                            <button className="btn-blue" onClick={() => handleSave(item.id)}>Done</button>
-                                                            <button className="btn-red" onClick={handleCancelEdit}>Cancel</button>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    
+                    {selectedId && (
+                        <EditPropertyUI
+                        editItemId={selectedId}
+                        onClose={handleClose}
+                        />
                     )}
 
                 </div>
