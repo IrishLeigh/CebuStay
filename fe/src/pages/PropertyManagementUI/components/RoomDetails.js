@@ -17,7 +17,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 
-export default function RoomDetails({ isEditing, propertyData }) {
+export default function RoomDetails({ isEditing, propertyData , onRoomDetailsChange }) {
   const [guestCapacity, setGuestCapacity] = useState(10);
   const [unitRooms, setUnitRooms] = useState([]);
   const [unitBeds, setUnitBeds] = useState([]);
@@ -40,16 +40,22 @@ export default function RoomDetails({ isEditing, propertyData }) {
 
   const handleGuestCapacityChange = (event) => {
     setGuestCapacity(event.target.value);
+    onRoomDetailsChange({ guestCapacity: event.target.value, unitRooms, unitBeds });
   };
 
   const handleRoomDetailChange = (index, event) => {
     const newRoomDetails = [...unitRooms];
     newRoomDetails[index].quantity = event.target.value;
     setUnitRooms(newRoomDetails);
+    onRoomDetailsChange({ guestCapacity, unitRooms: newRoomDetails, unitBeds });
   };
 
   const handleAddRoom = () => {
-    setUnitRooms([...unitRooms, { name: newRoomName, quantity: newRoomQuantity }]);
+    setUnitRooms([
+      ...unitRooms,
+      { unitroomid: unitRooms.length + 1, roomname: newRoomName, quantity: newRoomQuantity },
+    ]);
+
     setNewRoomName("");
     setNewRoomQuantity(0);
     setIsAddingRoom(false);
@@ -78,6 +84,7 @@ export default function RoomDetails({ isEditing, propertyData }) {
             : room
         )
       );
+      
     } else {
       // Add bed to existing bedroom
       const bedroom = newUnitBeds[selectedRoomIndex];
@@ -85,6 +92,7 @@ export default function RoomDetails({ isEditing, propertyData }) {
       newUnitBeds[selectedRoomIndex] = bedroom;
     }
     setUnitBeds(newUnitBeds);
+    onRoomDetailsChange({ unitBeds: newUnitBeds });
     setNewBedType("");
     setNewBedQuantity(0);
     setIsAddingBed(false);
@@ -121,6 +129,12 @@ export default function RoomDetails({ isEditing, propertyData }) {
     setIsAddingBed(false);
     setSelectedRoomIndex(null);
     setOpenAddBedDialog(false);
+  };
+
+  const handleBedDetailChange = (bedroomIndex, bedType, event) => {
+    const newUnitBeds = [...unitBeds];
+    newUnitBeds[bedroomIndex].beds[bedType] = event.target.value;
+    setUnitBeds(newUnitBeds);
   };
 
   return (
@@ -262,41 +276,52 @@ export default function RoomDetails({ isEditing, propertyData }) {
                       {bedType}
                     </InputLabel>
                   </div>
-
                   <div style={{ flex: 1 }}>
                     <TextField
                       id={`bed-${bedroomIndex}-${bedIndex}`}
                       variant="outlined"
                       value={bedroom.beds[bedType]}
-                      fullWidth
-                      disabled
+                      onChange={(event) =>
+                        handleBedDetailChange(bedroomIndex, bedType, event)
+                      }
+                      type="number"
                       size="small"
+                      sx={{ width: "100%" }}
                     />
                   </div>
-                  <IconButton
-                    aria-label="delete-bed"
-                    onClick={() => handleDeleteBed(bedroomIndex, bedType)}
-                    disabled={!isEditing}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+
+                  {isEditing && (
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() =>
+                        handleDeleteBed(bedroomIndex, bedType)
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
                 </div>
               ))}
-              <IconButton
-                aria-label="delete-bedroom"
-                onClick={() => handleDeleteBedroom(bedroomIndex)}
-                disabled={!isEditing}
-              >
-                <DeleteIcon />
-              </IconButton>
               {isEditing && (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
+                  size="small"
                   onClick={() => handleOpenAddBedDialog(bedroomIndex)}
-                  startIcon={<AddIcon />}
+                  sx={{ marginTop: "0.5rem" }}
                 >
                   Add Bed
+                </Button>
+              )}
+              {isEditing && (
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  onClick={() => handleDeleteBedroom(bedroomIndex)}
+                  sx={{ marginTop: "0.5rem" }}
+                >
+                  Delete Bedroom
                 </Button>
               )}
             </div>
@@ -305,7 +330,7 @@ export default function RoomDetails({ isEditing, propertyData }) {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => handleOpenAddBedDialog(null)}
+              onClick={() => setOpenAddBedDialog(true)}
               sx={{ marginTop: "1rem" }}
             >
               Add Bedroom
@@ -313,35 +338,34 @@ export default function RoomDetails({ isEditing, propertyData }) {
           )}
         </Grid>
       </Grid>
-
-      <Dialog open={openAddBedDialog} onClose={handleCancelAddBed}>
-        <DialogTitle>Add Bed</DialogTitle>
+      <Dialog
+        open={openAddBedDialog}
+        onClose={handleCancelAddBed}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Add Bed</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please enter the bed type and quantity.
+            Please select the bed type and quantity.
           </DialogContentText>
           <Select
             value={newBedType}
             onChange={(e) => setNewBedType(e.target.value)}
             fullWidth
-            displayEmpty
-            sx={{ marginTop: "1rem" }}
           >
-            <MenuItem value="">
-              <em>Select Bed Type</em>
-            </MenuItem>
-            <MenuItem value="Single Bed">Single Bed</MenuItem>
-            <MenuItem value="Double Bed">Double Bed</MenuItem>
-            <MenuItem value="Queen Size Bed">Queen Size Bed</MenuItem>
-            <MenuItem value="King Size Bed">King Size Bed</MenuItem>
+            <MenuItem value="largebed">Large Bed</MenuItem>
+            <MenuItem value="smallbed">Small Bed</MenuItem>
+            <MenuItem value="bunkbed">Bunk Bed</MenuItem>
+            <MenuItem value="sofabed">Sofa Bed</MenuItem>
           </Select>
           <TextField
+            autoFocus
+            margin="dense"
             label="Quantity"
             type="number"
+            fullWidth
             value={newBedQuantity}
             onChange={(e) => setNewBedQuantity(e.target.value)}
-            fullWidth
-            sx={{ marginTop: "0.5rem" }}
           />
         </DialogContent>
         <DialogActions>

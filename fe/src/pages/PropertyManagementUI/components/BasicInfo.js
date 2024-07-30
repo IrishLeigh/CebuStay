@@ -108,7 +108,7 @@ export default function BasicInfo({ isEditing, propertyData, propertyAddress, on
               onChange={handlePropertyTypeChange}
               disabled={!isEditing}
             >
-              <MenuItem value="House"  sx={{ fontFamily: "Poppins, sans-serif" }}>House</MenuItem>
+              <MenuItem value="Home"  sx={{ fontFamily: "Poppins, sans-serif" }}>Home</MenuItem>
               <MenuItem value="Condominium"   sx={{ fontFamily: "Poppins, sans-serif" }}>Condominium</MenuItem>
               <MenuItem value="Apartment"   sx={{ fontFamily: "Poppins, sans-serif" }}>Apartment</MenuItem>
               <MenuItem value="Hotel"   sx={{ fontFamily: "Poppins, sans-serif" }}>Hotel</MenuItem>

@@ -11,7 +11,8 @@ export default function RulesPolicies({ isEditing, parentHouseRulesData, parentP
     checkInFrom: "12:00",
     checkInUntil: "14:00",
     checkOutFrom: "12:00",
-    checkOutUntil: "14:00"
+    checkOutUntil: "14:00",
+    customRules: "",
   });
 
   const [policiesData, setPoliciesData] = useState({
@@ -110,8 +111,7 @@ export default function RulesPolicies({ isEditing, parentHouseRulesData, parentP
                 disabled={!isEditing}
                 onChange={(e) => setShowTimePicker(e.target.checked)}
                 color="secondary"
-              />{" "}
-              Noise Restrictions
+              /> Noise Restrictions
               {showTimePicker && (
                 <div>
                   <TextField
@@ -241,52 +241,51 @@ export default function RulesPolicies({ isEditing, parentHouseRulesData, parentP
             </Box>
           </Box>
         </Grid>
+
         <Grid item xs={6} sx={{ padding: "1rem" }}>
           <Box sx={{ width: "auto", padding: "1rem", fontFamily: "Poppins, sans-serif" }}>
-            <h6 style={{ marginBottom: "1rem", fontWeight: "bold" }}>Policies</h6>
+            <h6 style={{ marginBottom: "1rem", fontWeight: "bold" }}>Rules & Policies</h6>
             <Box>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: 18, m: 2 }}>Cancellation Policy</Typography>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: 18, m: 2 }}>Policies</Typography>
               <Checkbox
+                name="standardCancellation"
                 checked={policiesData.standardCancellation}
                 color="secondary"
                 disabled={!isEditing}
-                onChange={(e) => handleCheckboxChange(e, 'standardCancellation')}
-                name="standardCancellation"
-              /> Standard Cancellation Plan
+                onChange={handleCheckboxChange}
+              /> Standard Cancellation
               <br />
-              {policiesData.standardCancellation && (
-                <TextField
-                  label="Cancellation Days"
-                  type="number"
-                  value={policiesData.cancellationDays}
-                  disabled={!isEditing}
-                  onChange={handleDaysChange}
-                  sx={{ marginTop: 2 }}
-                />
-              )}
-              <br />
+              <TextField
+                id="cancellation-days"
+                label="Cancellation Days"
+                type="number"
+                value={policiesData.cancellationDays}
+                disabled={!isEditing}
+                onChange={handleDaysChange}
+                sx={{ m: 2, width: '92%' }}
+              />
               <Checkbox
+                name="nonRefundableRate"
                 checked={policiesData.nonRefundableRate}
                 color="secondary"
                 disabled={!isEditing}
                 onChange={handleCheckboxChange}
-                name="nonRefundableRate"
-              /> Non-refundable Rate
+              /> Non-Refundable Rate
               <br />
               <Checkbox
+                name="modificationPlan"
                 checked={policiesData.modificationPlan}
                 color="secondary"
                 disabled={!isEditing}
                 onChange={handleCheckboxChange}
-                name="modificationPlan"
               /> Modification Plan
               <br />
               <Checkbox
+                name="offerDiscounts"
                 checked={policiesData.offerDiscounts}
                 color="secondary"
                 disabled={!isEditing}
                 onChange={handleCheckboxChange}
-                name="offerDiscounts"
               /> Offer Discounts
             </Box>
           </Box>

@@ -7,9 +7,10 @@ export default function Amenities({ isEditing, parentAmenities, parentFacilities
   const [selectedServices, setSelectedServices] = useState([]);
 
   useEffect(() => {
-    if (parentAmenities) setSelectedAmenities(parentAmenities);
-    if (parentFacilities) setSelectedFacilities(parentFacilities);
-    if (parentServices) setSelectedServices(parentServices);
+    // Initialize state with empty arrays if props are undefined or empty
+    setSelectedAmenities(parentAmenities || []);
+    setSelectedFacilities(parentFacilities || []);
+    setSelectedServices(parentServices || []);
   }, [parentAmenities, parentFacilities, parentServices]);
 
   const handleAmenityChange = (event) => {
