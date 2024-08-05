@@ -5,9 +5,8 @@ import UnitInfo_2 from "../../components/registration_unit/registration_unitDeta
 import BedroomDetails from "../../components/registration_unit/registration_bedRoomDetails/bedroomDetails";
 import SimplePaper from "../../components/registration_unit/registration_personalInformation/home_form";
 import HouseRules from "../../components/registration_unit/registration_houseRules/houseRules";
-import AccommodationPropertyType from "../../components/Button/AccommodationPropertyType";
 import Properties from "../../components/Button/Properties";
-import PropertyType from "../../components/Button/AccommodationRegistration2";
+import PropertyType from "./components/PropertyTypeDescription";
 import AddressForm from "../../components/Form/AccommodationPropertyLocation";
 import AccommodationUploadPhotos from "../../components/Form/AccommodationUploadPhotos";
 import Policies from "../../components/registration_unit/registration_bookingPolicies/bookingPolicies";
@@ -19,7 +18,7 @@ import "../AccommodationRegistrationUI/css/Registration.css"; // Import CSS file
 import AnimatePage from "../AccommodationRegistrationUI/components/AnimatedPage";
 import PaymentMethods from "../../components/registration_unit/registration_pMethods/PaymentMethods";
 import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
-import "../AccommodationRegistrationUI/css/RegistrationUnitBG.css";
+import "../AccommodationRegistrationUI/css/Registration.css";
 import {
   Modal,
   Backdrop,
@@ -29,6 +28,7 @@ import {
   Fade,
 } from "@mui/material";
 import { useUser } from "../../components/UserProvider";
+import PropertyType2 from "./components/PropertyType2";
 const style = {
   position: "absolute",
   top: "50%",
@@ -693,7 +693,7 @@ export default function AccommodationRegistrationUI() {
         {step === 2 && (
           <div>
             <AnimatePage>
-              <PropertyType
+              <PropertyType2
                 onSelectedPropertyTypeChange={handleSelectedPropertyTypeChange}
                 parentSelectedPropertyType={selectedPropertyType}
               />

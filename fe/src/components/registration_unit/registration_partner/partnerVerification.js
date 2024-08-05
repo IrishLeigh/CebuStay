@@ -68,17 +68,17 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
+            <Typography sx={{ fontSize: "2rem" ,fontFamily: "Poppins, sans-serif"}} fontWeight="bold">
               Compliance and Trust
             </Typography>
 
-            <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2} >
+            <Typography sx={{ fontSize: "1.5rem", width: "100%",fontFamily: "Poppins, sans-serif" }} mb={2} >
               For verification, please tell us who you are.
             </Typography>
           </div>
         </Box>
 
-        <Paper elevation={3} sx={{ p: "2rem", width: "100%" }}>
+        <Paper elevation={3} sx={{ p: "2rem", width: "100%" , borderRadius: "0.8rem", boxShadow: 3}}>
           <Box
             component="form"
             sx={{
@@ -87,10 +87,10 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
             autoComplete="off"
           >
             <div>
-              <Typography sx={{ fontSize: "1.125rem" }} mb={4} >
+              <Typography sx={{ fontSize: "1.125rem", fontFamily: "Poppins, sans-serif" }} mb={4} >
                 To ensure compliance with legal and regulatory standards, we require some information about you and your property.
               </Typography>
-              <Typography sx={{ fontSize: "1.5rem" }} mb={2} fontWeight="bold">
+              <Typography sx={{ fontSize: "1.5rem",fontFamily: "Poppins, sans-serif" }} mb={2} fontWeight="bold">
                 Accommodation Ownership
               </Typography>
               <RadioGroup

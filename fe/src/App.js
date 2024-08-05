@@ -42,6 +42,9 @@ import AccountManagement from "./pages/AccountManagement/Layout/AccountManagemen
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import AccommodationReservation from "./pages/PropertyManagementUI/AccommodationReservation";
 
+import MultiUnitRegistration from "./pages/AccommodationRegistrationUI/MultiUnitRegistrationUI";
+import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
+
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
   const location = useLocation(); // Use useLocation hook to get the current route path
@@ -110,8 +113,13 @@ function App() {
           {/* <Route element={<EditProfile2 />} path='/profile/edit-name' exact/>
               <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/> */}
           <Route
-            path="/list-your-property"
+            path="/list-property/create-listing"
             element={<AccommodationRegistration />}
+            exact
+          />
+           <Route
+            path="/list-property"
+            element={<GettingStartedRegistration />}
             exact
           />
           {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}

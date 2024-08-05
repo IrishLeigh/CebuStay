@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { Paper, Typography, IconButton, Button } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import Container from "@mui/material/Container";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ImageIcon from "@mui/icons-material/Image";
-import { Box } from "@mui/material";
+import { Paper, Typography, IconButton, Button, Box, Grid, Container, Card, CardMedia } from "@mui/material";
+import { Delete as DeleteIcon, Image as ImageIcon } from "@mui/icons-material";
 import AnimatePage from "./AnimatedPage";
-
 
 const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) => {
   const [selectedImages, setSelectedImages] = useState([]);
@@ -33,48 +28,40 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
       return {
         name: file.name,
         url: URL.createObjectURL(file),
+        size: file.size,
       };
     });
 
     if (oversizedImages.length > 0) {
-      setErrors([
-        ...errors,
-        `Image(s) ${oversizedImages.join(", ")} size cannot exceed 5MB`,
+      setErrors((prevErrors) => [
+        ...prevErrors,
+        `The following image(s) exceed the 5MB size limit: ${oversizedImages.join(", ")}`,
       ]);
     }
 
-    const filteredImages = newImages.filter((image) => image !== null);
-    const uniqueImages = filteredImages.slice(0, 5 - selectedImages.length);
+    const validImages = newImages.filter((image) => image !== null);
+    const imagesToAdd = validImages.slice(0, 5 - selectedImages.length);
 
-    const updatedImages = [...selectedImages, ...uniqueImages];
-    setSelectedImages(updatedImages);
+    setSelectedImages((prevImages) => [...prevImages, ...imagesToAdd]);
   };
 
   const onDrop = (acceptedFiles) => {
     const newImages = acceptedFiles.slice(0, 5 - selectedImages.length);
-
-    const uniqueImages = newImages
+    const imagesToAdd = newImages
       .filter(
-        (file) =>
-          !selectedImages.some((selectedFile) => selectedFile.name === file.name)
+        (file) => !selectedImages.some((selected) => selected.name === file.name)
       )
       .map((file) => ({
         name: file.name,
         url: URL.createObjectURL(file),
+        size: file.size,
       }));
 
-    const updatedImages = [...selectedImages, ...uniqueImages];
-    setSelectedImages(updatedImages);
+    setSelectedImages((prevImages) => [...prevImages, ...imagesToAdd]);
   };
 
   const handleDeleteImage = (index) => {
-    const updatedImages = [...selectedImages];
-    updatedImages.splice(index, 1);
-    setSelectedImages(updatedImages);
-  };
-
-  const handleDeleteAllImages = () => {
-    setSelectedImages([]);
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -83,65 +70,61 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
   });
 
   const validateImages = () => {
-    const newErrors = [];
-    selectedImages.forEach((image) => {
-      if (image.size > 5 * 1024 * 1024) {
-        newErrors.push(`Image ${image.name} size cannot exceed 5MB`);
-      }
-    });
-    setErrors(newErrors);
-    return newErrors.length === 0;
+    const validationErrors = selectedImages
+      .filter((image) => image.size > 5 * 1024 * 1024)
+      .map((image) => `Image "${image.name}" exceeds the 5MB size limit.`);
+
+    setErrors(validationErrors);
+    return validationErrors.length === 0;
   };
 
   const handleNextStep = () => {
+    // Check if there are exactly 5 images
+    if (selectedImages.length !== 5) {
+      alert("Please upload exactly 5 images.");
+      return;
+    }
+
+    // Validate image sizes
     if (validateImages()) {
       onImagesChange(selectedImages);
       handleNext();
+    } else {
+      alert("Please ensure all images are under the 5MB size limit.");
     }
   };
 
   return (
-    <Box
-    >
-      <Container maxWidth="lg" className="centered-container">
+    <Box>
+      <Container maxWidth="lg">
         <AnimatePage>
           <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "left",
+                  alignItems: "flex-start",
                   padding: "1rem",
-                  width: "100%",
-                  boxSizing: "border-box",
                 }}
               >
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontWeight: "bold",
-                    marginBottom: "1rem",
-                  }}
-                  align="left"
-                >
-                  Upload your photos
-                </Typography>
-                <Typography align="left">
-                  Upload at most 5 photos of your property. The more you upload,
-                  the more likely you are to get bookings. You can add more later.
-                </Typography>
+                
+
                 <Paper
                   elevation={3}
                   sx={{
+                    padding: "2rem",
                     width: "100%",
-                    maxWidth: "32rem",
-                    padding: "1rem",
-                    marginTop: "2rem",
-                    boxSizing: "border-box",
+                    borderRadius: "0.8rem",
                   }}
                 >
+                  <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "1rem" }}>
+                  Upload Up to 5 Stunning Cover Photos
+                </Typography>
+                <Typography  sx={{ marginBottom: "1rem", color: '#333', lineHeight: 1.5 , fontFamily: "Poppins, sans-serif",fontSize: "1.125rem"}}>
+                  
+                  Showcase the best features of your property with high-quality images. These photos will be the first thing guests see, so make sure they highlight what makes your place special. You can always add more room photos later. Let your property shine and attract guests with captivating visuals!
+                </Typography>
                   <div
                     {...getRootProps()}
                     style={{
@@ -150,79 +133,57 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      width: "calc(100% - 60px)",
                       height: "10rem",
                       marginBottom: "1rem",
                     }}
                   >
-                    {selectedImages.length === 0 ? (
-                      <>
-                        <input
-                          {...getInputProps()}
-                          onChange={handleImageChange}
-                          multiple
-                          style={{ display: "none" }}
-                        />
-                        <Typography variant="body1" align="center">
-                          <ImageIcon sx={{ fontSize: 50 }} />
-                          <br />
-                          Drag & drop images here, or click to select
-                        </Typography>
-                      </>
-                    ) : (
-                      <Typography variant="body1" align="center">
-                        Drag & drop images here, or click to select
-                      </Typography>
-                    )}
+                    <input
+                      {...getInputProps()}
+                      onChange={handleImageChange}
+                      multiple
+                      style={{ display: "none" }}
+                    />
+                    <Typography variant="body1" align="center">
+                      <ImageIcon sx={{ fontSize: 50 }} />
+                      <br />
+                      Drag & drop images here, or click to select
+                    </Typography>
                   </div>
-                  <>
-                    <Typography variant="h6">Uploaded Files:</Typography>
-                    <ul
-                      style={{
-                        overflowY: "auto",
-                        maxHeight: "200px",
-                        listStyleType: "none",
-                        padding: 0,
-                        margin: 0,
-                      }}
-                    >
-                      {selectedImages.map((image, index) => (
-                        <li
-                          key={index}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: "0.5rem",
-                          }}
-                        >
-                          <ImageIcon
-                            sx={{ fontSize: 20, paddingRight: 2 }}
+                  <Typography variant="h6">Uploaded Files:</Typography>
+                  <Grid container spacing={2}>
+                    {selectedImages.map((image, index) => (
+                      <Grid item xs={6} sm={4} md={3} key={index}>
+                        <Card sx={{ position: 'relative' }}>
+                          <CardMedia
+                            component="img"
+                            alt={image.name}
+                            height="140"
+                            image={image.url}
                           />
-                          <Typography>{image.name}</Typography>
                           <IconButton
                             aria-label="delete"
                             onClick={() => handleDeleteImage(index)}
                             sx={{
-                              marginLeft: "auto",
-                              color: "red",
+                              position: 'absolute',
+                              top: 8,
+                              right: 8,
+                              color: 'red',
+                              backgroundColor: 'rgba(255, 255, 255, 0.7)',
                             }}
                           >
                             <DeleteIcon />
                           </IconButton>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Paper>
                 {errors.length > 0 && (
                   <Paper
                     elevation={3}
                     sx={{
-                      width: "100%",
-                      maxWidth: "32rem",
                       padding: "1rem",
                       marginTop: "2rem",
-                      boxSizing: "border-box",
                       backgroundColor: "#f8d7da",
                       borderColor: "#f5c6cb",
                       color: "#721c24",
@@ -241,25 +202,13 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
         </AnimatePage>
       </Container>
       <div className="stepperFooter">
-        <Button  onClick={handleBack} className="stepperPrevious">
+        <Button onClick={handleBack} className="stepperPrevious">
           Back
         </Button>
-        <Button  onClick={handleNextStep} className="stepperNext" disabled={selectedImages.length === 0}>
+        <Button onClick={handleNextStep} className="stepperNext">
           Next
         </Button>
       </div>
-      {/* <Box mt={4} display="flex" justifyContent="space-between">
-        <Button variant="contained" onClick={handleBack}>
-          Back
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleNextStep}
-          disabled={selectedImages.length === 0}
-        >
-          Next
-        </Button>
-      </Box> */}
     </Box>
   );
 };

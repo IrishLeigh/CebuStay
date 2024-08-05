@@ -108,7 +108,7 @@ function HeaderUser({ token, setToken }) {
               ))}
 
               <button className="property-listing">
-                <Link to="/list-your-property" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to="/list-property" style={{ textDecoration: 'none', color: 'inherit' }}>
                   List your property
                 </Link>
               </button>
