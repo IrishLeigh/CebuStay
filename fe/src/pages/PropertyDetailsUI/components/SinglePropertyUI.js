@@ -13,7 +13,8 @@ import AvailabilityTable from "./AvailabilityTable";
 import SearchAvailabilityButton from "./SearchAvailabilityButton";
 import ArrowRight from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
-import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsAndRatingsSingleUnit";
+// import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsAndRatingsSingleUnit";
+import ReviewsRatings from "../../ReviewsUI/ReviewsRatings";
 
 export default function SinglePropertyUI(propertyid) {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -163,7 +164,7 @@ export default function SinglePropertyUI(propertyid) {
           </div>
           <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
           <div>
-            <ReviewsAndRatingsSingleUnit />
+            <ReviewsRatings />
           </div>
         </div>
       </Container>
