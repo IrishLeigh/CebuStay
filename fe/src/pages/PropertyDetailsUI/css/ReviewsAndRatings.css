@@ -8,72 +8,8 @@
   background-color: #f9f9f9;
 }
 
-.review-container h2 {
-  text-align: center;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.review-name {
-  font-weight: bold;
-  font-size: 1.5rem;
-}
-
-.review-rating .star {
-  font-size: 30px;
-  color: #ddd;
-}
-
-.review-rating .star.filled {
-  color: #ffc107;
-}
-
-.review-text {
-  margin-top: 10px;
-  color: #555;
-}
-
-.add-review {
-  margin-top: 20px;
-}
-
-.add-review h3 {
-  margin-bottom: 10px;
-}
-
-.add-review input,
-.add-review textarea {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.add-review button {
-  padding: 10px 20px;
-  background-color: #1780cb;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.add-review button:hover {
-  background-color: #2f99fc;
-}
-
 .review-unit {
   font-style: italic;
-}
-
-.add-review {
-  margin-top: 20px;
 }
 
 .add-review .MuiTextField-root {
@@ -83,3 +19,191 @@
 .add-review .MuiFormControl-root {
   margin-bottom: 10px;
 }
+
+.review-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  font-family: Arial, sans-serif;
+  width: 100%;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.review-avatar {
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.review-info {
+  flex-grow: 1;
+}
+
+.review-name {
+  font-weight: bold;
+}
+
+.review-location {
+  color: #757575;
+}
+
+.review-date {
+  color: #757575;
+}
+
+.review-content {
+  margin-bottom: 12px;
+}
+
+.review-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.review-positive,
+.review-negative {
+  display: flex;
+  align-items: center;
+}
+
+.review-icon {
+  margin-right: 8px;
+}
+
+.review-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-room-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-room-type,
+.review-stay-duration,
+.review-group-type {
+  margin-bottom: 4px;
+}
+
+.review-rating {
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.review-helpful {
+  display: flex;
+  gap: 8px;
+}
+
+/* ReviewsAndRatings.css */
+
+/* Container for dropdown and title */
+.unit-dropdown-container {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  gap: 15px; /* Space between title and dropdown */
+}
+
+/* Style the label */
+.unit-dropdown-container label {
+  font-size: 1.2em;
+  margin: 0;
+  color: #333;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* Style the select element */
+.unit-dropdown-container select {
+  font-size: 1em;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+  width: 220px; /* Adjust width as needed */
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Style for options */
+.unit-dropdown-container option {
+  padding: 10px;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .unit-dropdown-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .unit-dropdown-container label {
+    margin-bottom: 10px;
+  }
+
+  .unit-dropdown-container select {
+    width: 100%;
+  }
+}
+
+.review-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.review-buttons button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.review-buttons button:hover {
+  color: #555;
+}
+
+.like-button {
+  color: green;
+}
+
+.dislike-button {
+  color: red;
+}
+
+/* .review-card.positive {
+  border-left: 5px solid green;
+}
+
+.review-card.negative {
+  border-left: 5px solid red;
+} */
