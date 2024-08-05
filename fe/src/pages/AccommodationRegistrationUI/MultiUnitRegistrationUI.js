@@ -21,10 +21,10 @@ import PropTypes from 'prop-types';
 import Check from '@mui/icons-material/Check';
 import { useData } from "../../components/registration_unit/registration_location/contextAddressData";
 import axios from "axios";
-import { useUser } from "../../components/UserProvider";
-import MultiPropertyInformation from "./MultiUnitRegistration/MultiPropertyInformation";
-import MultiPropertyLocation from "./MultiUnitRegistration/MultiPropertyLocation";
-import MultiRoomsAndBeds from "./MultiUnitRegistration/MultiRoomsAndBeds";
+import MultiPropertyInformation from "./components/MultiUnitRegistration/MultiPropertyInformation";
+import MultiPropertyLocation from "./components/MultiUnitRegistration/MultiPropertyLocation";
+import MultiRoomsAndBeds from "./components/MultiUnitRegistration/MultiRoomsAndBeds";
+
 
 // Customized Stepper
 const QontoStepIconRoot = styled('div')(({ theme, ownerState }) => ({

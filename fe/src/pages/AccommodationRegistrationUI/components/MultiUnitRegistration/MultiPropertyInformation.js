@@ -6,7 +6,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import AnimatePage from "../components/AnimatedPage";
+import AnimatePage from "../AnimatedPage";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";

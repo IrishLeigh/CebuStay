@@ -5,9 +5,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
-import { useData } from "../../../components/registration_unit/registration_location/contextAddressData";
+import { useData } from "../../../../components/registration_unit/registration_location/contextAddressData";
 import { Button } from '@mui/material';
-import AnimatePage from "../components/AnimatedPage";
+import AnimatePage from "../AnimatedPage";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 
 const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {

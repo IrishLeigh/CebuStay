@@ -50,17 +50,17 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
       >
         <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <div>
-            <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
+            <Typography sx={{ fontSize: "2rem" , fontFamily: "Poppins, sans-serif",mb: 2}} fontWeight="bold">
               Payment Methods
             </Typography>
 
-            <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2} >
+            {/* <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2} >
               Idk here yet.
-            </Typography>
+            </Typography> */}
           </div>
         </Box>
 
-        <Paper elevation={3} sx={{ p: "2rem", width: "100%" }}>
+        <Paper elevation={3} sx={{ p: "2rem", width: "100%" , borderRadius: "0.8rem", boxShadow: 3}}>
           <Box
             component="form"
             sx={{

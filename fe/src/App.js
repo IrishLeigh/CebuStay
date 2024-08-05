@@ -41,8 +41,9 @@ import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropert
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import AccommodationReservation from "./pages/PropertyManagementUI/AccommodationReservation";
-import MultiPropertyInformation from "./pages/AccommodationRegistrationUI/MultiUnitRegistration/MultiPropertyInformation";
+
 import MultiUnitRegistration from "./pages/AccommodationRegistrationUI/MultiUnitRegistrationUI";
+import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -112,8 +113,13 @@ function App() {
           {/* <Route element={<EditProfile2 />} path='/profile/edit-name' exact/>
               <Route element={<EditProfile3 />} path='/profile/edit-phone' exact/> */}
           <Route
-            path="/list-your-property"
-            element={<MultiUnitRegistration />}
+            path="/list-property/create-listing"
+            element={<AccommodationRegistration />}
+            exact
+          />
+           <Route
+            path="/list-property"
+            element={<GettingStartedRegistration />}
             exact
           />
           {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}

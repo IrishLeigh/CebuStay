@@ -18,7 +18,7 @@ const propertyTypes = [
   },
 ];
 
-export default function PropertyType({ onSelectedPropertyTypeChange, parentSelectedPropertyType }) {
+export default function PropertyTypeDescription({ onSelectedPropertyTypeChange, parentSelectedPropertyType }) {
   const [selectedPropertyType, setSelectedPropertyType] = useState(parentSelectedPropertyType);
 
   const handleClick = (button) => {

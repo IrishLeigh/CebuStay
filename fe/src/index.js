@@ -11,6 +11,7 @@ import AccountManagement from "./pages/AccountManagement/Layout/AccountManagemen
 import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -1,3 +1,60 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.registration-body {
+  background-image: url("/public/RegisterBG.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+.gettingStarted-body {
+  background-image: url("/public/GettingStarted.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.accommodation-registration-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: white; /* Ensure the header has a background */
+}
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+
+  margin-bottom: 5rem;
+}
 /* Define styles for the footer containing next and previous buttons */
 .stepperFooter {
   position: fixed;
@@ -45,4 +102,6 @@
   pointer-events: none; /* Prevent interaction */
   opacity: 0.5; /* Make it semi-transparent */
 }
+
+
 
