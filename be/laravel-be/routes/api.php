@@ -105,6 +105,8 @@ Route::post('/propertypaymentmethod', 'App\Http\Controllers\PropertyPaymentMetho
 Route::post('/uploaduserimg', 'App\Http\Controllers\FileController@uploadAvatar');
 Route::get('/getuserimg', 'App\Http\Controllers\FileController@getUserAvatar');
 Route::post('/updateavatar', 'App\Http\Controllers\FileController@updateAvatar');
+Route::post('/addcaption', 'App\Http\Controllers\FileController@addCaption');
+
 
 //UPLOAD MULTIPLE IMAGES
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');

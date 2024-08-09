@@ -106,11 +106,11 @@ class FileController extends CORS
 
         if ($files == null) {
             return response()->json(['message' => 'Please select at least one file', 'status' => 'error']);
-        } else if (count($files) > 5) { // Check if any file is greater than 15MB
-            return response()->json(['message' => 'The maximum number of files is 5', 'status' => 'error']);
+        } else if (count($files) > 15) {
+            return response()->json(['message' => 'The maximum number of files is 15', 'status' => 'error']);
         }
         foreach ($files as $file) {
-            if ($file->getSize() > 5 * 1024 * 1024) { // 5MB in bytes
+            if ($file->getSize() > 2 * 1024 * 1024) { // 2MB in bytes
                 return response()->json(['message' => 'A file size exceeds the maximum limit of 15MB', 'status' => 'error']);
             }
             if (!in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif'])) {
@@ -202,13 +202,25 @@ class FileController extends CORS
         return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
     }
 
+    public function addCaption(Request $request)
+    {
+        $this->enableCors($request);
+        $id = $request->id;
+        $caption = $request->caption;
+        $file = File::find($id);
+        $file->caption = $caption;
+        $file->save();
+        return response()->json(['status' => 'success', 'message' => 'File caption added']);
+    }
+
     public function getImgByProperty($propertyid)
     {
         $propertyimgs = File::where('propertyid', $propertyid)->get();
         $imglist = $propertyimgs->map(function ($item) {
             return [
                 'id' => $item->id,
-                'src' => $item->file_url
+                'src' => $item->file_url,
+                'caption' => $item->caption
             ];
         });
         return response()->json(['img' => $imglist]);

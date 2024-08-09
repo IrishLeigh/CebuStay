@@ -15,6 +15,7 @@ use App\Models\Facilities;
 use App\Models\Service;
 use App\Models\PropertyOwner;
 use App\Models\PropertyOwnership;
+use App\Models\PropertyPaymentMethods;
 
 class PropertyController extends CORS
 {
@@ -128,6 +129,13 @@ class PropertyController extends CORS
             'property_owner' => $property_ownerdetails
         ];
 
+        // Fetch property payment method
+        $payment_method = PropertyPaymentMethods::select('isonline', 'paymentmethod')->where('propertyid', $request->input('propertyid'))->first();
+        $payment_method_details = $payment_method ? [
+            'isonline' => $payment_method->isonline,
+            'paymentmethod' => $payment_method->paymentmethod
+        ] : null;
+
         return response()->json([
             "property_details" => $property_info,
             "property_address" => $property_address,
@@ -139,9 +147,11 @@ class PropertyController extends CORS
             "property_services" => $property_services,
             "property_houserules" => $property_houserules,
             "property_bookingpolicy" => $property_bookingpolicy,
-            "property_owner" => $property_owner
+            "property_owner" => $property_owner,
+            "payment_method" => $payment_method_details
         ]);
     }
+
 
     public function getAllProperties(Request $request)
     {

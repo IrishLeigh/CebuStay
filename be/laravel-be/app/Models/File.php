@@ -14,6 +14,7 @@ class File extends Model
         'id',
         'file_id',
         'propertyid',
+        'caption'
     ];
 
     public function property()
