@@ -156,7 +156,7 @@ export default function MultiPropertyUI(propertyid) {
             </div>
             <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
             <div>
-              <ReviewsAndRatingsMultiUnit />
+              <ReviewsAndRatingsMultiUnit propertyId={propertyid.propertyid} />
             </div>
           </div>
         </div>

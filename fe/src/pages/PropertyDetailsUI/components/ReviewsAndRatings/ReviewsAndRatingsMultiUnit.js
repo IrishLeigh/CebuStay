@@ -9,6 +9,8 @@ import {
   FaThumbsUp,
   FaThumbsDown,
 } from "react-icons/fa";
+import axios from "axios";
+import { useUser } from "../../../../components/UserProvider";
 
 // Function to generate dummy reviews
 const generateDummyReviews = (count) => {
@@ -120,15 +122,17 @@ const generateDummyReviews = (count) => {
   return reviews;
 };
 
-const ReviewsAndRatings = () => {
+const ReviewsAndRatingsMultiUnit = ({ propertyId }) => {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
-  const [reviews, setReviews] = useState(generateDummyReviews(50));
+  const [reviews, setReviews] = useState([]);
   const [view, setView] = useState("All"); // Tab view: All, Latest, Oldest
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState("All"); // State for selected unit
-
-  const user = { initials: "AB", name: "Alex Brown" };
+  const [unit, setUnit] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
+  // const user = { initials: "AB", name: "Alex Brown" };
+  const { user } = useUser();
 
   useEffect(() => {
     // Fetch reviews or use dummy data
@@ -139,22 +143,88 @@ const ReviewsAndRatings = () => {
 
   const handleRatingChange = (ratingValue) => setRating(ratingValue);
 
-  const handleSubmit = () => {
+  // const handleSubmit = () => {
+  //   if (comment && rating) {
+  //     setReviews([
+  //       ...reviews,
+  //       {
+  //         user,
+  //         comment,
+  //         rating,
+  //         date: new Date().toISOString(),
+  //         unit: `Unit ${reviews.length + 1}`,
+  //         isPositive: rating >= 3,
+  //       },
+  //     ]);
+  //     setComment("");
+  //     setRating(0);
+  //     setShowReviewForm(false); // Hide review form after submission
+  //   }
+  // };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    };
+    return date.toLocaleString('en-US', options);
+  };
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`http://127.0.0.1:8000/api/getallreviewsandratings`, {
+          params: {
+            propertyid: propertyId
+          }
+        });
+        console.log("reviews", res.data);
+        setReviews(res.data.reviews);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSubmit = async () => {
     if (comment && rating) {
-      setReviews([
-        ...reviews,
-        {
-          user,
-          comment,
+      try {
+        await axios.post('http://127.0.0.1:8000/api/reviewsandratings', {
+          userid: user.userid,
+          propertyid: propertyId,
           rating,
-          date: new Date().toISOString(),
-          unit: `Unit ${reviews.length + 1}`,
-          isPositive: rating >= 3,
-        },
-      ]);
-      setComment("");
+          review: comment
+        });
+        // Refetch the reviews after successful submission
+        const res = await axios.get('http://127.0.0.1:8000/api/getallreviewsandratings', {
+          params: {
+            propertyid: propertyId
+          }
+        });
+        setReviews(res.data.reviews);
+      } catch (err) {
+        console.log(err);
+      }
+
+      setComment('');
       setRating(0);
       setShowReviewForm(false); // Hide review form after submission
+      setErrorMessage('');
+    }
+    else {
+      setErrorMessage('Please enter a comment and rating.');
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
     }
   };
 
@@ -164,26 +234,27 @@ const ReviewsAndRatings = () => {
     setShowReviewForm(false); // Hide review form when cancel is pressed
   };
 
-  const averageRating = (
-    reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-  ).toFixed(1);
+  const averageRating = reviews.length > 0
+    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+    : 0;
   const ratingsCount = reviews.reduce((acc, review) => {
     acc[review.rating] = (acc[review.rating] || 0) + 1;
     return acc;
   }, {});
 
+
   const filteredReviews = reviews
     .filter((review) =>
-      selectedUnit === "All" ? true : review.unit === selectedUnit
+      selectedUnit === "All" ? true : review.unitname === selectedUnit
     )
     .filter(
       (review) =>
         view === "All"
           ? true
           : view === "Latest"
-          ? new Date(review.date) >=
+            ? new Date(review.date) >=
             new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Last 30 days
-          : new Date(review.date) <
+            : new Date(review.date) <
             new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Before the last 30 days
     )
     .sort((a, b) =>
@@ -270,23 +341,43 @@ const ReviewsAndRatings = () => {
           <div className="review-input-container">
             <div className="review-input">
               <div className="rating">
-                <div className="user-initials">{user.initials}</div>
-                {[...Array(5)].map((_, index) => (
-                  <span
-                    key={index}
-                    className={`star ${index < rating ? "filled" : ""}`}
-                    onClick={() => handleRatingChange(index + 1)}
-                  >
-                    <FaStar />
-                  </span>
-                ))}
+                <div className="user-initials">{`${user.firstname?.charAt(0) || ''}${user.lastname?.charAt(0) || ''}`}</div>
+                <div className="review-name">{user.firstname} {user.lastname}</div>
+
               </div>
+              <select
+                style={{ marginBottom: "10px" }}
+                value={selectedUnit}
+                onChange={(e) => setSelectedUnit(e.target.value)}
+              >
+                <option value="">Select Unit</option>
+                {Array.from(new Set(reviews.map((review) => review.unitname))).map(
+                  (unit, index) => (
+                    <option key={index} value={unit}>
+                      {unit}
+                    </option>
+                  )
+                )}
+              </select>
+              <div> {[...Array(5)].map((_, index) => (
+                <span
+                  key={index}
+                  className={`star ${index < rating ? "filled" : ""}`}
+                  onClick={() => handleRatingChange(index + 1)}
+                >
+                  <FaStar />
+                </span>
+              ))}
+              </div>
+
+
+
               <textarea
                 placeholder="Write your review here..."
                 value={comment}
                 onChange={handleCommentChange}
               ></textarea>
-              <div className="review-buttons">
+              <div className="buttons">
                 <button className="submit" onClick={handleSubmit}>
                   Submit
                 </button>
@@ -313,11 +404,13 @@ const ReviewsAndRatings = () => {
             onChange={(e) => setSelectedUnit(e.target.value)}
           >
             <option value="All">All Units</option>
-            {Array.from(new Set(reviews.map((review) => review.unit))).map(
+            {Array.from(new Set(reviews.map((review) => review.unitname))).map(
               (unit, index) => (
-                <option key={index} value={unit}>
-                  {unit}
-                </option>
+                unit && (
+                  <option key={index} value={unit}>
+                    {unit}
+                  </option>
+                )
               )
             )}
           </select>
@@ -325,7 +418,7 @@ const ReviewsAndRatings = () => {
 
         <div className="reviews-list-container">
           <h2 className="reviews-title">{view} Reviews</h2>
-          <div className="reviews-list">
+          {/* <div className="reviews-list">
             {filteredReviews.map((review, index) => (
               <div
                 key={index}
@@ -347,7 +440,7 @@ const ReviewsAndRatings = () => {
                 <div className="review-content">
                   <div className="review-unit">
                     <span>
-                      <strong>Unit:</strong> {review.unit}
+                      <strong>Unit:</strong> {review.unitname}
                     </span>
                   </div>
                   <div
@@ -381,11 +474,62 @@ const ReviewsAndRatings = () => {
                 </div>
               </div>
             ))}
+          </div> */}
+
+
+
+
+          <div className="reviews-list">
+            {filteredReviews.map((review, index) => (
+              <div
+                key={index}
+                className={`review-card ${review.isPositive ? "positive" : "negative"
+                  }`}
+              >
+                <div className="review-header">
+                  <div className="review-avatar">{`${review.firstname?.charAt(0) || ''}${review.lastname?.charAt(0) || ''}`}</div>
+                  <div className="review-info">
+                    <div className="review-name">{review.firstname} {review.lastname}</div>
+                    <div className="review-location"><strong>Unit:</strong> {review.unitname}</div>
+                  </div>
+
+                  <div className="review-date">
+                    Reviewed: {formatDate(review.created_at)}
+                  </div>
+                </div>
+                <div className="review-rating">
+                  {[...Array(review.rating)].map((_, idx) => (
+                    <FaStar key={idx} className="star filled" />
+                  ))}
+                  {[...Array(5 - review.rating)].map((_, idx) => (
+                    <FaRegStar key={idx} className="star" />
+                  ))}
+                </div>
+                <div className="review-content">
+                  <div>
+                    {review.review}
+                  </div>
+                </div>
+                <div className="review-footer">
+
+                  {/* <div className="review-buttons">
+                    <button className="like-button">
+                      <FaThumbsUp />
+                    </button>
+                    <button className="dislike-button">
+                      <FaThumbsDown />
+                    </button>
+                  </div> */}
+                </div>
+              </div>
+            ))}
           </div>
+
+
         </div>
       </div>
     </div>
   );
 };
 
-export default ReviewsAndRatings;
+export default ReviewsAndRatingsMultiUnit;

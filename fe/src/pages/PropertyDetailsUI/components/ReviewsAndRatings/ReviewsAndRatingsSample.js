@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../css/ReviewsAndRatings.css";
 import axios from "axios";
 
-const ReviewsAndRatingsSingleUnit = () => {
+const ReviewsAndRatingsSingleUnitss = () => {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({
     name: "",
