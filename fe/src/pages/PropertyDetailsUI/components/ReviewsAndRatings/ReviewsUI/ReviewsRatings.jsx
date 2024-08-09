@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './ReviewsRatings.css';
-import { FaStar, FaRegStar, FaStarHalfAlt, FaUsers, FaSortNumericDown, FaChartBar } from 'react-icons/fa';
+import { FaStar, FaRegStar, FaStarHalfAlt, FaUsers, FaSortNumericDown, FaChartBar, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import axios from 'axios';
+import { useUser } from '../../../../../components/UserProvider';
+
 
 const generateDummyReviews = (count) => {
   const names = ['Charlie Davis', 'Emma Frost', 'George Hill', 'Isabella Johnson', 'Kevin Lee', 'Liam Brown', 'Sophia Clark', 'James White', 'Olivia Lewis', 'Noah Walker', 'Mia Harris', 'Ethan Young', 'Ava King', 'Mason Wright', 'Isabella Lopez', 'Lucas Scott', 'Charlotte Adams', 'Jackson Nelson', 'Amelia Carter', 'Oliver Mitchell', 'Harper Perez', 'Henry Turner', 'Ella Collins', 'Sebastian Hall', 'Zoe Rivera', 'Leo Jenkins', 'Aria Sanchez', 'Jack Morris', 'Lily Price', 'Benjamin Morgan', 'Nora Cooper', 'Alexander Hughes', 'Emily Bell', 'William Murphy', 'Abigail Kelly', 'Daniel Ross', 'Madison Cooper', 'Matthew Bailey', 'Ella Turner', 'Michael Barnes', 'Hannah Rivera', 'James Martinez', 'Grace Cooper', 'David Lee', 'Chloe Adams', 'Gavin Thompson', 'Addison Roberts', 'Eli Johnson', 'Sofia Martinez', 'Samuel Anderson', 'Evelyn Miller'];
@@ -16,28 +19,96 @@ const generateDummyReviews = (count) => {
   return reviews;
 };
 
-const ReviewsRatings = () => {
+const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
+  const { user } = useUser();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
-  const [reviews, setReviews] = useState(generateDummyReviews(50));
+  // const [reviews, setReviews] = useState(generateDummyReviews(50));
+  const [reviews, setReviews] = useState([]);
   const [view, setView] = useState('All'); // Tab view: All, Latest, Oldest
   const [showReviewForm, setShowReviewForm] = useState(false);
-
-  const user = { initials: 'AB', name: 'Alex Brown' };
+  const [errorMessage, setErrorMessage] = useState('');
+  // const user = { initials: 'AB', name: 'Alex Brown' };
 
   const handleCommentChange = (e) => setComment(e.target.value);
 
   const handleRatingChange = (ratingValue) => setRating(ratingValue);
 
-  const handleSubmit = () => {
+  // const handleSubmit = () => {
+  //   if (comment && rating) {
+  //     setReviews([
+  //       ...reviews,
+  //       { user, comment, rating, date: new Date().toISOString() }
+  //     ]);
+  //     setComment('');
+  //     setRating(0);
+  //     setShowReviewForm(false); // Hide review form after submission
+  //   }
+  // };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    };
+    return date.toLocaleString('en-US', options);
+  };
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`http://127.0.0.1:8000/api/getallreviewsandratings`, {
+          params: {
+            propertyid: propertyId
+          }
+        });
+        console.log("reviews", res.data);
+        setReviews(res.data.reviews);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSubmit = async () => {
     if (comment && rating) {
-      setReviews([
-        ...reviews,
-        { user, comment, rating, date: new Date().toISOString() }
-      ]);
+      try {
+        await axios.post('http://127.0.0.1:8000/api/reviewsandratings', {
+          userid: user.userid,
+          propertyid: propertyId,
+          rating,
+          review: comment
+        });
+        // Refetch the reviews after successful submission
+        const res = await axios.get('http://127.0.0.1:8000/api/getallreviewsandratings', {
+          params: {
+            propertyid: propertyId
+          }
+        });
+        setReviews(res.data.reviews);
+      } catch (err) {
+        console.log(err);
+      }
+
       setComment('');
       setRating(0);
       setShowReviewForm(false); // Hide review form after submission
+      setErrorMessage('');
+    }
+    else {
+      setErrorMessage('Please enter a comment and rating.');
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
     }
   };
 
@@ -47,7 +118,9 @@ const ReviewsRatings = () => {
     setShowReviewForm(false); // Hide review form when cancel is pressed
   };
 
-  const averageRating = (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1);
+  const averageRating = reviews.length > 0
+    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+    : 0;
   const ratingsCount = reviews.reduce((acc, review) => {
     acc[review.rating] = (acc[review.rating] || 0) + 1;
     return acc;
@@ -55,8 +128,9 @@ const ReviewsRatings = () => {
 
   const filteredReviews = (view === 'All' ? reviews :
     view === 'Latest' ? [...reviews].sort((a, b) => new Date(b.date) - new Date(a.date)) :
-    [...reviews].sort((a, b) => new Date(a.date) - new Date(b.date))
+      [...reviews].sort((a, b) => new Date(a.date) - new Date(b.date))
   );
+
 
   return (
     <div className="outer-container">
@@ -69,26 +143,26 @@ const ReviewsRatings = () => {
             <p>People's experiences</p>
           </div>
 
-              <div className="summary-box">
-          <FaStar className="summary-icon" />
-          <h3>Average Rating</h3>
-          <div className="average-rating-container">
-            <p className="average-number">{averageRating}</p>
-            <div className="average-rating">
-              {[...Array(Math.floor(averageRating))].map((_, index) => (
-                <FaStar key={index} className="average-star filled" />
-              ))}
-              {averageRating % 1 !== 0 && <FaStarHalfAlt className="average-star filled" />}
-              {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
-                <FaRegStar key={index} className="average-star" />
-              ))}
+          <div className="summary-box">
+            <FaStar className="summary-icon" />
+            <h3>Average Rating</h3>
+            <div className="average-rating-container">
+              <p className="average-number">{averageRating}</p>
+              <div className="average-rating">
+                {[...Array(Math.floor(averageRating))].map((_, index) => (
+                  <FaStar key={index} className="average-star filled" />
+                ))}
+                {averageRating % 1 !== 0 && <FaStarHalfAlt className="average-star filled" />}
+                {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
+                  <FaRegStar key={index} className="average-star" />
+                ))}
+              </div>
             </div>
+            <p>Based on {reviews.length} reviews</p>
           </div>
-          <p>Based on {reviews.length} reviews</p>
-        </div>
 
           <div className="summary-box">
-          <FaChartBar className="summary-icon" />
+            <FaChartBar className="summary-icon" />
             <h3>Rating Distribution</h3>
             <div className="star-distribution">
               {[5, 4, 3, 2, 1].map((star) => (
@@ -134,7 +208,11 @@ const ReviewsRatings = () => {
           <div className="review-input-container">
             <div className="review-input">
               <div className="rating">
-                <div className="user-initials">{user.initials}</div>
+                <div className="user-initials">{`${user.firstname?.charAt(0) || ''}${user.lastname?.charAt(0) || ''}`}</div>
+                <div className="review-name">{user.firstname} {user.lastname}</div>
+
+              </div>
+              <div>
                 {[...Array(5)].map((_, index) => (
                   <span
                     key={index}
@@ -154,6 +232,9 @@ const ReviewsRatings = () => {
                 <button className="submit" onClick={handleSubmit}>Submit</button>
                 <button className="cancel" onClick={handleCancel}>Cancel</button>
               </div>
+              {errorMessage && (
+                <p style={{ color: 'red' }}>{errorMessage}</p>
+              )}
             </div>
           </div>
         )}
@@ -166,12 +247,12 @@ const ReviewsRatings = () => {
 
         <div className="reviews-list-container">
           <h2 className="reviews-title">{view} Reviews</h2>
-          <div className="reviews-list">
+          {/* <div className="reviews-list">
             {filteredReviews.map((review, index) => (
               <div key={index} className="review">
                 <div className="user-info">
-                  {/* <div className="user-initials">{review.user.initials}</div> */}
-                  <div className="user-name">{review.user.name}</div>
+                  <div className="user-name">{review.firstname} {review.lastname}</div>
+                  <div>{formatDate(review.created_at)}</div>
                 </div>
                 <div className="review-rating">
                   {[...Array(review.rating)].map((_, idx) => (
@@ -181,15 +262,64 @@ const ReviewsRatings = () => {
                     <FaRegStar key={idx} className="star" />
                   ))}
                 </div>
-                <div className="review-comment">{review.comment}</div>
+                <div className="review-comment">{review.review}</div>
                 <button className="read-more">Read Review</button>
               </div>
             ))}
+          </div> */}
+
+
+          <div className="reviews-list">
+            {filteredReviews.map((review, index) => (
+              <div
+                key={index}
+                className={`review-card ${review.isPositive ? "positive" : "negative"
+                  }`}
+              >
+                <div className="review-header">
+                  <div className="review-avatar">{`${review.firstname?.charAt(0) || ''}${review.lastname?.charAt(0) || ''}`}</div>
+                  <div className="review-info">
+                    <div className="review-name">{review.firstname} {review.lastname}</div>
+                    <div className="review-location">Unknown Location</div>
+                  </div>
+
+                  <div className="review-date">
+                    Reviewed: {formatDate(review.created_at)}
+                  </div>
+                </div>
+                <div className="review-rating">
+                  {[...Array(review.rating)].map((_, idx) => (
+                    <FaStar key={idx} className="star filled" />
+                  ))}
+                  {[...Array(5 - review.rating)].map((_, idx) => (
+                    <FaRegStar key={idx} className="star" />
+                  ))}
+                </div>
+                <div className="review-content">
+                  <div>
+                    {review.review}
+                  </div>
+                </div>
+                <div className="review-footer">
+
+                  {/* <div className="review-buttons">
+                    <button className="like-button">
+                      <FaThumbsUp />
+                    </button>
+                    <button className="dislike-button">
+                      <FaThumbsDown />
+                    </button>
+                  </div> */}
+                </div>
+              </div>
+            ))}
           </div>
+
+
         </div>
       </div>
     </div>
   );
 };
 
-export default ReviewsRatings;
+export default ReviewsAndRatingsSingleUnit;

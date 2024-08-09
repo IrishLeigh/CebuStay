@@ -13,8 +13,7 @@ import AvailabilityTable from "./AvailabilityTable";
 import SearchAvailabilityButton from "./SearchAvailabilityButton";
 import ArrowRight from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
-// import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsAndRatingsSingleUnit";
-import ReviewsRatings from "../../ReviewsUI/ReviewsRatings";
+import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsUI/ReviewsRatings";
 
 export default function SinglePropertyUI(propertyid) {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -125,7 +124,7 @@ export default function SinglePropertyUI(propertyid) {
             propertyImages={propertyImages}
           />
         </div>
-        <div
+        {/* <div
           style={{
             width: "100%",
             height: "0.1rem",
@@ -134,16 +133,16 @@ export default function SinglePropertyUI(propertyid) {
             padding: 0,
             backgroundColor: "#A334CF",
           }}
-        >
+        > */}
           {/* Design is still not Sure */}
-        </div>
+        {/* </div>
         <div>
           <SearchAvailabilityButton />
         </div>
 
         <div>
           <AvailabilityTable propertyid={propertyid.propertyid} />
-        </div>
+        </div> */}
 
         <div
           style={{
@@ -164,7 +163,9 @@ export default function SinglePropertyUI(propertyid) {
           </div>
           <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
           <div>
-            <ReviewsRatings />
+            {/* <ReviewsRatings /> */}
+            {/* <ReviewsAndRatingsMultiUnit /> */}
+            <ReviewsAndRatingsSingleUnit propertyId={propertyid.propertyid} />
           </div>
         </div>
       </Container>
