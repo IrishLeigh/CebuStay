@@ -11,6 +11,6 @@ class ReviewsAndRating extends Model
 
     protected $primaryKey = 'rid';
 
-    protected $fillable = ['rid', 'userid', 'rating', 'review', 'unitname'];
+    protected $fillable = ['rid', 'userid', 'propertyid', 'rating', 'review', 'unitname'];
 
 }
