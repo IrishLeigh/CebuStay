@@ -14,12 +14,18 @@ class File extends Model
         'id',
         'file_id',
         'propertyid',
-        'caption'
+        'caption',
+        'unitid'
     ];
 
     public function property()
     {
         return $this->belongsTo(Property::class, 'propertyid', 'propertyid');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(UnitDetails::class, 'unitid', 'unitid');
     }
 
     use HasFactory;

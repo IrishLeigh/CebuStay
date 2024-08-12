@@ -56,6 +56,11 @@ class PropertyController extends CORS
             $home->propertyid = $propertyid;
             $home->unit_type = $property->unit_type;
             $home->save();
+        } else {
+            $home = new Home();
+            $home->propertyid = $propertyid;
+            $home->unit_type = "Multi Unit";
+            $home->save();
         }
         return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid]);
     }

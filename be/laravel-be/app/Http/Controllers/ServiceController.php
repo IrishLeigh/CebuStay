@@ -17,8 +17,18 @@ class ServiceController extends CORS
     {
         $this->enableCors($request);
         $service = new Service();
-        $service->propertyid = $request->input('propertyid');
-        $service->service_name = $request->input('service_name');
+        $unitid = $request->input('unitid');
+        if ($unitid != null) {
+            $service->unitid = $unitid;
+            $service->propertyid = $request->input('propertyid');
+            $service->service_name = $request->input('service_name');
+            $service->ismulti = true;
+        } else {
+            $service->propertyid = $request->input('propertyid');
+            $service->service_name = $request->input('service_name');
+            $service->ismulti = false;
+        }
+
         $service->save();
 
         return response()->json($service);

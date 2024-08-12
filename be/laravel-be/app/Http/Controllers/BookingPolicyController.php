@@ -17,11 +17,13 @@ class BookingPolicyController extends CORS
         if ($bookingpolicy->is_cancel_plan == true) {
             $bookingpolicy->cancel_days = $request->input('cancel_days');
         } else {
-            $bookingpolicy->cancel_days = null;
+            $bookingpolicy->cancel_days = false;
+            $bookingpolicy->is_cancel_plan = false;
         }
-        $bookingpolicy->non_refundable = $request->input('non_refundable');
-        $bookingpolicy->modification_plan = $request->input('modification_plan');
-        $bookingpolicy->offer_discount = $request->input('offer_discount');
+        $request->input('non_refundable') === null ? $bookingpolicy->non_refundable = false : $bookingpolicy->non_refundable = true;
+        $request->input('modification_plan') === null ? $bookingpolicy->modification_plan = false : $bookingpolicy->modification_plan = true;
+        $request->input('offer_discount') === null ? $bookingpolicy->offer_discount = false : $bookingpolicy->offer_discount = true;
+
         $bookingpolicy->save();
 
         return response()->json([
