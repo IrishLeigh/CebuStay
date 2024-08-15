@@ -12,6 +12,7 @@ import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
+import InteractiveMap from "./InteractiveMap/InteractiveMap";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
