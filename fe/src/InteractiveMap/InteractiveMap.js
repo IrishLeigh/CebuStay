@@ -29,6 +29,7 @@ export default function InteractiveMap() {
     fetchData();
   }, []);
 
+  // Set the style for the country
   const countryStyle = {
     fillColor: '#f00',
     weight: 2,
@@ -38,6 +39,7 @@ export default function InteractiveMap() {
     fillOpacity: 0.7
   };
 
+  // Function to set the style for each city when clicked
   const getCityStyle = (city) => {
     const cityName = city.properties.NAME_2;
 
@@ -73,6 +75,7 @@ export default function InteractiveMap() {
         } else {
           setSelectedCity(cityName);
 
+          // Check if the target coordinates are within the clicked city
           locations.forEach((location) => {
             const point = turf.point(location.coordinates);
 
@@ -115,6 +118,7 @@ export default function InteractiveMap() {
       <h1>Cebu City Map</h1>
       {locations.length > 0 ? (
         <MapContainer center={[10.5, 124]} zoom={9} style={{ height: '90vh' }}
+        // To Make the Map Static
         // scrollWheelZoom={false} // Disable zooming with scroll
         // dragging={false} // Disable dragging
         // zoomControl={false} // Hide zoom controls
