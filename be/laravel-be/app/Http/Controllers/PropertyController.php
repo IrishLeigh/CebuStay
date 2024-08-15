@@ -16,6 +16,7 @@ use App\Models\Service;
 use App\Models\PropertyOwner;
 use App\Models\PropertyOwnership;
 use App\Models\PropertyPaymentMethods;
+use App\Models\File;
 
 class PropertyController extends CORS
 {
@@ -78,63 +79,119 @@ class PropertyController extends CORS
     public function getPropertyById(Request $request)
     {
         $this->enableCors($request);
-        $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type')->where('propertyid', $request->input('propertyid'))->first();
-        $property_address = DB::table('location')->select('address', 'zipcode', 'latitude', 'longitude')->where('propertyid', $request->input('propertyid'))->first();
-        $property_amenities = Amenity::select('amenityid', 'amenity_name')->where('propertyid', $request->input('propertyid'))->get();
-        $property_facilities = Facilities::select('facilitiesid', 'facilities_name')->where('propertyid', $request->input('propertyid'))->get();
-        $property_services = Service::select('serviceid', 'service_name')->where('propertyid', $request->input('propertyid'))->get();
-        $property_bookingpolicy = BookingPolicy::select('bookingpolicyid', 'is_cancel_plan', 'cancel_days', 'non_refundable', 'modification_plan', 'offer_discount')->where('propertyid', $request->input('propertyid'))->first();
-        $property_houserules = DB::table('house_rules')->select('houserulesid', 'smoking_allowed', 'pets_allowed', 'parties_events_allowed', 'noise_restrictions', 'quiet_hours_start', 'quiet_hours_end', 'custom_rules', 'check_in_from', 'check_in_until', 'check_out_from', 'check_out_until')->where('propertyid', $request->input('propertyid'))->get();
-        // $property_home = DB::table('home')->select('homeid', 'proppricingid', 'isoccupied')->where('propertyid', $request->input('propertyid'))->first();
-        $property_unitdetails = DB::table('unitdetails')->where('propertyid', $request->input('propertyid'))->first();
-        $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $property_unitdetails->proppricingid)->first();
-        $unitid = $property_unitdetails->unitid;
-        $unitrooms = DB::table('unitrooms')->select('unitroomid', 'roomname', 'quantity')->where('unitid', $unitid)->get();
-        $unitroomsCollection = collect($unitrooms);
-        $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
-        $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
-        $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
-        $unitbedroom_beds = DB::table('bedroomtype')->where('unitroomid', $unitbedroom->unitroomid)->get();
-        $unitbeds = [];
 
-        foreach ($unitbedroom_beds as $bedroom) {
-            $beds = [];
+        $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type')
+            ->where('propertyid', $request->input('propertyid'))
+            ->first();
 
-            // Access object properties using the -> operator, not []
-            if ($bedroom->singlebed > 0) {
-                $beds['singlebed'] = $bedroom->singlebed;
-            }
-            if ($bedroom->bunkbed > 0) {
-                $beds['bunkbed'] = $bedroom->bunkbed;
-            }
-            if ($bedroom->largebed > 0) {
-                $beds['largebed'] = $bedroom->largebed;
-            }
-            if ($bedroom->superlargebed > 0) {
-                $beds['superlargebed'] = $bedroom->superlargebed;
-            }
+        $property_address = DB::table('location')
+            ->select('address', 'zipcode', 'latitude', 'longitude')
+            ->where('propertyid', $request->input('propertyid'))
+            ->first();
 
-            // If there are beds in this bedroom, add it to the transformed data
-            if (!empty($beds)) {
-                $unitbeds[] = [
-                    'bedroomnum' => $bedroom->bedroomnum,
-                    'beds' => $beds
+        // Fetch amenities and group by unitid if available
+        $property_amenities = DB::table('amenity')
+            ->select('amenityid', 'amenity_name', 'unitid')
+            ->where('propertyid', $request->input('propertyid'))
+            ->get();
+
+        $amenities_by_unit = $property_amenities->groupBy('unitid')->map(function ($items) {
+            return $items->map(function ($item) {
+                return [
+                    'amenityid' => $item->amenityid,
+                    'amenity_name' => $item->amenity_name,
                 ];
+            });
+        });
+
+        // Fetch services and group by unitid if available
+        $property_services = DB::table('services')
+            ->select('serviceid', 'service_name', 'unitid')
+            ->where('propertyid', $request->input('propertyid'))
+            ->get();
+
+        $services_by_unit = $property_services->groupBy('unitid')->map(function ($items) {
+            return $items->map(function ($item) {
+                return [
+                    'serviceid' => $item->serviceid,
+                    'service_name' => $item->service_name,
+                ];
+            });
+        });
+
+        $property_facilities = Facilities::select('facilitiesid', 'facilities_name')
+            ->where('propertyid', $request->input('propertyid'))
+            ->get();
+
+        $property_bookingpolicy = BookingPolicy::select('bookingpolicyid', 'is_cancel_plan', 'cancel_days', 'non_refundable', 'modification_plan', 'offer_discount')
+            ->where('propertyid', $request->input('propertyid'))
+            ->first();
+
+        $property_houserules = DB::table('house_rules')
+            ->select('houserulesid', 'smoking_allowed', 'pets_allowed', 'parties_events_allowed', 'noise_restrictions', 'quiet_hours_start', 'quiet_hours_end', 'custom_rules', 'check_in_from', 'check_in_until', 'check_out_from', 'check_out_until')
+            ->where('propertyid', $request->input('propertyid'))
+            ->get();
+
+        $units = DB::table('unitdetails')->where('propertyid', $request->input('propertyid'))->get();
+        $unit_details = [];
+
+        foreach ($units as $unit) {
+            $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $unit->proppricingid)->first();
+            $unitid = $unit->unitid;
+            $unitrooms = DB::table('unitrooms')->select('unitroomid', 'roomname', 'quantity')->where('unitid', $unitid)->get();
+            $unitroomsCollection = collect($unitrooms);
+            $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
+            $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
+            $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
+            $unitbedroom_beds = DB::table('bedroomtype')->where('unitroomid', $unitbedroom->unitroomid)->get();
+            $unitbeds = [];
+
+            foreach ($unitbedroom_beds as $bedroom) {
+                $beds = [];
+
+                if ($bedroom->singlebed > 0) {
+                    $beds['singlebed'] = $bedroom->singlebed;
+                }
+                if ($bedroom->bunkbed > 0) {
+                    $beds['bunkbed'] = $bedroom->bunkbed;
+                }
+                if ($bedroom->largebed > 0) {
+                    $beds['largebed'] = $bedroom->largebed;
+                }
+                if ($bedroom->superlargebed > 0) {
+                    $beds['superlargebed'] = $bedroom->superlargebed;
+                }
+
+                if (!empty($beds)) {
+                    $unitbeds[] = [
+                        'bedroomnum' => $bedroom->bedroomnum,
+                        'beds' => $beds
+                    ];
+                }
             }
+
+            $property_files = File::select('file_url as src', 'caption')
+                ->where('propertyid', $request->input('propertyid'))
+                ->where('unitid', $unitid)
+                ->get();
+
+            $unit_details[] = [
+                'unitid' => $unitid,
+                'guest_capacity' => $unit->guest_capacity,
+                'unitrooms' => $unitrooms,
+                'unitbeds' => $unitbeds,
+                'unitpricing' => $unitpricing,
+                'images' => $property_files,
+                'amenities' => $amenities_by_unit->get($unitid, []),
+                'services' => $services_by_unit->get($unitid, [])
+            ];
         }
 
-        $unitrooms = [
-            'unitid' => $unitid,
-            'guest_capacity' => $property_unitdetails->guest_capacity,
-            'unitrooms' => $unitrooms,
-            'unitbeds' => $unitbeds
-        ];
         $property_owner = [
             'property_ownership' => $propownid,
             'property_owner' => $property_ownerdetails
         ];
 
-        // Fetch property payment method
         $payment_method = PropertyPaymentMethods::select('isonline', 'paymentmethod')->where('propertyid', $request->input('propertyid'))->first();
         $payment_method_details = $payment_method ? [
             'isonline' => $payment_method->isonline,
@@ -144,9 +201,7 @@ class PropertyController extends CORS
         return response()->json([
             "property_details" => $property_info,
             "property_address" => $property_address,
-            // "property_home" => $property_home,
-            "property_unitpricing" => $unitpricing,
-            "property_unitrooms" => $unitrooms,
+            "property_unitdetails" => $unit_details,
             "property_amenities" => $property_amenities,
             "property_facilities" => $property_facilities,
             "property_services" => $property_services,
