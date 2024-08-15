@@ -57,6 +57,8 @@ Route::post('/facilities', 'App\Http\Controllers\FacilitiesController@create');
 Route::post('/houseRules', 'App\Http\Controllers\HouseruleController@create');
 
 // Routes for location
+Route::get('/getPropertyLocation', 'App\Http\Controllers\LocationController@getAllPropertyLocations');
+
 // Route::post('/location', [LocationController::class, 'create']);
 Route::post('/location', 'App\Http\Controllers\LocationController@create');
 Route::get('/getlocations', 'App\Http\Controllers\LocationController@getAllLocation');
