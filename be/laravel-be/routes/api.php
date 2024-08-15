@@ -46,6 +46,7 @@ Route::post('/propertyownership', 'App\Http\Controllers\PropertyOwnershipControl
 // Routes for amenity
 Route::post('/amenities', 'App\Http\Controllers\AmenityController@create');
 Route::get('/getamenities', 'App\Http\Controllers\AmenityController@getAmenities');
+Route::get('/getamenitiesbyunit', 'App\Http\Controllers\AmenityController@getAmenitiesByUnit');
 // Routes for service
 Route::post('/services', 'App\Http\Controllers\ServiceController@create');
 
@@ -56,6 +57,8 @@ Route::post('/facilities', 'App\Http\Controllers\FacilitiesController@create');
 Route::post('/houseRules', 'App\Http\Controllers\HouseruleController@create');
 
 // Routes for location
+Route::get('/getPropertyLocation', 'App\Http\Controllers\LocationController@getAllPropertyLocations');
+
 // Route::post('/location', [LocationController::class, 'create']);
 Route::post('/location', 'App\Http\Controllers\LocationController@create');
 Route::get('/getlocations', 'App\Http\Controllers\LocationController@getAllLocation');
@@ -110,6 +113,7 @@ Route::post('/addcaption', 'App\Http\Controllers\FileController@addCaption');
 
 //UPLOAD MULTIPLE IMAGES
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
+Route::post('/upload-unit-files', 'App\Http\Controllers\FileController@uploadUnitFiles');
 //GET IMAGES
 Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty');
 Route::get('/getallfirstimg', 'App\Http\Controllers\FileController@getAllFirstImg');

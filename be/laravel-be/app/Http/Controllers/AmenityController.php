@@ -17,8 +17,18 @@ class AmenityController extends CORS
     {
         $this->enableCors($request);
         $amenity = new Amenity();
-        $amenity->propertyid = $request->input('propertyid');
-        $amenity->amenity_name = $request->input('amenity_name');
+        $unitid = $request->input('unitid');
+        if ($unitid != null) {
+            $amenity->unitid = $unitid;
+            $amenity->propertyid = $request->input('propertyid');
+            $amenity->amenity_name = $request->input('amenity_name');
+            $amenity->ismulti = true;
+        } else {
+            $amenity->propertyid = $request->input('propertyid');
+            $amenity->amenity_name = $request->input('amenity_name');
+            $amenity->ismulti = false;
+        }
+
         $amenity->save();
 
         return response()->json($amenity);
@@ -28,6 +38,13 @@ class AmenityController extends CORS
     {
         $this->enableCors($request);
         $amenities = Amenity::select('propertyid', 'amenity_name')->get();
+        return response()->json(['status' => 'success', 'data' => $amenities]);
+    }
+    public function getAmenitiesByUnit(Request $request)
+    {
+        $this->enableCors($request);
+        $unitid = $request->input('unitid');
+        $amenities = Amenity::where('unitid', $unitid)->get();
         return response()->json(['status' => 'success', 'data' => $amenities]);
     }
 }

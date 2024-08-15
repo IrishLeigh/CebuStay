@@ -23,6 +23,7 @@ class ReviewsAndRatingsController extends CORS
 
         $review->rid = $request->input('rid');
         $review->userid = $request->input('userid');
+        $review->propertyid = $request->input('propertyid');
         $review->rating = $request->input('rating');
         $review->review = $request->input('review');
         if ($request->input('unitname')) {
@@ -75,27 +76,32 @@ class ReviewsAndRatingsController extends CORS
     public function getAllReviewsAndRatings(Request $request)
     {
         $this->enableCors($request);
-
+    
+        $propertyId = $request->input('propertyid');
+    
         $reviews = DB::table('reviewsandratings')
             ->join('users', 'reviewsandratings.userid', '=', 'users.userid')
             ->select(
                 'reviewsandratings.rid',
                 'reviewsandratings.userid',
+                'reviewsandratings.propertyid',
                 'reviewsandratings.rating',
                 'reviewsandratings.review',
                 'reviewsandratings.unitname',
+                'reviewsandratings.created_at',
                 'users.firstname',
                 'users.lastname'
             )
+            ->where('reviewsandratings.propertyid', $propertyId)
             ->get();
-
+    
         if ($reviews->isEmpty()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'No reviews found.',
+                'message' => 'No reviews found for the specified property.',
             ], 404);
         }
-
+    
         return response()->json([
             'status' => 'success',
             'reviews' => $reviews,

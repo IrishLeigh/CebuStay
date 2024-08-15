@@ -215,7 +215,10 @@ class FileController extends CORS
 
     public function getImgByProperty($propertyid)
     {
-        $propertyimgs = File::where('propertyid', $propertyid)->get();
+        $propertyimgs = File::where('propertyid', $propertyid)
+            ->whereNull('unitid')
+            ->get();
+
         $imglist = $propertyimgs->map(function ($item) {
             return [
                 'id' => $item->id,
@@ -223,26 +226,28 @@ class FileController extends CORS
                 'caption' => $item->caption
             ];
         });
+
         return response()->json(['img' => $imglist]);
     }
+
     public function getAllFirstImg(Request $request)
     {
         $this->enableCors($request);
         $allproperties = Property::all();
-        // Array to store the results
         $result = [];
 
-        // Loop through each property
         foreach ($allproperties as $property) {
-            // Get the first file associated with this property
-            $firstFile = File::where('propertyid', $property->propertyid)->first();
+            // Get the first file associated with this property where unitid is null
+            $firstFile = File::where('propertyid', $property->propertyid)
+                ->whereNull('unitid')
+                ->first();
 
             // If there is a file, add its information to the result array
             if ($firstFile) {
                 $result[] = [
                     'propertyid' => $property->propertyid,
                     'file_id' => $firstFile->id,
-                    'src' => $firstFile->file_url, // Assuming path is a field in your File model
+                    'src' => $firstFile->file_url, // Assuming file_url is a field in your File model
                     // Add any other information you need
                 ];
             }
@@ -251,6 +256,7 @@ class FileController extends CORS
         // Return the result
         return response()->json($result);
     }
+
 
     public function uploadAvatar(Request $request)
     {
@@ -417,6 +423,112 @@ class FileController extends CORS
         } catch (GuzzleException $e) {
             return response()->json(['message' => 'Failed to update image', 'status' => 'error']);
         }
+    }
+
+    public function uploadUnitFiles(Request $request)
+    {
+        $folderId = \Config('services.google.folder_id'); // Assuming you send folder_id along with files
+        $propertyid = $request->propertyid;
+        $unitid = $request->unitid; // New unitid parameter
+        $files = $request->file('files'); // Array of files
+        $hasNonImage = false;
+
+        if ($files == null) {
+            return response()->json(['message' => 'Please select at least one file', 'status' => 'error']);
+        } else if (count($files) > 15) {
+            return response()->json(['message' => 'The maximum number of files is 15', 'status' => 'error']);
+        }
+        foreach ($files as $file) {
+            if ($file->getSize() > 2 * 1024 * 1024) { // 2MB in bytes
+                return response()->json(['message' => 'A file size exceeds the maximum limit of 2MB', 'status' => 'error']);
+            }
+            if (!in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif'])) {
+                $hasNonImage = true;
+                break;
+            }
+        }
+
+        if ($hasNonImage) {
+            return response()->json(['message' => 'A file is not an image file', 'status' => 'error']);
+        }
+
+        $uploadedFiles = $this->uploadMultipleUnitFiles($files, $folderId, $propertyid, $unitid);
+        // Process the uploaded files as needed
+        return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
+    }
+
+    public function uploadMultipleUnitFiles(array $files, string $folderId, string $propertyid, ?string $unitid)
+    {
+        $accessToken = $this->token();
+        $client = new Client();
+        $uploadedFiles = [];
+
+        foreach ($files as $file) {
+            // Validate each file if necessary
+            if (!$file->isValid()) {
+                continue; // Skip invalid files
+            }
+
+            $name = $file->getClientOriginalName();
+            $path = $file->getRealPath();
+
+            try {
+                $metadata = [
+                    'name' => $name,
+                    'parents' => [$folderId],
+                ];
+
+                $fileContents = file_get_contents($path);
+
+                // Create multipart form data
+                $multipart = [
+                    [
+                        'name' => 'metadata',
+                        'contents' => json_encode($metadata),
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                    ],
+                    [
+                        'name' => 'file',
+                        'contents' => $fileContents,
+                        'filename' => $name,
+                    ],
+                ];
+
+                // Create a new PSR-7 multipart stream
+                $stream = new Psr7\MultipartStream($multipart);
+
+                $response = $client->request('POST', 'https://www.googleapis.com/upload/drive/v3/files', [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $accessToken,
+                        'Content-Type' => 'multipart/related; boundary=' . $stream->getBoundary(),
+                    ],
+                    'body' => $stream,
+                ]);
+
+                $file_id = json_decode($response->getBody()->getContents())->id;
+                $file_url = "https://drive.google.com/thumbnail?id=$file_id";
+
+                $newFile = new File(); // Assuming PropertyFile model namespace
+                $newFile->file_name = $name;
+                $newFile->file_id = $file_id;
+                $newFile->file_url = $file_url;
+                $newFile->propertyid = $propertyid;
+                $newFile->unitid = $unitid; // Set unitid
+                $newFile->save();
+
+                $uploadedFiles[] = [
+                    'file_name' => $name,
+                    'file_id' => $file_id,
+                ];
+            } catch (GuzzleException $e) {
+                // Handle any exceptions if needed
+                continue; // Skip this file and move to the next one
+            }
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
     }
 
 }

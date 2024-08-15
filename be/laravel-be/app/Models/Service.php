@@ -14,5 +14,7 @@ class Service extends Model
         'serviceid',
         'propertyid',
         'service_name',
+        'unitid',
+        'ismulti'
     ];
 }

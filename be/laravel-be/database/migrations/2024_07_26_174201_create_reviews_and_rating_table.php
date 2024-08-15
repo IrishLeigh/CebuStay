@@ -14,8 +14,10 @@ return new class extends Migration {
             $table->increments('rid');
             $table->unsignedInteger('userid');
             $table->foreign('userid')->references('userid')->on('users');
+            $table->unsignedInteger('propertyid');
+            $table->foreign('propertyid')->references('propertyid')->on('property');
             $table->integer('rating')->nullable();
-            $table->string('review')->nullable();
+            $table->text('review')->nullable();
             $table->string('unitname')->nullable();
             $table->timestamps();
         });

@@ -14,5 +14,9 @@ class Amenity extends Model
         'amenityid',
         'propertyid',
         'amenity_name',
+        'unitid',
+        'ismulti'
     ];
+
+
 }
