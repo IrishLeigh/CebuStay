@@ -12,11 +12,12 @@ import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
+import InteractiveMap from "./InteractiveMap/InteractiveMap";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/* <BrowserRouter>
       <DataProvider>
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
@@ -24,7 +25,8 @@ root.render(
           </GoogleOAuthProvider>
         </UserProvider>
       </DataProvider>
-    </BrowserRouter>
+    </BrowserRouter> */}
+    <InteractiveMap />
   </React.StrictMode>
 );
 
