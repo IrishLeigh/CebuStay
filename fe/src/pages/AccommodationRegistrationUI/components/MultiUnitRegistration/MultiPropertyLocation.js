@@ -6,20 +6,22 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
 import { useData } from "../../../../components/registration_unit/registration_location/contextAddressData";
-import { Button } from '@mui/material';
+import { Button } from "@mui/material";
 import AnimatePage from "../AnimatedPage";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 
 const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   const { location } = useData();
   const [addressData, setAddressData] = useState({});
-  const [street, setStreet] = useState(localStorage.getItem('street') || "");
-  const [postalCode, setPostalCode] = useState(localStorage.getItem('postalCode') || "");
+  const [street, setStreet] = useState(localStorage.getItem("street") || "");
+  const [postalCode, setPostalCode] = useState(
+    localStorage.getItem("postalCode") || ""
+  );
   const [addPin, setAddPin] = useState(null);
   const [mapVal, setMapVal] = useState(null); // Track map value state
   const mapRef = useRef(null);
-  
-  const {location2} = useData();
+
+  const { location2 } = useData();
   const [position, setPosition] = useState(addPin);
   const [mapPos, setMapPos] = useState(addPin);
 
@@ -30,8 +32,8 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
 
   useEffect(() => {
     // Save input data to localStorage whenever it changes
-    localStorage.setItem('street', street);
-    localStorage.setItem('postalCode', postalCode);
+    localStorage.setItem("street", street);
+    localStorage.setItem("postalCode", postalCode);
   }, [street, postalCode]);
 
   const validateAndProceed = () => {
@@ -41,7 +43,9 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
     } else if (mapVal === null) {
       alert("Please pin your exact location on the map.");
     } else {
-      alert("Please fill in all the required fields and pin your location on the map.");
+      alert(
+        "Please fill in all the required fields and pin your location on the map."
+      );
     }
   };
 
@@ -78,6 +82,8 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
         const { lat, lng } = data.results[0].geometry.location;
 
         setAddPin({ lat, lng });
+        // setMapVal(`${lat}, ${lng}`);
+        setMapPos({ lat, lng });
         location({ street, postalCode });
       } else {
         console.error("No results found in the geocoding response.");
@@ -105,6 +111,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
       setMapVal(`${position.lat}, ${position.lng}`);
       location2(mapPos);
       console.log("Location saved:", position.lat, position.lng);
+      console.log();
     } else {
       console.log("No location to save");
     }
@@ -120,23 +127,26 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   return (
     <Container maxWidth="lg" className="centered-container">
       <AnimatePage>
-        <Box 
-           display="flex"
-           justifyContent="center"
-           alignItems="center"  
-        >
+        <Box display="flex" justifyContent="center" alignItems="center">
           <Paper
             sx={{
-              width: '80vw',
-              padding: '2rem',
-              borderRadius: '0.8rem',
+              width: "80vw",
+              padding: "2rem",
+              borderRadius: "0.8rem",
               boxShadow: 3,
             }}
           >
-            <Typography sx={{ fontSize: "2rem", fontWeight: "bold" , mb: 2, fontFamily: "Poppins"}}>
+            <Typography
+              sx={{
+                fontSize: "2rem",
+                fontWeight: "bold",
+                mb: 2,
+                fontFamily: "Poppins",
+              }}
+            >
               Property Location
             </Typography>
-            
+
             <Typography sx={{ fontSize: "1rem" }} mb={2}>
               Describe your property in detail. Highlight its unique features,
               amenities, and any additional information potential tenants or
@@ -144,40 +154,37 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
             </Typography>
             <Grid container>
               <Grid item xs={12} md={6}>
-                <Box >
-                  
-                
-                    <TextField
-                      label="Street Address"
-                      value={street}
-                      name="street"
-                      onChange={handleChange}
-                      helperText="Enter your street address"
-                      fullWidth
-                    />
-                    <TextField
-                      label="Postal/ZIP Code"
-                      value={postalCode}
-                      name="postalCode"
-                      onChange={handleChange}
-                      helperText="Enter your postal or ZIP code"
-                      fullWidth
-                    />
-                    <Box mt={2}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleSubmit}
-                      >
-                        Pin Your Location
-                      </Button>
-                    </Box>
-                  
+                <Box>
+                  <TextField
+                    label="Street Address"
+                    value={street}
+                    name="street"
+                    onChange={handleChange}
+                    helperText="Enter your street address"
+                    fullWidth
+                  />
+                  <TextField
+                    label="Postal/ZIP Code"
+                    value={postalCode}
+                    name="postalCode"
+                    onChange={handleChange}
+                    helperText="Enter your postal or ZIP code"
+                    fullWidth
+                  />
+                  <Box mt={2}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSubmit}
+                    >
+                      Pin Your Location
+                    </Button>
+                  </Box>
                 </Box>
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
-                <Box className={addPin ? 'active' : 'greyed-out'}>
+                <Box className={addPin ? "active" : "greyed-out"}>
                   {/* <Typography sx={{ fontSize: "1rem", textAlign: "left", fontFamily: "Poppins" }} fontWeight="bold">
                     Pin your exact location here:
                   </Typography> */}
@@ -206,7 +213,15 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                       mapTypeId={"terrain"}
                       ref={mapRef}
                     >
-                      {position && <Marker position={position} draggable={true} onDragend={(t, map, coords) => setPosition(coords.latLng)} />}
+                      {position && (
+                        <Marker
+                          position={position}
+                          draggable={true}
+                          onDragend={(t, map, coords) =>
+                            setPosition(coords.latLng)
+                          }
+                        />
+                      )}
                     </Map>
                     <Button
                       variant="contained"

@@ -15,42 +15,52 @@ export default function PropertyInfo({ propertyImages, propertyInfo }) {
   const [rooms, setTransformedRooms] = useState([]);
 
   useEffect(() => {
-    if (propertyImages && propertyInfo && propertyInfo.property_unitrooms) {
+    if (propertyImages && propertyInfo && propertyInfo.property_unitdetails) {
       setPropertyImg(propertyImages);
       setPropertyDetails(propertyInfo);
+      console.log("ARI NAA?", propertyInfo);
 
-      const unitrooms = propertyInfo.property_unitrooms.unitrooms || [];
-      const unitbeds = propertyInfo.property_unitrooms.unitbeds || [];
+      // Flattened arrays to hold all rooms and beds
+      const allRooms = [];
+      const allBeds = [];
 
-      // Create a map to track which bedrooms have been added
-      const bedroomMap = {};
+      propertyInfo.property_unitdetails.forEach((unit) => {
+        const unitrooms = unit.unitrooms || [];
+        const unitbeds = unit.unitbeds || [];
 
-      // Map through unitbeds to create bedroom entries with details
-      const detailedRooms = unitbeds.map((bedroom, index) => {
-        const bedTypes = Object.entries(bedroom.beds).map(([type, count]) => (
-          <div key={type}>
-            {count} {type}
-          </div>
-        ));
-        const name = `Bedroom #${index + 1}`;
-        bedroomMap[name] = true;
-        return { name, details: bedTypes };
+        // Create a map to track which bedrooms have been added
+        const bedroomMap = {};
+
+        // Map through unitbeds to create bedroom entries with details
+        const detailedRooms = unitbeds.map((bedroom, index) => {
+          const bedTypes = Object.entries(bedroom.beds || {}).map(
+            ([type, count]) => (
+              <div key={type}>
+                {count} {type}
+              </div>
+            )
+          );
+          const name = `Bedroom #${index + 1}`;
+          bedroomMap[name] = true;
+          return { name, details: bedTypes };
+        });
+
+        // Add non-bedroom rooms from unitrooms
+        const nonBedroomRooms = unitrooms
+          .map((room) => {
+            if (room.roomname === "Bedroom") {
+              return null; // Skip bedroom as they are already handled
+            }
+            return { name: room.roomname };
+          })
+          .filter(Boolean);
+
+        // Combine detailedRooms and nonBedroomRooms
+        allRooms.push(...detailedRooms, ...nonBedroomRooms);
       });
 
-      // Add non-bedroom rooms from unitrooms
-      const nonBedroomRooms = unitrooms
-        .map((room) => {
-          if (room.roomname === "Bedroom") {
-            return null; // Skip bedroom as they are already handled
-          }
-          return { name: room.roomname };
-        })
-        .filter(Boolean);
-
-      // Combine detailedRooms and nonBedroomRooms
-      const combinedRooms = [...detailedRooms, ...nonBedroomRooms];
-
-      setTransformedRooms(combinedRooms);
+      console.log("COMBINED ROOMS", allRooms);
+      setTransformedRooms(allRooms);
     }
   }, [propertyImages, propertyInfo]);
 
@@ -122,19 +132,19 @@ export default function PropertyInfo({ propertyImages, propertyInfo }) {
         <RoomDetails rooms={rooms} />
       </div>
       <div ref={amenitiesRef}>
-        <PropertyViewAmenities propertyinfo={propertyDetails} />
+        <PropertyViewAmenities propertyinfo={propertyInfo} />
       </div>
       <div ref={facilitiesRef}>
-        <PropertyViewFacilities propertyinfo={propertyDetails} />
+        <PropertyViewFacilities propertyinfo={propertyInfo} />
       </div>
       <div ref={servicesRef}>
-        <PropertyViewServices propertyinfo={propertyDetails} />
+        <PropertyViewServices propertyinfo={propertyInfo} />
       </div>
       <div ref={houseRulesRef}>
-        <PropertyHouseRules propertyinfo={propertyDetails} />
+        <PropertyHouseRules propertyinfo={propertyInfo} />
       </div>
       <div ref={cancellationRef}>
-        <PropertyCancellation propertyinfo={propertyDetails} />
+        <PropertyCancellation propertyinfo={propertyInfo} />
       </div>
     </div>
   );
