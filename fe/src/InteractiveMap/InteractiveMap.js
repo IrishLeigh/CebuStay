@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, GeoJSON, Marker, Popup } from 'react-leaflet';
+import { MapContainer, GeoJSON, Marker, Popup, useMap } from 'react-leaflet';
 import * as turf from '@turf/turf';
 import axios from 'axios';
 import cebuCity from './data/Cebu.MuniCities.json';
@@ -11,6 +11,8 @@ export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [foundLocations, setFoundLocations] = useState([]);
   const [locations, setLocations] = useState([]);
+  const initialCenter = [10.5, 124];
+  const initialZoom = 9;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,15 +30,28 @@ export default function InteractiveMap() {
     };
     fetchData();
   }, []);
+// Custom button component to reset the map center and zoom
+  function ResetButton({ center, zoom }) {
+    const map = useMap();
+    
+    const handleReset = () => {
+      map.setView(center, zoom);
+    };
 
+    return (
+      <button onClick={handleReset} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+        Reset Map
+      </button>
+    );
+  }
   // Set the style for the country
   const countryStyle = {
-    fillColor: '#f00',
+    fillColor: '#FDF7A4',
     weight: 2,
     opacity: 1,
-    color: 'black',
-    dashArray: '3',
-    fillOpacity: 0.7
+    color: '#FCB26E',
+    dashArray: '1',
+    fillOpacity: 1
   };
 
   // Function to set the style for each city when clicked
@@ -47,9 +62,9 @@ export default function InteractiveMap() {
       return { 
         fillColor: '#0f0',
         color: 'black',
-        weight: 2,
+        weight: 3,
         opacity: 1,
-        dashArray: '3',
+        dashArray: '1',
         fillOpacity: 0.7
       };
     } else {
@@ -114,17 +129,21 @@ export default function InteractiveMap() {
   });
 
   return (
-    <div>
-      <h1>Cebu City Map</h1>
+    <div className="map-background">
+      <div className="map-container">
+      {/* <h1>Cebu City Map</h1> */}
       {locations.length > 0 ? (
-        <MapContainer center={[10.5, 124]} zoom={9} style={{ height: '90vh' }}
+        <MapContainer center={[10.5, 124]} zoom={9} style={{ height: '100vh' , width:"50%", margin:"0.5rem"}}
         // To Make the Map Static
         // scrollWheelZoom={false} // Disable zooming with scroll
         // dragging={false} // Disable dragging
         // zoomControl={false} // Hide zoom controls
         // doubleClickZoom={false} // Disable zooming with double click
         // boxZoom={false} // Disable zooming by drawing a box
+        minZoom={9} // Minimum zoom level (zoomed out)
+        maxZoom={11} // Maximum zoom level (zoomed in)
         >
+          <ResetButton center={initialCenter} zoom={initialZoom} />
           <GeoJSON
             data={cebuCity.features}
             onEachFeature={onEachCity}
@@ -154,6 +173,8 @@ export default function InteractiveMap() {
           </ul>
         </div>
       )}
+      </div>
+
     </div>
   );
 }

@@ -1,3 +1,27 @@
-.leaflet-container{
-    background-color: white;
+.leaflet-container {
+    background-color: rgba(255, 255, 255, 0.2); /* 30% opacity */
+    
 }
+
+/* InteractiveMap.css */
+
+
+.map-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.map-background {
+    background-image: url("/public/sea4.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 105vh;
+    /* padding: 0.5rem; */
+      /* transform: rotate(35deg); */
+      /* transform-origin: center center; */
+  
+  }
+
