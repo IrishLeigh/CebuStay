@@ -13,6 +13,7 @@ export default function InteractiveMap() {
   const [locations, setLocations] = useState([]);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
+  const [zoom, setZoom] = useState(9);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +31,29 @@ export default function InteractiveMap() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+
+      if (screenWidth < 768) {
+        setZoom(7); // Lower zoom for smaller screens
+      } else if (screenWidth < 1024) {
+        setZoom(8); // Medium zoom for tablet-sized screens
+      } else {
+        setZoom(9); // Default zoom for larger screens
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Call handleResize once to set the initial zoom
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 // Custom button component to reset the map center and zoom
   function ResetButton({ center, zoom }) {
     const map = useMap();
@@ -39,7 +63,7 @@ export default function InteractiveMap() {
     };
 
     return (
-      <button onClick={handleReset} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+        <button className="reset-btn" onClick={handleReset} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
         Reset Map
       </button>
     );
@@ -60,12 +84,12 @@ export default function InteractiveMap() {
 
     if (selectedCity === cityName) {
       return { 
-        fillColor: '#0f0',
-        color: 'black',
+        fillColor: '#ADC939',
+        color: '#F77D1E',
         weight: 3,
         opacity: 1,
         dashArray: '1',
-        fillOpacity: 0.7
+        // fillOpacity: 0.7
       };
     } else {
       return countryStyle;
@@ -129,53 +153,91 @@ export default function InteractiveMap() {
   });
 
   return (
-    <div className="map-background">
-      <div className="map-container">
-      {/* <h1>Cebu City Map</h1> */}
-      {locations.length > 0 ? (
-        <MapContainer center={[10.5, 124]} zoom={9} style={{ height: '100vh' , width:"50%", margin:"0.5rem"}}
-        // To Make the Map Static
-        // scrollWheelZoom={false} // Disable zooming with scroll
-        // dragging={false} // Disable dragging
-        // zoomControl={false} // Hide zoom controls
-        // doubleClickZoom={false} // Disable zooming with double click
-        // boxZoom={false} // Disable zooming by drawing a box
-        minZoom={9} // Minimum zoom level (zoomed out)
-        maxZoom={11} // Maximum zoom level (zoomed in)
-        >
-          <ResetButton center={initialCenter} zoom={initialZoom} />
-          <GeoJSON
-            data={cebuCity.features}
-            onEachFeature={onEachCity}
-            style={getCityStyle}
-          />
-          {foundLocations.map((location, index) => (
-            <Marker 
-              key={index} 
-              position={[location.coordinates[1], location.coordinates[0]]} 
-              title={location.name}
-              icon={customIcon}
-            >
-              <Popup>{location.name}</Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      ) : (
-        <p>Loading map data...</p>
-      )}
-      {selectedCity && foundLocations.length > 0 && (
-        <div>
-          <h2>Properties found within {selectedCity}:</h2>
-          <ul>
-            {foundLocations.map((location, index) => (
-              <li key={index}>{location.name}</li> 
-            ))}
-          </ul>
-        </div>
-      )}
-      </div>
+    <>
 
-    </div>
+      <div style={{alignItems:"center",justifyContent:"center", backgroundColor:"white", padding:"1rem", }}>
+        <div className="title" style={{marginBottom:"0.5rem", textAlign:"center", fontWeight:"bold"}}>
+          Explore Cebu, With A Heart 
+        </div>
+        <div className="subtitle" style={{marginBottom:"1rem", textAlign:"center"}}>
+          Choose what you want to do in cebu, and we will find the accommodation for you
+        </div>
+       
+      </div>
+      <div className="map-background">
+      <div className="map-filter-cntr">
+          <button className="map-filter-btn"  style={{backgroundColor:"#16B4DD"}}>
+            Where to stay?
+          </button>
+          <button className="map-filter-btn"  style={{backgroundColor:"#ADC939"}}>
+            Culture & Experiences
+          </button>
+          <button className="map-filter-btn" style={{backgroundColor:"#F9CC41"}}>
+            See And Do
+          </button>
+          <button className="map-filter-btn" style={{backgroundColor:"#F77D1E"}}>
+           Hidden Jewels
+          </button>
+          <button className="map-filter-btn" style={{backgroundColor:"#EE414B"}}>
+           Even and Festivals
+          </button>
+          <button className="map-filter-btn" style={{backgroundColor:"#A334CF"}}>
+            What's in Cebu?
+          </button>
+
+        </div>
+
+        <div className="map-container">
+        {/* <h1>Cebu City Map</h1> */}
+        {locations.length > 0 ? (
+          <MapContainer 
+            className='map'
+            center={[10.5, 124]} 
+            zoom={zoom}  
+          // To Make the Map Static
+          scrollWheelZoom={false} // Disable zooming with scroll
+          dragging={false} // Disable dragging
+          // zoomControl={false} // Hide zoom controls
+          // doubleClickZoom={false} // Disable zooming with double click
+          // boxZoom={false} // Disable zooming by drawing a box
+          minZoom={9} // Minimum zoom level (zoomed out)
+          maxZoom={11} // Maximum zoom level (zoomed in)
+          >
+            <ResetButton center={initialCenter} zoom={initialZoom} />
+            <GeoJSON
+              data={cebuCity.features}
+              onEachFeature={onEachCity}
+              style={getCityStyle}
+            />
+            {foundLocations.map((location, index) => (
+              <Marker 
+                key={index} 
+                position={[location.coordinates[1], location.coordinates[0]]} 
+                title={location.name}
+                icon={customIcon}
+              >
+                <Popup>{location.name}</Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        ) : (
+          <p>Loading map data...</p>
+        )}
+        {selectedCity && foundLocations.length > 0 && (
+          <div>
+            <h2>Properties found within {selectedCity}:</h2>
+            <ul>
+              {foundLocations.map((location, index) => (
+                <li key={index}>{location.name}</li> 
+              ))}
+            </ul>
+          </div>
+        )}
+        </div>
+
+      </div>
+    </>
+   
   );
 }
 
