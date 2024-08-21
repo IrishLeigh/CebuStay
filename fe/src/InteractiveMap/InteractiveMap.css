@@ -1,3 +1,138 @@
-.leaflet-container{
-    background-color: white;
+.leaflet-container {
+    /* background-color: rgba(255, 255, 255, 0.2); 30% opacity */
+    background-color: transparent;
+    
+}
+
+/* InteractiveMap.css */
+
+.map{
+    height: 100vh;
+     width: 60%;
+     margin: 0.5rem;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+}
+.map-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.map-background {
+    background-image: url("/public/sea4.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 110vh;
+    /* padding: 0.5rem; */
+      /* transform: rotate(35deg); */
+      /* transform-origin: center center; */
+  
+  }
+
+  .map-filter-cntr {
+    position: sticky; /* Makes the filter buttons stick when scrolling */
+    top: 0; /* Position them at the top of the scrolling container */
+    background-color: white; /* Ensure the background color is white for contrast */
+    padding: 1rem; /* Add some padding */
+    z-index: 1000; /* Ensure it's on top of other elements */
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .map-filter-btn {
+
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, background-color 0.3s;
+    border-radius: 5px;
+
+  }
+  
+  /* Hover state */
+  .map-filter-btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  
+  /* Clicked state */
+  .map-filter-btn:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  
+  /* Additional styles for the reset button */
+  .reset-btn {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: transform 0.2s ease-in-out, background-color 0.3s;
+ 
+  }
+  
+  /* Hover state for the reset button */
+  .reset-btn:hover {
+    transform: scale(1.05);
+    background-color: #0056b3;
+  }
+  
+  /* Clicked state for the reset button */
+  .reset-btn:active {
+    transform: scale(0.95);
+    background-color: #003f7f;
+  }
+  
+/* Media query for 14-inch screens (1366px resolution) */
+
+
+/* Media query for screens wider than 1440px */
+@media screen and (min-width: 1440px) {
+    .map {
+        height: 100vh;
+        width: 50%;
+        padding: 0.5rem;
+    }
+}@media screen and (max-width: 1366px) {
+    .map {
+        width: 60%;
+        height: 135vh;
+    }
+
+    .map-background {
+        height: 155vh;
+        /* padding: 0.5rem; */
+          /* transform: rotate(35deg); */
+          /* transform-origin: center center; */
+      
+      }
+}
+/* Media query for medium screens (like tablets) */
+@media screen and (max-width: 1024px) {
+    .map {
+        width: 80%;
+    }
+}
+
+/* Media query for small screens (like phones) */
+@media screen and (max-width: 768px) {
+    .map {
+        width: 100%;
+    }
 }
