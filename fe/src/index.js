@@ -21,7 +21,7 @@ root.render(
       <DataProvider>
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
-            <InteractiveMap />
+            <App />
           </GoogleOAuthProvider>
         </UserProvider>
       </DataProvider>

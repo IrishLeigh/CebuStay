@@ -162,10 +162,9 @@ export default function InteractiveMap() {
         <div className="subtitle" style={{marginBottom:"1rem", textAlign:"center"}}>
           Choose what you want to do in cebu, and we will find the accommodation for you
         </div>
-       
       </div>
       <div className="map-background">
-      <div className="map-filter-cntr">
+        <div className="map-filter-cntr">
           <button className="map-filter-btn"  style={{backgroundColor:"#16B4DD"}}>
             Where to stay?
           </button>
@@ -186,7 +185,6 @@ export default function InteractiveMap() {
           </button>
 
         </div>
-
         <div className="map-container">
         {/* <h1>Cebu City Map</h1> */}
         {locations.length > 0 ? (
