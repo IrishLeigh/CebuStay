@@ -44,6 +44,7 @@ import AccommodationReservation from "./pages/PropertyManagementUI/Accommodation
 
 import MultiUnitRegistration from "./pages/AccommodationRegistrationUI/MultiUnitRegistrationUI";
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
+import EditPropertyUI from "./pages/PropertyManagementUI/components/EditPropertyUI";
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
@@ -139,6 +140,9 @@ function App() {
             exact
           />
           <Route path="/calendar" element={<CalendarUI />} />
+          <Route path="/edit-property/:id" element={<EditPropertyUI />} />
+
+
         </Route>
 
         {/* Redirect to login for any unmatched route */}

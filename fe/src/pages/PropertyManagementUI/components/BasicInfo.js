@@ -10,127 +10,161 @@ import {
   Select,
   FormControl,
   FormLabel,
-  TextField
+  TextField,
+  Button,
+  Typography,
+  IconButton,
+  Paper,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import CancelIcon from "@mui/icons-material/Cancel";
 
-export default function BasicInfo({ isEditing, propertyData, propertyAddress, onBasicInfoChange }) {
-  const [propertyName, setPropertyName] = useState("");
-  const [propertyType, setPropertyType] = useState("");
-  const [unitType, setUnitType] = useState("");
-  const [description, setDescription] = useState("");
-  const [directions, setDirections] = useState("");
-  const [street, setStreet] = useState("");
-  const [postalCode, setPostalCode] = useState("");
+export default function BasicInfo({ propertyData, propertyAddress, onBasicInfoChange }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [localState, setLocalState] = useState({
+    propertyName: "",
+    propertyType: "",
+    unitType: "",
+    description: "",
+    directions: "",
+    street: "",
+    postalCode: "",
+  });
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     if (propertyData) {
-      setPropertyName(propertyData.property_name || "");
-      setPropertyType(propertyData.property_type || "");
-      setUnitType(propertyData.unit_type || "");
-      setDescription(propertyData.property_desc || "");
-      setDirections(propertyData.property_directions || "");
+      setLocalState((prevState) => ({
+        ...prevState,
+        propertyName: propertyData.property_name || "",
+        propertyType: propertyData.property_type || "",
+        unitType: propertyData.unit_type || "",
+        description: propertyData.property_desc || "",
+        directions: propertyData.property_directions || "",
+      }));
     }
     if (propertyAddress) {
-      setStreet(propertyAddress.address || "");
-      setPostalCode(propertyAddress.zipcode || "");
+      setLocalState((prevState) => ({
+        ...prevState,
+        street: propertyAddress.address || "",
+        postalCode: propertyAddress.zipcode || "",
+      }));
     }
   }, [propertyData, propertyAddress]);
 
-  const handlePropertyNameChange = (event) => {
-    const newValue = event.target.value;
-    setPropertyName(newValue);
-    onBasicInfoChange({ propertyName: newValue, propertyType, unitType, description, directions, street, postalCode });
+  const handleChange = (field, value) => {
+    setLocalState((prevState) => ({
+      ...prevState,
+      [field]: value,
+    }));
   };
 
-  const handlePropertyTypeChange = (event) => {
-    const newValue = event.target.value;
-    setPropertyType(newValue);
-    onBasicInfoChange({ propertyName, propertyType: newValue, unitType, description, directions, street, postalCode });
+  const handleSave = () => {
+    alert("Basic Info saved successfully!");
+    setIsEditing(false);
   };
 
-  const handleUnitTypeChange = (event) => {
-    const newValue = event.target.value;
-    setUnitType(newValue);
-    onBasicInfoChange({ propertyName, propertyType, unitType: newValue, description, directions, street, postalCode });
-  };
-
-  const handleDescriptionChange = (event) => {
-    const newValue = event.target.value;
-    setDescription(newValue);
-    onBasicInfoChange({ propertyName, propertyType, unitType, description: newValue, directions, street, postalCode });
-  };
-
-  const handleDirectionsChange = (event) => {
-    const newValue = event.target.value;
-    setDirections(newValue);
-    onBasicInfoChange({ propertyName, propertyType, unitType, description, directions: newValue, street, postalCode });
-  };
-
-  const handleStreetChange = (event) => {
-    const newValue = event.target.value;
-    setStreet(newValue);
-    onBasicInfoChange({ propertyName, propertyType, unitType, description, directions, street: newValue, postalCode });
-  };
-
-  const handlePostalCodeChange = (event) => {
-    const newValue = event.target.value;
-    setPostalCode(newValue);
-    onBasicInfoChange({ propertyName, propertyType, unitType, description, directions, street, postalCode: newValue });
+  const handleCancel = () => {
+    setIsEditing(false);
+    setLocalState({
+      propertyName: propertyData.property_name || "",
+      propertyType: propertyData.property_type || "",
+      unitType: propertyData.unit_type || "",
+      description: propertyData.property_desc || "",
+      directions: propertyData.property_directions || "",
+      street: propertyAddress.address || "",
+      postalCode: propertyAddress.zipcode || "",
+    });
   };
 
   return (
-    <div style={{ width: "auto" }}>
+    <Paper style={{ width: "auto", padding: "4rem", borderRadius: "0.8rem", alignItems: "center" }}>
       <Grid container spacing={2}>
-        <Grid item xs={6} sx={{ padding: "1rem" }}>
+        <Grid item xs={12}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+          <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem", fontWeight: "bold" }}>
+            Basic Information Of The Property
+          </Typography>
+          <div>
+            {!isEditing && (
+              <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
+                Edit
+              </Button>
+            )}
+            {isEditing && (
+              <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
+                Cancel
+              </Button>
+            )}
+          </div>
+        </div>
+         
           <div style={{ marginBottom: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-name" sx={{ fontFamily: "Poppins, sans-serif" }}>
+            <div style={{ marginBottom: "0.5rem"}}>
               Property Name
-            </InputLabel>
+            </div>
             <TextField
               id="property-name"
               variant="outlined"
               sx={{ width: "100%" }}
-              value={propertyName}
-              onChange={handlePropertyNameChange}
+              value={localState.propertyName}
+              onChange={(e) => handleChange("propertyName", e.target.value)}
               disabled={!isEditing}
             />
           </div>
-
           <div style={{ marginBottom: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-type-select"  sx={{ fontFamily: "Poppins, sans-serif" }}>
+            <InputLabel variant="standard" htmlFor="property-type-select" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Property Type
             </InputLabel>
             <Select
-             sx={{ fontFamily: "Poppins, sans-serif" , width: "100%"}}
-              labelId="property-type-select-label"
+              sx={{ fontFamily: "Poppins, sans-serif", width: "100%" }}
               id="property-type-select"
-              value={propertyType}
-              onChange={handlePropertyTypeChange}
+              value={localState.propertyType}
+              onChange={(e) => handleChange("propertyType", e.target.value)}
               disabled={!isEditing}
             >
-              <MenuItem value="Home"  sx={{ fontFamily: "Poppins, sans-serif" }}>Home</MenuItem>
-              <MenuItem value="Condominium"   sx={{ fontFamily: "Poppins, sans-serif" }}>Condominium</MenuItem>
-              <MenuItem value="Apartment"   sx={{ fontFamily: "Poppins, sans-serif" }}>Apartment</MenuItem>
-              <MenuItem value="Hotel"   sx={{ fontFamily: "Poppins, sans-serif" }}>Hotel</MenuItem>
+              <MenuItem value="Home" sx={{ fontFamily: "Poppins, sans-serif" }}>
+                Home
+              </MenuItem>
+              <MenuItem value="Condominium" sx={{ fontFamily: "Poppins, sans-serif" }}>
+                Condominium
+              </MenuItem>
+              <MenuItem value="Apartment" sx={{ fontFamily: "Poppins, sans-serif" }}>
+                Apartment
+              </MenuItem>
+              <MenuItem value="Hotel" sx={{ fontFamily: "Poppins, sans-serif" }}>
+                Hotel
+              </MenuItem>
             </Select>
           </div>
-          <div>
-            <FormControl component="fieldset">
-              <FormLabel component="legend" sx={{ fontFamily: "Poppins, sans-serif" }}>Unit Type</FormLabel>
-              <RadioGroup
-                row
-                aria-label="unit type"
-                name="unit-type-group"
-                value={unitType}
-                onChange={handleUnitTypeChange}
+          <FormControl component="fieldset">
+            <FormLabel component="legend" sx={{ fontFamily: "Poppins, sans-serif" }}>
+              Unit Type
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-label="unit type"
+              name="unit-type-group"
+              value={localState.unitType}
+              onChange={(e) => handleChange("unitType", e.target.value)}
+              sx={{ fontFamily: "Poppins, sans-serif" }}
+            >
+              <FormControlLabel
+                value="Private Room"
+                control={<Radio />}
+                label="Private Room"
+                disabled={!isEditing}
                 sx={{ fontFamily: "Poppins, sans-serif" }}
-                
-              >
-                <FormControlLabel value="Private Room" control={<Radio />} label="Private Room" disabled={!isEditing}  sx={{ fontFamily: "Poppins, sans-serif" }}/>
-                <FormControlLabel value="Entire Place" control={<Radio />} label="Entire Place" disabled={!isEditing}  sx={{ fontFamily: "Poppins, sans-serif" }}/>
-              </RadioGroup>
-            </FormControl>
-          </div>
+              />
+              <FormControlLabel
+                value="Entire Place"
+                control={<Radio />}
+                label="Entire Place"
+                disabled={!isEditing}
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+              />
+            </RadioGroup>
+          </FormControl>
           <div style={{ marginTop: "1rem" }}>
             <InputLabel variant="standard" htmlFor="property-description" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Description
@@ -140,14 +174,14 @@ export default function BasicInfo({ isEditing, propertyData, propertyAddress, on
               multiline
               maxRows={4}
               rows={4}
-              sx={{ width: "100%" , fontFamily: "Poppins, sans-serif" }}
-              value={description}
-              onChange={handleDescriptionChange}
+              sx={{ width: "100%", fontFamily: "Poppins, sans-serif" }}
+              value={localState.description}
+              onChange={(e) => handleChange("description", e.target.value)}
               disabled={!isEditing}
             />
           </div>
           <div style={{ marginTop: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-directions" sx ={{ fontFamily: "Poppins, sans-serif" }}>
+            <InputLabel variant="standard" htmlFor="property-directions" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Directions
             </InputLabel>
             <TextField
@@ -156,20 +190,22 @@ export default function BasicInfo({ isEditing, propertyData, propertyAddress, on
               maxRows={4}
               rows={4}
               sx={{ width: "100%", fontFamily: "Poppins, sans-serif" }}
-              value={directions}
-              onChange={handleDirectionsChange}
+              value={localState.directions}
+              onChange={(e) => handleChange("directions", e.target.value)}
               disabled={!isEditing}
             />
           </div>
-        </Grid>
-        <Grid item xs={6} sx={{ padding: "1rem" }}>
-          <div style={{ marginBottom: "1rem" }}>
-            <InputLabel variant="standard" htmlFor="property-name" sx={{ fontFamily: "Poppins, sans-serif" }}>
+        {/* </Grid>
+        <Grid item xs={6} sx={{ padding: "1rem" }}> */}
+            
+          <div style={{marginTop: "1rem", marginBottom: "1rem" }}>
+            <InputLabel variant="standard" htmlFor="street-address" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Address
             </InputLabel>
             <TextField
-              value={street}
-              onChange={handleStreetChange}
+              id="street-address"
+              value={localState.street}
+              onChange={(e) => handleChange("street", e.target.value)}
               helperText="Enter your street address"
               fullWidth
               disabled={!isEditing}
@@ -178,8 +214,8 @@ export default function BasicInfo({ isEditing, propertyData, propertyAddress, on
           </div>
           <TextField
             label="Postal/ZIP Code"
-            value={postalCode}
-            onChange={handlePostalCodeChange}
+            value={localState.postalCode}
+            onChange={(e) => handleChange("postalCode", e.target.value)}
             helperText="Enter your postal or ZIP code"
             fullWidth
             disabled={!isEditing}
@@ -187,12 +223,21 @@ export default function BasicInfo({ isEditing, propertyData, propertyAddress, on
           />
         </Grid>
       </Grid>
-    </div>
+      {isEditing && (
+        <div style={{ marginTop: "1rem", textAlign: "right" }}>
+        <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
+          Revert Changes
+        </Button>
+        <Button variant="contained"  disabled={!hasChanges}  onClick={handleSave}>
+          Save All Changes
+        </Button>
+      </div>
+      )}
+    </Paper>
   );
 }
 
 BasicInfo.propTypes = {
-  isEditing: PropTypes.bool.isRequired,
   propertyData: PropTypes.object.isRequired,
   propertyAddress: PropTypes.object.isRequired,
   onBasicInfoChange: PropTypes.func.isRequired,

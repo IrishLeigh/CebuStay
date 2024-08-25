@@ -79,8 +79,8 @@
 }
 
 .gallery-image {
-  width: 350px;
-  height: 200px;
+  width: 35%;
+  height: 20%;
   object-fit: cover;
   margin-right: 10px;
   border-radius: 12px;
