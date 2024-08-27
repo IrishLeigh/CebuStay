@@ -14,11 +14,10 @@ export default function InteractiveMap() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [locations, setLocations] = useState([]);
   const [selectedCulture, setSelectedCulture] = useState(null);
-
-  const mapContainerRef = useRef(null);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
+  const mapContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
