@@ -93,9 +93,10 @@ const handleChangeDate = (date) => {
       </Typography>
       {/* Upload Image */}
       <div style={{
-        border: '2px dashed #cacaca',
+        border: '2px dashed #ccc',
         padding: '1rem',
-        borderRadius: '10px',
+        borderRadius: '0.8rem',
+        marginBottom: '1rem',
       }}>
         <Typography sx={{ fontSize: "1.125rem" }}>
           Upload your profile photo

@@ -6,6 +6,7 @@ import Sidebar from '../../PropertyManagementUI/components/sidebar';
 import {Grid } from '@mui/material';
 import axios from 'axios';
 import EditPropertyUI from '../../PropertyManagementUI/components/EditPropertyUI';
+import { useNavigate } from 'react-router-dom';
 export default function PropertyManagementListing() {
     const [selectedButton, setSelectedButton] = useState('ALL');
     const [showDropdown, setShowDropdown] = useState(false);
@@ -24,6 +25,9 @@ export default function PropertyManagementListing() {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+
+    
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
         if (token) {
@@ -64,10 +68,13 @@ export default function PropertyManagementListing() {
         fetchData();
       }, [user]);
 
+    // const handleEdit = (id) => {
+    //     setEditItemId(id);
+    //     setEditModalOpen(true);
+    // };
     const handleEdit = (id) => {
-        setEditItemId(id);
-        setEditModalOpen(true);
-    };
+        navigate(`/edit-property/${id}`); // Navigate to the edit page
+      };
 
     const handleSave = (id) => {
         // Save the edited data
@@ -315,12 +322,12 @@ export default function PropertyManagementListing() {
 
                     {/* Edit Modal */}
                     
-                    {selectedId && (
+                    {/* {selectedId && (
                         <EditPropertyUI
                         editItemId={selectedId}
                         onClose={handleClose}
                         />
-                    )}
+                    )} */}
 
                 </div>
             </Grid>
