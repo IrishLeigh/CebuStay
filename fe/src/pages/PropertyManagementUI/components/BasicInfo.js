@@ -98,6 +98,9 @@ export default function BasicInfo({ propertyData, propertyAddress, onBasicInfoCh
             )}
           </div>
         </div>
+        <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "0.875rem", color: "#6b7280",    marginBottom: "2rem" }}>
+          This section allows you to review and edit the basic details of your property. You can update the name, type, description, directions, and address of the property to ensure all information is accurate.
+        </Typography>
          
           <div style={{ marginBottom: "1rem" }}>
             <div style={{ marginBottom: "0.5rem"}}>

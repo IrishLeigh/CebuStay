@@ -200,26 +200,30 @@ export default function RoomDetails( {propertyData , onRoomDetailsChange }) {
   };
 
 
-  console.log("Room Details from property data:", propertyData);
+
   return (
     <Paper style={{ width: "auto", padding: "4rem", borderRadius: "0.8rem", alignItems: "center" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-          <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem" , fontWeight: "bold"}}>
-            Rooms and Details
-          </Typography>
-          <div>
-            {!isEditing && (
-              <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
-                Edit
-              </Button>
-            )}
-            {isEditing && (
-              <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-                Cancel
-              </Button>
-            )}
-          </div>
+        <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem" , fontWeight: "bold"}}>
+          Rooms and Details
+        </Typography>
+        <div>
+          {!isEditing && (
+            <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
+              Edit
+            </Button>
+          )}
+          {isEditing && (
+            <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
+              Cancel
+            </Button>
+          )}
         </div>
+      </div>
+      <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "0.875rem", color: "#6b7280", marginBottom: "2rem" }}>
+        Use this section to configure your property's room and bed details. Specify guest capacity, add room types, and set up bed arrangements to accurately reflect your accommodation setup.
+      </Typography>
+
       <Grid container spacing={2} sx={{ alignItems: "center" }}>
         <Grid item xs={12} >
         

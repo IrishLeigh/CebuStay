@@ -10,67 +10,68 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Button,
 } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 
-export default function PricePayment({
-  isEditing,
-  onUnitPricingChange,
-  parentUnitPricing = {},
-  onPaymentDataChange,
-  parentPaymentData = {},
-}) {
+export default function PricePayment({ parentUnitPricing = {}, parentPaymentData = {} }) {
   const pesoSign = "\u20B1";
   const [priceEntered, setPriceEntered] = useState(false);
-  const [basePrice, setBasePrice] = useState(parentUnitPricing.basePrice || "");
+  const [basePrice, setBasePrice] = useState(parentUnitPricing.min_price || "");
   const [priceUnit, setPriceUnit] = useState({
-    basePrice: parentUnitPricing.basePrice || "",
+    basePrice: parentUnitPricing.min_price || "",
     profit: "",
   });
   const [paymentData, setPaymentData] = useState({
-    selectedPayment: parentPaymentData.selectedPayment || "",
-    selectedPayout: parentPaymentData.selectedPayout || "",
+    selectedPayment: parentPaymentData.isonline === 1 ? "Online" : "",
+    selectedPayout: parentPaymentData.paymentmethod || "",
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalData, setOriginalData] = useState({});
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     // Update state when parent data changes
-    setBasePrice(parentUnitPricing.basePrice || "");
+    setBasePrice(parentUnitPricing.min_price || "");
     setPaymentData({
-      selectedPayment: parentPaymentData.selectedPayment || '',
-      selectedPayout: parentPaymentData.selectedPayout || ''
+      selectedPayment: parentPaymentData.isonline === 1 ? "Online" : "",
+      selectedPayout: parentPaymentData.paymentmethod || "",
+    });
+    setOriginalData({
+      basePrice: parentUnitPricing.min_price || "",
+      paymentData: {
+        selectedPayment: parentPaymentData.isonline === 1 ? "Online" : "",
+        selectedPayout: parentPaymentData.paymentmethod || "",
+      },
     });
   }, [parentUnitPricing, parentPaymentData]);
 
   useEffect(() => {
     const profitValue = calculateProfit(Number(basePrice));
     setPriceUnit({ basePrice, profit: profitValue });
-    if (onUnitPricingChange) {
-      onUnitPricingChange({ basePrice, profit: profitValue });
-    }
-  }, [basePrice, onUnitPricingChange]);
+  }, [basePrice]);
 
   const handlePaymentChange = (event) => {
-    const newPaymentData = {
-      ...paymentData,
-      selectedPayment: event.target.value
-    };
-    setPaymentData(newPaymentData);
-    onPaymentDataChange(newPaymentData);
+    setPaymentData((prevState) => ({
+      ...prevState,
+      selectedPayment: event.target.value,
+    }));
+    setHasChanges(true);
   };
 
   const handlePayoutChange = (event) => {
-    const newPaymentData = {
-      ...paymentData,
-      selectedPayout: event.target.value
-    };
-    setPaymentData(newPaymentData);
-    onPaymentDataChange(newPaymentData);
+    setPaymentData((prevState) => ({
+      ...prevState,
+      selectedPayout: event.target.value,
+    }));
+    setHasChanges(true);
   };
 
   const handlePriceChange = (event) => {
     const numericValue = event.target.value.replace(/\D/g, "");
     setPriceEntered(Boolean(numericValue));
     setBasePrice(numericValue);
+    setHasChanges(true);
   };
 
   const calculateProfit = (basePrice) => {
@@ -80,8 +81,53 @@ export default function PricePayment({
     return profitValue;
   };
 
+  const handleCancel = () => {
+    setIsEditing(false);
+    setBasePrice(originalData.basePrice);
+    setPaymentData(originalData.paymentData);
+  };
+
+  const handleSave = () => {
+    // Gather the data to be sent to the API
+    const dataToSave = {
+      unitPricing: {
+        min_price: basePrice,
+      },
+      paymentData: {
+        isonline: paymentData.selectedPayment === "Online" ? 1 : 0,
+        paymentmethod: paymentData.selectedPayout,
+      },
+    };
+
+    console.log("Saving data:", dataToSave);
+
+    setIsEditing(false); // Exit editing mode for now
+  };
+
+
   return (
-    <div style={{ width: "auto" }}>
+    <Paper style={{ width: "auto", padding: "4rem", borderRadius: "0.8rem", alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+        <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem", fontWeight: "bold" }}>
+          Your Unit Pricing and Payment Details
+        </Typography>
+        <div>
+          {!isEditing && (
+            <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
+              Edit
+            </Button>
+          )}
+          {isEditing && (
+            <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
+              Cancel
+            </Button>
+          )}
+        </div>
+      </div>
+      <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "0.875rem", color: "#6b7280", marginBottom: "2rem" }}>
+        Set your unit's nightly price, including taxes and fees. Choose how guests can pay and how you prefer to receive payouts. Click "Edit" to make changes, then save or cancel as needed.
+      </Typography>
+
       <Grid container spacing={2}>
         <Grid item xs={12} md={6} sx={{ padding: "1rem" }}>
           <Box className="centered-container">
@@ -247,8 +293,18 @@ export default function PricePayment({
               </Typography>
             </RadioGroup>
           </Box>
+          {isEditing && (
+            <div style={{ marginTop: "1rem", textAlign: "right" }}>
+              <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
+                Revert Changes
+              </Button>
+              <Button variant="contained" disabled={!hasChanges} onClick={handleSave}>
+                Save All Changes
+              </Button>
+            </div>
+          )}
         </Grid>
       </Grid>
-    </div>
+    </Paper>
   );
 }

@@ -18,6 +18,9 @@ import {
   AttachMoney as PricingIcon
 } from '@mui/icons-material';
 import GavelIcon from '@mui/icons-material/Gavel';
+import EditPartnerVerification from './EditPartnerVerification';
+import VerifiedIcon from '@mui/icons-material/Verified';
+
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -55,6 +58,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
     selectedPayment: "",
     selectedPayout: "",
   });
+  const [partnerData, setPartnerData] = useState({});
   const [rooms, setRooms] = useState({});
   const [data, setData] = useState({});
   const navigate = useNavigate();
@@ -78,9 +82,10 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         setServices(data.property_services.map(s => s.service_name.toLowerCase().replace(/\s+/g, '')));
         setHouseRules(data.property_houserules[0]);
         setPolicies(data.property_bookingpolicy);
-        setUnitPricing(data.property_unitpricing);
+        setUnitPricing(data.property_unitdetails[0].unitpricing);
         setPaymentData(data.payment_method);
         setRooms(data.property_unitdetails);
+        setPartnerData(data.property_owner);
       } catch (error) {
         console.error('Error fetching property data:', error);
       }
@@ -94,8 +99,8 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
   };
 
   return (
-    <div style={{ height: '100%', background: '#F4F7FA', color: '#000' }}>
-      <div style={{ background: '#333', padding: '1rem', display: 'flex', alignItems: 'center', color: '#FFF' }}>
+    <div style={{ height: '100vh', color: '#000' ,background: '#F4F7FA'}}>
+      <div style={{ background: '#15A1C6', padding: '1rem', display: 'flex', alignItems: 'center', color: '#FFF' }}>
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate(-1)}
@@ -108,14 +113,15 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         >
           Back
         </Button>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' , alignItems: 'center', justifyContent: 'center', flexGrow: 1}}>
           {[
             { label: 'Basic Info', icon: <InfoIcon /> },
             { label: 'Room & Details', icon: <BedroomIcon /> },
             { label: 'Photos', icon: <PhotoIcon /> },
-            { label: 'Amenities', icon: <AmenitiesIcon /> },
+            { label: 'Shared Amenities', icon: <AmenitiesIcon /> },
             { label: 'Rules', icon: <GavelIcon /> },
-            { label: 'Pricing & Methods', icon: <PricingIcon /> }
+            { label: 'Pricing & Methods', icon: <PricingIcon /> },
+            { label: 'Partner Verification', icon: <VerifiedIcon /> },
           ].map((item, index) => (
             <div
               key={index}
@@ -124,7 +130,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 padding: '0.75rem 1.5rem',
-                background: value === index ? '#A334CF' : 'transparent',
+                background: value === index ? '#16B4DD' : 'transparent',
                 color: value === index ? '#FFF' : '#DDD',
                 border: 'none',
                 cursor: 'pointer',
@@ -144,7 +150,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         </div>
       </div>
 
-      <div style={{ padding: '3rem 4rem', overflowY: 'auto' }}>
+      <div style={{ padding: '3rem 4rem' ,background: '#F4F7FA'}}>
         <CustomTabPanel value={value} index={0}>
           <BasicInfo
             propertyData={propertyData}
@@ -187,10 +193,15 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         <CustomTabPanel value={value} index={5}>
           <PricePayment
             isEditing={isEditing}
-            unitPricing={unitPricing}
-            paymentData={paymentData}
+            parentUnitPricing={unitPricing}
+            parentPaymentData={paymentData}
             onPricingChange={(updatedPricing) => setUnitPricing(updatedPricing)}
             onPaymentChange={(updatedPayment) => setPaymentData(updatedPayment)}
+          />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={6}>
+          <EditPartnerVerification 
+            parentPartnerData={partnerData}
           />
         </CustomTabPanel>
       </div>
