@@ -6,21 +6,19 @@ import cebuCity from "./data/Cebu.MuniCities.json";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./InteractiveMap.css";
-import Liloan from "./Liloan";
-import CarCar from "./Carcar";
-import BadianKawasanFalls from "./BadianKawasanFalls";
+import CultureCard from "./CultureCard"; // Import the CultureCard component
+import Culture from "./data/Culture.json"; // Import tourist spots JSON data
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
-  const [foundLocations, setFoundLocations] = useState([]);
-  const [showCard, setShowCard] = useState(null); // Use `null` or an identifier
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [locations, setLocations] = useState([]);
-  const [filter, setFilter] = useState(null);
+  const [selectedCulture, setSelectedCulture] = useState(null);
+
+  const mapContainerRef = useRef(null);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
-
-  const mapContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,8 +56,6 @@ export default function InteractiveMap() {
     };
 
     window.addEventListener("resize", handleResize);
-
-    // Call handleResize once to set the initial zoom
     handleResize();
 
     return () => {
@@ -67,16 +63,17 @@ export default function InteractiveMap() {
     };
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        mapContainerRef.current &&
-        !mapContainerRef.current.contains(event.target)
-      ) {
-        setShowCard(null);
-      }
-    };
+  const handleClickOutside = (event) => {
+    if (
+      mapContainerRef.current &&
+      !mapContainerRef.current.contains(event.target)
+    ) {
+      setSelectedCity(null);
+      setSelectedCulture(null);
+    }
+  };
 
+  useEffect(() => {
     document.addEventListener("click", handleClickOutside);
 
     return () => {
@@ -84,8 +81,16 @@ export default function InteractiveMap() {
     };
   }, []);
 
-  const handleMarkerClick = (cardName) => {
-    setShowCard((prevCard) => (prevCard === cardName ? null : cardName));
+  const handleCityClick = (cityName, event) => {
+    event.originalEvent.stopPropagation(); // Prevent map click event
+    setSelectedCity((prevCity) => (prevCity === cityName ? null : cityName));
+  };
+
+  const handleMarkerClick = (culture, event) => {
+    event.originalEvent.stopPropagation(); // Prevent map click event
+    setSelectedCulture((prevCulture) =>
+      prevCulture === culture ? null : culture
+    );
   };
 
   function ResetButton({ center, zoom }) {
@@ -120,6 +125,14 @@ export default function InteractiveMap() {
     fillOpacity: 1,
   };
 
+  const customIcon = (url) =>
+    L.icon({
+      iconUrl: url,
+      iconSize: [41, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [0, -41],
+    });
+
   const getCityStyle = (city) => {
     const cityName = city.properties.NAME_2;
 
@@ -140,81 +153,15 @@ export default function InteractiveMap() {
     const cityName = city.properties.NAME_2;
 
     layer.on({
-      click: () => {
-        const found = [];
-        console.log("City Name:", cityName);
-        if (!locations.length) {
-          console.log("Locations not loaded yet.");
-          return;
-        }
+      click: (event) => handleCityClick(cityName, event),
+    });
 
-        if (selectedCity === cityName) {
-          setSelectedCity(null);
-          setFoundLocations([]);
-        } else {
-          setSelectedCity(cityName);
-
-          locations.forEach((location) => {
-            const point = turf.point(location.coordinates);
-
-            let isInPolygon = false;
-            if (city.geometry.type === "Polygon") {
-              const cityPolygon = turf.polygon(city.geometry.coordinates);
-              isInPolygon = turf.booleanPointInPolygon(point, cityPolygon);
-            } else if (city.geometry.type === "MultiPolygon") {
-              city.geometry.coordinates.forEach((polygonCoords) => {
-                const cityPolygon = turf.polygon(polygonCoords);
-                if (turf.booleanPointInPolygon(point, cityPolygon)) {
-                  isInPolygon = true;
-                }
-              });
-            }
-
-            if (isInPolygon) {
-              found.push({
-                name: location.name,
-                coordinates: location.coordinates,
-              });
-            }
-          });
-
-          setFoundLocations(found);
-        }
-      },
+    layer.bindTooltip(cityName, {
+      permanent: false, // Tooltip appears on hover only
+      direction: "auto",
+      className: "city-tooltip", // Optional: to apply custom styles
     });
   };
-
-  const customIcon = L.icon({
-    iconUrl: "./resort.png",
-    iconSize: [41, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [0, -41],
-  });
-
-  const rosquillosIcon = L.icon({
-    iconUrl: "./rosquillos.png",
-    iconSize: [41, 41],
-    iconAnchor: [20.5, 41],
-    popupAnchor: [0, -41],
-  });
-
-  const lechonIcon = L.icon({
-    iconUrl: "./lechon.png",
-    iconSize: [41, 41],
-    iconAnchor: [20.5, 41],
-    popupAnchor: [0, -41],
-  });
-
-  const kawasanIcon = L.icon({
-    iconUrl: "./kawasanfalls.png",
-    iconSize: [41, 41],
-    iconAnchor: [20.5, 41],
-    popupAnchor: [0, -41],
-  });
-
-  const liloanCoordinates = [10.3988, 123.9996];
-  const carcarCoordinates = [10.115111, 123.639954];
-  const badianCoordinates = [9.8321, 123.4159];
 
   return (
     <>
@@ -246,59 +193,65 @@ export default function InteractiveMap() {
       </div>
       <div className="map-background">
         <div className="map-filter-cntr">
+          {/* Filter buttons for categories */}
           <button
             className="map-filter-btn"
             style={{ backgroundColor: "#16B4DD" }}
-            onClick={() => setFilter("stay")}
+            onClick={() => setSelectedCategory("Where to stay")}
           >
             Where to stay?
           </button>
           <button
             className="map-filter-btn"
             style={{ backgroundColor: "#ADC939" }}
-            onClick={() => setFilter("culture")}
+            onClick={() => setSelectedCategory("Culture & Experiences")}
           >
             Culture & Experiences
           </button>
           <button
             className="map-filter-btn"
             style={{ backgroundColor: "#F9CC41" }}
-            onClick={() => setFilter("seeAndDo")}
+            onClick={() => setSelectedCategory("See And Do")}
           >
             See And Do
           </button>
           <button
             className="map-filter-btn"
             style={{ backgroundColor: "#F77D1E" }}
-            onClick={() => setFilter("hiddenJewels")}
+            onClick={() => setSelectedCategory("Hidden Jewels")}
           >
             Hidden Jewels
           </button>
           <button
             className="map-filter-btn"
             style={{ backgroundColor: "#EE414B" }}
-            onClick={() => setFilter("events")}
+            onClick={() => setSelectedCategory("Events and Festivals")}
           >
             Events and Festivals
           </button>
           <button
             className="map-filter-btn"
             style={{ backgroundColor: "#A334CF" }}
-            onClick={() => setFilter("cebuInfo")}
+            onClick={() => setSelectedCategory("What's in Cebu")}
           >
             What's in Cebu?
           </button>
         </div>
+
         <div className="map-container" ref={mapContainerRef}>
           {locations.length > 0 ? (
             <MapContainer
               className="map"
-              center={[10.5, 124]}
+              center={initialCenter}
               zoom={zoom}
               scrollWheelZoom={false}
               dragging={false}
               minZoom={9}
               maxZoom={11}
+              onClick={() => {
+                setSelectedCity(null); // Deselect city
+                setSelectedCulture(null); // Deselect culture
+              }}
             >
               <ResetButton center={initialCenter} zoom={initialZoom} />
               <GeoJSON
@@ -306,75 +259,33 @@ export default function InteractiveMap() {
                 onEachFeature={onEachCity}
                 style={getCityStyle}
               />
-              {foundLocations.map((location, index) => (
-                <Marker
-                  key={index}
-                  position={[location.coordinates[1], location.coordinates[0]]}
-                  title={location.name}
-                  icon={customIcon}
-                >
-                  <Popup>{location.name}</Popup>
-                </Marker>
-              ))}
-              {filter === "culture" && (
-                <>
+              {selectedCategory === "Culture & Experiences" &&
+                Culture.filter(
+                  (culture) =>
+                    !selectedCity || culture["city name"] === selectedCity
+                ).map((culture, index) => (
                   <Marker
-                    position={liloanCoordinates}
-                    title="Liloan - Home of Rosquillos"
-                    icon={rosquillosIcon}
+                    key={index}
+                    position={culture.coordinates}
+                    title={culture.name}
+                    icon={customIcon(culture.iconUrl)}
                     eventHandlers={{
-                      click: () => handleMarkerClick("rosquillos"),
-                    }}
-                  />
-                  <Marker
-                    position={carcarCoordinates}
-                    title="Carcar City - Lechon"
-                    icon={lechonIcon}
-                    eventHandlers={{
-                      click: () => handleMarkerClick("carcar"),
+                      click: (e) => handleMarkerClick(culture, e),
                     }}
                   >
-                    {/* <Popup>Carcar City - Known for its delicious Lechon</Popup> */}
+                    <Popup>{culture.name}</Popup>
                   </Marker>
-                  <Marker
-                    position={badianCoordinates}
-                    title="Badian - Kawasan Falls"
-                    icon={kawasanIcon}
-                    eventHandlers={{
-                      click: () => handleMarkerClick("kawasan"),
-                    }}
-                  >
-                    {/* <Popup>Badian - Home of Kawasan Falls</Popup> */}
-                  </Marker>
-                </>
-              )}
+                ))}
             </MapContainer>
           ) : (
             <p>Loading map data...</p>
           )}
-          {selectedCity && foundLocations.length > 0 && (
-            <div>
-              <h2>Properties found within {selectedCity}:</h2>
-              <ul>
-                {foundLocations.map((location, index) => (
-                  <li key={index}>{location.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {showCard === "rosquillos" && (
-            <div className="event-card">
-              <Liloan />
-            </div>
-          )}
-          {showCard === "carcar" && (
-            <div className="carcar-card">
-              <CarCar />
-            </div>
-          )}
-          {showCard === "kawasan" && (
-            <div className="kawasan-card">
-              <BadianKawasanFalls />
+          {selectedCulture && (
+            <div className="culture-card-container">
+              <CultureCard
+                culture={selectedCulture}
+                onClose={() => setSelectedCulture(null)}
+              />
             </div>
           )}
         </div>

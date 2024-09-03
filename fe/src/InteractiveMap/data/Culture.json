@@ -1,0 +1,45 @@
+[
+  {
+    "name": "Liloan - Home of Rosquillos",
+    "coordinates": [10.458, 124.065],
+    "category": "Culture",
+    "iconUrl": "./resort.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "description2": "Description of Spot 1",
+    "city name": "Liloan"
+  },
+
+  {
+    "name": "Liloan - Home of Rosquillos",
+    "coordinates": [10.4121, 123.9861],
+    "category": "Culture",
+    "iconUrl": "./rosquillos.png",
+    "imageUrl": "./liloanfestival.jpg",
+    "description": "The Rosquillos Festival is a cultural and food festival celebrated i Liloan, Cebu, Philippines. It is held in honor of the town’s most famous delicacy, the rosquillos a type of circular cookie made from flour, eggs, sugar, shortening, and baking powder. These cookies were first made by Margarita “Titay” Frasco in 1907, and they have since become a beloved local treat.",
+    "description2": "For the Rosquillos Festival, wear light and comfortable clothing like a sundress or t-shirt with shorts, paired with comfortable shoes, a hat, and sunglasses to stay cool and stylish in the warm weather.",
+    "city name": "Liloan"
+  },
+
+  {
+    "name": "Carcar City Cebu",
+    "coordinates": [10.1151, 123.64],
+    "category": "Culture",
+    "iconUrl": "./lechon.png",
+    "imageUrl": "./carcarlechon.jpg",
+    "description": "Carcar is famous for its lechon, considered one of the best in the Philippines. The public market is a must-visit for food lovers, where you can taste freshly roasted lechon with crispy skin and tender meat.",
+    "description2": "For the Rosquillos Festival, wear light and comfortable clothing like a sundress or t-shirt with shorts, paired with comfortable shoes, a hat, and sunglasses to stay cool and stylish in the warm weather.",
+    "city name": "Carcar"
+  },
+
+  {
+    "name": "Sibonga Cebu",
+    "coordinates": [10.0431, 123.5952],
+    "category": "Culture",
+    "iconUrl": "./church.png",
+    "imageUrl": "./sibongachurch.jpg",
+    "description": "Sibonga is best known for the Marist Monastery of the Holy Eucharist and a church called Simala Miraculous Mama Mary. They are in a single large building complex, and exceedingly scenic. For Catholics, especially Filipinos, this is a place of pilgrimage.",
+    "description2": "Dress modestly and comfortably for your visit to Simala, wearing lightweight clothes, comfortable shoes, and sun protection.",
+    "city name": "Sibonga"
+  }
+]
