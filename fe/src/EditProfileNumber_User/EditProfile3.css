@@ -7,7 +7,6 @@
   .edit-profile-container {
     display: flex;
     height: 100vh; /* Ensure the container takes up the full height of the viewport */
-    
   }
   
   .edit-sidebar {
@@ -81,19 +80,15 @@
     font-weight: 400;
     margin-bottom: 5px;
   }
-
-
-.edit-edit-text {
-  color: rgb(152, 141, 141);
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-}
-.edit-edit-text:hover{
-  color: black;
-}
+  
+  .edit-edit-text {
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+  }
   
   .edit-section-header {
     font-family: 'Open Sans', sans-serif;

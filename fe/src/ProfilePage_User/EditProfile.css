@@ -16,7 +16,7 @@
     display: flex;
     flex-direction: column;
     width: 10%;
-    margin-top: 3px;
+    margin-top: 1%;
   }
   
   .edit-sidebar-item {
@@ -63,14 +63,17 @@
   
   .edit-detail-container {
     background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px;    padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
     cursor: pointer;
     position: relative;
   }
   
- 
+  .edit-detail-container:hover {
+    background-color: #F9CC41;
+  }
   
   .edit-detail-label {
     font-family: 'Open Sans', sans-serif;
@@ -123,7 +126,6 @@
     cursor: auto;
     color: grey;
   }
-  
   
 
   
