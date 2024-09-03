@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import BasicInfo from './BasicInfo';
-import RoomDetails from './RoomDetails';
+import RoomDetails from './RoomDetailsSingleUnit';
 import Photos from './Photos';
 import Amenities from './Amenities';
 import RulesPolicies from './RulesPolicies';
@@ -20,6 +20,8 @@ import {
 import GavelIcon from '@mui/icons-material/Gavel';
 import EditPartnerVerification from './EditPartnerVerification';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import RoomDetailsSingleUnit from './RoomDetailsSingleUnit';
+import EditRoomDetailsMultipleUnit from './EditRoomDetailsMultipleUnit';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,6 +65,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
   const [data, setData] = useState({});
   const navigate = useNavigate();
   const { id } = useParams();
+  const [isSingleUnit, setIsSingleUnit] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -86,6 +89,10 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         setPaymentData(data.payment_method);
         setRooms(data.property_unitdetails);
         setPartnerData(data.property_owner);
+
+        // // Determine if the property is a single unit type
+        const singleUnitTypes = ["Home", "Apartment", "Condominium"];
+        setIsSingleUnit(singleUnitTypes.includes(data.property_details.property_type));
       } catch (error) {
         console.error('Error fetching property data:', error);
       }
@@ -97,6 +104,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
   const handleChange = (index) => {
     setValue(index);
   };
+  // console.log("Property Data TYPE?: ", propertyData.property_type);
 
   return (
     <div style={{ height: '100vh', color: '#000' ,background: '#F4F7FA'}}>
@@ -159,12 +167,21 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <RoomDetails
-            isEditing={isEditing}
-            propertyData={rooms}
-            onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
-          />
+          {isSingleUnit ? (
+            <RoomDetailsSingleUnit
+              isEditing={isEditing}
+              propertyData={rooms}
+              onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
+            />
+          ) : (
+            <EditRoomDetailsMultipleUnit
+            parentRoomsAndBedsData = {rooms}
+            
+
+            />
+          )}
         </CustomTabPanel>
+
         <CustomTabPanel value={value} index={2}>
           <Photos />
         </CustomTabPanel>

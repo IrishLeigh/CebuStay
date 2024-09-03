@@ -23,7 +23,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-export default function RoomDetails( {propertyData , onRoomDetailsChange }) {
+export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChange }) {
   const [guestCapacity, setGuestCapacity] = useState(10);
   const [unitRooms, setUnitRooms] = useState([]);
   const [unitBeds, setUnitBeds] = useState([]);
