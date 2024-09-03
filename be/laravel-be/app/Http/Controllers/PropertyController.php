@@ -177,6 +177,8 @@ class PropertyController extends CORS
 
             $unit_details[] = [
                 'unitid' => $unitid,
+                'unitname' => $unit->unitname,
+                'unitquantity' => $unit->unitquantity,
                 'guest_capacity' => $unit->guest_capacity,
                 'unitrooms' => $unitrooms,
                 'unitbeds' => $unitbeds,

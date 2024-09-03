@@ -22,26 +22,26 @@ class UnitDetailsController extends CORS
         $unitids = [];
 
         // Loop to insert the unit details based on the unit quantity
-        for ($i = 0; $i < $unitquantity; $i++) {
-            $unit = new UnitDetails();
-            $unit->propertyid = $request->input('propertyid');
-            $unit->guest_capacity = $request->input('guest_capacity');
-            // $unit->unitquantity = 1; // Each individual entry is considered as one unit
-            $unit->unitname = $roomname;
+        // for ($i = 0; $i < $unitquantity; $i++) {
+        $unit = new UnitDetails();
+        $unit->propertyid = $request->input('propertyid');
+        $unit->guest_capacity = $request->input('guest_capacity');
+        $unit->unitquantity = $unitquantity; // Each individual entry is considered as one unit
+        $unit->unitname = $roomname;
 
-            $unit->save();
-            $unitid = $unit->unitid;
+        $unit->save();
+        $unitid = $unit->unitid;
 
-            $this->insertUnitRooms($unitid, $unitrooms);
+        $this->insertUnitRooms($unitid, $unitrooms);
 
-            // Store the inserted unit id for reference
-            $unitids[] = $unitid;
-        }
+        // Store the inserted unit id for reference
+        //     $unitids[] = $unitid;
+        // }
 
         return response()->json([
             "status" => 'success',
             "message" => "Unit Details inserted successfully",
-            "unitid" => $unitids // Returning an array of inserted unit ids
+            "unitid" => $unitid // Returning an array of inserted unit ids
         ]);
     }
 

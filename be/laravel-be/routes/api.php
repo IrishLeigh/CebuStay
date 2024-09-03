@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EditUserProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserForgotPassController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\ServiceController;
@@ -104,6 +105,7 @@ Route::get('/allpropertypricing', 'App\Http\Controllers\PropertyPricingControlle
 Route::post('/propertypaymentmethod', 'App\Http\Controllers\PropertyPaymentMethodsController@insertPropertyPaymentMethods');
 
 //UPLOAD IMG
+Route::post('/uploadimmg', 'App\Http\Controllers\FileController@store');
 //UPLOAD USER PROFILE IMG
 Route::post('/uploaduserimg', 'App\Http\Controllers\FileController@uploadAvatar');
 Route::get('/getuserimg', 'App\Http\Controllers\FileController@getUserAvatar');
@@ -146,3 +148,9 @@ Route::get('/user/properties', 'App\Http\Controllers\UserController@getAllProper
 Route::post('/reviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@insertReviewsAndRating');
 Route::get('/getreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getReviewsAndRatingByReviewId');
 Route::get('/getallreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getAllReviewsAndRatings');
+
+//EDIT PROPERTY INFO
+Route::put('/updatepropertyinfo/{propertyid}', [PropertyController::class, 'UpdatePropertyInfo']);
+Route::put('/updatepropertylocation/{propertyid}', [LocationController::class, 'edit']);
+
+

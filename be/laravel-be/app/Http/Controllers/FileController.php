@@ -39,7 +39,7 @@ class FileController extends CORS
     {
         $validation = $request->validate([
             'file' => 'file|required',
-            'file_name' => 'required',
+            // 'file_name' => 'required',
         ]);
 
         $accessToken = $this->token();
@@ -99,6 +99,7 @@ class FileController extends CORS
 
     public function uploadFiles(Request $request)
     {
+        $this->enableCors($request);
         $folderId = \Config('services.google.folder_id'); // Assuming you send folder_id along with files
         $propertyid = $request->propertyid;
         $files = $request->file('files'); // Array of files
@@ -180,8 +181,8 @@ class FileController extends CORS
                 ]);
 
                 $file_id = json_decode($response->getBody()->getContents())->id;
-                $file_url = "https://drive.google.com/thumbnail?id=$file_id";
-
+                // $file_url = "https://drive.google.com/thumbnail?id=$file_id";
+                $file_url = "https://lh3.googleusercontent.com/d/$file_id=w1000?authuser=0";
                 $newFile = new File(); // Assuming File model namespace
                 $newFile->file_name = $name;
                 $newFile->file_id = $file_id;

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\HouseRule;
 
-class HouseRuleController extends CORS
+class HouseruleController extends CORS
 {
     /**
      * Update house rules.

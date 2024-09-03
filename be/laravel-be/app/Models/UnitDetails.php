@@ -9,7 +9,7 @@ class UnitDetails extends Model
 {
     protected $table = 'unitdetails';
     protected $primaryKey = 'unitid';
-    protected $guarded = ['unitid', 'propertyid', 'proppricingid', 'guest_capacity', 'unitname'];
+    protected $guarded = ['unitid', 'propertyid', 'proppricingid', 'guest_capacity', 'unitname', 'quantity'];
 
     public function property()
     {
