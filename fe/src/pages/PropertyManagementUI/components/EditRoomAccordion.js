@@ -32,10 +32,10 @@ export default function EditRoomAccordion({ index , onRoomDetailsUpdate, roomDat
   const { totalQTY } = useData();
   const [unitDetailsData, setUnitDetailsData] = useState({
     roomDetails: [
-      { roomname: "Bathroom", quantity: 0 },
-      { roomname: "Living Room", quantity: 0 },
-      { roomname: "Kitchen", quantity: 0 },
-      { roomname: "Dining", quantity: 0 },
+      { roomType: "Bathroom", quantity: 0 },
+      { roomType: "Living Room", quantity: 0 },
+      { roomType: "Kitchen", quantity: 0 },
+      { roomType: "Dining", quantity: 0 },
     ],
    newUnitRooms: [],
   });
@@ -361,6 +361,8 @@ const handleBedQuantityChange = (bedType) => (event) => {
         break;
       }
     }
+
+    setPhotos(newPhotos);
   };
   // Photo delete handler
   const handlePhotoDelete = (photoIndex) => {
@@ -590,11 +592,12 @@ const handleBedQuantityChange = (bedType) => (event) => {
                               value={room.roomname}
                               onChange={(e) => handleRoomTypeChange(columnIndex * roomsPerColumn + roomIndex, e.target.value)}
                               fullWidth
-                              disabled={["Bathroom", "Kitchen", "Dining", "Living Room"].includes(room.roomname)}
+                              disabled={["Bathroom", "Kitchen", "Dining", "Living Room","Bedroom"].includes(room.roomname)}
                               size="small"
                               // label={!["Bathroom", "Kitchen", "Dining", "Living Room"].includes(room.roomType) && "Room Type"}
                               label="Room Type"
                               sx={{ fontFamily: "Poppins, sans-serif" }}
+                            
                             />
                           </Grid>
                           <Grid item xs={12} md={4}>
@@ -618,7 +621,9 @@ const handleBedQuantityChange = (bedType) => (event) => {
                                   position: 'absolute',
                                   right: 0,
                                   color: 'error.main',
+                                  
                                 }}
+                                disabled={!isEditing}
                               >
                                 <RemoveCircleIcon />
                               </IconButton>
@@ -634,6 +639,7 @@ const handleBedQuantityChange = (bedType) => (event) => {
                     startIcon={<AddIcon />}
                     onClick={addRoom}
                     sx={{ ml: 1,mt:1,fontFamily: "Poppins" }}
+                    disabled={!isEditing}
                   >
                     Add New Room
                   </Button>
@@ -738,44 +744,50 @@ const handleBedQuantityChange = (bedType) => (event) => {
               <Typography sx={{fontFamily: "Poppins, sans-serif", fontWeight: 'bold'}}>Room Photos</Typography>
               <input
                 accept="image/*"
-                id={`photo-upload-${index}`}
+                id="photo-upload"
                 type="file"
                 multiple
                 onChange={handlePhotoUpload}
                 style={{ display: 'none' }}
+                disabled={!isEditing}
               />
-              <label htmlFor={`photo-upload-${index}`}>
-                <Button variant="outlined" component="span" sx={{ mt: 2 }}>
+              <label htmlFor="photo-upload">
+                <Button variant="outlined" component="span" sx={{ mt: 2 }} disabled={!isEditing}>
                   Upload Photos
                 </Button>
               </label>
 
               <Grid container spacing={2} mt={2}>
-                {photos.map((photo, idx) => (
-                  <Grid item xs={6} sm={4} md={3} key={idx}>
-                    <Card sx={{ position: 'relative' }}>
-                      <CardMedia
-                        component="img"
-                        alt={`Room Photo ${idx + 1}`}
-                        height="140"
-                        image={photo}
-                      />
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handlePhotoDelete(idx)}
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          color: 'red',
-                          backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Card>
-                  </Grid>
-                ))}
+                {photos.map((photoUrl, idx) => {
+                  console.log("Photo URL:", photoUrl); // Verify each URL
+                  return (
+                    <Grid item xs={6} sm={4} md={3} key={idx}>
+                      <Card sx={{ position: 'relative' }}>
+                        <CardMedia
+                          component="img"
+                          alt={`Room Photo ${idx + 1}`}
+                          height="140"
+                          image={photoUrl}
+                        />
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handlePhotoDelete(idx)}
+                          sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            color: 'red',
+                            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                            
+                          }}
+                          disabled={!isEditing}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Card>
+                    </Grid>
+                  );
+                })}
               </Grid>
             </Box>
           </Grid>
