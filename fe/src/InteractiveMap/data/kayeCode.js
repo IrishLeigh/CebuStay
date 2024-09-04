@@ -6,23 +6,19 @@ import cebuCity from "./data/Cebu.MuniCities.json";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./InteractiveMap.css";
-import CultureCard from "./CultureCard"; // Import the CultureCard component
-import Culture from "./data/Culture.json"; // Import tourist spots JSON data
-import SeeAndDo from "./data/SeeAndDo.json"; // Import see and do JSON data
-import SeeAndDoCard from "./components/SeeAndDoCard";
+// import CultureCard from "./CultureCard"; // Import the CultureCard component
+import Culture from "./data/culture.json"; // Import tourist spots JSON data
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [locations, setLocations] = useState([]);
   const [selectedCulture, setSelectedCulture] = useState(null);
-  const [selectedSeeAndDo, setSelectedSeeAndDo] = useState(null);
+
   const mapContainerRef = useRef(null);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
-  const [foundLocations ,setFoundLocations] = useState([]);
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,26 +34,26 @@ export default function InteractiveMap() {
           ],
         }));
 
-          setLocations(fetchedLocations);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchData();
-    }, []);
+        setLocations(fetchedLocations);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-      const handleResize = () => {
-        const screenWidth = window.innerWidth;
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
 
-        if (screenWidth < 768) {
-          setZoom(7); // Lower zoom for smaller screens
-        } else if (screenWidth < 1024) {
-          setZoom(8); // Medium zoom for tablet-sized screens
-        } else {
-          setZoom(9); // Default zoom for larger screens
-        }
-      };
+      if (screenWidth < 768) {
+        setZoom(7); // Lower zoom for smaller screens
+      } else if (screenWidth < 1024) {
+        setZoom(8); // Medium zoom for tablet-sized screens
+      } else {
+        setZoom(9); // Default zoom for larger screens
+      }
+    };
 
     window.addEventListener("resize", handleResize);
     handleResize();
@@ -74,7 +70,6 @@ export default function InteractiveMap() {
     ) {
       setSelectedCity(null);
       setSelectedCulture(null);
-      setSelectedSeeAndDo(null);
     }
   };
 
@@ -91,17 +86,12 @@ export default function InteractiveMap() {
     setSelectedCity((prevCity) => (prevCity === cityName ? null : cityName));
   };
 
-  const handleMarkerClick = (spot, event) => {
+  const handleMarkerClick = (culture, event) => {
     event.originalEvent.stopPropagation(); // Prevent map click event
-    if (selectedCategory === "See And Do") {
-      setSelectedSeeAndDo(spot);
-      setSelectedCulture(null); // Deselect culture
-    } else if (selectedCategory === "Culture & Experiences") {
-      setSelectedCulture(spot);
-      setSelectedSeeAndDo(null); // Deselect see and do
-    }
+    setSelectedCulture((prevCulture) =>
+      prevCulture === culture ? null : culture
+    );
   };
-  
 
   function ResetButton({ center, zoom }) {
     const map = useMap();
@@ -143,8 +133,8 @@ export default function InteractiveMap() {
       popupAnchor: [0, -41],
     });
 
-    const getCityStyle = (city) => {
-      const cityName = city.properties.NAME_2;
+  const getCityStyle = (city) => {
+    const cityName = city.properties.NAME_2;
 
     if (selectedCity === cityName) {
       return {
@@ -164,12 +154,6 @@ export default function InteractiveMap() {
 
     layer.on({
       click: (event) => handleCityClick(cityName, event),
-    });
-
-    layer.bindTooltip(cityName, {
-      permanent: false, // Tooltip appears on hover only
-      direction: "auto",
-      className: "city-tooltip", // Optional: to apply custom styles
     });
   };
 
@@ -255,18 +239,12 @@ export default function InteractiveMap() {
               center={initialCenter}
               zoom={zoom}
               scrollWheelZoom={false}
-              // dragging={true}
-              zoomControl={false}
-              // doubleClickZoom={false}
-              touchZoom={false}
-              boxZoom={false}
-              keyboard={false}
+              dragging={false}
               minZoom={9}
               maxZoom={11}
               onClick={() => {
                 setSelectedCity(null); // Deselect city
                 setSelectedCulture(null); // Deselect culture
-                setSelectedSeeAndDo(null); // Deselect see and do
               }}
             >
               <ResetButton center={initialCenter} zoom={initialZoom} />
@@ -276,10 +254,9 @@ export default function InteractiveMap() {
                 style={getCityStyle}
               />
               {selectedCategory === "Culture & Experiences" &&
-                Culture.filter(
-                  (culture) =>
-                    !selectedCity || culture["city name"] === selectedCity
-                ).map((culture, index) => (
+                Culture
+                .filter(culture => !selectedCity || culture["city name"] === selectedCity)
+                .map((culture, index) => (
                   <Marker
                     key={index}
                     position={culture.coordinates}
@@ -292,46 +269,18 @@ export default function InteractiveMap() {
                     <Popup>{culture.name}</Popup>
                   </Marker>
                 ))}
-
-                 {selectedCategory === "See And Do" &&
-                SeeAndDo.filter(
-                  (spot) =>
-                    !selectedCity || spot["city name"] === selectedCity
-                ).map((spot, index) => (
-                  <Marker
-                    key={index}
-                    position={spot.coordinates}
-                    title={spot.name}
-                    icon={customIcon(spot.iconUrl)}
-                    eventHandlers={{
-                      click: (e) => handleMarkerClick(spot, e),
-                    }}
-                  >
-                    <Popup>{spot.name}</Popup>
-                  </Marker>
-                ))}
             </MapContainer>
           ) : (
             <p>Loading map data...</p>
           )}
-          {selectedSeeAndDo && selectedCategory === "See And Do" && (
-            <div >
-              <SeeAndDoCard
-                spot={selectedSeeAndDo}
-                onClose={() => setSelectedSeeAndDo(null)}
-              />
-            </div>
-          )}
-          {selectedCulture && selectedCategory === "Culture & Experiences" && (
+          {/* {selectedCulture && (
             <div className="culture-card-container">
               <CultureCard
                 culture={selectedCulture}
                 onClose={() => setSelectedCulture(null)}
               />
             </div>
-          )}
-          
-
+          )} */}
         </div>
       </div>
     </>

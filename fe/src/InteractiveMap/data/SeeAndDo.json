@@ -1,0 +1,113 @@
+[
+  {
+    "name": "Cebu Taoist Temple",
+    "coordinates": [10.33445938557973, 123.88797356557683],
+    "category": "See And Do",
+    "iconUrl": "./taoistIcon.png",
+    "imageUrl": "./CebuTaoist.jpg",
+    "description": "This temple had become popular because of its artistic structures. Even non-believers of the Taoism religion pay visit to the place. From there, you can see the striking view of the city and even the Mactan Island. And, of course, for Taoists, this is the ideal place to pray or meditate.",
+    "activities": "Explore the artistic structures, enjoy panoramic city views, meditate, and take in the serene environment.",
+    "more_info": [
+      "Opening Hours : Typically open daily from 8:00 AM to 5:00 PM.",
+       "Best Time to Visit : Early morning or late afternoon for cooler temperatures and less crowd."
+    ]
+      ,
+    "city name": "Cebu City"
+  }
+  ,
+  {
+    "name": "10000 Roses Cafe",
+    "coordinates": [10.25686933707186, 123.93231063792345],
+    "category": "See And Do",
+    "iconUrl": "./10000Icon.png",
+    "imageUrl": "./10000.jpg",
+    "description": "A beautiful cafe featuring thousands of LED roses that light up the night, creating a magical atmosphere. Perfect for evening outings and photo ops.",
+    "activities": "Enjoy the illuminated rose garden, take photos, and relax in the cozy cafe environment.",
+    "more_info": [
+      "Opening Hours : Daily from 4:00 PM to 10:00 PM.",
+      "Admission Fee : Entrance is free, but purchases are required at the cafe."
+    ],
+    "city name": "Cebu City"
+  },
+  {
+    "name": "Kawasan Falls",
+    "coordinates": [9.815341696199019, 123.3722591477236],
+    "category": "See And Do",
+    "iconUrl": "./kawasanfalls.png",
+    "imageUrl": "./BadianKawasanFalls.jpg",
+    "description": "Kawasan Falls is a stunning multi-tiered waterfall located in the lush jungle of Badian, Cebu. The falls are known for their turquoise blue waters and scenic surroundings, making it a popular spot for swimming and canyoning.",
+    "activities": "Enjoy swimming in the cool, clear waters, take a bamboo raft ride close to the falls, and go canyoning for an adventurous experience.",
+    "more_info": [
+      "Opening Hours: Daily from 7:00 AM to 5:00 PM.",
+      "Admission Fee: PHP 50 per person for entrance.",
+      "Best Time to Visit: Early morning to avoid crowds and enjoy the peaceful ambiance."
+    ],
+    "city name": "Badian"
+  },{
+    "name": "Osmeña Peak",
+    "coordinates": [9.824557947604186, 123.44096452370148],
+    "category": "See And Do",
+    "iconUrl": "./osmenaIcon.png",
+    "imageUrl": "./OsmenaPeak.jpg",
+    "description": "Osema Peak offers breathtaking panoramic views of the surrounding landscapes and is a popular hiking destination. The trail is well-maintained and leads to a scenic viewpoint where you can see the coastline and nearby islands.",
+    "activities": "Hiking to the peak, enjoying the panoramic views, and photography.",
+    "more_info": [
+      "Opening Hours: 6:00 AM to 6:00 PM.",
+      "Admission Fee: PHP 100 per person.",
+      "Best Time to Visit: Early morning or late afternoon for cooler temperatures and clearer views."
+    ],
+    "city name": "Dalaguete"
+  },
+  {
+    "name": "Pescador Island",
+    "coordinates": [9.926411371436359, 123.34318399622502],
+    "category": "See And Do",
+    "iconUrl": "./island.png",
+    "imageUrl": "./Pescador.jpg",
+    "description": "Pescador Island is renowned for its crystal-clear waters and vibrant marine life. It's a popular spot for snorkeling and diving, offering a glimpse into the underwater world teeming with colorful coral reefs and exotic fish.",
+    "activities": "Snorkeling, diving, and marine sightseeing.",
+    "more_info": [
+      "Opening Hours: 7:00 AM to 5:00 PM.",
+      "Admission Fee: PHP 200 per person.",
+      "Best Time to Visit: November to May for calm seas and clear visibility."
+    ],
+    "city name": "Moalboal"
+  },
+  {
+    "name": "Oslob Whale Sharks",
+    "coordinates": [9.46357052638118, 123.37977668303108],
+    "category": "See And Do",
+    "iconUrl": "./whale.png",
+    "imageUrl": "./OslobWhale.jpg",
+    "description": "Oslob Whale Sharks is one of the best places to experience up-close encounters with these gentle giants. Visitors can swim and snorkel with whale sharks in their natural habitat, making it a must-visit destination for marine enthusiasts.",
+    "activities": "Snorkeling, whale shark watching, and photography.",
+    "more_info": [
+      "Opening Hours: 6:00 AM to 12:00 PM daily.",
+      "Admission Fee: PHP 1,000 for snorkeling with whale sharks.",
+      "Best Time to Visit: March to June for optimal whale shark sightings and calm sea conditions."
+    ],
+    "city name": "Oslob"
+  },
+  {
+    "name": "Sumilon Island Sandbar",
+    "coordinates": [9.4696, 123.4556],
+    "category": "See And Do",
+    "iconUrl": "./island.png",
+    "imageUrl": "./Sumilon.jpg",
+    "description": "Sumilon Island Sandbar is a pristine white sandbar located off the coast of Sumilon Island. It is known for its crystal-clear waters and stunning views, making it a perfect spot for swimming, snorkeling, and sunbathing.",
+    "activities": "Swimming, snorkeling, beachcombing, and relaxing.",
+    "more_info": [
+      "Opening Hours: 8:00 AM to 5:00 PM daily.",
+      "Admission Fee: PHP 500 for day access to the island.",
+      "Best Time to Visit: November to May for the best weather and clear water."
+    ],
+    "city name": "Oslob"
+  }
+  
+  
+  
+  
+  
+  
+ 
+]
