@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 
-export default function PricePayment({ parentUnitPricing = {}, parentPaymentData = {} }) {
+export default function PricePayment({ parentUnitPricing = {}, parentPaymentData = {} , isSingleUnit}) {
   const pesoSign = "\u20B1";
   const [priceEntered, setPriceEntered] = useState(false);
   const [basePrice, setBasePrice] = useState(parentUnitPricing.min_price || "");
@@ -129,98 +129,102 @@ export default function PricePayment({ parentUnitPricing = {}, parentPaymentData
       </Typography>
 
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6} sx={{ padding: "1rem" }}>
-          <Box className="centered-container">
-            <Paper
-              elevation={3}
-              sx={{
-                width: "80%",
-                padding: 2,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "5px",
-              }}
-            >
-              <Box
-                component="form"
-                noValidate
-                autoComplete="off"
-                sx={{
-                  width: "auto",
-                  padding: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  Set your price per night!
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Including taxes, commission, and charges
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    fontSize: "2rem",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="h6">{pesoSign}</Typography>
-                  <TextField
-                    id="base_price"
-                    placeholder="566"
-                    type="text"
-                    value={basePrice}
-                    onChange={handlePriceChange}
-                    disabled={!isEditing}
-                    sx={{
-                      border: "none",
-                      outline: "none",
-                      textAlign: "center",
-                      fontSize: "inherit",
-                      width: "35%",
-                      input: { textAlign: "center" }
-                    }}
-                  />
-                </Box>
-
-                {priceEntered && (
-                  <>
-                    <Divider sx={{ my: 2 }}>Pricing Details</Divider>
-                    <Box sx={{ textAlign: "center" }}>
-                      <Typography variant="body2">
-                        Commission and charges from CebuStay totaling 18.00%
-                      </Typography>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <CheckIcon />
-                        <Typography variant="body2" sx={{ ml: 1 }}>
-                          Enjoy instant booking confirmations for added
-                          convenience.
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <CheckIcon />
-                        <Typography variant="body2" sx={{ ml: 1 }}>
-                          Let us handle guest payments, saving you time and
-                          effort.
-                        </Typography>
-                      </Box>
-                      <Typography variant="h6" sx={{ mt: 2 }}>
-                        Your total earnings would be (including taxes)
-                      </Typography>
-                      <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                        {pesoSign}
-                        {priceUnit.profit}
-                      </Typography>
-                    </Box>
-                  </>
-                )}
-              </Box>
-            </Paper>
-          </Box>
-        </Grid>
+        {isSingleUnit && (
+           <Grid item xs={12} md={6} sx={{ padding: "1rem" }}>
+           <Box className="centered-container">
+             <Paper
+               elevation={3}
+               sx={{
+                 width: "80%",
+                 padding: 2,
+                 justifyContent: "center",
+                 alignItems: "center",
+                 borderRadius: "5px",
+               }}
+             >
+               <Box
+                 component="form"
+                 noValidate
+                 autoComplete="off"
+                 sx={{
+                   width: "auto",
+                   padding: 2,
+                   display: "flex",
+                   flexDirection: "column",
+                   alignItems: "center",
+                 }}
+               >
+                 <Typography variant="h6" gutterBottom>
+                   Set your price per night!
+                 </Typography>
+                 <Typography variant="body2" gutterBottom>
+                   Including taxes, commission, and charges
+                 </Typography>
+                 <Box
+                   sx={{
+                     display: "flex",
+                     fontSize: "2rem",
+                     justifyContent: "center",
+                     alignItems: "center",
+                   }}
+                 >
+                   <Typography variant="h6">{pesoSign}</Typography>
+                   <TextField
+                     id="base_price"
+                     placeholder="566"
+                     type="text"
+                     value={basePrice}
+                     onChange={handlePriceChange}
+                     disabled={!isEditing}
+                     sx={{
+                       border: "none",
+                       outline: "none",
+                       textAlign: "center",
+                       fontSize: "inherit",
+                       width: "35%",
+                       input: { textAlign: "center" }
+                     }}
+                   />
+                 </Box>
+ 
+                 {priceEntered && (
+                   <>
+                     <Divider sx={{ my: 2 }}>Pricing Details</Divider>
+                     <Box sx={{ textAlign: "center" }}>
+                       <Typography variant="body2">
+                         Commission and charges from CebuStay totaling 18.00%
+                       </Typography>
+                       <Box sx={{ display: "flex", alignItems: "center" }}>
+                         <CheckIcon />
+                         <Typography variant="body2" sx={{ ml: 1 }}>
+                           Enjoy instant booking confirmations for added
+                           convenience.
+                         </Typography>
+                       </Box>
+                       <Box sx={{ display: "flex", alignItems: "center" }}>
+                         <CheckIcon />
+                         <Typography variant="body2" sx={{ ml: 1 }}>
+                           Let us handle guest payments, saving you time and
+                           effort.
+                         </Typography>
+                       </Box>
+                       <Typography variant="h6" sx={{ mt: 2 }}>
+                         Your total earnings would be (including taxes)
+                       </Typography>
+                       <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                         {pesoSign}
+                         {priceUnit.profit}
+                       </Typography>
+                     </Box>
+                   </>
+                 )}
+               </Box>
+             </Paper>
+           </Box>
+         </Grid>
+          
+        )}
+       
         <Grid item xs={12} md={6} sx={{ padding: "1rem" }}>
           <Box
             component="form"

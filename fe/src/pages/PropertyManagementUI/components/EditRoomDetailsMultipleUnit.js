@@ -10,14 +10,20 @@ import RoomAccordion from "../../AccommodationRegistrationUI/components/MultiUni
 import AddIcon from '@mui/icons-material/Add';
 import EditRoomAccordion from "./EditRoomAccordion";
 
-export default function EditRoomDetailsMultipleUnit({ handleBack, handleNext, onMultiRoomsAndBedsChange, parentRoomsAndBedsData }) {
+export default function EditRoomDetailsMultipleUnit({  parentRoomsAndBedsData }) {
   const [roomDetailsList, setRoomDetailsList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalData, setOriginalData] = useState({});
+  const [hasChanges, setHasChanges] = useState(false);
+  const [originalRoomDetailsList, setOriginalRoomDetailsList] = useState([]);
+  const [resetFlag, setResetFlag] = useState(false);
 
   useEffect(() => {
     // Initialize roomDetailsList from parentRoomsAndBedsData if available
     // If not, initialize with one empty room
     if (parentRoomsAndBedsData && parentRoomsAndBedsData.length > 0) {
       setRoomDetailsList(parentRoomsAndBedsData);
+      setOriginalRoomDetailsList(parentRoomsAndBedsData);
     } else {
       setRoomDetailsList([{}]); // Initialize with one empty room
     }
@@ -73,9 +79,14 @@ export default function EditRoomDetailsMultipleUnit({ handleBack, handleNext, on
   //     alert("Please add at least one room with details.");
   //   }
   // };
+  const handleCancel = () => {
+    setIsEditing(false);
+    setRoomDetailsList(originalRoomDetailsList);
+    setResetFlag(true); // Trigger reset in child components
+  };
 
   useEffect(() => {
-    console.log('Room Details inside the child:', roomDetailsList);
+    console.log('Room Details inside the Edit Room Details:', roomDetailsList);
   }, [roomDetailsList]);
 
   return (
@@ -85,7 +96,7 @@ export default function EditRoomDetailsMultipleUnit({ handleBack, handleNext, on
             <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem" , fontWeight: "bold"}}>
               Rooms and Details
             </Typography>
-            {/* <div>
+            <div>
               {!isEditing && (
                 <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
                   Edit
@@ -96,7 +107,7 @@ export default function EditRoomDetailsMultipleUnit({ handleBack, handleNext, on
                   Cancel
                 </Button>
               )}
-            </div> */}
+            </div>
           </div>
           <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "0.875rem", color: "#6b7280", marginBottom: "2rem" }}>
             Use this section to configure your property's room and bed details. Specify guest capacity, add room types, and set up bed arrangements to accurately reflect your accommodation setup.
@@ -105,13 +116,16 @@ export default function EditRoomDetailsMultipleUnit({ handleBack, handleNext, on
             <Grid container spacing={2}>
               <Grid item xs={12} md={12}>
                 {roomDetailsList.map((roomDetails, index) => (
-                  <EditRoomAccordion
-                    key={index} // Add a key to avoid warnings
-                    index={index}
-                    onRoomDetailsUpdate={handleRoomDetailsUpdate}
-                    onDeleteRoom={handleDeleteRoom} // Pass down the delete function
-                    roomData={roomDetails} // Pass the specific room details data
-                  />
+                   <EditRoomAccordion
+                      key={index} // Add a key to avoid warnings
+                      index={index}
+                      onRoomDetailsUpdate={handleRoomDetailsUpdate}
+                      onDeleteRoom={handleDeleteRoom} // Pass down the delete function
+                      roomData={roomDetails} // Pass the specific room details data
+                      isEditing={isEditing}
+                      originalData={originalRoomDetailsList[index]}
+                      reset={resetFlag} // Pass the reset flag to the child component
+                    />
                 ))}
 
                 <Button onClick={handleAddRoomDetails} variant="contained" color="primary" startIcon={<AddIcon />} sx={{ mt: 2 }}>

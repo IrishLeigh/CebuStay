@@ -183,7 +183,8 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         </CustomTabPanel>
 
         <CustomTabPanel value={value} index={2}>
-          <Photos />
+
+          <Photos isSingleUnit={isSingleUnit} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <Amenities
@@ -214,6 +215,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
             parentPaymentData={paymentData}
             onPricingChange={(updatedPricing) => setUnitPricing(updatedPricing)}
             onPaymentChange={(updatedPayment) => setPaymentData(updatedPayment)}
+            isSingleUnit={isSingleUnit}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={6}>

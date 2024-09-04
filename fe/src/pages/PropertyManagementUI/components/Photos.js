@@ -28,7 +28,7 @@ import {
   ArrowRight,
 } from "@mui/icons-material";
 
-export default function Photos() {
+export default function Photos( {isSingleUnit}) {
   const [openCoverPhotoDialog, setOpenCoverPhotoDialog] = useState(false);
   const [openGalleryPhotoDialog, setOpenGalleryPhotoDialog] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -269,72 +269,75 @@ const originalData = useRef({
             </div>
           )}
         </Grid>
-
-        {/* Gallery Photos */}
-        <Grid item xs={12} sx={{ padding: "1rem" }}>
-          <div className="info-title-cntr" onClick={() => handlePhotoTypeChange('galleryPhotos')}>
-            <ArrowRight sx={{ color: "#16B4DD" }} />
-            <div>Gallery Photos</div>
-          </div>
-          <Divider sx={{ width: "100%", color: "#ccc" }} />
-          <ImageList variant="masonry" cols={5} gap={5}>
-            {galleryPhotos.map((image, index) => (
-              <ImageListItem key={image.id} onClick={() => handleClickOpen(index, 'galleryPhotos')} style={{ position: 'relative', cursor: 'pointer' }}>
-                <img
-                  src={image.src}
-                  alt={`Gallery ${image.id}`}
-                  style={{ objectFit: 'cover', height: '200px' }}
-                />
-                {isEditing && (
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
-                      handleDeleteGalleryPhoto(index);
-                    }}
-                    sx={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                      color: 'white',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                      },
-                    }}
-                  >
-                    <Delete />
-                  </IconButton>
-                )}
-                <ImageListItemBar
-                  title={image.caption}
-                  position="below"
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
-          {isEditing && (
-            <div style={{ marginTop: "1rem" }}>
-              <input
-                accept="image/*"
-                style={{ display: "none" }}
-                id="upload-gallery-button"
-                multiple
-                type="file"
-                onChange={(e) => handleAddPhotos(e, 'galleryPhotos')}
-              />
-              <label htmlFor="upload-gallery-button">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  component="span"
-                  startIcon={<AddAPhoto />}
-                >
-                  Add Gallery Photos
-                </Button>
-              </label>
+        {isSingleUnit && (
+          // Gallery Photos
+          <Grid item xs={12} sx={{ padding: "1rem" }}>
+            <div className="info-title-cntr" onClick={() => handlePhotoTypeChange('galleryPhotos')}>
+              <ArrowRight sx={{ color: "#16B4DD" }} />
+              <div>Gallery Photos</div>
             </div>
-          )}
-        </Grid>
+            <Divider sx={{ width: "100%", color: "#ccc" }} />
+            <ImageList variant="masonry" cols={5} gap={5}>
+              {galleryPhotos.map((image, index) => (
+                <ImageListItem key={image.id} onClick={() => handleClickOpen(index, 'galleryPhotos')} style={{ position: 'relative', cursor: 'pointer' }}>
+                  <img
+                    src={image.src}
+                    alt={`Gallery ${image.id}`}
+                    style={{ objectFit: 'cover', height: '200px' }}
+                  />
+                  {isEditing && (
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
+                        handleDeleteGalleryPhoto(index);
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        color: 'white',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        },
+                      }}
+                    >
+                      <Delete />
+                    </IconButton>
+                  )}
+                  <ImageListItemBar
+                    title={image.caption}
+                    position="below"
+                  />
+                </ImageListItem>
+              ))}
+            </ImageList>
+            {isEditing && (
+              <div style={{ marginTop: "1rem" }}>
+                <input
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  id="upload-gallery-button"
+                  multiple
+                  type="file"
+                  onChange={(e) => handleAddPhotos(e, 'galleryPhotos')}
+                />
+                <label htmlFor="upload-gallery-button">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component="span"
+                    startIcon={<AddAPhoto />}
+                  >
+                    Add Gallery Photos
+                  </Button>
+                </label>
+              </div>
+            )}
+          </Grid>
+        )}
+
+       
       </Grid>
 
       {/* Cover Photo Dialog */}
