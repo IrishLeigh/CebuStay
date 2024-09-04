@@ -9,7 +9,6 @@
     "description2": "Description of Spot 1",
     "city name": "Liloan"
   },
-
   {
     "name": "Liloan - Home of Rosquillos",
     "coordinates": [10.4121, 123.9861],
@@ -20,7 +19,6 @@
     "description2": "For the Rosquillos Festival, wear light and comfortable clothing like a sundress or t-shirt with shorts, paired with comfortable shoes, a hat, and sunglasses to stay cool and stylish in the warm weather.",
     "city name": "Liloan"
   },
-
   {
     "name": "Carcar City Cebu",
     "coordinates": [10.1151, 123.64],
@@ -28,12 +26,11 @@
     "iconUrl": "./lechon.png",
     "imageUrl": "./carcarlechon.jpg",
     "description": "Carcar is famous for its lechon, considered one of the best in the Philippines. The public market is a must-visit for food lovers, where you can taste freshly roasted lechon with crispy skin and tender meat.",
-    "description2": "For the Rosquillos Festival, wear light and comfortable clothing like a sundress or t-shirt with shorts, paired with comfortable shoes, a hat, and sunglasses to stay cool and stylish in the warm weather.",
+    "description2": "When visiting Carcar City, especially for food tours, wear light and comfortable clothing like a t-shirt and shorts, paired with comfortable walking shoes. A hat and sunglasses are recommended to protect yourself from the sun.",
     "city name": "Carcar"
   },
-
   {
-    "name": "Sibonga Cebu",
+    "name": "Simala Shrine",
     "coordinates": [10.0431, 123.5952],
     "category": "Culture",
     "iconUrl": "./church.png",
@@ -41,5 +38,45 @@
     "description": "Sibonga is best known for the Marist Monastery of the Holy Eucharist and a church called Simala Miraculous Mama Mary. They are in a single large building complex, and exceedingly scenic. For Catholics, especially Filipinos, this is a place of pilgrimage.",
     "description2": "Dress modestly and comfortably for your visit to Simala, wearing lightweight clothes, comfortable shoes, and sun protection.",
     "city name": "Sibonga"
+  },
+  {
+    "name": "Sinulog Festival",
+    "coordinates": [10.3157, 123.8854],
+    "category": "Festival",
+    "iconUrl": "./sinulog.png",
+    "imageUrl": "./sinulogfestival.jpg",
+    "description": "The Sinulog Festival is one of the grandest and most colorful festivals in the Philippines. Held annually in Cebu City, it celebrates the Filipino people's pagan past and their acceptance of Christianity. The main highlight is the street parade featuring participants in colorful costumes dancing to the rhythm of drums and native gongs.",
+    "description2": "Wear comfortable clothes suitable for warm weather, such as a t-shirt and shorts. Bring a hat, sunglasses, and wear comfortable shoes as you might be walking a lot.",
+    "city name": "Cebu City"
+  },
+  {
+    "name": "Kadaugan sa Mactan",
+    "coordinates": [10.307, 123.9794],
+    "category": "Festival",
+    "iconUrl": "./mactan.png",
+    "imageUrl": "./kadaugan.jpg",
+    "description": "Kadaugan sa Mactan is a week-long festival held in Lapu-Lapu City, celebrating the historic Battle of Mactan. The highlight is the reenactment of the battle between local chieftain Lapu-Lapu and Portuguese explorer Ferdinand Magellan, which takes place on the shores of Mactan.",
+    "description2": "For the Kadaugan sa Mactan festival, wear light, breathable clothing like a t-shirt and shorts or a sundress. Comfortable shoes are a must for walking and standing. A hat, sunglasses, and sunscreen are essential to protect yourself from the sun.",
+    "city name": "Lapu-Lapu City"
+  },
+  {
+    "name": "Naga City - Dagitab Festival",
+    "coordinates": [10.2165, 123.7582],
+    "category": "Culture",
+    "iconUrl": "./dagitab.png",
+    "imageUrl": "./dagitabfestival.jpg",
+    "description": "The Dagitab Festival is Naga City's annual celebration showcasing its rich culture and history. The festival features a grand parade with vibrant costumes, street dancing, and electrifying performances, symbolizing the city's moniker as the 'City of Lights'.",
+    "description2": "For the Dagitab Festival, wear light and comfortable clothing such as a t-shirt and shorts. Opt for comfortable shoes as you'll be on your feet for most of the festivities. Don't forget a hat and sunglasses to protect yourself from the sun.",
+    "city name": "Naga"
+  },
+  {
+    "name": "Talisay - Inasal Festival",
+    "coordinates": [10.2524, 123.8392],
+    "category": "Culture",
+    "iconUrl": "./inasal.png",
+    "imageUrl": "./talisayinasal.jpg",
+    "description": "The Inasal Festival celebrates the rich culinary heritage of Talisay, with focus on the local specialty, 'inasal' or grilled pork. The festival features food fairs, cooking competitions, and street dancing that highlight the city’s culture.",
+    "description2": "Wear comfortable and casual clothing suitable for walking and enjoying outdoor activities. Light fabrics, a hat, and sunglasses are recommended.",
+    "city name": "Talisay"
   }
 ]

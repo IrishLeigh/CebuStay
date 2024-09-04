@@ -8,13 +8,15 @@ import L from "leaflet";
 import "./InteractiveMap.css";
 import CultureCard from "./CultureCard"; // Import the CultureCard component
 import Culture from "./data/Culture.json"; // Import tourist spots JSON data
+import SeeAndDo from "./data/SeeAndDo.json"; // Import see and do JSON data
+import SeeAndDoCard from "./components/SeeAndDoCard";
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [locations, setLocations] = useState([]);
   const [selectedCulture, setSelectedCulture] = useState(null);
-
+  const [selectedSeeAndDo, setSelectedSeeAndDo] = useState(null);
   const mapContainerRef = useRef(null);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
@@ -72,6 +74,7 @@ export default function InteractiveMap() {
     ) {
       setSelectedCity(null);
       setSelectedCulture(null);
+      setSelectedSeeAndDo(null);
     }
   };
 
@@ -88,12 +91,17 @@ export default function InteractiveMap() {
     setSelectedCity((prevCity) => (prevCity === cityName ? null : cityName));
   };
 
-  const handleMarkerClick = (culture, event) => {
+  const handleMarkerClick = (spot, event) => {
     event.originalEvent.stopPropagation(); // Prevent map click event
-    setSelectedCulture((prevCulture) =>
-      prevCulture === culture ? null : culture
-    );
+    if (selectedCategory === "See And Do") {
+      setSelectedSeeAndDo(spot);
+      setSelectedCulture(null); // Deselect culture
+    } else if (selectedCategory === "Culture & Experiences") {
+      setSelectedCulture(spot);
+      setSelectedSeeAndDo(null); // Deselect see and do
+    }
   };
+  
 
   function ResetButton({ center, zoom }) {
     const map = useMap();
@@ -247,12 +255,18 @@ export default function InteractiveMap() {
               center={initialCenter}
               zoom={zoom}
               scrollWheelZoom={false}
-              dragging={false}
+              // dragging={true}
+              zoomControl={false}
+              // doubleClickZoom={false}
+              touchZoom={false}
+              boxZoom={false}
+              keyboard={false}
               minZoom={9}
               maxZoom={11}
               onClick={() => {
                 setSelectedCity(null); // Deselect city
                 setSelectedCulture(null); // Deselect culture
+                setSelectedSeeAndDo(null); // Deselect see and do
               }}
             >
               <ResetButton center={initialCenter} zoom={initialZoom} />
@@ -278,11 +292,37 @@ export default function InteractiveMap() {
                     <Popup>{culture.name}</Popup>
                   </Marker>
                 ))}
+
+                 {selectedCategory === "See And Do" &&
+                SeeAndDo.filter(
+                  (spot) =>
+                    !selectedCity || spot["city name"] === selectedCity
+                ).map((spot, index) => (
+                  <Marker
+                    key={index}
+                    position={spot.coordinates}
+                    title={spot.name}
+                    icon={customIcon(spot.iconUrl)}
+                    eventHandlers={{
+                      click: (e) => handleMarkerClick(spot, e),
+                    }}
+                  >
+                    <Popup>{spot.name}</Popup>
+                  </Marker>
+                ))}
             </MapContainer>
           ) : (
             <p>Loading map data...</p>
           )}
-          {selectedCulture && (
+          {selectedSeeAndDo && selectedCategory === "See And Do" && (
+            <div >
+              <SeeAndDoCard
+                spot={selectedSeeAndDo}
+                onClose={() => setSelectedSeeAndDo(null)}
+              />
+            </div>
+          )}
+          {selectedCulture && selectedCategory === "Culture & Experiences" && (
             <div className="culture-card-container">
               <CultureCard
                 culture={selectedCulture}
@@ -290,6 +330,8 @@ export default function InteractiveMap() {
               />
             </div>
           )}
+          
+
         </div>
       </div>
     </>
