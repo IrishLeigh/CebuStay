@@ -6,8 +6,8 @@ import cebuCity from "./data/Cebu.MuniCities.json";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./InteractiveMap.css";
-import CultureCard from "./CultureCard"; // Import the CultureCard component
-import Culture from "./data/Culture.json"; // Import tourist spots JSON data
+// import CultureCard from "./CultureCard"; // Import the CultureCard component
+import Culture from "./data/culture.json"; // Import tourist spots JSON data
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
@@ -19,8 +19,6 @@ export default function InteractiveMap() {
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
-  const [foundLocations ,setFoundLocations] = useState([]);
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,26 +34,26 @@ export default function InteractiveMap() {
           ],
         }));
 
-          setLocations(fetchedLocations);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchData();
-    }, []);
+        setLocations(fetchedLocations);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-      const handleResize = () => {
-        const screenWidth = window.innerWidth;
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
 
-        if (screenWidth < 768) {
-          setZoom(7); // Lower zoom for smaller screens
-        } else if (screenWidth < 1024) {
-          setZoom(8); // Medium zoom for tablet-sized screens
-        } else {
-          setZoom(9); // Default zoom for larger screens
-        }
-      };
+      if (screenWidth < 768) {
+        setZoom(7); // Lower zoom for smaller screens
+      } else if (screenWidth < 1024) {
+        setZoom(8); // Medium zoom for tablet-sized screens
+      } else {
+        setZoom(9); // Default zoom for larger screens
+      }
+    };
 
     window.addEventListener("resize", handleResize);
     handleResize();
@@ -135,8 +133,8 @@ export default function InteractiveMap() {
       popupAnchor: [0, -41],
     });
 
-    const getCityStyle = (city) => {
-      const cityName = city.properties.NAME_2;
+  const getCityStyle = (city) => {
+    const cityName = city.properties.NAME_2;
 
     if (selectedCity === cityName) {
       return {
@@ -156,12 +154,6 @@ export default function InteractiveMap() {
 
     layer.on({
       click: (event) => handleCityClick(cityName, event),
-    });
-
-    layer.bindTooltip(cityName, {
-      permanent: false, // Tooltip appears on hover only
-      direction: "auto",
-      className: "city-tooltip", // Optional: to apply custom styles
     });
   };
 
@@ -262,10 +254,9 @@ export default function InteractiveMap() {
                 style={getCityStyle}
               />
               {selectedCategory === "Culture & Experiences" &&
-                Culture.filter(
-                  (culture) =>
-                    !selectedCity || culture["city name"] === selectedCity
-                ).map((culture, index) => (
+                Culture
+                .filter(culture => !selectedCity || culture["city name"] === selectedCity)
+                .map((culture, index) => (
                   <Marker
                     key={index}
                     position={culture.coordinates}
@@ -282,14 +273,14 @@ export default function InteractiveMap() {
           ) : (
             <p>Loading map data...</p>
           )}
-          {selectedCulture && (
+          {/* {selectedCulture && (
             <div className="culture-card-container">
               <CultureCard
                 culture={selectedCulture}
                 onClose={() => setSelectedCulture(null)}
               />
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </>

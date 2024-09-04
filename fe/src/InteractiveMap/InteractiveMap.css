@@ -2,6 +2,31 @@
   /* background-color: rgba(255, 255, 255, 0.2); 30% opacity */
   background-color: transparent;
 }
+.city-tooltip {
+  background-color: #ffffff;
+  border: 2px solid #f77d1e;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px;
+  text-align: center;
+  opacity: 0; /* Start with tooltip hidden */
+  transition: opacity 0.3s ease; /* Smooth transition */
+}
+
+.leaflet-tooltip {
+  font-size: inherit; /* Inherit font size from custom class */
+}
+
+/* Show tooltip on hover */
+.leaflet-marker-icon:hover + .leaflet-tooltip {
+  opacity: 1;
+}
+/* Default style for markers */
+.leaflet-marker-icon {
+  border: none; /* No border by default */
+
+}
+
 
 /* InteractiveMap.css */
 

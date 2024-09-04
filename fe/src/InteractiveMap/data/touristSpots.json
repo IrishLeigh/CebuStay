@@ -5,7 +5,7 @@
     "category": "See And Do",
     "iconUrl": "./resort.png",
     "imageUrl": "./path-to-image.jpg",
-    "description": "Description of Spot 1",
+    "description": "Here are thou, thou are here, uponeth me mememme, hehehe lablabal",
     "city name":"Liloan"
   },
   {
@@ -64,7 +64,18 @@
     "description": "Description of Spot 1",
     "city name":"Badian"
 
+  },
+  {
+    "name": "Ludi Park",
+    "coordinates": [9.822843353293795, 123.4356658163685],
+    "category": "Culture & Experiences",
+    "iconUrl": "./osmenaIcon.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "city name":"Badian"
+
   }
+
 
 
 
