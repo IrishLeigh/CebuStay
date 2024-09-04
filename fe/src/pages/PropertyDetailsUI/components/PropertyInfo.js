@@ -13,6 +13,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo }) {
   const [propertyImg, setPropertyImg] = useState([]);
   const [propertyDetails, setPropertyDetails] = useState({});
   const [rooms, setTransformedRooms] = useState([]);
+  const [activeSection, setActiveSection] = useState("gallery");
 
   useEffect(() => {
     if (propertyImages && propertyInfo && propertyInfo.property_unitdetails) {
@@ -64,88 +65,80 @@ export default function PropertyInfo({ propertyImages, propertyInfo }) {
     }
   }, [propertyImages, propertyInfo]);
 
-  // Create refs for each section
-  const galleryRef = useRef(null);
-  const detailsRef = useRef(null);
-  const amenitiesRef = useRef(null);
-  const facilitiesRef = useRef(null);
-  const servicesRef = useRef(null);
-  const houseRulesRef = useRef(null);
-  const cancellationRef = useRef(null);
-
-  // Scroll to the section referenced
-  const scrollToSection = (ref) => {
-    ref.current.scrollIntoView({ behavior: "smooth" });
+  const renderSection = () => {
+    switch (activeSection) {
+      case "gallery":
+        return <RoomGallery propertyImages={propertyImg} />;
+      case "details":
+        return <RoomDetails rooms={rooms} />;
+      case "amenities":
+        return <PropertyViewAmenities propertyinfo={propertyInfo} />;
+      case "facilities":
+        return <PropertyViewFacilities propertyinfo={propertyInfo} />;
+      case "services":
+        return <PropertyViewServices propertyinfo={propertyInfo} />;
+      case "houseRules":
+        return <PropertyHouseRules propertyinfo={propertyInfo} />;
+      case "cancellation":
+        return <PropertyCancellation propertyinfo={propertyInfo} />;
+      default:
+        return null;
+    }
   };
 
   return (
     <div style={{ marginBottom: "2rem" }}>
       <Box className="sort-menu">
+       <button
+          className="sort-btn"
+        >
+          View As
+        </button>
         <button
           className="sort-btn"
-          onClick={() => scrollToSection(galleryRef)}
+          onClick={() => setActiveSection("gallery")}
         >
           Gallery
         </button>
         <button
           className="sort-btn"
-          onClick={() => scrollToSection(detailsRef)}
+          onClick={() => setActiveSection("details")}
         >
           Room Details
         </button>
         <button
           className="sort-btn"
-          onClick={() => scrollToSection(amenitiesRef)}
+          onClick={() => setActiveSection("amenities")}
         >
           Property Amenities
         </button>
         <button
           className="sort-btn"
-          onClick={() => scrollToSection(facilitiesRef)}
+          onClick={() => setActiveSection("facilities")}
         >
           Property Facilities
         </button>
         <button
           className="sort-btn"
-          onClick={() => scrollToSection(servicesRef)}
+          onClick={() => setActiveSection("services")}
         >
           Property Services
         </button>
         <button
           className="sort-btn"
-          onClick={() => scrollToSection(houseRulesRef)}
+          onClick={() => setActiveSection("houseRules")}
         >
           Property Rules
         </button>
         <button
           className="sort-btn"
-          onClick={() => scrollToSection(cancellationRef)}
+          onClick={() => setActiveSection("cancellation")}
         >
           Cancellation
         </button>
       </Box>
 
-      <div ref={galleryRef}>
-        <RoomGallery propertyImages={propertyImg} />
-      </div>
-      <div ref={detailsRef}>
-        <RoomDetails rooms={rooms} />
-      </div>
-      <div ref={amenitiesRef}>
-        <PropertyViewAmenities propertyinfo={propertyInfo} />
-      </div>
-      <div ref={facilitiesRef}>
-        <PropertyViewFacilities propertyinfo={propertyInfo} />
-      </div>
-      <div ref={servicesRef}>
-        <PropertyViewServices propertyinfo={propertyInfo} />
-      </div>
-      <div ref={houseRulesRef}>
-        <PropertyHouseRules propertyinfo={propertyInfo} />
-      </div>
-      <div ref={cancellationRef}>
-        <PropertyCancellation propertyinfo={propertyInfo} />
-      </div>
+      {renderSection()}
     </div>
   );
 }
