@@ -19,6 +19,8 @@ export default function InteractiveMap() {
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
+  const [foundLocations ,setFoundLocations] = useState([]);
+  
 
   useEffect(() => {
     const fetchData = async () => {

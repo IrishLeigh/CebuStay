@@ -1,0 +1,71 @@
+[
+  {
+    "name": "Liloan - Home of Rosquillos",
+    "coordinates": [10.458, 124.065],
+    "category": "See And Do",
+    "iconUrl": "./resort.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "city name":"Liloan"
+  },
+  {
+    "name": "Carcar - Heritage City",
+    "coordinates": [10.233, 123.583],
+    "category": "See And Do",
+    "iconUrl": "./resort.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "city name":"Carcar"
+  },
+  {
+    "name": "Badian - Kawasan Falls",
+    "coordinates": [9.954, 123.361],
+    "category": "See And Do",
+    "iconUrl": "./resort.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "city name":"Badian"
+  },
+  {
+    "name": "Sirao Flower Garden",
+    "coordinates": [10.40892355357276, 123.86609931897456],
+    "category": "See And Do",
+    "iconUrl": "./siraoIcon.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "city name":"Cebu City"
+  },
+  {
+    "name": "Cebu Taoist Temple",
+    "coordinates": [10.334337719379045, 123.88804142731291],
+    "category": "See And Do",
+    "iconUrl": "./taoistIcon.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "city name":"Cebu City"
+  },
+  {
+    "name": "10,000 Roses Cafe and More",
+    "coordinates": [10.25897696643044, 123.93219310595852],
+    "category": "See And Do",
+    "iconUrl": "./10000Icon.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+
+    "city name":"Cordoba"
+    
+  },
+  {
+    "name": "Osmeña Peak",
+    "coordinates": [9.822843353293795, 123.4356658163685],
+    "category": "See And Do",
+    "iconUrl": "./osmenaIcon.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "city name":"Badian"
+
+  }
+
+
+
+]
