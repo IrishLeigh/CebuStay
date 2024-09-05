@@ -12,7 +12,13 @@ import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
+<<<<<<< HEAD
 
+=======
+import InteractiveMap from "./InteractiveMap/InteractiveMap";
+import UserDetails from "./components/EditProfileComponents/UserDetails";
+import UserBookingHistory from "./components/UserBookingHistory/UserBookingHistory";
+>>>>>>> 9003ef3 (Updated the UI for partnership)
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

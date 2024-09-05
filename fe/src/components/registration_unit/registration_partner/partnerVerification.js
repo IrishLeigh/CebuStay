@@ -3,13 +3,14 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { RadioGroup } from '@mui/material';
+import { Grid, RadioGroup } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
 import Button from '@mui/material/Button';
 import '../../../components/Button/NextButton.css';
+import AnimatePage from '../../../pages/AccommodationRegistrationUI/components/AnimatedPage';
 
 export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack,openModal }) {
   const [hostType, setHostType] = useState('');
@@ -59,11 +60,11 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      className='centered-container'
-    >
-      <Box
+    <Container maxWidth="lg">
+       <AnimatePage>
+        <Grid container spacing={2} className="centered-container">
+          <Grid item xs={6} sx={{ textAlign: "left" }}></Grid>
+      {/* <Box
        
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -76,9 +77,16 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
               For verification, please tell us who you are.
             </Typography>
           </div>
-        </Box>
+        </Box> */}
 
-        <Paper elevation={3} sx={{ p: "2rem", width: "100%" , borderRadius: "0.8rem", boxShadow: 3}}>
+          <Paper
+            sx={{
+              width: '80vw',
+              padding: '2rem',
+              borderRadius: '0.8rem',
+              boxShadow: 3,
+            }}
+          >
           <Box
             component="form"
             sx={{
@@ -87,11 +95,11 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
             autoComplete="off"
           >
             <div>
-              <Typography sx={{ fontSize: "1.125rem", fontFamily: "Poppins, sans-serif" }} mb={4} >
-                To ensure compliance with legal and regulatory standards, we require some information about you and your property.
-              </Typography>
-              <Typography sx={{ fontSize: "1.5rem",fontFamily: "Poppins, sans-serif" }} mb={2} fontWeight="bold">
+             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
                 Accommodation Ownership
+              </Typography>
+              <Typography sx={{ fontFamily: "Poppins, sans-serif", mb: 2 }}>
+                To ensure compliance with legal and regulatory standards, we require some information about you and your property.
               </Typography>
               <RadioGroup
                 aria-labelledby="Host"
@@ -103,7 +111,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
                   value="Individual"
                   control={<Radio />}
                   label={
-                    <Typography sx={{ fontSize: "1.125rem" }}>
+                    <Typography sx={{ fontFamily: "Poppins, sans-serif", }}>
                       I am the host representing myself.
                     </Typography>
                   }
@@ -113,7 +121,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
                   value="Company"
                   control={<Radio />}
                   label={
-                    <Typography sx={{ fontSize: "1.125rem" }}>
+                    <Typography sx={{ fontFamily: "Poppins, sans-serif", }}>
                       I represent a company.
                     </Typography>
                   }
@@ -121,7 +129,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
               </RadioGroup>
             </div>
 
-            <div>
+            <div style={{ padding:"1rem" }}>
               {hostType === 'Individual' && (
                 <IndividualHost onDataChange={handleIndividualDataChange} />  
               )}
@@ -131,7 +139,9 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
             </div>
           </Box>
         </Paper>
-      </Box>
+        </Grid>
+      </AnimatePage>
+      {/* </Box> */}
       <div className="stepperFooter">
         <Button onClick={handleBack} className="stepperPrevious">
           Back
@@ -140,6 +150,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
           Finish
         </Button>
       </div>
+      
     </Container>
   );
 }
