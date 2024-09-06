@@ -150,7 +150,7 @@ class RegisterUserController extends CORS
         $user->isverified = 1;
         $user->save();
 
-        return response()->json(['message' => 'Email verified successfully.', 'status' => 'success']);
+        return response()->json(['message' => 'Verification code is correct.', 'status' => 'success']);
     }
 
 }
