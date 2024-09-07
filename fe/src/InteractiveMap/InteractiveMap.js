@@ -1,63 +1,40 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, GeoJSON, Marker, Popup, useMap } from "react-leaflet";
-import * as turf from "@turf/turf";
 import axios from "axios";
-import cebuCity from "./data/Cebu.MuniCities.json";
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import cebuCity from "./data/Cebu.MuniCities.json";
 import "./InteractiveMap.css";
-import CultureCard from "./CultureCard"; // Import the CultureCard component
-import Culture from "./data/Culture.json"; // Import tourist spots JSON data
-import SeeAndDo from "./data/SeeAndDo.json"; // Import see and do JSON data
 import SeeAndDoCard from "./components/SeeAndDoCard";
+import CultureCard from "./CultureCard";
+import Culture from "./data/culture.json";
+import SeeAndDo from "./data/SeeAndDo.json";
+import WhereToStay from "./data/wheretostay.json"; // Import WhereToStay JSON data
+import StayCard from "./components/StayCard";
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [locations, setLocations] = useState([]);
+  const [selectedStay, setSelectedStay] = useState(null);
   const [selectedCulture, setSelectedCulture] = useState(null);
   const [selectedSeeAndDo, setSelectedSeeAndDo] = useState(null);
   const mapContainerRef = useRef(null);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
-  const [foundLocations ,setFoundLocations] = useState([]);
-  
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/getPropertyLocation"
-        );
-        const fetchedLocations = response.data.data.map((property) => ({
-          name: property.property_name,
-          coordinates: [
-            parseFloat(property.longitude),
-            parseFloat(property.latitude),
-          ],
-        }));
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
 
-          setLocations(fetchedLocations);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchData();
-    }, []);
-
-    useEffect(() => {
-      const handleResize = () => {
-        const screenWidth = window.innerWidth;
-
-        if (screenWidth < 768) {
-          setZoom(7); // Lower zoom for smaller screens
-        } else if (screenWidth < 1024) {
-          setZoom(8); // Medium zoom for tablet-sized screens
-        } else {
-          setZoom(9); // Default zoom for larger screens
-        }
-      };
+      if (screenWidth < 768) {
+        setZoom(7); // Lower zoom for smaller screens
+      } else if (screenWidth < 1024) {
+        setZoom(8); // Medium zoom for tablet-sized screens
+      } else {
+        setZoom(9); // Default zoom for larger screens
+      }
+    };
 
     window.addEventListener("resize", handleResize);
     handleResize();
@@ -75,6 +52,7 @@ export default function InteractiveMap() {
       setSelectedCity(null);
       setSelectedCulture(null);
       setSelectedSeeAndDo(null);
+      setSelectedStay(null); // Deselect stay
     }
   };
 
@@ -96,12 +74,17 @@ export default function InteractiveMap() {
     if (selectedCategory === "See And Do") {
       setSelectedSeeAndDo(spot);
       setSelectedCulture(null); // Deselect culture
+      setSelectedStay(null); // Deselect stay
     } else if (selectedCategory === "Culture & Experiences") {
       setSelectedCulture(spot);
       setSelectedSeeAndDo(null); // Deselect see and do
+      setSelectedStay(null); // Deselect stay
+    } else if (selectedCategory === "Where to stay") {
+      setSelectedStay(spot);
+      setSelectedSeeAndDo(null); // Deselect see and do
+      setSelectedCulture(null); // Deselect culture
     }
   };
-  
 
   function ResetButton({ center, zoom }) {
     const map = useMap();
@@ -143,8 +126,8 @@ export default function InteractiveMap() {
       popupAnchor: [0, -41],
     });
 
-    const getCityStyle = (city) => {
-      const cityName = city.properties.NAME_2;
+  const getCityStyle = (city) => {
+    const cityName = city.properties.NAME_2;
 
     if (selectedCity === cityName) {
       return {
@@ -201,6 +184,7 @@ export default function InteractiveMap() {
           for you
         </div>
       </div>
+      
       <div className="map-background">
         <div className="map-filter-cntr">
           {/* Filter buttons for categories */}
@@ -249,79 +233,100 @@ export default function InteractiveMap() {
         </div>
 
         <div className="map-container" ref={mapContainerRef}>
-          {locations.length > 0 ? (
-            <MapContainer
-              className="map"
-              center={initialCenter}
-              zoom={zoom}
-              scrollWheelZoom={false}
-              // dragging={true}
-              zoomControl={false}
-              // doubleClickZoom={false}
-              touchZoom={false}
-              boxZoom={false}
-              keyboard={false}
-              minZoom={9}
-              maxZoom={11}
-              onClick={() => {
-                setSelectedCity(null); // Deselect city
-                setSelectedCulture(null); // Deselect culture
-                setSelectedSeeAndDo(null); // Deselect see and do
-              }}
-            >
-              <ResetButton center={initialCenter} zoom={initialZoom} />
-              <GeoJSON
-                data={cebuCity.features}
-                onEachFeature={onEachCity}
-                style={getCityStyle}
-              />
-              {selectedCategory === "Culture & Experiences" &&
-                Culture.filter(
-                  (culture) =>
-                    !selectedCity || culture["city name"] === selectedCity
-                ).map((culture, index) => (
-                  <Marker
-                    key={index}
-                    position={culture.coordinates}
-                    title={culture.name}
-                    icon={customIcon(culture.iconUrl)}
-                    eventHandlers={{
-                      click: (e) => handleMarkerClick(culture, e),
-                    }}
-                  >
-                    <Popup>{culture.name}</Popup>
-                  </Marker>
-                ))}
+  <MapContainer
+    className="map"
+    center={initialCenter}
+    zoom={zoom}
+    scrollWheelZoom={false}
+    zoomControl={false}
+    touchZoom={false}
+    boxZoom={false}
+    keyboard={false}
+    minZoom={9}
+    maxZoom={11}
+    onClick={() => {
+      setSelectedCity(null); // Deselect city
+      setSelectedCulture(null); // Deselect culture
+      setSelectedSeeAndDo(null); // Deselect see and do
+      setSelectedStay(null); // Deselect stay
+    }}
+  >
+            <ResetButton center={initialCenter} zoom={initialZoom} />
+            <GeoJSON
+              data={cebuCity.features}
+              onEachFeature={onEachCity}
+              style={getCityStyle}
+            />
 
-                 {selectedCategory === "See And Do" &&
-                SeeAndDo.filter(
-                  (spot) =>
-                    !selectedCity || spot["city name"] === selectedCity
-                ).map((spot, index) => (
-                  <Marker
-                    key={index}
-                    position={spot.coordinates}
-                    title={spot.name}
-                    icon={customIcon(spot.iconUrl)}
-                    eventHandlers={{
-                      click: (e) => handleMarkerClick(spot, e),
-                    }}
-                  >
-                    <Popup>{spot.name}</Popup>
-                  </Marker>
-                ))}
-            </MapContainer>
-          ) : (
-            <p>Loading map data...</p>
-          )}
+            {/* Culture & Experiences Markers */}
+            {selectedCategory === "Culture & Experiences" &&
+              Culture.filter(
+                (culture) =>
+                  !selectedCity || culture["city name"] === selectedCity
+              ).map((culture, index) => (
+                <Marker
+                  key={index}
+                  position={culture.coordinates}
+                  title={culture.name}
+                  icon={customIcon(culture.iconUrl)}
+                  eventHandlers={{
+                    click: (e) => handleMarkerClick(culture, e),
+                  }}
+                >
+                  <Popup>{culture.name}</Popup>
+                </Marker>
+              ))}
+
+            {/* See And Do Markers */}
+            {selectedCategory === "See And Do" &&
+              SeeAndDo.filter(
+                (spot) =>
+                  !selectedCity || spot["city name"] === selectedCity
+              ).map((spot, index) => (
+                <Marker
+                  key={index}
+                  position={spot.coordinates}
+                  title={spot.name}
+                  icon={customIcon(spot.iconUrl)}
+                  eventHandlers={{
+                    click: (e) => handleMarkerClick(spot, e),
+                  }}
+                >
+                  <Popup>{spot.name}</Popup>
+                </Marker>
+              ))}
+
+            {/* Where To Stay Markers */}
+          {/* Where To Stay Markers */}
+    {selectedCategory === "Where to stay" &&
+      WhereToStay.filter(
+        (stay) => !selectedCity || stay["city name"] === selectedCity
+      ).map((stay, index) => (
+        <Marker
+          key={index}
+          position={stay.coordinates}
+          title={stay.name}
+          icon={customIcon(stay.iconUrl)}
+          eventHandlers={{
+            click: (e) => handleMarkerClick(stay, e),
+          }}
+        >
+          <Popup>{stay.name}</Popup>
+        </Marker>
+      ))}
+          </MapContainer>
+
+          {/* See And Do Card */}
           {selectedSeeAndDo && selectedCategory === "See And Do" && (
-            <div >
+            <div>
               <SeeAndDoCard
                 spot={selectedSeeAndDo}
                 onClose={() => setSelectedSeeAndDo(null)}
               />
             </div>
           )}
+
+          {/* Culture Card */}
           {selectedCulture && selectedCategory === "Culture & Experiences" && (
             <div className="culture-card-container">
               <CultureCard
@@ -330,10 +335,19 @@ export default function InteractiveMap() {
               />
             </div>
           )}
-          
 
-        </div>
+{selectedStay && selectedCategory === "Where to stay" && (
+    <div className="stay-card-container">
+      <StayCard
+        stay={selectedStay}
+        onClose={() => setSelectedStay(null)}
+      />
+    </div>
+  )}
+</div>
       </div>
+
+
     </>
   );
 }
