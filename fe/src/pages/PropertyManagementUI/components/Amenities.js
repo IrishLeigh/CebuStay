@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid, InputLabel, FormControlLabel, Checkbox, Box, Paper, Typography, Button } from "@mui/material";
 
-export default function Amenities({ amenities, facilities, services }) {
+export default function Amenities({ amenities, facilities, services , isSingleUnit, onAmenitiesChange }) {
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [selectedFacilities, setSelectedFacilities] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
@@ -92,7 +92,8 @@ export default function Amenities({ amenities, facilities, services }) {
 
       <Grid container spacing={2}>
         {/* Amenities Section */}
-        <Grid item xs={12}>
+        {isSingleUnit && (
+          <Grid item xs={12}>
           <div
             style={{
               marginBottom: "1rem",
@@ -142,9 +143,13 @@ export default function Amenities({ amenities, facilities, services }) {
             </Grid>
           </div>
         </Grid>
+          
+        )}
+        
 
         {/* Facilities Section */}
-        <Grid item xs={12}>
+        {isSingleUnit && (
+          <Grid item xs={12}>
           <div
             style={{
               marginBottom: "1rem",
@@ -194,6 +199,9 @@ export default function Amenities({ amenities, facilities, services }) {
             </Grid>
           </div>
         </Grid>
+          
+        )}
+        
 
         {/* Services Section */}
         <Grid item xs={12}>

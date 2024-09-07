@@ -25,8 +25,10 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChange }) {
   const [guestCapacity, setGuestCapacity] = useState(10);
-  const [unitRooms, setUnitRooms] = useState([]);
+  const [unitRooms, setUnitRooms] = useState([
+  ]);
   const [unitBeds, setUnitBeds] = useState([]);
+  const [newUnitRooms, setNewUnitRooms] = useState([]);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomQuantity, setNewRoomQuantity] = useState(0);
   const [isAddingRoom, setIsAddingRoom] = useState(false);
@@ -67,35 +69,37 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
   const handleGuestCapacityChange = (event) => {
     setGuestCapacity(event.target.value);
     onRoomDetailsChange({ guestCapacity: event.target.value, unitRooms, unitBeds });
+    setHasChanges(true);
   };
 
   const handleRoomDetailChange = (index, event) => {
     const newRoomDetails = [...unitRooms];
     newRoomDetails[index].quantity = event.target.value;
     setUnitRooms(newRoomDetails);
+    setHasChanges(true);
     onRoomDetailsChange({ guestCapacity, unitRooms: newRoomDetails, unitBeds });
+    
   };
 
   const handleAddRoom = () => {
-    setUnitRooms([
-      ...unitRooms,
-      { unitroomid: unitRooms.length + 1, roomname: newRoomName, quantity: newRoomQuantity },
-    ]);
-
+    const newRoom = { roomname: newRoomName, quantity: newRoomQuantity };
+    setNewUnitRooms([...newUnitRooms, newRoom]);
     setNewRoomName("");
     setNewRoomQuantity(0);
     setIsAddingRoom(false);
+    setHasChanges(true);
   };
-
   const handleDeleteRoom = (index) => {
-    const newRoomDetails = unitRooms.filter((_, i) => i !== index);
-    setUnitRooms(newRoomDetails);
+    const updatedRooms = newUnitRooms.filter((_, i) => i !== index);
+    setNewUnitRooms(updatedRooms);
+    setHasChanges(true);
   };
 
   const handleCancelAddRoom = () => {
     setNewRoomName("");
     setNewRoomQuantity(0);
     setIsAddingRoom(false);
+    
   };
 
   const handleAddBed = () => {
@@ -109,13 +113,18 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
             ? { ...room, quantity: newUnitBeds.length }
             : room
         )
+        
       );
+      setHasChanges(true);
+     
       
     } else {
       // Add bed to existing bedroom
       const bedroom = newUnitBeds[selectedRoomIndex];
       bedroom.beds[newBedType] = newBedQuantity;
       newUnitBeds[selectedRoomIndex] = bedroom;
+      setHasChanges(true);
+      
     }
     setUnitBeds(newUnitBeds);
     onRoomDetailsChange({ unitBeds: newUnitBeds });
@@ -124,12 +133,14 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
     setIsAddingBed(false);
     setSelectedRoomIndex(null);
     setOpenAddBedDialog(false);
+    setHasChanges(true);
   };
 
   const handleDeleteBed = (bedroomIndex, bedType) => {
     const newUnitBeds = [...unitBeds];
     delete newUnitBeds[bedroomIndex].beds[bedType];
     setUnitBeds(newUnitBeds);
+    setHasChanges(true);
   };
 
   const handleDeleteBedroom = (bedroomIndex) => {
@@ -142,6 +153,7 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
           : room
       )
     );
+    setHasChanges(true);
   };
 
   const handleOpenAddBedDialog = (roomIndex) => {
@@ -194,11 +206,15 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
     const newUnitBeds = [...unitBeds];
     newUnitBeds[bedroomIndex].beds[bedType] = event.target.value;
     setUnitBeds(newUnitBeds);
+    setHasChanges(true);
   };
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
 
+  console.log("Room Details:", propertyData);
+  console.log("New Unit Rooms:", newUnitRooms);
+  console.log("Exisitng ROoms:", unitRooms);
 
 
   return (
@@ -257,8 +273,9 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
           left: "0.1rem", position: "relative", backgroundColor: "#fff", width: "fit-content"}}>
               Available Rooms
             </h6>
+            {/* Display available rooms exiting rooms from API */}
             {unitRooms
-            .filter((room) => room.roomname !== "Bedroom") // Exclude Bedroom
+            // .filter((room) => room.roomname !== "Bedroom") // Exclude Bedroom
             .map((room, index) => (
               <div
                 key={index}
@@ -294,15 +311,68 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
                   />
                 </div>
                 
+                {isEditing && !["Bedroom", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname) && (
                 <IconButton
                   aria-label="delete"
                   onClick={() => handleDeleteRoom(index)}
-                  disabled={!isEditing}
                 >
                   <DeleteIcon />
                 </IconButton>
+              )}
+
               </div>
             ))}
+            {/* Display Newly added rooms */}
+            {newUnitRooms
+            .filter((room) => room.roomname !== "Bedroom") // Exclude Bedroom
+            .map((room, index) => (
+              <div
+                key={index}
+                style={{
+                  marginBottom: "0.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  marginLeft: "1rem",
+                  paddingBottom: "0.8rem",   
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  {room.roomname}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <TextField
+                    id={`room-${index}`}
+                    variant="outlined"
+                    value={room.quantity}
+                    onChange={(event) => handleRoomDetailChange(index, event)}
+                    disabled={!isEditing}
+                    type="number"
+                    size="small"
+                    fullWidth
+                    helperText={isEditing ? "" : ""}
+                    sx={{
+                      "& .MuiOutlinedInput-root.Mui-focused": {
+                        "& fieldset": {
+                          borderColor: "#16B4DD",
+                        },
+                      },
+                    }}
+                  />
+                </div>
+                {isEditing && !["Bedroom", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname) && (
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleDeleteRoom(index)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )}
+
+                
+              </div>
+            ))}
+
+
 
             {isEditing && (
               <div style={{ marginTop: "1rem" }}>
@@ -440,7 +510,7 @@ export default function RoomDetailsSingleUnit( {propertyData , onRoomDetailsChan
                         handleDeleteBed(bedroomIndex, bedType)
                       }
                     >
-                      <DeleteIcon  disabled={bedroom.roomname === "Bedroom" || !isEditing}/>
+                      <DeleteIcon  disabled={!isEditing}/>
                     </IconButton>
             
                 </div>

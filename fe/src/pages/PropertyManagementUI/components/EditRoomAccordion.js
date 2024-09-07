@@ -32,12 +32,12 @@ export default function EditRoomAccordion({ index , onRoomDetailsUpdate, roomDat
   const { totalQTY } = useData();
   const [unitDetailsData, setUnitDetailsData] = useState({
     roomDetails: [
-      { roomType: "Bathroom", quantity: 0 },
-      { roomType: "Living Room", quantity: 0 },
-      { roomType: "Kitchen", quantity: 0 },
-      { roomType: "Dining", quantity: 0 },
+      { roomname: "Bathroom", quantity: 0 },
+      { roomname: "Living Room", quantity: 0 },
+      { roomname: "Kitchen", quantity: 0 },
+      { roomname: "Dining", quantity: 0 },
     ],
-    guestCapacity: "",
+   newUnitRooms: [],
   });
   const [bedDetails, setBedDetails] = useState({
     bedroomnum: 1, // Initial bedroom number
@@ -54,95 +54,124 @@ export default function EditRoomAccordion({ index , onRoomDetailsUpdate, roomDat
   const [selectedServices, setSelectedServices] = useState([]);
   const [unitId, setUnitId] = useState("");
   const [errors, setErrors] = useState({});
-  const [photos, setPhotos] = useState([]); // New state for photos
+  const [photos, setPhotos] = useState(roomData?.photos || []);
   const [isInitialized, setIsInitialized] = useState(false);
-
+  const [isCanceled, setIsCanceled] = useState(false);
+  // Effect to handle reset and initialization
   useEffect(() => {
-    if (roomData && !isInitialized) {
-      setRoomName(roomData.roomName || "Sample");
-      setRoomQuantity(roomData.roomQuantity || "2");
-      setGuestCapacity(roomData.guest_capacity || "");
-      setDescription(roomData.description || "Sample description");
-      setBasePrice(roomData.unitpricing.min_price || "");
-      setMaxPrice(roomData.maxPrice || "125");
-      setProfit(roomData.profit || "");
-  
-      if (roomData.unitrooms) {
-        setUnitDetailsData((prevData) => ({
-          ...prevData,
-          roomDetails: roomData.unitrooms,
-        }));
-      }
-  
-      if (roomData.unitbeds && roomData.unitbeds.length > 0) {
-        const mappedBeds = {
-          largeBed: { selected: roomData.unitbeds[0].beds.largebed > 0, quantity: roomData.unitbeds[0].beds.largebed || 0 },
-          singleBed: { selected: roomData.unitbeds[0].beds.singlebed > 0, quantity: roomData.unitbeds[0].beds.singlebed || 0 },
-          double: { selected: roomData.unitbeds[0].beds.double > 0, quantity: roomData.unitbeds[0].beds.double || 0 },
-          superLarge: { selected: roomData.unitbeds[0].beds.superlarge > 0, quantity: roomData.unitbeds[0].beds.superlarge || 0 },
-        };
-    
-        setBedDetails(mappedBeds);
-      }
-  
-      if (roomData.amenities) {
-        setSelectedAmenities(roomData.amenities.map(amenity => amenity.amenity_name));
-      }
-  
-      if (roomData.services) {
-        setSelectedServices(roomData.services.map(service => service.service_name));
-      }
-  
-      if (roomData.images) {
-        setPhotos(roomData.images.map(image => image.src));
-      }
-  
+    if (reset) {
+      handleCancel();
+    } else if (roomData && !isInitialized) {
+      initializeRoomData(roomData);
       setIsInitialized(true);
     }
-  }, [roomData, isInitialized]);
+  }, [reset, roomData, isInitialized, originalData, isCanceled]);
   
-  useEffect(() => {
-    if (reset && originalData) {
-      setRoomName(originalData.roomName || "");
-      setRoomQuantity(originalData.roomQuantity || "");
-      setGuestCapacity(originalData.guest_capacity || "");
-      setDescription(originalData.description || "");
-      setBasePrice(originalData.unitpricing.min_price || "");
-      setMaxPrice(originalData.maxPrice || "");
-      setProfit(originalData.profit || "");
+
+  const handleCancel = () => {
+    initializeRoomData(originalData);
+    setExpanded(false);
+    setIsCanceled(true);
+  };
+
+  const initializeRoomData = (data) => {
+    if (data) {
+      setRoomName(data.roomName || "Sample");
+      setRoomQuantity(data.roomQuantity || "2");
+      setGuestCapacity(data.guest_capacity || "");
+      setDescription(data.description || "Sample description");
+      setBasePrice(data.unitpricing?.min_price || "");
+      setMaxPrice(data.maxPrice || "125");
+      setProfit(data.profit || "");
   
-      if (originalData.unitrooms) {
+      // Initialize room details
+      const predefinedRooms = [
+        { roomname: "Bathroom", quantity: 0 },
+        { roomname: "Living Room", quantity: 0 },
+        { roomname: "Kitchen", quantity: 0 },
+        { roomname: "Dining", quantity: 0 },
+      ];
+  
+      if (data.unitrooms && data.unitrooms.length > 0) {
+        // Merge predefined rooms with incoming data
+        const mergedRooms = predefinedRooms.map((predefinedRoom) => {
+          const matchingRoom = data.unitrooms.find(
+            (unitRoom) => unitRoom.roomname === predefinedRoom.roomname
+          );
+          return matchingRoom
+            ? { roomname: matchingRoom.roomname, quantity: matchingRoom.quantity }
+            : predefinedRoom;
+        });
+  
         setUnitDetailsData((prevData) => ({
           ...prevData,
-          roomDetails: originalData.unitrooms,
+          roomDetails: mergedRooms,
+        }));
+      } else {
+        // Set default rooms if no room data exists
+        setUnitDetailsData((prevData) => ({
+          ...prevData,
+          roomDetails: predefinedRooms,
         }));
       }
   
-      if (originalData.unitbeds && originalData.unitbeds.length > 0) {
+      // Initialize bed details
+      if (data.unitbeds && data.unitbeds.length > 0) {
         const mappedBeds = {
-          largeBed: { selected: originalData.unitbeds[0].beds.largebed > 0, quantity: originalData.unitbeds[0].beds.largebed || 0 },
-          singleBed: { selected: originalData.unitbeds[0].beds.singlebed > 0, quantity: originalData.unitbeds[0].beds.singlebed || 0 },
-          double: { selected: originalData.unitbeds[0].beds.double > 0, quantity: originalData.unitbeds[0].beds.double || 0 },
-          superLarge: { selected: originalData.unitbeds[0].beds.superlarge > 0, quantity: originalData.unitbeds[0].beds.superlarge || 0 },
+          largeBed: { selected: data.unitbeds[0].beds.largebed > 0, quantity: data.unitbeds[0].beds.largebed || 0 },
+          singleBed: { selected: data.unitbeds[0].beds.singlebed > 0, quantity: data.unitbeds[0].beds.singlebed || 0 },
+          double: { selected: data.unitbeds[0].beds.double > 0, quantity: data.unitbeds[0].beds.double || 0 },
+          superLarge: { selected: data.unitbeds[0].beds.superlarge > 0, quantity: data.unitbeds[0].beds.superlarge || 0 },
         };
-    
+  
         setBedDetails(mappedBeds);
+      } else {
+        // Initialize with empty bed details if no data is provided
+        setBedDetails({
+          largeBed: { selected: false, quantity: 0 },
+          singleBed: { selected: false, quantity: 0 },
+          double: { selected: false, quantity: 0 },
+          superLarge: { selected: false, quantity: 0 },
+        });
       }
   
-      if (originalData.amenities) {
-        setSelectedAmenities(originalData.amenities.map(amenity => amenity.amenity_name));
+      // Initialize amenities and services
+      if (data.amenities) {
+        setSelectedAmenities(data.amenities.map((amenity) => amenity.amenity_name));
       }
   
-      if (originalData.services) {
-        setSelectedServices(originalData.services.map(service => service.service_name));
+      if (data.services) {
+        setSelectedServices(data.services.map((service) => service.service_name));
       }
   
-      if (originalData.images) {
-        setPhotos(originalData.images.map(image => image.src));
+      // Initialize photos
+      if (data.images) {
+        setPhotos(data.images.map((image) => image.src));
       }
+    } else {
+      // Handle case where no data is provided
+      setUnitDetailsData((prevData) => ({
+        ...prevData,
+        roomDetails: [
+          { roomname: "Bathroom", quantity: 0 },
+          { roomname: "Living Room", quantity: 0 },
+          { roomname: "Kitchen", quantity: 0 },
+          { roomname: "Dining", quantity: 0 },
+        ],
+      }));
+  
+      setBedDetails({
+        largeBed: { selected: false, quantity: 0 },
+        singleBed: { selected: false, quantity: 0 },
+        double: { selected: false, quantity: 0 },
+        superLarge: { selected: false, quantity: 0 },
+      });
+      setSelectedAmenities([]);
+      setSelectedServices([]);
+      setPhotos([]);
     }
-  }, [reset, originalData]);
-   
+  };
+  
   const handleServiceChange = (event) => {
     const { name, checked } = event.target;
     const updatedServices = checked
@@ -203,23 +232,22 @@ export default function EditRoomAccordion({ index , onRoomDetailsUpdate, roomDat
   totalQTY(totalBedrooms);
 
   const addRoom = () => {
-    // Calculate the total number of rooms
     const totalRooms = unitDetailsData.roomDetails.length;
-  
-    // Check if the total number of rooms is less than 8
+    
     if (totalRooms < 8) {
+      const newRoom = { roomname: "", quantity: 0 };
+  
       setUnitDetailsData((prevData) => ({
         ...prevData,
-        roomDetails: [...prevData.roomDetails, { roomname: "", quantity: 0 }],
+        roomDetails: [...prevData.roomDetails, newRoom],
+        newUnitRooms: [...prevData.newUnitRooms, newRoom], // Add the new room to newUnitRooms
       }));
     } else {
-      // Optionally, provide feedback if the limit is reached
       alert("You can only add up to 4 rooms.");
     }
   };
   
-
-  const handleRoomTypeChange = (index, value) => {
+   const handleRoomTypeChange = (index, value) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
     updatedRoomDetails[index].roomname = value;
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
@@ -227,10 +255,25 @@ export default function EditRoomAccordion({ index , onRoomDetailsUpdate, roomDat
 
   const handleQuantityChange = (index, value) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
-    updatedRoomDetails[index].quantity = parseInt(value, 10) || 0; // Ensure value is a number
+    updatedRoomDetails[index].quantity = parseInt(value, 10) || 0;
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
   };
   
+//   const handleQuantityChange = (value, index = null) => {
+//   if (index !== null) {
+//     // Update quantity for an existing room in roomDetails
+//     const updatedRoomDetails = [...unitDetailsData.roomDetails];
+//     updatedRoomDetails[index].quantity = parseInt(value, 10) || 0;
+//     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
+//   } else {
+//     // Update quantity for the new room
+//     setNewRoom((prevNewRoom) => ({
+//       ...prevNewRoom,
+//       quantity: parseInt(value, 10) || 0,
+//     }));
+//   }
+// };
+
 
   const removeRoom = (index) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
@@ -272,9 +315,6 @@ const handleBedQuantityChange = (bedType) => (event) => {
   });
 };
 
-  
-
-
    // Split the roomDetails array into columns of up to 5 rooms each
    const roomsPerColumn = 4;
    const columns = [];
@@ -303,30 +343,34 @@ const handleBedQuantityChange = (bedType) => (event) => {
     // Photo upload handler
    // Handle photo upload
    const handlePhotoUpload = (event) => {
-    const files = event.target.files;
-    const newPhotos = [...photos];
-    
-    // Convert uploaded files to URLs
-    for (let i = 0; i < files.length; i++) {
-      const fileURL = URL.createObjectURL(files[i]);
-      newPhotos.push({ src: fileURL, caption: null });
+    const files = Array.from(event.target.files);
+    const newPhotos = [];
+
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size exceeds 5MB limit");
+      } else if (photos.length + newPhotos.length < 15) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setPhotos((prevPhotos) => [...prevPhotos, e.target.result]);
+        };
+        reader.readAsDataURL(file);
+        newPhotos.push(file);
+      } else {
+        alert("You can upload up to 15 photos only.");
+        break;
+      }
     }
-
-    setPhotos(newPhotos);
   };
-
-  // Photo delete handler  // Handle photo delete
-  const handlePhotoDelete = (index) => {
-    const updatedPhotos = photos.filter((_, idx) => idx !== index);
-    setPhotos(updatedPhotos);
+  // Photo delete handler
+  const handlePhotoDelete = (photoIndex) => {
+    setPhotos((prevPhotos) => prevPhotos.filter((_, index) => index !== photoIndex));
   };
- 
    const handleSubmit = () => {
      if (!validate()) {
        alert("Please fill in all required fields.");
        return;
      }
- 
      const roomData = {
        roomName,
        roomQuantity,
@@ -345,7 +389,8 @@ const handleBedQuantityChange = (bedType) => (event) => {
  
      // Send the collected data to the parent
      setExpanded(false);
-     onRoomDetailsUpdate(index, roomData);
+     alert(`Room data UNIT ID ${unitId} UPDATED`);
+     console.log("Room data UPDATED", roomData);
    };
   
   const handleDelete = () => {
@@ -353,15 +398,19 @@ const handleBedQuantityChange = (bedType) => (event) => {
     onDeleteRoom(index);
     console.log("Room data deleted.");
   };
-
-
+  
   console.log("Room data in EditRoomAccordion", roomData);
   console.log("Selected AMmenities", selectedAmenities);
   console.log("Images", photos);
   console.log("Beds", bedDetails);
+  console.log(`Photos ${index}`, photos);
+  console.log ('Rooms', unitDetailsData.roomDetails);
+  console.log ('New Rooms', unitDetailsData.newUnitRooms);
+
   return (
     
       <Accordion expanded={expanded === "panel1"} onChange={handleAccordionChange("panel1")} sx={{ border: expanded === "panel1" ? "2px solid blue" : "none" }}>
+        
         <AccordionSummary
           expandIcon={<ArrowDownwardIcon />}
           aria-controls="panel1-content"
@@ -373,14 +422,19 @@ const handleBedQuantityChange = (bedType) => (event) => {
           Unit Type {index + 1} : <span style={{ color: '#ccc', fontStyle: 'italic' }}>{roomName}</span>
         </Typography>
 
-          {expanded && (
+          {expanded && isEditing && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>
-                Save
+              <Button variant="contained" color="primary" onClick={handleSubmit} >
+                Update
               </Button>
-              <Button variant="outlined" color="secondary" onClick={handleDelete} disabled={index === 0}>
-                Delete
+              <Button variant="contained" color="primary" onClick={handleCancel}>
+                Cancel Changes
               </Button>
+              { index !== 0 &&
+              <Button variant="outlined" color="secondary" onClick={handleDelete} >
+               Delete
+             </Button>
+              }
             </Box>
           )}
         </AccordionSummary>
@@ -511,7 +565,7 @@ const handleBedQuantityChange = (bedType) => (event) => {
           {/* Rooms and Configuration */}
           <Grid container spacing={2} sx={{ mt: 1 ,}}>
           {/* Header for Other Rooms Available */}
-            <Grid item xs={12} md={8} sx={{ border: "1px solid #ccc", borderRadius: "0.5rem"}}>
+          <Grid item xs={12} md={8} sx={{ border: "1px solid #ccc", borderRadius: "0.5rem"}}>
               <Typography  sx={{ fontWeight: "bold", mb: 2 , fontFamily: "Poppins, sans-serif"}}>
                 Other Rooms Available
               </Typography>
@@ -536,12 +590,11 @@ const handleBedQuantityChange = (bedType) => (event) => {
                               value={room.roomname}
                               onChange={(e) => handleRoomTypeChange(columnIndex * roomsPerColumn + roomIndex, e.target.value)}
                               fullWidth
-                              disabled={["Bathroom", "Kitchen", "Dining", "Living Room","Bedroom"].includes(room.roomname)}
+                              disabled={["Bathroom", "Kitchen", "Dining", "Living Room"].includes(room.roomname)}
                               size="small"
                               // label={!["Bathroom", "Kitchen", "Dining", "Living Room"].includes(room.roomType) && "Room Type"}
                               label="Room Type"
                               sx={{ fontFamily: "Poppins, sans-serif" }}
-                            
                             />
                           </Grid>
                           <Grid item xs={12} md={4}>
@@ -553,7 +606,7 @@ const handleBedQuantityChange = (bedType) => (event) => {
                               fullWidth
                               size="small"
                               sx={{ fontFamily: "Poppins, sans-serif" }}
-                              disabled={!isEditing}
+                             disabled={!isEditing}
                             />
                           </Grid>
                           <Grid item xs={12} md={1}>
@@ -565,9 +618,7 @@ const handleBedQuantityChange = (bedType) => (event) => {
                                   position: 'absolute',
                                   right: 0,
                                   color: 'error.main',
-                                  
                                 }}
-                                disabled={!isEditing}
                               >
                                 <RemoveCircleIcon />
                               </IconButton>
@@ -583,7 +634,6 @@ const handleBedQuantityChange = (bedType) => (event) => {
                     startIcon={<AddIcon />}
                     onClick={addRoom}
                     sx={{ ml: 1,mt:1,fontFamily: "Poppins" }}
-                    disabled={!isEditing}
                   >
                     Add New Room
                   </Button>
@@ -684,59 +734,54 @@ const handleBedQuantityChange = (bedType) => (event) => {
               ))}
             </Grid>
             {/* Photo Upload Section */}
-            <Box mt={3} sx={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '0.8rem' }}>
-              <Typography sx={{ fontFamily: "Poppins, sans-serif", fontWeight: 'bold' }}>Room Photos</Typography>
+             <Box mt={3} sx={{ border: '1px solid #ccc', padding: '1rem' , borderRadius: '0.8rem'}}>
+              <Typography sx={{fontFamily: "Poppins, sans-serif", fontWeight: 'bold'}}>Room Photos</Typography>
               <input
                 accept="image/*"
-                id="photo-upload"
+                id={`photo-upload-${index}`}
                 type="file"
                 multiple
                 onChange={handlePhotoUpload}
                 style={{ display: 'none' }}
-                disabled={!isEditing}
               />
-              <label htmlFor="photo-upload">
-                <Button variant="outlined" component="span" sx={{ mt: 2 }} disabled={!isEditing}>
+              <label htmlFor={`photo-upload-${index}`}>
+                <Button variant="outlined" component="span" sx={{ mt: 2 }}>
                   Upload Photos
                 </Button>
               </label>
 
               <Grid container spacing={2} mt={2}>
-                {photos.map((photoUrl, idx) => {
-                  console.log("Photo URL:", photoUrl); // Verify each URL
-                  return (
-                    <Grid item xs={6} sm={4} md={3} key={idx}>
-                      <Card sx={{ position: 'relative' }}>
-                        <CardMedia
-                          component="img"
-                          alt={`Room Photo ${idx + 1}`}
-                          height="140"
-                          image={photoUrl}
-                        />
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => handlePhotoDelete(idx)}
-                          sx={{
-                            position: 'absolute',
-                            top: 8,
-                            right: 8,
-                            color: 'red',
-                            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                            
-                          }}
-                          disabled={!isEditing}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Card>
-                    </Grid>
-                  );
-                })}
+                {photos.map((photo, idx) => (
+                  <Grid item xs={6} sm={4} md={3} key={idx}>
+                    <Card sx={{ position: 'relative' }}>
+                      <CardMedia
+                        component="img"
+                        alt={`Room Photo ${idx + 1}`}
+                        height="140"
+                        image={photo}
+                      />
+                      <IconButton
+                        aria-label="delete"
+                        onClick={() => handlePhotoDelete(idx)}
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          color: 'red',
+                          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
             </Box>
           </Grid>
     
-          <Button onClick={handleSubmit} fullWidth variant="contained"  sx={{ mt: 3 ,fontFamily: "Poppins, sans-serif"}}>Save this room</Button>
+          <Button onClick={handleSubmit} fullWidth variant="contained"  sx={{ mt: 3 ,fontFamily: "Poppins, sans-serif"}}>Update Room</Button>
+          
         </AccordionDetails>
       </Accordion>
                 

@@ -5,22 +5,24 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-
-import RoomAccordion from "../../AccommodationRegistrationUI/components/MultiUnitRegistration/MultiRoomsAndDetails";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import AddIcon from '@mui/icons-material/Add';
 import EditRoomAccordion from "./EditRoomAccordion";
 
-export default function EditRoomDetailsMultipleUnit({  parentRoomsAndBedsData }) {
-  const [roomDetailsList, setRoomDetailsList] = useState([]);
+export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) {
+  const [roomDetailsList, setRoomDetailsList] = useState([]); // Existing rooms
+  const [newUnitRooms, setNewUnitRooms] = useState([]); // Newly added rooms
   const [isEditing, setIsEditing] = useState(false);
-  const [originalData, setOriginalData] = useState({});
-  const [hasChanges, setHasChanges] = useState(false);
   const [originalRoomDetailsList, setOriginalRoomDetailsList] = useState([]);
   const [resetFlag, setResetFlag] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     // Initialize roomDetailsList from parentRoomsAndBedsData if available
-    // If not, initialize with one empty room
     if (parentRoomsAndBedsData && parentRoomsAndBedsData.length > 0) {
       setRoomDetailsList(parentRoomsAndBedsData);
       setOriginalRoomDetailsList(parentRoomsAndBedsData);
@@ -32,118 +34,166 @@ export default function EditRoomDetailsMultipleUnit({  parentRoomsAndBedsData })
   const handleAddRoomDetails = () => {
     const lastRoom = roomDetailsList[roomDetailsList.length - 1];
 
-    // Check if the last room has required details filled out (adjust according to your requirements)
+    // Check if the last room has required details filled out
     if (!lastRoom || Object.keys(lastRoom).length === 0) {
       alert("Please complete the current room details before adding a new room.");
       return;
     }
 
-    // Add a new empty room object
-    setRoomDetailsList([...roomDetailsList, {}]);
+    // Add a new empty room object to the newUnitRooms state
+    setNewUnitRooms([...newUnitRooms, {}]);
   };
 
   const handleRoomDetailsUpdate = (index, roomData) => {
-    // Check if roomData is not empty
     if (!roomData || Object.keys(roomData).length === 0) {
       console.warn("Empty or incomplete room data received");
-      return; // Do nothing if the room data is empty
-    }
-
-    // Update room details if data is valid
-    const updatedRoomDetailsList = roomDetailsList.map((room, i) =>
-      i === index ? roomData : room
-    );
-    setRoomDetailsList(updatedRoomDetailsList);
-    console.log('Updated Room Data:', updatedRoomDetailsList);
-  };
-
-  const handleDeleteRoom = (index) => {
-    if (index === 0) {
-      alert("The first room cannot be deleted.");
       return;
     }
+  
+    // Update room details based on whether it's an existing or new room
+    if (index < roomDetailsList.length) {
+      // Existing room
+      const updatedRoomDetailsList = roomDetailsList.map((room, i) =>
+        i === index ? roomData : room
+      );
+      setRoomDetailsList(updatedRoomDetailsList);
+    } else {
+      // New room
+      const newIndex = index - roomDetailsList.length;
+      const updatedNewUnitRooms = newUnitRooms.map((room, i) =>
+        i === newIndex ? roomData : room
+      );
+      setNewUnitRooms(updatedNewUnitRooms);
+    }
+  };
+  
 
-    // Remove the room at the given index
-    const updatedRoomDetailsList = roomDetailsList.filter((_, i) => i !== index);
-    setRoomDetailsList(updatedRoomDetailsList);
+  const handleDeleteRoom = (index) => {
+    if (index < roomDetailsList.length) {
+      // Existing room
+      if (index === 0) {
+        alert("The first room cannot be deleted.");
+        return;
+      }
+
+      const updatedRoomDetailsList = roomDetailsList.filter((_, i) => i !== index);
+      setRoomDetailsList(updatedRoomDetailsList);
+    } else {
+      // New room
+      const newIndex = index - roomDetailsList.length;
+      const updatedNewUnitRooms = newUnitRooms.filter((_, i) => i !== newIndex);
+      setNewUnitRooms(updatedNewUnitRooms);
+    }
   };
 
-  // const validateAndProceed = () => {
-  //   // Check if there is at least one non-empty room in roomDetailsList
-  //   const isValid = roomDetailsList.some(room => Object.keys(room).length > 0);
-    
-  //   if (isValid) {
-  //     onMultiRoomsAndBedsChange(roomDetailsList);
-  //     handleNext();
-  //   } else {
-  //     alert("Please add at least one room with details.");
-  //   }
-  // };
   const handleCancel = () => {
+    setOpenModal(true); // Open the modal when the cancel button is clicked
+  };
+
+  const handleCloseModal = (confirm) => {
+    setOpenModal(false);
+    if (confirm) {
+      setIsEditing(false);
+      setRoomDetailsList(originalRoomDetailsList);
+      setNewUnitRooms([]); // Reset new rooms
+      setResetFlag(true); // Trigger reset in child components
+
+      // Reset the flag after a short delay to allow the child to process the reset
+      setTimeout(() => setResetFlag(false), 0);
+    }
+  };
+
+  const handleSubmit = () => {
+    // Combine existing rooms and new rooms
+    const updatedRoomDetailsList = [...roomDetailsList, ...newUnitRooms];
+    setRoomDetailsList(updatedRoomDetailsList);
     setIsEditing(false);
-    setRoomDetailsList(originalRoomDetailsList);
-    setResetFlag(true); // Trigger reset in child components
+    console.log("DONE:", updatedRoomDetailsList);
   };
 
   useEffect(() => {
-    console.log('Room Details inside the Edit Room Details:', roomDetailsList);
-  }, [roomDetailsList]);
+    console.log('Updayed Room Details :', roomDetailsList, newUnitRooms);
+
+  }, [roomDetailsList, newUnitRooms]);
 
   return (
-   
-        <Paper style={{ width: "auto", padding: "4rem", borderRadius: "0.8rem", alignItems: "center" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-            <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem" , fontWeight: "bold"}}>
-              Rooms and Details
-            </Typography>
-            <div>
-              {!isEditing && (
-                <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
-                  Edit
-                </Button>
-              )}
-              {isEditing && (
-                <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </div>
-          <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "0.875rem", color: "#6b7280", marginBottom: "2rem" }}>
-            Use this section to configure your property's room and bed details. Specify guest capacity, add room types, and set up bed arrangements to accurately reflect your accommodation setup.
+    <>
+      <Paper style={{ width: "auto", padding: "4rem", borderRadius: "0.8rem", alignItems: "center" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+          <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem", fontWeight: "bold" }}>
+            Rooms and Details
           </Typography>
+          <div>
+            {!isEditing && (
+              <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
+                Edit
+              </Button>
+            )}
+            {isEditing && (
+              <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
+                Cancel
+              </Button>
+            )}
+            {isEditing && (
+              <Button onClick={handleSubmit} sx={{ marginRight: "1rem" }} variant="contained">
+                Submit
+              </Button>
+            )}
+          </div>
+        </div>
+        <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "0.875rem", color: "#6b7280", marginBottom: "2rem" }}>
+          Use this section to configure your property's room and bed details. Specify guest capacity, add room types, and set up bed arrangements to accurately reflect your accommodation setup.
+        </Typography>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={12}>
-                {roomDetailsList.map((roomDetails, index) => (
-                   <EditRoomAccordion
-                      key={index} // Add a key to avoid warnings
-                      index={index}
-                      onRoomDetailsUpdate={handleRoomDetailsUpdate}
-                      onDeleteRoom={handleDeleteRoom} // Pass down the delete function
-                      roomData={roomDetails} // Pass the specific room details data
-                      isEditing={isEditing}
-                      originalData={originalRoomDetailsList[index]}
-                      reset={resetFlag} // Pass the reset flag to the child component
-                    />
-                ))}
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={12}>
+          {roomDetailsList.map((roomDetails, index) => (
+            <EditRoomAccordion
+              key={roomDetails.unitid} // Ensure this is unique for each room
+              index={index}
+              onRoomDetailsUpdate={handleRoomDetailsUpdate}
+              onDeleteRoom={handleDeleteRoom}
+              roomData={roomDetails}
+              isEditing={isEditing}
+              originalData={originalRoomDetailsList[index]}
+              reset={resetFlag}
+            />
+          ))}
+            {newUnitRooms.map((roomDetails, index) => (
+              <EditRoomAccordion
+                key={`new-${index}`}
+                index={roomDetailsList.length + index}
+                onRoomDetailsUpdate={handleRoomDetailsUpdate}
+                onDeleteRoom={handleDeleteRoom}
+                roomData={roomDetails}
+                isEditing={isEditing}
+                originalData={{}}
+                reset={resetFlag}
+              />
+            ))}
 
-                <Button onClick={handleAddRoomDetails} variant="contained" color="primary" startIcon={<AddIcon />} sx={{ mt: 2 }}>
-                  Add Room Details
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              spacing={2}
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              mt={2}
-            >
-            </Grid>
-        </Paper>
-  
-
+            <Button onClick={handleAddRoomDetails} variant="contained" color="primary" startIcon={<AddIcon />} sx={{ mt: 2 }}>
+              Add Room Details
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to revert changes? All unsaved changes will be lost.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCloseModal(false)} color="primary">
+            No
+          </Button>
+          <Button onClick={() => handleCloseModal(true)} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

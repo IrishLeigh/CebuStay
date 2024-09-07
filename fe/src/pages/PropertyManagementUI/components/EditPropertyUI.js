@@ -177,7 +177,6 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
             <EditRoomDetailsMultipleUnit
             parentRoomsAndBedsData = {rooms}
             
-
             />
           )}
         </CustomTabPanel>
@@ -197,6 +196,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
               setFacilities(newFacilities);
               setServices(newServices);
             }}
+            isSingleUnit={isSingleUnit}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={4}>

@@ -38,7 +38,6 @@ export default function RoomAccordion({ index , onRoomDetailsUpdate, roomData, o
       { roomType: "Kitchen", quantity: 0 },
       { roomType: "Dining", quantity: 0 },
     ],
-    guestCapacity: "",
   });
   const [bedDetails, setBedDetails] = useState({
     singleBed: { selected: false, quantity: 0 },
