@@ -131,7 +131,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       onDaysChange={handleDaysChange}
                     />
                     <br />
-                    <Typography sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
+                    <Typography sx={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
                       <LightbulbTwoToneIcon sx={{ fontSize: '14px', color: 'orange' }} />
                       The guest will receive a 25% refund if they cancel outside the free cancellation window.
                     </Typography>

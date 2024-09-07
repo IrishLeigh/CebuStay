@@ -87,8 +87,8 @@ const handleChangeDate = (date) => {
 };
 
   return (
-    <div>
-      <Typography sx={{ fontSize: "1.5rem" }} mb={2} mt={6} fontWeight="bold">
+    <div sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">
         Host Details
       </Typography>
       {/* Upload Image */}
@@ -98,7 +98,7 @@ const handleChangeDate = (date) => {
         borderRadius: '0.8rem',
         marginBottom: '1rem',
       }}>
-        <Typography sx={{ fontSize: "1.125rem" }}>
+        <Typography sx={{ fontFamily: "Poppins", fontSize: "1.125rem", fontWeight: "bold", marginBottom: "0.5rem" }}>
           Upload your profile photo
         </Typography>
         <Button
@@ -130,11 +130,12 @@ const handleChangeDate = (date) => {
       style={{
         border: '2px dashed #cacaca',
         padding: '1rem',
-        borderRadius: '10px',
-        mt:3
+        borderRadius: '0.8rem',
+        marginBottom: '1rem',
+        marginTop: '1rem'
       }}
       >
-        <Typography sx={{ fontSize: "1.125rem" }}  ml={1} fontWeight="bold">
+        <Typography sx={{ fontSize: "1.125rem", fontFamily: "Poppins" }}  ml={1} fontWeight="bold">
           Profile
         </Typography>
         <Box
@@ -187,11 +188,11 @@ const handleChangeDate = (date) => {
       style={{
         border: '2px dashed #cacaca',
         padding: '1rem',
-        borderRadius: '10px',
-        mt:3
+        borderRadius: '0.8rem',
+        marginTop: '1rem'
       }}
       >
-        <Typography sx={{ fontSize: "1.125rem" }}  ml={1} fontWeight="bold">
+        <Typography sx={{ fontSize: "1.125rem" , fontFamily: "Poppins"}}  ml={1} fontWeight="bold">
           Contact Details
         </Typography>
         <Box
@@ -225,11 +226,11 @@ const handleChangeDate = (date) => {
       style={{
         border: '2px dashed #cacaca',
         padding: '1rem',
-        borderRadius: '10px',
-        mt:3
+        borderRadius: '0.8rem',
+        marginTop: '1rem'
       }}
       >
-        <Typography sx={{ fontSize: "1.125rem" }}  ml={1} fontWeight="bold">
+        <Typography sx={{ fontSize: "1.125rem" , fontFamily: "Poppins"}}  ml={1} fontWeight="bold">
           Location Details
         </Typography>
         <Box
@@ -279,11 +280,11 @@ const handleChangeDate = (date) => {
       style={{
         border: '2px dashed #cacaca',
         padding: '1rem',
-        borderRadius: '10px',
-        mt:3
+        borderRadius: '0.8rem',
+       marginTop: '1rem'
       }}
       >
-        <Typography sx={{ fontSize: "1.125rem" }}  ml={1} mb={2} fontWeight="bold">
+        <Typography sx={{ fontSize: "1.125rem" , fontFamily: "Poppins"}}  ml={1} mb={2} fontWeight="bold">
           Describe Yourself
         </Typography>
         <Box
@@ -310,11 +311,11 @@ const handleChangeDate = (date) => {
       style={{
         border: '2px dashed #cacaca',
         padding: '1rem',
-        borderRadius: '10px',
-        mt:3
+        borderRadius: '0.8rem',
+        marginTop: '1rem'
       }}
       >
-        <Typography sx={{ fontSize: "1.125rem" }}  ml={1} mb={2} fontWeight="bold">
+        <Typography sx={{ fontSize: "1.125rem", fontFamily: "Poppins" }}  ml={1} mb={2} fontWeight="bold">
           Calendar Sync
         </Typography>
         <Typography sx={{ fontSize: "1rem" }}  ml={1} mb={1} >

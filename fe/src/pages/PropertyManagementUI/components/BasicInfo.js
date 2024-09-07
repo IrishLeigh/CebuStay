@@ -57,6 +57,7 @@ export default function BasicInfo({ propertyData, propertyAddress, onBasicInfoCh
       ...prevState,
       [field]: value,
     }));
+    setHasChanges(true);
   };
 
   const handleSave = () => {

@@ -12,7 +12,8 @@ import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
-
+import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
+import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
