@@ -40,8 +40,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
-
+.stay-card-container {
+  position: absolute;
+  right: 20px; /* Add padding from the right side of the screen */
+  z-index: 1000;
+  padding: 15px;
+  width: 300px;
+  border-radius: 8px;
+  margin-bottom: 30rem;
+  margin-right: 3rem;
+}
 .map-background {
   background-image: url("/public/sea4.png");
   background-repeat: no-repeat;
@@ -54,7 +64,6 @@
 }
 
 .map-filter-cntr {
-  /* position: sticky; Makes the filter buttons stick when scrolling */
   top: 0; /* Position them at the top of the scrolling container */
   background-color: white; /* Ensure the background color is white for contrast */
   padding: 0.5rem; /* Add some padding */
