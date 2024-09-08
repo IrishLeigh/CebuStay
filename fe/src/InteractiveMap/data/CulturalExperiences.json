@@ -1,0 +1,132 @@
+[
+  {
+    "name": "Liloan - Home of Rosquillos",
+    "coordinates": [10.458, 124.065],
+    "category": "Culture",
+    "iconUrl": "./resort.png",
+    "imageUrl": "./path-to-image.jpg",
+    "description": "Description of Spot 1",
+    "description2": "Description of Spot 1",
+    "city name": "Liloan"
+  },
+  {
+    "name": "Liloan - Home of Rosquillos",
+    "coordinates": [10.4121, 123.9861],
+    "category": "Culture",
+    "iconUrl": "./rosquillos.png",
+    "imageUrl": "./liloanfestival.jpg",
+    "description": "The Rosquillos Festival is a cultural and food festival celebrated i Liloan, Cebu, Philippines. It is held in honor of the town’s most famous delicacy, the rosquillos a type of circular cookie made from flour, eggs, sugar, shortening, and baking powder. These cookies were first made by Margarita “Titay” Frasco in 1907, and they have since become a beloved local treat.",
+    "description2": "For the Rosquillos Festival, wear light and comfortable clothing like a sundress or t-shirt with shorts, paired with comfortable shoes, a hat, and sunglasses to stay cool and stylish in the warm weather.",
+    "city name": "Liloan"
+  },
+  {
+    "name": "Carcar City Cebu",
+    "coordinates": [10.1151, 123.64],
+    "category": "Culture",
+    "iconUrl": "./lechon.png",
+    "imageUrl": "./carcarlechon.jpg",
+    "description": "Carcar is famous for its lechon, considered one of the best in the Philippines. The public market is a must-visit for food lovers, where you can taste freshly roasted lechon with crispy skin and tender meat.",
+    "description2": "When visiting Carcar City, especially for food tours, wear light and comfortable clothing like a t-shirt and shorts, paired with comfortable walking shoes. A hat and sunglasses are recommended to protect yourself from the sun.",
+    "city name": "Carcar"
+  },
+  {
+    "name": "Simala Shrine",
+    "coordinates": [10.0431, 123.5952],
+    "category": "Culture",
+    "iconUrl": "./church.png",
+    "imageUrl": "./sibongachurch.jpg",
+    "description": "Sibonga is best known for the Marist Monastery of the Holy Eucharist and a church called Simala Miraculous Mama Mary. They are in a single large building complex, and exceedingly scenic. For Catholics, especially Filipinos, this is a place of pilgrimage.",
+    "description2": "Dress modestly and comfortably for your visit to Simala, wearing lightweight clothes, comfortable shoes, and sun protection.",
+    "city name": "Sibonga"
+  },
+  {
+    "name": "Sinulog Festival",
+    "coordinates": [10.3157, 123.8854],
+    "category": "Culture",
+    "iconUrl": "./sinulog.png",
+    "imageUrl": "./sinulogcebu.jpg",
+    "description": "The Sinulog Festival is one of the grandest and most colorful festivals in the Philippines. Held annually in Cebu City, it celebrates the Filipino people's pagan past and their acceptance of Christianity. The main highlight is the street parade featuring participants in colorful costumes dancing to the rhythm of drums and native gongs.",
+    "description2": "Wear comfortable clothes suitable for warm weather, such as a t-shirt and shorts. Bring a hat, sunglasses, and wear comfortable shoes as you might be walking a lot.",
+    "city name": "Cebu City"
+  },
+  {
+    "name": "Kadaugan sa Mactan",
+    "coordinates": [10.307, 123.9794],
+    "category": "Culture",
+    "iconUrl": "./mactan.png",
+    "imageUrl": "./kadaugan.jpg",
+    "description": "Kadaugan sa Mactan is a week-long festival held in Lapu-Lapu City, celebrating the historic Battle of Mactan. The highlight is the reenactment of the battle between local chieftain Lapu-Lapu and Portuguese explorer Ferdinand Magellan, which takes place on the shores of Mactan.",
+    "description2": "For the Kadaugan sa Mactan festival, wear light, breathable clothing like a t-shirt and shorts or a sundress. Comfortable shoes are a must for walking and standing. A hat, sunglasses, and sunscreen are essential to protect yourself from the sun.",
+    "city name": "Lapu-Lapu City"
+  },
+  {
+    "name": "Kagasangan Festival",
+    "coordinates": [9.9557, 123.4008],
+    "category": "Culture",
+    "iconUrl": "./kagasangan.png",
+    "imageUrl": "./moalboal.jpg",
+    "description": "A cultural event celebrated annually that showcases the local traditions, dances, and music of Moalboal. It highlights the community spirit and cultural heritage of the town.",
+    "description2": "Modest and comfortable attire. A sundress, skirt, or pants with a top is appropriate. Ensure that your shoulders and knees are covered as a sign of respect.",
+    "city name": "Moalboal"
+  },
+  {
+    "name": "Hinulawan Festival",
+    "coordinates": [10.387, 123.6503],
+    "category": "Culture",
+    "iconUrl": "./hinulawan.png",
+    "imageUrl": "./toledo.jpg",
+    "description": "The Tingguinay Festival is celebrated in Toledo City to honor the city's patron saint. It features traditional dances, music, and street parades showcasing the local culture and heritage.",
+    "description2": "Wear light and breathable clothing suitable for the tropical weather. Comfortable shoes are recommended as you'll be walking a lot. Don’t forget sun protection like a hat and sunscreen.",
+    "city name": "Toledo City"
+  },
+  {
+    "name": "Pasko sa Balamban",
+    "coordinates": [10.4858, 123.7741],
+    "category": "Culture",
+    "iconUrl": "./pasko.png",
+    "imageUrl": "./paskobalamban.jpg",
+    "description": "Pasko sa Balamban is the annual Christmas festival in Balamban, Cebu. The event includes a vibrant Christmas parade, local food stalls, and various cultural performances.",
+    "description2": "Dress in casual, comfortable attire and wear appropriate shoes for walking. The event takes place in December, so light jackets or sweaters may be needed for cooler evenings.",
+    "city name": "Balamban"
+  },
+  {
+    "name": "Pintos Festival",
+    "coordinates": [11.0128, 123.9861],
+    "category": "Culture",
+    "iconUrl": "./pintos.png",
+    "imageUrl": "./bogo.jpg",
+    "description": "Held in Bogo City, the Pintos Festival celebrates the local agricultural heritage with street dances, food fairs, and exhibits showcasing traditional crafts and produce.",
+    "description2": "Light and comfortable clothing is best, along with sun protection like a hat and sunglasses. Wear sturdy shoes for walking through the festival grounds.",
+    "city name": "Bogo City"
+  },
+  {
+    "name": "Argao’s Suroy-Suroy Festival",
+    "coordinates": [9.9326, 123.5504],
+    "category": "Culture",
+    "iconUrl": "./suroy.png",
+    "imageUrl": "./argao.jpg",
+    "description": "The Suroy-Suroy Festival in Argao highlights the town’s local history, crafts, and traditions. The festival features street parades, traditional dances, and showcases the town's unique heritage.",
+    "description2": "Wear comfortable clothing suitable for outdoor activities. Bring sun protection like a hat and sunscreen. Comfortable walking shoes are essential.",
+    "city name": "Argao"
+  },
+  {
+    "name": "Oslob Cuartel",
+    "coordinates": [9.49, 123.39],
+    "category": "Culture",
+    "iconUrl": "./cuartel.png",
+    "imageUrl": "./oslob.jpg",
+    "description": "The Oslob Cuartel is an unfinished barracks made of coral stones located near the Oslob Church. It was built during the Spanish colonial period by Filipino laborers under the direction of Spanish authorities. The structure was intended as barracks for Spanish soldiers, but construction was halted due to the arrival of American forces in the late 19th century.",
+    "description2": "Wear modest and comfortable attire, as this is a historical site. Light clothing such as a t-shirt and shorts or a sundress is ideal, especially for walking around the area.",
+    "city name": "Oslob"
+  },
+  {
+    "name": "Baluarte (Oslob Watchtower)",
+    "coordinates": [9.55, 123.42],
+    "category": "Culture",
+    "iconUrl": "./watchtower.png",
+    "imageUrl": "./baluarteoslob.jpg",
+    "description": "The Baluarte, or watchtower, is one of the many stone structures built along the coast of Cebu to guard against Moro pirate attacks during the Spanish period. Located near the Oslob Cuartel, this watchtower provides insight into the town's historical defense systems and Spanish colonial rule.",
+    "description2": "For a visit to the Baluarte, casual and comfortable clothing is recommended. Wear sturdy shoes for walking along the coastal path, and don’t forget sun protection like a hat or sunscreen.",
+    "city name": "Oslob"
+  }
+]
