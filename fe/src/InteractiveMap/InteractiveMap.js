@@ -6,8 +6,8 @@ import cebuCity from "./data/Cebu.MuniCities.json";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./InteractiveMap.css";
-import CultureCard from "./CultureCard"; // Import the CultureCard component
-import Culture from "./data/Culture.json"; // Import tourist spots JSON data
+import CultureCard from "./components/CultureCard"; // Import the CultureCard component
+import CulturalExperiences from "./data/CulturalExperiences.json";
 import SeeAndDo from "./data/SeeAndDo.json"; // Import see and do JSON data
 import SeeAndDoCard from "./components/SeeAndDoCard";
 
@@ -21,8 +21,7 @@ export default function InteractiveMap() {
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
-  const [foundLocations ,setFoundLocations] = useState([]);
-  
+  const [foundLocations, setFoundLocations] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,26 +37,26 @@ export default function InteractiveMap() {
           ],
         }));
 
-          setLocations(fetchedLocations);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchData();
-    }, []);
+        setLocations(fetchedLocations);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-      const handleResize = () => {
-        const screenWidth = window.innerWidth;
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
 
-        if (screenWidth < 768) {
-          setZoom(7); // Lower zoom for smaller screens
-        } else if (screenWidth < 1024) {
-          setZoom(8); // Medium zoom for tablet-sized screens
-        } else {
-          setZoom(9); // Default zoom for larger screens
-        }
-      };
+      if (screenWidth < 768) {
+        setZoom(7); // Lower zoom for smaller screens
+      } else if (screenWidth < 1024) {
+        setZoom(8); // Medium zoom for tablet-sized screens
+      } else {
+        setZoom(9); // Default zoom for larger screens
+      }
+    };
 
     window.addEventListener("resize", handleResize);
     handleResize();
@@ -101,7 +100,6 @@ export default function InteractiveMap() {
       setSelectedSeeAndDo(null); // Deselect see and do
     }
   };
-  
 
   function ResetButton({ center, zoom }) {
     const map = useMap();
@@ -143,8 +141,8 @@ export default function InteractiveMap() {
       popupAnchor: [0, -41],
     });
 
-    const getCityStyle = (city) => {
-      const cityName = city.properties.NAME_2;
+  const getCityStyle = (city) => {
+    const cityName = city.properties.NAME_2;
 
     if (selectedCity === cityName) {
       return {
@@ -276,7 +274,7 @@ export default function InteractiveMap() {
                 style={getCityStyle}
               />
               {selectedCategory === "Culture & Experiences" &&
-                Culture.filter(
+                CulturalExperiences.filter(
                   (culture) =>
                     !selectedCity || culture["city name"] === selectedCity
                 ).map((culture, index) => (
@@ -293,10 +291,9 @@ export default function InteractiveMap() {
                   </Marker>
                 ))}
 
-                 {selectedCategory === "See And Do" &&
+              {selectedCategory === "See And Do" &&
                 SeeAndDo.filter(
-                  (spot) =>
-                    !selectedCity || spot["city name"] === selectedCity
+                  (spot) => !selectedCity || spot["city name"] === selectedCity
                 ).map((spot, index) => (
                   <Marker
                     key={index}
@@ -315,7 +312,7 @@ export default function InteractiveMap() {
             <p>Loading map data...</p>
           )}
           {selectedSeeAndDo && selectedCategory === "See And Do" && (
-            <div >
+            <div>
               <SeeAndDoCard
                 spot={selectedSeeAndDo}
                 onClose={() => setSelectedSeeAndDo(null)}
@@ -330,8 +327,6 @@ export default function InteractiveMap() {
               />
             </div>
           )}
-          
-
         </div>
       </div>
     </>
