@@ -68,5 +68,65 @@
     "description": "A cultural event celebrated annually that showcases the local traditions, dances, and music of Moalboal. It highlights the community spirit and cultural heritage of the town.",
     "description2": "Modest and comfortable attire. A sundress, skirt, or pants with a top is appropriate. Ensure that your shoulders and knees are covered as a sign of respect.",
     "city name": "Moalboal"
+  },
+  {
+    "name": "Hinulawan Festival",
+    "coordinates": [10.387, 123.6503],
+    "category": "Culture",
+    "iconUrl": "./hinulawan.png",
+    "imageUrl": "./toledo.jpg",
+    "description": "The Tingguinay Festival is celebrated in Toledo City to honor the city's patron saint. It features traditional dances, music, and street parades showcasing the local culture and heritage.",
+    "description2": "Wear light and breathable clothing suitable for the tropical weather. Comfortable shoes are recommended as you'll be walking a lot. Don’t forget sun protection like a hat and sunscreen.",
+    "city name": "Toledo City"
+  },
+  {
+    "name": "Pasko sa Balamban",
+    "coordinates": [10.4858, 123.7741],
+    "category": "Culture",
+    "iconUrl": "./pasko.png",
+    "imageUrl": "./paskobalamban.jpg",
+    "description": "Pasko sa Balamban is the annual Christmas festival in Balamban, Cebu. The event includes a vibrant Christmas parade, local food stalls, and various cultural performances.",
+    "description2": "Dress in casual, comfortable attire and wear appropriate shoes for walking. The event takes place in December, so light jackets or sweaters may be needed for cooler evenings.",
+    "city name": "Balamban"
+  },
+  {
+    "name": "Pintos Festival",
+    "coordinates": [11.0128, 123.9861],
+    "category": "Culture",
+    "iconUrl": "./pintos.png",
+    "imageUrl": "./bogo.jpg",
+    "description": "Held in Bogo City, the Pintos Festival celebrates the local agricultural heritage with street dances, food fairs, and exhibits showcasing traditional crafts and produce.",
+    "description2": "Light and comfortable clothing is best, along with sun protection like a hat and sunglasses. Wear sturdy shoes for walking through the festival grounds.",
+    "city name": "Bogo City"
+  },
+  {
+    "name": "Argao’s Suroy-Suroy Festival",
+    "coordinates": [9.9326, 123.5504],
+    "category": "Culture",
+    "iconUrl": "./suroy.png",
+    "imageUrl": "./argao.jpg",
+    "description": "The Suroy-Suroy Festival in Argao highlights the town’s local history, crafts, and traditions. The festival features street parades, traditional dances, and showcases the town's unique heritage.",
+    "description2": "Wear comfortable clothing suitable for outdoor activities. Bring sun protection like a hat and sunscreen. Comfortable walking shoes are essential.",
+    "city name": "Argao"
+  },
+  {
+    "name": "Oslob Cuartel",
+    "coordinates": [9.49, 123.39],
+    "category": "Culture",
+    "iconUrl": "./cuartel.png",
+    "imageUrl": "./oslob.jpg",
+    "description": "The Oslob Cuartel is an unfinished barracks made of coral stones located near the Oslob Church. It was built during the Spanish colonial period by Filipino laborers under the direction of Spanish authorities. The structure was intended as barracks for Spanish soldiers, but construction was halted due to the arrival of American forces in the late 19th century.",
+    "description2": "Wear modest and comfortable attire, as this is a historical site. Light clothing such as a t-shirt and shorts or a sundress is ideal, especially for walking around the area.",
+    "city name": "Oslob"
+  },
+  {
+    "name": "Baluarte (Oslob Watchtower)",
+    "coordinates": [9.55, 123.42],
+    "category": "Culture",
+    "iconUrl": "./watchtower.png",
+    "imageUrl": "./baluarteoslob.jpg",
+    "description": "The Baluarte, or watchtower, is one of the many stone structures built along the coast of Cebu to guard against Moro pirate attacks during the Spanish period. Located near the Oslob Cuartel, this watchtower provides insight into the town's historical defense systems and Spanish colonial rule.",
+    "description2": "For a visit to the Baluarte, casual and comfortable clothing is recommended. Wear sturdy shoes for walking along the coastal path, and don’t forget sun protection like a hat or sunscreen.",
+    "city name": "Oslob"
   }
 ]
