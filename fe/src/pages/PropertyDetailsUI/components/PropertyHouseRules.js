@@ -19,7 +19,6 @@ const check_in_until = "check_in_until";
 const check_out_from = "check_out_from";
 const check_out_until = "check_out_until";
 const custom_rules = "custom_rules";
-const houserulesid = "houserulesid";
 const noise_restrictions = "noise_restrictions";
 const parties_events_allowed = "parties_events_allowed";
 const pets_allowed = "pets_allowed";
@@ -34,7 +33,6 @@ const iconMap = {
   [check_out_from]: <AccessTime sx={{ color: "#16B4DD" }} />,
   [check_out_until]: <AccessTime sx={{ color: "#16B4DD" }} />,
   [custom_rules]: <EventNote sx={{ color: "#16B4DD" }} />,
-  [houserulesid]: <Hotel sx={{ color: "#16B4DD" }} />,
   [noise_restrictions]: <NaturePeople sx={{ color: "#16B4DD" }} />,
   [parties_events_allowed]: <NoMeetingRoom sx={{ color: "#16B4DD" }} />,
   [pets_allowed]: <Pets sx={{ color: "#16B4DD" }} />,
@@ -73,11 +71,6 @@ const HouseRules = ({ houserules = {} }) => {
         formatTime(houserules[quiet_hours_end]) ?? "N/A"
       }`,
       icon: iconMap[quiet_hours_start],
-    },
-    {
-      label: "House rules ID",
-      value: houserules[houserulesid] ?? "N/A",
-      icon: iconMap[houserulesid],
     },
     {
       label: "Custom rules",
