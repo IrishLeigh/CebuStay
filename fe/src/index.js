@@ -14,6 +14,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
 import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
 import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";
+import TopRated from "./InteractiveMap/components/TopRated";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -22,7 +23,7 @@ root.render(
       <DataProvider>
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
-            <App />
+            <TopRated />
           </GoogleOAuthProvider>
         </UserProvider>
       </DataProvider>
