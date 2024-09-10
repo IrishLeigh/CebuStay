@@ -90,7 +90,10 @@ function App() {
       location.pathname !== "/admin/listings" && 
       location.pathname !== "/admin/calendar" && 
       location.pathname !== "/account" &&
+<<<<<<< HEAD
 
+=======
+>>>>>>> cfec5d0 (Added dashboard layout and small changes to registration part)
       (
         token ? (
           <HeaderUser token={token} setToken={setToken} />
