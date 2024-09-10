@@ -32,9 +32,12 @@ import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
 import AccommodationRegistrationUI from "./pages/AccommodationRegistrationUI/AccommodationRegistrationUI";
 import PaymentVerification from "./components/PaymentVerification/PaymentVerification";
 
+
 import LandingPageUI from "./pages/LandingPage/LandingPageUI";
 import PropertyListUI from "./pages/SearchAndFilter/PropertyListUI";
 import ViewPropertyUI from "./pages/PropertyDetailsUI/ViewPropertyUI";
+import CalendarUI from "./pages/PropertyManagementUI/components/calendar/calendarUI";
+
 import CalendarUI from "./pages/PropertyManagementUI/components/calendar/calendarUI";
 
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
@@ -42,6 +45,10 @@ import AccommodationRegistration from "./pages/AccommodationRegistrationUI/Accom
 
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
 import EditPropertyUI from "./pages/PropertyManagementUI/components/EditPropertyUI";
+import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
+
+import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
+import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
@@ -90,10 +97,6 @@ function App() {
       location.pathname !== "/admin/listings" && 
       location.pathname !== "/admin/calendar" && 
       location.pathname !== "/account" &&
-<<<<<<< HEAD
-
-=======
->>>>>>> cfec5d0 (Added dashboard layout and small changes to registration part)
       (
         token ? (
           <HeaderUser token={token} setToken={setToken} />
@@ -135,6 +138,7 @@ function App() {
           {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}
 
           
+          
           <Route
             path="/accommodation/property/:propertyid"
             element={<ViewPropertyUI />}
@@ -150,6 +154,12 @@ function App() {
           />
           <Route path="/calendar" element={<CalendarUI />} />
           <Route path="/edit-property/:id" element={<EditPropertyUI />} />
+          <Route path="/edit-property/:id" element={<EditPropertyUI />} />
+             {/* Admin Routes */}
+          <Route path="/admin/overview" element={<Dashboard />} />
+          <Route path="/admin/listings" element={< PropertyManagementListingUI/>} />
+          <Route path="/admin/calendar" element={<CalendarUI />} />
+          <Route path="/admin/guests" element={<AccommodationReservationUI />} />
           <Route path="/edit-property/:id" element={<EditPropertyUI />} />
              {/* Admin Routes */}
           <Route path="/admin/overview" element={<Dashboard />} />
