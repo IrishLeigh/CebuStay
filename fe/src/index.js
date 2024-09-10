@@ -14,8 +14,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
 import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
 import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";
-// import TopRated from "./InteractiveMap/components/TopRated";
-import ViewNearby from "./InteractiveMap/components/ViewNearby";
+import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
