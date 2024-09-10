@@ -7,14 +7,15 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Box,
 } from "@mui/material";
 
 import axios from "axios";
-import Sidebar from "./components/sidebar";
-import WeekPicker from "./components/calendar";
-import CalendarComponent from "./components/CalendarComponent";
+// import Sidebar from "../sidebar";
+// import WeekPicker from "../../../Calendar/components/calendar";
+import CalendarComponent from "./CalendarComponent";
 
-const CalendarUI = () => {
+const CalendarLayout = () => {
   const [propertyData, setPropertyData] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState("");
   const [selectedUnitType, setSelectedUnitType] = useState("");
@@ -81,9 +82,9 @@ const CalendarUI = () => {
   }, [user]);
 
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar />
-      <div style={{ flex: 1 }}>
+    <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
+      {/* <Sidebar />
+      <div style={{ flex: 1 }}> */}
         <Container>
           <div style={{ paddingTop: "2rem", margin: "0 auto" }}>
             <Paper
@@ -156,9 +157,9 @@ const CalendarUI = () => {
           </div>
           <CalendarComponent propertyTypes={propertyTypes} />
         </Container>
-      </div>
-    </div>
+      {/* </div> */}
+    </Box>
   );
 };
 
-export default CalendarUI;
+export default CalendarLayout;

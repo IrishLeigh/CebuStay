@@ -10,12 +10,12 @@ import {
   stepConnectorClasses,
   StepConnector,
   styled,
+  Backdrop,
+  CircularProgress,
+  BackdropRoot,
 } from "@mui/material";
-import AnimatePage from "./components/AnimatedPage";
 import PropertyType from "./components/PropertyType";
 import PropertyType2 from "./components/PropertyType2";
-import HeaderUser from "../../components/Header/HeaderUser";
-import PropertyInformation from "./components/PropertyInformation";
 import RoomDetails from "./components/RoomDetails";
 import BedroomDetails2 from "./components/BedRoomDetails";
 import UploadPhotos from "./components/UploadPhotos";
@@ -25,7 +25,7 @@ import Policies from "./components/BookingPolicies";
 import UnitPricing from "./components/PropertyPricing";
 import PaymentMethods from "./components/PaymentMethods";
 import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
-import ConfirmationModal from "./components/ConfirmationModal";
+import ConfirmationModal from "./modals/ConfirmationModal";
 import AmenitiesFacilitiesServices from "./components/AmmenitiesServiciesFacilities";
 import PropTypes from "prop-types";
 import Check from "@mui/icons-material/Check";
@@ -37,18 +37,20 @@ import MultiPropertyLocation from "./components/MultiUnitRegistration/MultiPrope
 import MultiRoomsAndBeds from "./components/MultiUnitRegistration/MultiRoomsAndBeds";
 import MultiUnitFacilities from "./components/MultiUnitRegistration/MultiUnitFacilities";
 import PropertyRulesPolicies from "./components/MultiUnitRegistration/PropertyRulesPolicies";
+import SuccessModal from "./modals/SuccessModal";
+import { useNavigate } from "react-router-dom";
 
 // Customized Stepper
 const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
   color: theme.palette.mode === "dark" ? theme.palette.grey[700] : "#eaeaf0",
   display: "flex",
-  height: 22,
+  height: 2,
   alignItems: "center",
   ...(ownerState.active && {
-    color: "#784af4",
+    color: "#16B4DD",
   }),
   "& .QontoStepIcon-completedIcon": {
-    color: "#784af4",
+    color: "#16B4DD",
     zIndex: 1,
     fontSize: 18,
   },
@@ -61,18 +63,18 @@ const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
 }));
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 10,
+    top: 2,
     left: "calc(-50% + 16px)",
     right: "calc(50% + 16px)",
   },
   [`&.${stepConnectorClasses.active}`]: {
     [`& .${stepConnectorClasses.line}`]: {
-      borderColor: "#784af4",
+      borderColor: "#16B4DD",
     },
   },
   [`&.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
-      borderColor: "#784af4",
+      borderColor: "#16B4DD",
     },
   },
   [`& .${stepConnectorClasses.line}`]: {
@@ -112,6 +114,7 @@ QontoStepIcon.propTypes = {
 export default function AccommodationRegistration() {
   const handleSubmit = async () => {
     if (isSingleUnit) {
+      //For Single Unit
       await handleSubmitSingle();
     } else if (isMultiUnit) {
       await handleSubmitMulti();
@@ -145,6 +148,12 @@ export default function AccommodationRegistration() {
   const [paymentData, setPaymentData] = useState({});
   const [hostData, setHostData] = useState({});
   const { addressData, mapVal, location, location2 } = useData();
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); // State for confirmation modal
+  const [isLoading, setIsLoading] = useState(false); // State for loading spinner
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  
 
   // Determine if the selected property type is single or multi-unit
   const isSingleUnit =
@@ -169,15 +178,13 @@ export default function AccommodationRegistration() {
   const stepsFlowA = [
     "Property",
     "Type",
-    "Unit",
-    "Basic",
+    "Basic Info",
     "Room",
-    "Bedroom",
+    "Bed",
     "Photos",
     "Location",
     "Amenities",
     "Rules",
-    "Policies",
     "Pricing",
     "Payment",
     "Partnership",
@@ -221,6 +228,19 @@ export default function AccommodationRegistration() {
     }
   }, []);
 
+  // Modals and Loaders
+  const openConfirmationModal = () => {
+    setIsConfirmationModalOpen(true); // Open the confirmation modal
+  };
+
+  const closeConfirmationModal = () => {
+    setIsConfirmationModalOpen(false); // Close the confirmation modal
+  };
+
+  const closeSuccessModal = () => {
+    setIsSuccessModalOpen(false); // Close the success modal
+    navigate('/'); // Redirect to the homepage
+  };
   // useEffect to update locationDetails whenever addressData or mapVal changes
   useEffect(() => {
     setLocationDetails({ addressData, mapVal });
@@ -304,6 +324,8 @@ export default function AccommodationRegistration() {
   };
 
   const handleSubmitSingle = async () => {
+    //
+    setIsLoading(true); // Show the loading spinner
     let missingFields = [];
 
     console.log("selectedPropertyType:", selectedPropertyType);
@@ -686,7 +708,8 @@ export default function AccommodationRegistration() {
                                 location(null);
                                 alert("Form submitted successfully!");
                                 alert("Form submitted successfully!");
-                                setIsModalOpen(false);
+                                setIsLoading(false); // Hide the loading spinner
+                                setIsSuccessModalOpen(true); 
                               }
                             }
                           }
@@ -707,6 +730,8 @@ export default function AccommodationRegistration() {
         alert("Submission failed. Please try again later.");
       } finally {
         // Hide modal and reset loading state after a delay
+        setIsLoading(false); // Hide the loading spinner
+        
       }
     }
   };
@@ -1151,11 +1176,19 @@ export default function AccommodationRegistration() {
                   />
                 )}
                 {step === 2 && (
-                  <PropertyInformation
-                    onPropertyInformationChange={
+                  // <PropertyInformation
+                  //   onPropertyInformationChange={
+                  //     handlePropertyInformationChange
+                  //   }
+                  //   parentPropertyInfo={propertyInfo}
+                  //   handleNext={handleNext}
+                  //   handleBack={handleBack}
+                  // />
+                  <MultiPropertyInformation
+                    onMultiPropertyInformationChange={
                       handlePropertyInformationChange
                     }
-                    parentPropertyInfo={propertyInfo}
+                    parentMultiPropertyInfo={propertyInfo}
                     handleNext={handleNext}
                     handleBack={handleBack}
                   />
@@ -1186,7 +1219,11 @@ export default function AccommodationRegistration() {
                   />
                 )}
                 {step === 6 && (
-                  <AddressForm
+                  // <AddressForm
+                  //   handleNext={handleNext}
+                  //   handleBack={handleBack}
+                  // />
+                  <MultiPropertyLocation
                     handleNext={handleNext}
                     handleBack={handleBack}
                   />
@@ -1200,22 +1237,31 @@ export default function AccommodationRegistration() {
                   />
                 )}
                 {step === 8 && (
-                  <HouseRules
-                    onHouseRulesDataChange={handleHouseRulesDataChange}
-                    parentHouseRules={houseRulesData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
+                //   <HouseRules
+                //     onHouseRulesDataChange={handleHouseRulesDataChange}
+                //     parentHouseRules={houseRulesData}
+                //     handleNext={handleNext}
+                //     handleBack={handleBack}
+                //   />
+                // )}
+                // {step === 9 && (
+                //   <Policies
+                //     onPoliciesDataChange={handlePoliciesDataChange}
+                //     parentPoliciesData={policiesData}
+                //     handleNext={handleNext}
+                //     handleBack={handleBack}
+                //   />
+                // )}
+                  <PropertyRulesPolicies
+                      onPoliciesDataChange={handlePoliciesDataChange}
+                      parentPoliciesData={policiesData}
+                      onHouseRulesDataChange={handleHouseRulesDataChange}
+                      parentHouseRules={houseRulesData}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
                 )}
                 {step === 9 && (
-                  <Policies
-                    onPoliciesDataChange={handlePoliciesDataChange}
-                    parentPoliciesData={policiesData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 10 && (
                   <UnitPricing
                     onUnitPricingChange={handleUnitPricing}
                     parentUnitPricing={unitPricing}
@@ -1223,7 +1269,7 @@ export default function AccommodationRegistration() {
                     handleBack={handleBack}
                   />
                 )}
-                {step === 11 && (
+                {step === 10 && (
                   <PaymentMethods
                     onPaymentDataChange={handlePaymentDataChange}
                     parentPaymentData={paymentData}
@@ -1231,7 +1277,7 @@ export default function AccommodationRegistration() {
                     handleBack={handleBack}
                   />
                 )}
-                {step === 12 && (
+                {step === 11 && (
                   <PartnerVerification
                     onHostDataChange={handleHostDataChange}
                     parentHostData={hostData}
@@ -1315,14 +1361,38 @@ export default function AccommodationRegistration() {
                 {/* Other steps for multi unit */}
               </>
             )}
+           {/* Render circular progress indicator while loading */}
+            {/* Render circular progress indicator while loading */}
+              {isLoading && (
+              <Backdrop
+                open={isLoading}
+                style={{ zIndex: 1301, color: '#fff' }} // Make sure the backdrop is visible
+              >
+                <CircularProgress color="inherit" />
+                <p>Please wait...</p>
+              </Backdrop>
+            )}
 
-            {isModalOpen && (
+              {/* Render confirmation modal */}
+              {/* <ConfirmationModal
+                isOpen={isConfirmationModalOpen}
+                onConfirm={() => {
+                  closeConfirmationModal();
+                  handleSubmit(); // Proceed with submission after confirmation
+                }}
+                onCancel={closeConfirmationModal}
+              /> */}
               <ConfirmationModal
                 isOpen={isModalOpen}
-                closeModal={closeModal}
+                closeModal={isModalOpen}
                 handleSubmit={handleSubmit}
               />
-            )}
+
+              {/* Render success modal */}
+              <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={closeSuccessModal}
+              />
 
             <footer>
               <Stepper

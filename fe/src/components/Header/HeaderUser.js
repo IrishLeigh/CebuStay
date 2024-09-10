@@ -19,7 +19,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import './NavigationBar.css'; // Import the CSS file from '../NavigationBar.css';
 
 const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
-const settings = ['Account', 'Your Listings', 'Logout'];
+const settings = ['Account', 'Your Properties', 'Logout'];
 
 function HeaderUser({ token, setToken }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -59,8 +59,8 @@ function HeaderUser({ token, setToken }) {
           navigate('/account');
         }
         break;
-      case 'Your Listings':
-        navigate('/listings');
+      case 'Your Properties':
+        navigate('/admin/overview');
         break;
       case 'Logout':
         setOpenLogoutModal(true);

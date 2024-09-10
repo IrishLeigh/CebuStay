@@ -960,9 +960,9 @@ export default function AccommodationRegistrationUI() {
         </div>
       </Modal> */}
         {/* Loading indicator */}
-        <Backdrop open={open}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
+          <Backdrop open={open}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
         <Modal
           aria-labelledby="transition-modal-title"
           aria-describedby="transition-modal-description"
