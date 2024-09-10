@@ -2,25 +2,20 @@ import React, { useRef } from "react";
 import { Card, CardContent, Typography, Box, IconButton } from "@mui/material";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import PropertyCard from "./PropertyCard"; // Import PropertyCard
+import TopRated from "./TopRated";
 
-const MainCard = () => {
+const ViewNearby = () => {
   const scrollRef = useRef(null);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: -250,
-        behavior: "smooth",
-      });
+      scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: 250,
-        behavior: "smooth",
-      });
+      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
 
@@ -35,22 +30,13 @@ const MainCard = () => {
       discountedPrice: "₱3,636",
     },
     {
-      name: "Another Place",
-      image: "/anotherplace.jpg",
-      rating: "8.7 Very Good",
-      reviews: 45,
-      location: "Some Location",
-      originalPrice: "₱5,000",
-      discountedPrice: "₱4,500",
-    },
-    {
-      name: "Another Place",
-      image: "/anotherplace.jpg",
-      rating: "8.7 Very Good",
-      reviews: 45,
-      location: "Some Location",
-      originalPrice: "₱5,000",
-      discountedPrice: "₱4,500",
+      name: "Bubble Siargao",
+      image: "/bubblesiargao.jpg",
+      rating: "9.3 Exceptional",
+      reviews: 71,
+      location: "General Luna, Siargao Island",
+      originalPrice: "₱4,154",
+      discountedPrice: "₱3,636",
     },
     {
       name: "Bubble Siargao",
@@ -61,39 +47,106 @@ const MainCard = () => {
       originalPrice: "₱4,154",
       discountedPrice: "₱3,636",
     },
-    // Add more places if needed
+    {
+      name: "Bubble Siargao",
+      image: "/bubblesiargao.jpg",
+      rating: "9.3 Exceptional",
+      reviews: 71,
+      location: "General Luna, Siargao Island",
+      originalPrice: "₱4,154",
+      discountedPrice: "₱3,636",
+    },
+    {
+      name: "Bubble Siargao",
+      image: "/bubblesiargao.jpg",
+      rating: "9.3 Exceptional",
+      reviews: 71,
+      location: "General Luna, Siargao Island",
+      originalPrice: "₱4,154",
+      discountedPrice: "₱3,636",
+    },
   ];
 
   return (
-    <Card sx={{ maxWidth: 600, margin: "0 auto", boxShadow: 3 }}>
+    <Card sx={{ maxWidth: 600, margin: "0 auto", position: "relative" }}>
+      <TopRated />
       <CardContent>
-        {/* <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} /> */}
-        {/* Render PropertyCard components with scroll arrows */}
-        <Typography variant="h5" component="div">
+        <Typography
+          variant="h5"
+          component="div"
+          sx={{ fontWeight: "bold", fontSize: "1.2", mb: 2 }}
+        >
           Get inspired by our top-rated
         </Typography>
-        <Box sx={{ display: "flex", alignItems: "center", mt: 3 }}>
-          <IconButton onClick={scrollLeft} sx={{ mr: 1 }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center", position: "relative" }}
+        >
+          {/* Left Arrow Button */}
+          <IconButton
+            onClick={scrollLeft}
+            sx={{
+              position: "absolute",
+              left: 0,
+              zIndex: 2,
+              backgroundColor: "#f0f0f0",
+              borderRadius: "50%",
+              boxShadow: 2,
+              height: "40px",
+              width: "40px",
+              top: "50%",
+              transform: "translateY(-50%)", // Center the button vertically
+            }}
+          >
             <ArrowLeft />
           </IconButton>
+
+          {/* Scrollable Property Cards */}
           <Box
             ref={scrollRef}
             sx={{
               display: "flex",
               overflowX: "auto",
               whiteSpace: "nowrap",
-              gap: 2,
-              padding: "0 8px",
+              gap: 2, // Space between cards
+              px: 2, // Horizontal padding
               flex: 1,
+              alignItems: "center", // Center cards vertically
+              scrollbarWidth: "none", // Hide scrollbar
+              msOverflowStyle: "none", // Hide scrollbar for Internet Explorer and Edge
+              "&::-webkit-scrollbar": {
+                display: "none", // Hide scrollbar for WebKit browsers
+              },
             }}
           >
             {places.map((place, index) => (
-              <Box key={index} sx={{ display: "inline-block", minWidth: 250 }}>
+              <Box
+                key={index}
+                sx={{
+                  flexShrink: 0, // Prevent cards from shrinking
+                  width: 250, // Fixed width for cards
+                }}
+              >
                 <PropertyCard places={[place]} />
               </Box>
             ))}
           </Box>
-          <IconButton onClick={scrollRight} sx={{ ml: 1 }}>
+
+          {/* Right Arrow Button */}
+          <IconButton
+            onClick={scrollRight}
+            sx={{
+              position: "absolute",
+              right: 0,
+              zIndex: 2,
+              backgroundColor: "#f0f0f0",
+              borderRadius: "50%",
+              boxShadow: 2,
+              height: "40px",
+              width: "40px",
+              top: "50%",
+              transform: "translateY(-50%)", // Center the button vertically
+            }}
+          >
             <ArrowRight />
           </IconButton>
         </Box>
@@ -102,4 +155,4 @@ const MainCard = () => {
   );
 };
 
-export default MainCard;
+export default ViewNearby;
