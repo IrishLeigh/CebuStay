@@ -10,11 +10,12 @@ import Sample from "./pages/AccountManagement/Sample";
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
 import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
 import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";
-import TopRated from "./InteractiveMap/components/TopRated";
+// import TopRated from "./InteractiveMap/components/TopRated";
+import ViewNearby from "./InteractiveMap/components/ViewNearby";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -23,7 +24,9 @@ root.render(
       <DataProvider>
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
-            <TopRated />
+            {/* <TopRated /> */}
+            <ViewNearby />
+            {/* <App /> */}
           </GoogleOAuthProvider>
         </UserProvider>
       </DataProvider>
