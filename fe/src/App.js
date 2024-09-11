@@ -90,6 +90,7 @@ function App() {
       location.pathname !== "/admin/listings" && 
       location.pathname !== "/admin/calendar" && 
       location.pathname !== "/account" &&
+
       (
         token ? (
           <HeaderUser token={token} setToken={setToken} />

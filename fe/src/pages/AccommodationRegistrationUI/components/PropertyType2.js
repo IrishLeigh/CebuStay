@@ -44,11 +44,11 @@ export default function PropertyType2({
 
   return (
     
-      <Box sx={{ flexGrow: 1 }}>
+      <Box >
         
           <Container
             maxWidth="md"
-           className="centered-container"
+          //  className="centered-container"
           >
             <AnimatePage>
             <Typography

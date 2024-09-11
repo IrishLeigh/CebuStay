@@ -43,7 +43,7 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
   };
 
   return (
-    <Container maxWidth="md" className="centered-container">
+    <Container  >
       <AnimatePage>
         <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem", textAlign: "left" }}>
           Unlock the door to hosting with CebuStay! List your property and open your doors to guests effortlessly!
