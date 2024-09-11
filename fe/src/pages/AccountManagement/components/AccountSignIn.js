@@ -27,6 +27,7 @@ export default function AccountSignIn({ profile }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
 
   // Update current password from profile
   useEffect(() => {
@@ -48,6 +49,25 @@ export default function AccountSignIn({ profile }) {
 
   const handleSavePassword = async (e) => {
     e.preventDefault();
+  
+    // Check if the new password contains at least one capital letter or symbol
+    const passwordRequirements = /^(?=.*[A-Z])(?=.*[\W_]).+$/;
+  
+    if (!newPassword.match(passwordRequirements)) {
+      setSnackbarMessage("Password must contain at least one symbol or a capital letter");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return; // Stop further execution
+    }
+  
+    // Check if new password matches the confirm password field
+    if (newPassword !== confirmNewPassword) {
+      setSnackbarMessage("Passwords do not match");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return; // Stop further execution
+    }
+  
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
@@ -57,22 +77,30 @@ export default function AccountSignIn({ profile }) {
           password: newPassword,
         }
       );
-      // console.log("Password changed successfully");
+  
+      // Password successfully changed
       setSnackbarMessage("Password Successfully Changed");
       setSnackbarSeverity("success");
       setIsChanged(false); // Reset the state after saving
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
+  
     } catch (error) {
       console.error(error.response.data.message);
       // Handle error state or display an error message to the user
-      setSnackbarMessage("Failed to update password. Please try again later.");
+      
+      if (error.response?.data?.status === "invalid") {
+        setSnackbarMessage("Invalid Password");
+      } else {
+        setSnackbarMessage("An error occurred while changing the password");
+      }
       setSnackbarSeverity("error");
     } finally {
       setSnackbarOpen(true); // Always open the snackbar
     }
   };
+  
 
   const handleCancel = () => {
     setCurrentPassword(profile.currentPassword);
