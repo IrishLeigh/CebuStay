@@ -37,13 +37,33 @@ export default function AccountID({ profile, onUpdateProfile }) {
 
   const handleSaveName = async (e) => {
     e.preventDefault();
+  
+    // Regular expression to allow only alphabetic characters and spaces (if needed)
+    const namePattern = /^[A-Za-z\s]+$/;
+  
+    // Validate the first name
+    if (!namePattern.test(firstName)) {
+      setSnackbarMessage("Invalid first name. Only alphabetic characters are allowed.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+  
+    // Validate the last name
+    if (!namePattern.test(lastName)) {
+      setSnackbarMessage("Invalid last name. Only alphabetic characters are allowed.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+  
     try {
       const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${profile.userid}`, {
         userid: profile.userid,
         firstname: firstName,
         lastname: lastName,
       });
-
+  
       setSnackbarMessage("Personal information updated successfully!");
       setSnackbarSeverity("success");
       setIsChanged(false);
@@ -53,11 +73,12 @@ export default function AccountID({ profile, onUpdateProfile }) {
     } catch (error) {
       setSnackbarMessage("Failed to update data. Please try again later.");
       setSnackbarSeverity("error");
-      console.error('Failed to update data. Please try again later.', error);
+      console.error("Failed to update data. Please try again later.", error);
     } finally {
       setSnackbarOpen(true);
     }
   };
+  
 
   const handleCancel = () => {
     if (profile) {

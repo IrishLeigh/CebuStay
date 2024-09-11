@@ -305,12 +305,12 @@ const LoginUI = ({ setToken }) => {
             {passwordVisibility ? (
               <MdVisibility
                 onClick={togglePasswordVisibility}
-                style={{ paddingRight: "30px" }}
+                style={{ marginRight: "5%" }}
               />
             ) : (
               <MdVisibilityOff
                 onClick={togglePasswordVisibility}
-                style={{ paddingRight: "30px" }}
+                style={{ marginRight: "5%" }}
               />
             )}
           </div>
