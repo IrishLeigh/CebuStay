@@ -1693,9 +1693,10 @@ return (
                 {/* Other steps for multi unit */}
               </>
             )}
-           {/* Render circular progress indicator while loading */}
-            {/* Render circular progress indicator while loading */}
-              {isLoading && (
+
+      </Box>
+        {/* Render circular progress indicator while loading */}
+          {isLoading && (
               <Backdrop
                 open={isLoading}
                 style={{ zIndex: 1301, color: '#fff' }} // Make sure the backdrop is visible
