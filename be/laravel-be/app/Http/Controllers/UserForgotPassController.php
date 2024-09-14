@@ -22,24 +22,60 @@ class UserForgotPassController extends CORS
      */
 
     // UPDATE method User forgot password
+    // public function changePass(Request $request)
+    // {
+    //     $this->enableCors($request);
+    //     $email = $request->input('email');
+    //     $user = UserModel::where('email', $email)->first();
+
+    //     if (!$user) {
+    //         return response()->json(['message' => 'User not found.'], 404);
+    //     }
+    //     $user->password = Hash::make($request->input('password'));
+    //     $user->save();
+
+    //     return response()->json([
+    //         'message' => 'Password updated successfully.',
+    //         'user' => $user,
+    //     ]);
+
+    // }
+
     public function changePass(Request $request)
     {
         $this->enableCors($request);
+    
+        // Retrieve input data
         $email = $request->input('email');
+        $plainPassword = $request->input('password');
+    
+        // Debugging: Log received data
+        \Log::info('Email: ' . $email);
+        \Log::info('Received password: ' . $plainPassword);
+    
+        // Check if user exists
         $user = UserModel::where('email', $email)->first();
-
+    
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
-        $user->password = Hash::make($request->input('password'));
+    
+        // Hash the password
+        $hashedPassword = Hash::make($plainPassword);
+    
+        // Update the user password
+        $user->password = $hashedPassword;
         $user->save();
-
+    
+        // Return response (avoid including plain password in production)
         return response()->json([
             'message' => 'Password updated successfully.',
             'user' => $user,
+            'plain_password' => $plainPassword, // For debugging purposes
+            'hashed_password' => $hashedPassword
         ]);
-
     }
+    
 
     public function sendEmail($firstname, $lastname, $email, $verify_token)
     {
@@ -49,12 +85,12 @@ class UserForgotPassController extends CORS
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
         $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
-        $mail->Password = 'tkuz tiec nnxt zuqj';
+        $mail->Password = 'zwnx vmxk vghl igzt';
 
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;
 
-        $mail->setFrom('misternonoy11@email.com', $firstname);
+        $mail->setFrom('cebustay@gmail.com', "CebuStay");
         $mail->addAddress($email);     //Add a recipient
 
         $mail->isHTML(true);                                  //Set email format to HTML
@@ -69,14 +105,13 @@ class UserForgotPassController extends CORS
         $mail->Body = $email_template;
         try {
             $mail->send();
-            // echo "na send";
             return 1; // Email sent successfully
 
         } catch (Exception $e) {
-            // echo "wala na send";
             return 0; // Error occurred while sending email
         }
     }
+
     private function generateVerificationCode()
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -91,7 +126,7 @@ class UserForgotPassController extends CORS
         $this->enableCors($request);
         $email = $request->input('email');
         $user = UserModel::where('email', $email)->first();
-        if ($user->isverified == 1) {
+        if ($user->isverified === 1) {
             $verify_token = $this->generateVerificationCode();
             $user->verificationtoken = $verify_token;
             $tokenExpiration = Carbon::now()->addMinutes(5);
@@ -104,5 +139,35 @@ class UserForgotPassController extends CORS
         }
 
     }
+
+    public function verifyToken(Request $request)
+    {
+        $this->enableCors($request);
+
+        $verificationToken = $request->input('token');
+        $email = $request->input('email');
+
+        // Find the user by verification token and email
+        $user = UserModel::where('verificationtoken', $verificationToken)
+            ->where('email', $email)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Incorrect code', 'status' => 'error']);
+        }
+
+        // Check if token is expired
+        $tokenExpiration = $user->verification_token_expires_at;
+        if ($tokenExpiration && Carbon::now()->gt($tokenExpiration)) {
+            return response()->json(['message' => 'Verification token expired.', 'status' => 'expired']);
+        }
+
+        // Mark the email as verified
+        $user->isverified = 1;
+        $user->save();
+
+        return response()->json(['message' => 'Email verified successfully.', 'status' => 'success']);
+    }
+
 
 }

@@ -74,6 +74,7 @@ Route::get('/search', [LocationController::class, 'search']);
 // Route::get('/forgotPass', [UserForgotPassController::class, 'changePass']);
 Route::post('/forgotPass', 'App\Http\Controllers\UserForgotPassController@resendEmailCode');
 Route::put('/changepass', 'App\Http\Controllers\UserForgotPassController@changePass');
+Route::post('/passverifytoken', 'App\Http\Controllers\UserForgotPassController@verifyToken');
 
 
 // Routes for additional info
