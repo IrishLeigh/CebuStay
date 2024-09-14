@@ -1,56 +1,50 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+import React, { useState, useEffect, useCallback } from "react";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Button from '@mui/material/Button';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { styled } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
-import { Dialog, Slider } from '@mui/material';
-import Cropper from 'react-easy-crop';
+import Button from "@mui/material/Button";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import { Dialog, Slider } from "@mui/material";
+import Cropper from "react-easy-crop";
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
   height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
+  overflow: "hidden",
+  position: "absolute",
   bottom: 0,
   left: 0,
-  whiteSpace: 'nowrap',
-  width: '100%'
+  whiteSpace: "nowrap",
+  width: "100%",
 });
 
-export default function IndividualHost({ onDataChange, isEditing , parentIndividualData }) {
-  const [data, setData] = useState({
-    FirstName: '',
-    LastName: '',
-    DateOfBirth: '',
-    DisplayName: '',
-    PhoneNumber: '',
-    Email: '',
-    City: '',
-    Province: '',
-    ZipCode: '',
-    PrimaryAddress: '',
-    Describe: '',
-    CalendarLink: '',
-    UploadedImage: null,
-  });
+export default function IndividualHost({
+  onDataChange,
+  isEditing,
+  parentIndividualData,
+}) {
+  const [data, setData] = useState({});
   const [uploadedImage, setUploadedImage] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedArea, setCroppedArea] = useState(null);
   const [open, setOpen] = useState(false);
-
+  useEffect(() => {
+    console.log("parentPartnerData");
+    console.log(parentIndividualData);
+    setData(parentIndividualData);
+  }, []);
   useEffect(() => {
     onDataChange(data); // Callback to parent component when data changes
   }, [data, onDataChange]);
@@ -85,7 +79,7 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
   const handleChangeDate = (date) => {
     setData((prevData) => ({
       ...prevData,
-      DateOfBirth: date.isValid ? date.format('YYYY-MM-DD') : '', // Update DateOfBirth field with formatted date
+      DateOfBirth: date.isValid ? date.format("YYYY-MM-DD") : "", // Update DateOfBirth field with formatted date
     }));
   };
 
@@ -101,7 +95,7 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
   const readFile = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
-      reader.addEventListener('load', () => resolve(reader.result));
+      reader.addEventListener("load", () => resolve(reader.result));
       reader.readAsDataURL(file);
     });
   };
@@ -121,12 +115,14 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
         Host Details
       </Typography>
       {/* Upload Image */}
-      <div style={{
-        border: '2px dashed #ccc',
-        padding: '1rem',
-        borderRadius: '0.8rem',
-        marginBottom: '1rem',
-      }}>
+      <div
+        style={{
+          border: "2px dashed #ccc",
+          padding: "1rem",
+          borderRadius: "0.8rem",
+          marginBottom: "1rem",
+        }}
+      >
         <Typography sx={{ fontSize: "1.125rem" }}>
           Upload your profile photo
         </Typography>
@@ -136,14 +132,14 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
           variant="contained"
           tabIndex={-1}
           startIcon={<CloudUploadIcon />}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           Upload file
           <VisuallyHiddenInput type="file" onChange={handleFileChange} />
         </Button>
         {uploadedImage && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
               <Typography sx={{ fontSize: "1rem" }}>
                 {uploadedImage.name}
               </Typography>
@@ -157,10 +153,10 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
       {/* Profile */}
       <div
         style={{
-          border: '2px dashed #cacaca',
-          padding: '1rem',
-          borderRadius: '10px',
-          marginTop: '1rem',
+          border: "2px dashed #cacaca",
+          padding: "1rem",
+          borderRadius: "10px",
+          marginTop: "1rem",
         }}
       >
         <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
@@ -169,23 +165,30 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
         <Box
           component="form"
           sx={{
-            '& .MuiTextField-root': { m: 1, width: '25ch' },
+            "& .MuiTextField-root": { m: 1, width: "25ch" },
           }}
           noValidate
           autoComplete="off"
         >
           <div>
             <TextField
-              id="FirstName"
+              id="firstname"
               label="First Name"
-              value={data.FirstName}
+              value={data.firstname || ""} // Ensure it's never undefined or null
               onChange={handleChange}
+              InputLabelProps={{
+                shrink: Boolean(data.firstname), // Float the label if there's a value
+              }}
             />
+
             <TextField
-              id="LastName"
+              id="lastName"
               label="Last Name"
-              value={data.LastName}
+              value={data.lastname || ""}
               onChange={handleChange}
+              InputLabelProps={{
+                shrink: Boolean(data.lastname),
+              }}
             />
           </div>
           <div>
@@ -193,19 +196,22 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
               This is the name that will be shown on CebuStay website and app.
             </Typography>
             <TextField
-              id="DisplayName"
+              id="displayname"
               label="Display Name"
-              value={data.DisplayName}
+              value={data.displayname || ""}
               onChange={handleChange}
+              InputLabelProps={{
+                shrink: Boolean(data.displayname),
+              }}
             />
           </div>
           <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker']}>
+              <DemoContainer components={["DatePicker"]}>
                 <DatePicker
-                  id="DateOfBirth"
+                  id="dateofbirth"
                   label="Date of Birth"
-                  value={data.DateOfBirth ? dayjs(data.DateOfBirth) : null}
+                  value={data.dateofbirth ? dayjs(data.dateofbirth) : null}
                   onChange={handleChangeDate}
                 />
               </DemoContainer>
@@ -216,10 +222,10 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
       {/* Contact Details */}
       <div
         style={{
-          border: '2px dashed #cacaca',
-          padding: '1rem',
-          borderRadius: '10px',
-          marginTop: '1rem',
+          border: "2px dashed #cacaca",
+          padding: "1rem",
+          borderRadius: "10px",
+          marginTop: "1rem",
         }}
       >
         <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
@@ -228,24 +234,24 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
         <Box
           component="form"
           sx={{
-            '& .MuiTextField-root': { m: 1, width: '25ch' },
+            "& .MuiTextField-root": { m: 1, width: "25ch" },
           }}
           noValidate
           autoComplete="off"
         >
           <div>
             <TextField
-              id="PhoneNumber"
+              id="contactnumber"
               label="Phone Number"
-              sx={{ width: '30%' }}
-              value={data.PhoneNumber}
+              sx={{ width: "30%" }}
+              value={data.contactnumber}
               onChange={handleChange}
             />
             <TextField
-              id="Email"
+              id="email"
               label="Email"
-              sx={{ width: '50%' }}
-              value={data.Email}
+              sx={{ width: "50%" }}
+              value={data.email}
               onChange={handleChange}
             />
           </div>
@@ -254,10 +260,10 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
       {/* Location Details */}
       <div
         style={{
-          border: '2px dashed #cacaca',
-          padding: '1rem',
-          borderRadius: '10px',
-          marginTop: '1rem',
+          border: "2px dashed #cacaca",
+          padding: "1rem",
+          borderRadius: "10px",
+          marginTop: "1rem",
         }}
       >
         <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
@@ -266,39 +272,39 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
         <Box
           component="form"
           sx={{
-            '& .MuiTextField-root': { m: 1 },
+            "& .MuiTextField-root": { m: 1 },
           }}
           noValidate
           autoComplete="off"
         >
           <div>
             <TextField
-              id="City"
+              id="city"
               label="City"
-              value={data.City}
+              value={data.city}
               onChange={handleChange}
               fullWidth
             />
             <TextField
-              id="Province"
+              id="province"
               label="Province"
-              value={data.Province}
+              value={data.province}
               onChange={handleChange}
               fullWidth
             />
           </div>
           <div>
             <TextField
-              id="ZipCode"
+              id="zipcode"
               label="Zip Code"
-              value={data.ZipCode}
+              value={data.zipcode}
               onChange={handleChange}
               fullWidth
             />
             <TextField
-              id="PrimaryAddress"
+              id="primary_address"
               label="Primary Address"
-              value={data.PrimaryAddress}
+              value={data.primary_address}
               onChange={handleChange}
               fullWidth
             />
@@ -308,21 +314,21 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
       {/* Description */}
       <div
         style={{
-          border: '2px dashed #cacaca',
-          padding: '1rem',
-          borderRadius: '10px',
-          marginTop: '1rem',
+          border: "2px dashed #cacaca",
+          padding: "1rem",
+          borderRadius: "10px",
+          marginTop: "1rem",
         }}
       >
         <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
           Description
         </Typography>
         <TextField
-          id="Describe"
+          id="describe"
           label="Describe Your Accommodation"
           multiline
           rows={4}
-          value={data.Describe}
+          value={data.describe}
           onChange={handleChange}
           fullWidth
         />
@@ -330,27 +336,34 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
       {/* Calendar */}
       <div
         style={{
-          border: '2px dashed #cacaca',
-          padding: '1rem',
-          borderRadius: '10px',
-          marginTop: '1rem',
+          border: "2px dashed #cacaca",
+          padding: "1rem",
+          borderRadius: "10px",
+          marginTop: "1rem",
         }}
       >
         <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
           Calendar
         </Typography>
         <TextField
-          id="CalendarLink"
+          id="calendar"
           label="Calendar Link"
-          value={data.CalendarLink}
+          value={data.calendar}
           onChange={handleChange}
           fullWidth
         />
       </div>
       {/* Image Cropping Dialog */}
-       {/* Crop Dialog */}
-       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Box sx={{ position: 'relative', width: 400, height: 400, backgroundColor: '#333' }}>
+      {/* Crop Dialog */}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <Box
+          sx={{
+            position: "relative",
+            width: 400,
+            height: 400,
+            backgroundColor: "#333",
+          }}
+        >
           <Cropper
             image={imageSrc}
             crop={crop}
@@ -371,7 +384,12 @@ export default function IndividualHost({ onDataChange, isEditing , parentIndivid
             aria-labelledby="Zoom"
             onChange={(e, zoom) => setZoom(zoom)}
           />
-          <Button variant="contained" color="primary" onClick={handleSave} fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            fullWidth
+          >
             Save
           </Button>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
