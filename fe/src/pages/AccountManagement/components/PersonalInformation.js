@@ -27,7 +27,7 @@ const countries = [
 export default function PersonalInformation({ profile, onUpdateProfile }) {
   const [country, setCountry] = useState("");
   const [birthday, setBirthday] = useState("");
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState("");
   const [phoneNumberPrefix, setPhoneNumberPrefix] = useState("");
   const [isChanged, setIsChanged] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -38,8 +38,8 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -52,12 +52,19 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
       setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
       setCountry(profile.country);
       setPhone(profile.cellnumber);
+      const countryCode =
+        countries.find((c) => c.value === profile.country)?.code || "";
+      setPhoneNumberPrefix(countryCode);
     }
   }, [profile]);
 
   useEffect(() => {
     if (profile) {
-      setIsChanged((profile.birthday ? formatDate(profile.birthday) : "") !== birthday || country !== profile.country || phone !== profile.cellnumber);
+      setIsChanged(
+        (profile.birthday ? formatDate(profile.birthday) : "") !== birthday ||
+          country !== profile.country ||
+          phone !== profile.cellnumber
+      );
       setEditedProfile({
         ...profile,
         birthday: birthday,
@@ -67,37 +74,59 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     }
   }, [birthday, country, phone, profile]);
 
+  const handleCountryChange = (e) => {
+    const selectedCountry = e.target.value;
+    const countryCode =
+      countries.find((c) => c.value === selectedCountry)?.code || "";
+    setCountry(selectedCountry);
+    setPhoneNumberPrefix(countryCode);
+    setPhone(""); // Reset phone number when country changes
+  };
+
+  const handlePhoneChange = (e) => {
+    setPhone(e.target.value);
+  };
+
   const handleSaveInfo = async (e) => {
     e.preventDefault();
-  
+
     const phoneRegex = /^09\d{9}$/;
     if (!phoneRegex.test(phone)) {
-      setSnackbarMessage('Invalid phone number format. Please enter a valid 11-digit mobile number starting with 09 (e.g., 09123456789).');
-      setSnackbarSeverity('error');
+      setSnackbarMessage(
+        "Invalid phone number format. Please enter a valid 11-digit mobile number starting with 09 (e.g., 09123456789)."
+      );
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-  
+
     const selectedDate = new Date(birthday);
     const today = new Date();
-    const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-  
+    const minAgeDate = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    );
+
     if (selectedDate > minAgeDate) {
-      setSnackbarMessage('You must be at least 18 years old to proceed.');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("You must be at least 18 years old to proceed.");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-  
+
     try {
-      const formattedDate = selectedDate.toISOString().split('T')[0];
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${profile.userid}`, {
-        userid: profile.userid,
-        birthday: formattedDate || null,
-        country: country,
-        cellnumber: phone,
-      });
-      
+      const formattedDate = selectedDate.toISOString().split("T")[0];
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        {
+          userid: profile.userid,
+          birthday: formattedDate || null,
+          country: country,
+          cellnumber: phone,
+        }
+      );
+
       setSnackbarMessage("Personal information updated successfully!");
       setSnackbarSeverity("success");
       setIsChanged(false);
@@ -107,12 +136,12 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     } catch (error) {
       setSnackbarMessage("Failed to update data. Please try again later.");
       setSnackbarSeverity("error");
-      console.error('Failed to update data. Please try again later.', error);
+      console.error("Failed to update data. Please try again later.", error);
     } finally {
       setSnackbarOpen(true);
     }
   };
-  
+
   const handleCancel = () => {
     if (profile) {
       setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
@@ -169,7 +198,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           select
           label="Country"
           value={country}
-          onChange={(e) => setCountry(e.target.value)}
+          onChange={handleCountryChange}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
@@ -195,7 +224,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           id="outlined-required-phone"
           label="Phone Number"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={handlePhoneChange}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
@@ -207,19 +236,28 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
                 <Phone />
               </InputAdornment>
             ),
+            startAdornment: (
+              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                {phoneNumberPrefix}
+              </InputAdornment>
+            ),
           }}
         />
 
         <div className="account-btn-cntr">
           <button
-            className={`save-btn ${isChanged ? 'save-btn-withChanges' : 'save-btn-withoutChanges'}`}
+            className={`save-btn ${
+              isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+            }`}
             onClick={handleSaveInfo}
             disabled={!isChanged}
           >
             Save
           </button>
           <button
-            className={`cancel-btn ${isChanged ? 'cancel-btn-withChanges' : 'cancel-btn-withoutChanges'}`}
+            className={`cancel-btn ${
+              isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+            }`}
             onClick={handleCancel}
             disabled={!isChanged}
           >
