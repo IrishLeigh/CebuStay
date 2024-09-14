@@ -42,6 +42,9 @@ class HouseruleController extends CORS
         $houseRule->noise_restrictions = $request->input('noise_restrictions', null);
         $houseRule->quiet_hours_start = $request->input('quiet_hours_start', null);
         $houseRule->quiet_hours_end = $request->input('quiet_hours_end', null);
+        if ($houseRule->quiet_hours_start && $houseRule->quiet_hours_end) {
+            $houseRule->noise_restrictions = true;
+        }
         $houseRule->check_in_from = $request->input('check_in_from', null);
         $houseRule->check_in_until = $request->input('check_in_until', null);
         $houseRule->check_out_from = $request->input('check_out_from', null);

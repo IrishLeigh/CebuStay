@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EditUserProfileController;
@@ -13,7 +14,7 @@ use App\Http\Controllers\HouseRuleController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CheckoutSessionController;
-
+use App\Http\Controllers\UnitDetailsController;
 use App\Http\Controllers\WebhookController;
 
 // Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);
@@ -118,6 +119,7 @@ Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
 Route::post('/upload-unit-files', 'App\Http\Controllers\FileController@uploadUnitFiles');
 //GET IMAGES
 Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty');
+Route::get('/getfiles-gallery/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty_gallery');
 Route::get('/getallfirstimg', 'App\Http\Controllers\FileController@getAllFirstImg');
 //User 
 Route::post('/becomeManager', 'App\Http\Controllers\UserController@becomeManager');
@@ -149,8 +151,15 @@ Route::post('/reviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsControl
 Route::get('/getreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getReviewsAndRatingByReviewId');
 Route::get('/getallreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getAllReviewsAndRatings');
 
-//EDIT PROPERTY INFO
+//EDIT PROPERTY INFO Single Unit
 Route::put('/updatepropertyinfo/{propertyid}', [PropertyController::class, 'UpdatePropertyInfo']);
-Route::put('/updatepropertylocation/{propertyid}', [LocationController::class, 'edit']);
-
-
+Route::put('/updateunitinfo/{unitid}', [UnitDetailsController::class, 'UpdateUnitInfo']);
+Route::put('/updateunitinfo-singleunit/{unitid}', [UnitDetailsController::class, 'UpdateUnitInfoSingle']);
+Route::post('/deleteunitroom-singleunit/{unitid}', [UnitDetailsController::class, 'DeleteUnitRoomSingle']);
+Route::post('/deletebedroom-singleunit/{unitid}', [UnitDetailsController::class, 'DeleteBedRoomSingle']);
+Route::post('/deletebed-singleunit/{unitid}', [UnitDetailsController::class, 'DeleteBedSingle']);
+route::post('/updatepropertyfiles-singleunit/{propertyid}', [FileController::class, 'updateCoverPhotosSingle']);
+route::post('/updatepropertyfiles-gallerysingleunit/{propertyid}', [FileController::class, 'updateGalleryPhotosSingle']);
+route::post('/updatepropertybenefits-single/{propertyid}', [PropertyController::class, 'updatePropertyBenefits']);
+route::post('/updatepropertyrules-single/{propertyid}', [PropertyController::class, 'updatePropertyRules']);
+route::post('/updatepropertypricingpayment-single/{propertyid}', [PropertyController::class, 'updatePropertyPricePayment']);
