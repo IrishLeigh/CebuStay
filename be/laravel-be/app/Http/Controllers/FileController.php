@@ -97,6 +97,288 @@ class FileController extends CORS
         }
     }
 
+    public function updateCoverPhotosSingle(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+        $accessToken = $this->token(); // Fetch Google Drive API token
+        $success = false;
+        $nochange = true; // Default to true; if changes occur, this will be set to false
+        $client = new Client();
+
+        // Handle file deletion
+        if ($request->has('toDelete')) {
+            $toDelete = json_decode($request->input('toDelete'), true); // Decode JSON string
+            $failedDeletes = [];
+            $successCount = 0;
+
+            foreach ($toDelete as $fileData) {
+                try {
+                    $existingFile = File::find($fileData['id']);
+
+                    if (!$existingFile) {
+                        $failedDeletes[] = [
+                            'id' => $fileData['id'],
+                            'message' => 'File not found in database'
+                        ];
+                        continue; // Skip to the next file
+                    }
+
+                    // Delete the file from Google Drive
+                    $deleteResponse = $client->request('DELETE', 'https://www.googleapis.com/drive/v3/files/' . $existingFile->file_id, [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $accessToken,
+                        ],
+                    ]);
+
+                    if ($deleteResponse->getStatusCode() == 204) {
+                        $existingFile->delete();
+                        $successCount++;
+                        $nochange = false; // Change occurred: files deleted
+                    } else {
+                        $failedDeletes[] = [
+                            'id' => $fileData['id'],
+                            'message' => 'Failed to delete from Google Drive'
+                        ];
+                    }
+                } catch (GuzzleException $e) {
+                    $failedDeletes[] = [
+                        'id' => $fileData['id'],
+                        'message' => $e->getMessage(),
+                    ];
+                }
+            }
+
+            if (count($failedDeletes) > 0) {
+                return response()->json([
+                    'message' => 'Some files failed to delete',
+                    'status' => 'partial_success',
+                    'failed_deletes' => $failedDeletes
+                ]);
+            }
+        }
+
+        // Handle file upload
+        if ($request->hasFile('files')) {
+            $files = $request->file('files');
+            $folderId = \Config('services.google.folder_id');
+            $uploadedFiles = $this->uploadMultipleFiles($files, $folderId, $propertyid);
+
+            if ($uploadedFiles) {
+                $success = true;
+                $nochange = false; // Change occurred: files uploaded
+            } else {
+                // Handle case where uploadMultipleFiles might return an error or partial success
+                return response()->json([
+                    'message' => 'Failed to upload some files',
+                    'status' => 'partial_success',
+                    'errors' => $uploadedFiles['errors'] ?? []
+                ]);
+            }
+        }
+
+        // Handle the response
+        if ($nochange) {
+            // No changes were made
+            return response()->json(['message' => 'No changes made', 'status' => 'null']);
+        }
+
+        // Changes were made
+        if ($success) {
+            $propertyimgs = File::where('propertyid', $propertyid)
+                ->whereNull('unitid')
+                ->where('iscover', 1)
+                ->get();
+
+            $imglist = $propertyimgs->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'src' => $item->file_url,
+                    'caption' => $item->caption
+                ];
+            });
+            return response()->json(['message' => 'Cover photos updated successfully', 'status' => 'success', 'coverPhotos' => $imglist]);
+        } else {
+            return response()->json(['message' => 'Failed to update cover photos', 'status' => 'error']);
+        }
+    }
+
+    public function updateGalleryPhotosSingle(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+        $accessToken = $this->token(); // Fetch Google Drive API token
+        $success = false;
+        $nochange = true; // Default to true; if changes occur, this will be set to false
+        $client = new Client();
+
+        // Handle file deletion
+        if ($request->has('toDelete')) {
+            $toDelete = json_decode($request->input('toDelete'), true); // Decode JSON string
+            $failedDeletes = [];
+            $successCount = 0;
+
+            foreach ($toDelete as $fileData) {
+                try {
+                    $existingFile = File::find($fileData['id']);
+
+                    if (!$existingFile) {
+                        $failedDeletes[] = [
+                            'id' => $fileData['id'],
+                            'message' => 'File not found in database'
+                        ];
+                        continue; // Skip to the next file
+                    }
+
+                    // Delete the file from Google Drive
+                    $deleteResponse = $client->request('DELETE', 'https://www.googleapis.com/drive/v3/files/' . $existingFile->file_id, [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $accessToken,
+                        ],
+                    ]);
+
+                    if ($deleteResponse->getStatusCode() == 204) {
+                        $existingFile->delete();
+                        $successCount++;
+                        $nochange = false; // Change occurred: files deleted
+                    } else {
+                        $failedDeletes[] = [
+                            'id' => $fileData['id'],
+                            'message' => 'Failed to delete from Google Drive'
+                        ];
+                    }
+                } catch (GuzzleException $e) {
+                    $failedDeletes[] = [
+                        'id' => $fileData['id'],
+                        'message' => $e->getMessage(),
+                    ];
+                }
+            }
+
+            // if (count($failedDeletes) > 0) {
+            //     return response()->json([
+            //         'message' => 'Some files failed to delete',
+            //         'status' => 'partial_success',
+            //         'failed_deletes' => $failedDeletes
+            //     ]);
+            // }
+        }
+
+        // Handle file upload
+        if ($request->hasFile('files')) {
+            $files = $request->file('files');
+            $folderId = \Config('services.google.folder_id');
+            $uploadedFiles = $this->uploadMultipleFiles_Gallery($files, $folderId, $propertyid);
+
+            if ($uploadedFiles) {
+                $success = true;
+                $nochange = false; // Change occurred: files uploaded
+            } else {
+                // Handle case where uploadMultipleFiles might return an error or partial success
+                return response()->json([
+                    'message' => 'Failed to upload some files',
+                    'status' => 'partial_success',
+                    'errors' => $uploadedFiles['errors'] ?? []
+                ]);
+            }
+        }
+
+        // Handle the response
+        if ($nochange) {
+            // No changes were made
+            return response()->json(['message' => 'No changes made', 'status' => 'null']);
+        }
+
+        // Changes were made
+        if ($success) {
+            $propertyimgs = File::where('propertyid', $propertyid)
+                ->whereNull('unitid')
+                ->where('iscover', 0)
+                ->get();
+
+            $imglist = $propertyimgs->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'src' => $item->file_url,
+                    'caption' => $item->caption
+                ];
+            });
+            return response()->json(['message' => 'Gallery photos updated successfully', 'status' => 'success', 'galleryPhotos' => $imglist]);
+        }
+    }
+
+    public function uploadMultipleFiles_Gallery(array $files, string $folderId, string $propertyid)
+    {
+        $accessToken = $this->token();
+        $client = new Client();
+        $uploadedFiles = [];
+
+        foreach ($files as $file) {
+            // Validate each file if necessary
+            if (!$file->isValid()) {
+                continue; // Skip invalid files
+            }
+
+            $name = $file->getClientOriginalName();
+            $path = $file->getRealPath();
+
+            try {
+                $metadata = [
+                    'name' => $name,
+                    'parents' => [$folderId],
+                ];
+
+                $fileContents = file_get_contents($path);
+
+                // Create multipart form data
+                $multipart = [
+                    [
+                        'name' => 'metadata',
+                        'contents' => json_encode($metadata),
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                    ],
+                    [
+                        'name' => 'file',
+                        'contents' => $fileContents,
+                        'filename' => $name,
+                    ],
+                ];
+
+                // Create a new PSR-7 multipart stream
+                $stream = new Psr7\MultipartStream($multipart);
+
+                $response = $client->request('POST', 'https://www.googleapis.com/upload/drive/v3/files', [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $accessToken,
+                        'Content-Type' => 'multipart/related; boundary=' . $stream->getBoundary(),
+                    ],
+                    'body' => $stream,
+                ]);
+
+                $file_id = json_decode($response->getBody()->getContents())->id;
+                // $file_url = "https://drive.google.com/thumbnail?id=$file_id";
+                $file_url = "https://lh3.googleusercontent.com/d/$file_id=w1000?authuser=0";
+                $newFile = new File(); // Assuming File model namespace
+                $newFile->file_name = $name;
+                $newFile->file_id = $file_id;
+                $newFile->file_url = $file_url;
+                $newFile->propertyid = $propertyid;
+                $newFile->iscover = 0;
+                $newFile->save();
+
+                $uploadedFiles[] = [
+                    'file_name' => $name,
+                    'file_id' => $file_id,
+                ];
+            } catch (GuzzleException $e) {
+                // Handle any exceptions if needed
+                continue; // Skip this file and move to the next one
+            }
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
+    }
+
     public function uploadFiles(Request $request)
     {
         $this->enableCors($request);
@@ -128,7 +410,6 @@ class FileController extends CORS
         // Process the uploaded files as needed
         return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
     }
-
 
     public function uploadMultipleFiles(array $files, string $folderId, string $propertyid)
     {
@@ -188,6 +469,7 @@ class FileController extends CORS
                 $newFile->file_id = $file_id;
                 $newFile->file_url = $file_url;
                 $newFile->propertyid = $propertyid;
+                $newFile->iscover = 1;
                 $newFile->save();
 
                 $uploadedFiles[] = [
@@ -208,16 +490,50 @@ class FileController extends CORS
         $this->enableCors($request);
         $id = $request->id;
         $caption = $request->caption;
+
         $file = File::find($id);
+        $propertyid = $file->propertyid;
         $file->caption = $caption;
         $file->save();
-        return response()->json(['status' => 'success', 'message' => 'File caption added']);
+        $propertyimgs = File::where('propertyid', $propertyid)
+            ->whereNull('unitid')
+            ->where('iscover', $request->input('iscover') ?: 0)
+            ->get();
+
+
+        $imglist = $propertyimgs->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'src' => $item->file_url,
+                'caption' => $item->caption
+            ];
+        });
+        return response()->json(['status' => 'success', 'message' => 'File caption added', 'coverPhotos' => $imglist]);
     }
 
-    public function getImgByProperty($propertyid)
+    public function getImgByProperty($propertyid)   //GETTING COVER IMG OF A PROPERTY
     {
         $propertyimgs = File::where('propertyid', $propertyid)
             ->whereNull('unitid')
+            ->where('iscover', 1)
+            ->get();
+
+        $imglist = $propertyimgs->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'src' => $item->file_url,
+                'caption' => $item->caption
+            ];
+        });
+
+        return response()->json(['img' => $imglist]);
+    }
+
+    public function getImgByProperty_gallery($propertyid)   //GETTING COVER IMG OF A PROPERTY
+    {
+        $propertyimgs = File::where('propertyid', $propertyid)
+            ->whereNull('unitid')
+            ->where('iscover', 0)
             ->get();
 
         $imglist = $propertyimgs->map(function ($item) {

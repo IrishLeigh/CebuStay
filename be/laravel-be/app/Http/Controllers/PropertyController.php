@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PropertyPricing;
 use Illuminate\Support\Facades\DB;
 use App\Models\BedroomType;
 use App\Models\BookingPolicy;
@@ -14,9 +15,10 @@ use App\Models\Amenity;
 use App\Models\Facilities;
 use App\Models\Service;
 use App\Models\PropertyOwner;
-use App\Models\PropertyOwnership;
+use App\Models\Location;
 use App\Models\PropertyPaymentMethods;
 use App\Models\File;
+use App\Models\HouseRule;
 
 class PropertyController extends CORS
 {
@@ -164,6 +166,7 @@ class PropertyController extends CORS
 
                 if (!empty($beds)) {
                     $unitbeds[] = [
+                        'bedroomid' => $bedroom->bedroomid,
                         'bedroomnum' => $bedroom->bedroomnum,
                         'beds' => $beds
                     ];
@@ -214,6 +217,70 @@ class PropertyController extends CORS
         ]);
     }
 
+    public function UpdatePropertyInfo(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+
+        // Find the property by ID
+        $property = Property::find($propertyid);
+        if (!$property) {
+            return response()->json(["status" => 'error', "message" => "Property not found"], 404);
+        }
+
+        // Update fields if they are not null
+        if ($request->has('property_name')) {
+            $property->property_name = $request->input('property_name');
+        }
+        if ($request->has('property_type')) {
+            $property->property_type = $request->input('property_type');
+        }
+        if ($request->has('property_desc')) {
+            $property->property_desc = $request->input('property_desc');
+        }
+        if ($request->has('property_directions')) {
+            $property->property_directions = $request->input('property_directions');
+        }
+        if ($request->has('unit_type')) {
+            $property->unit_type = $request->input('unit_type');
+        }
+
+        $property->save();
+
+        // Update or create a Home entry if necessary
+        if ($request->has('unit_type')) {
+            $home = Home::firstOrNew(['propertyid' => $propertyid]);
+            if ($property->property_type == "Multi Unit") {
+                $home->unit_type = "Multi Unit";
+            } else if ($property->property_type == "Home" || $property->property_type == "Apartment") {
+                $home->unit_type = $request->input('unit_type') ?? "Single Unit";
+            }
+            $home->save();
+        }
+
+        // Find the location by property ID
+        $location = Location::where('propertyid', $propertyid)->first();
+        if (!$location) {
+            return response()->json(["status" => 'error', "message" => "Location not found"], 404);
+        }
+
+        // Update fields only if they are provided (not null)
+        if ($request->has('address')) {
+            $location->address = $request->input('address');
+        }
+        if ($request->has('zipcode')) {
+            $location->zipcode = $request->input('zipcode');
+        }
+        if ($request->has('latitude')) {
+            $location->latitude = $request->input('latitude');
+        }
+        if ($request->has('longitude')) {
+            $location->longitude = $request->input('longitude');
+        }
+
+        $location->save();
+
+        return response()->json(["status" => 'success', "message" => "Property Info updated successfully", "propertyid" => $propertyid]);
+    }
 
     public function getAllProperties(Request $request)
     {
@@ -453,5 +520,265 @@ class PropertyController extends CORS
         return response()->json($properties);
     }
 
+    public function updatePropertyBenefits(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+
+        if ($request->input('updated_amenities')) {
+            $updated_amenities = $request->input('updated_amenities');
+
+            // Get the existing amenities, transform the names, and extract them into an array of strings
+            $existing_amenities = Amenity::where('propertyid', $propertyid)
+                ->whereNull('unitid')
+                ->get()
+                ->map(function ($amenity) {
+                    // Transform the name to lowercase and remove spaces
+                    return strtolower(str_replace(' ', '', $amenity->amenity_name));
+                })
+                ->toArray(); // Convert the collection to an array of strings
+            // Loop through the updated amenities and add new ones
+            foreach ($updated_amenities as $updated_amenity) {
+                // Transform the updated amenity to lowercase and remove spaces for comparison
+                $updated_amenity_transformed = strtolower(str_replace(' ', '', $updated_amenity));
+
+                // Check if the transformed updated amenity is not in the existing amenities
+                if (!in_array($updated_amenity_transformed, $existing_amenities)) {
+                    $new_amenity = new Amenity();
+                    $new_amenity->propertyid = $propertyid;
+
+                    // Capitalize the first letter of each word
+                    $new_amenity->amenity_name = ucwords(strtolower($updated_amenity));
+
+                    $new_amenity->ismulti = true;
+                    $new_amenity->save();
+                }
+            }
+
+
+            // Loop through the existing amenities and remove any that are not in the updated list
+            foreach ($existing_amenities as $existing_amenity) {
+                if (!in_array($existing_amenity, $updated_amenities)) {
+                    Amenity::where('propertyid', $propertyid)
+                        ->where('amenity_name', $existing_amenity)
+                        ->delete();
+                }
+            }
+
+            $updated_amenities = Amenity::where('propertyid', $propertyid)
+                ->whereNull('unitid')
+                ->get()
+                ->map(function ($amenity) {
+                    // Transform the name to lowercase and remove spaces
+                    return strtolower(str_replace(' ', '', $amenity->amenity_name));
+                })
+                ->toArray(); // Convert the collection to an array of strings
+        }
+        if ($request->input('updated_facilities')) {
+            $updated_facilities = $request->input('updated_facilities');
+
+            // Get the existing facilities, transform the names, and extract them into an array of strings
+            $existing_facilities = Facilities::where('propertyid', $propertyid)
+                ->get()
+                ->map(function ($facility) {
+                    // Transform the name to lowercase and remove spaces
+                    return strtolower(str_replace(' ', '', $facility->facilities_name));
+                })
+                ->toArray(); // Convert the collection to an array of strings
+
+            // Loop through the updated facilities and add new ones
+            foreach ($updated_facilities as $updated_facility) {
+                // Transform the updated facility to lowercase and remove spaces for comparison
+                $updated_facility_transformed = strtolower(str_replace(' ', '', $updated_facility));
+
+                // Check if the transformed updated facility is not in the existing facilities
+                if (!in_array($updated_facility_transformed, $existing_facilities)) {
+                    $new_facility = new Facilities();
+                    $new_facility->propertyid = $propertyid;
+
+                    // Capitalize the first letter of each word
+                    $new_facility->facilities_name = ucwords(strtolower($updated_facility));
+
+                    $new_facility->save();
+                }
+            }
+
+            // Loop through the existing facilities and remove any that are not in the updated list
+            foreach ($existing_facilities as $existing_facility) {
+                if (!in_array($existing_facility, $updated_facilities)) {
+                    Facilities::where('propertyid', $propertyid)
+                        ->where('facilities_name', $existing_facility)
+                        ->delete();
+                }
+            }
+
+            // Update the list of existing facilities after modifications
+            $updated_facilities = Facilities::where('propertyid', $propertyid)
+                ->get()
+                ->map(function ($facility) {
+                    // Transform the name to lowercase and remove spaces
+                    return strtolower(str_replace(' ', '', $facility->facilities_name));
+                })
+                ->toArray(); // Convert the collection to an array of strings
+        }
+
+        if ($request->input('updated_services')) {
+            $updated_services = $request->input('updated_services');
+
+            // Get the existing services, transform the names, and extract them into an array of strings
+            $existing_services = Service::where('propertyid', $propertyid)
+                ->whereNull('unitid')
+                ->get()
+                ->map(function ($service) {
+                    // Transform the name to lowercase and remove spaces
+                    return strtolower(str_replace(' ', '', $service->service_name));
+                })
+                ->toArray(); // Convert the collection to an array of strings
+
+            // Loop through the updated services and add new ones
+            foreach ($updated_services as $updated_service) {
+                // Transform the updated service to lowercase and remove spaces for comparison
+                $updated_service_transformed = strtolower(str_replace(' ', '', $updated_service));
+
+                // Check if the transformed updated service is not in the existing services
+                if (!in_array($updated_service_transformed, $existing_services)) {
+                    $new_service = new Service();
+                    $new_service->propertyid = $propertyid;
+
+                    // Capitalize the first letter of each word
+                    $new_service->service_name = ucwords(strtolower($updated_service));
+
+                    $new_service->ismulti = true; // Assuming you want to set ismulti as true
+                    $new_service->save();
+                }
+            }
+
+            // Loop through the existing services and remove any that are not in the updated list
+            foreach ($existing_services as $existing_service) {
+                if (!in_array($existing_service, $updated_services)) {
+                    Service::where('propertyid', $propertyid)
+                        ->where('service_name', $existing_service)
+                        ->delete();
+                }
+            }
+
+            // Update the list of existing services after modifications
+            $updated_services = Service::where('propertyid', $propertyid)
+                ->whereNull('unitid')
+                ->get()
+                ->map(function ($service) {
+                    // Transform the name to lowercase and remove spaces
+                    return strtolower(str_replace(' ', '', $service->service_name));
+                })
+                ->toArray(); // Convert the collection to an array of strings
+        }
+
+
+        return response()->json(['status' => 'success', 'updatedAmenities' => $updated_amenities, 'updatedFacilities' => $updated_facilities, 'updatedServices' => $updated_services]);
+    }
+
+    public function updatePropertyRules(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+        if ($request->input('updated_rules')) {
+            $updated_rules = $request->input('updated_rules');
+            $existing_rules = HouseRule::where('propertyid', $propertyid)->first();
+            $existing_rules->check_in_from = $updated_rules['checkInFrom'];
+            $existing_rules->check_in_until = $updated_rules['checkInUntil'];
+            $existing_rules->check_out_from = $updated_rules['checkOutFrom'];
+            $existing_rules->check_out_until = $updated_rules['checkOutUntil'];
+            $existing_rules->custom_rules = ($updated_rules['customRules'] == "") ? "None" : $updated_rules['customRules'];
+            $existing_rules->parties_events_allowed = $updated_rules['partiesAllowed'];
+            $existing_rules->pets_allowed = $updated_rules['petsAllowed'];
+            if ($updated_rules['noise_restrictions'] == false) {
+                $existing_rules->noise_restrictions = false;
+                $existing_rules->quiet_hours_end = null;
+                $existing_rules->quiet_hours_start = null;
+            } else if ($updated_rules['quietHoursStart'] && $updated_rules['quietHoursEnd']) {
+                $existing_rules->quiet_hours_end = $updated_rules['quietHoursEnd'];
+                $existing_rules->quiet_hours_start = $updated_rules['quietHoursStart'];
+                $existing_rules->noise_restrictions = true;
+            }
+            // $existing_rules->noise_restrictions = $updated_rules['noise_restrictions'] ;
+            // if ($updated_rules['noise_restrictions']) {
+            //     $existing_rules->quiet_hours_end = "";
+            //     $existing_rules->quiet_hours_start = "";
+            // } else {
+            //     $existing_rules->quiet_hours_end = $updated_rules['quietHoursEnd'];
+            //     $existing_rules->quiet_hours_start = $updated_rules['quietHoursStart'];
+            // }
+
+            $existing_rules->smoking_allowed = $updated_rules['smokingAllowed'];
+            $existing_rules->save();
+            $raw_get_updated_rules = HouseRule::where('propertyid', $propertyid)->first();
+            $get_updated_rules = HouseRule::where('propertyid', $propertyid)->first();
+            $new_rules = [
+                'checkInFrom' => $get_updated_rules->check_in_from,
+                'checkInUntil' => $get_updated_rules->check_in_until,
+                'checkOutFrom' => $get_updated_rules->check_out_from,
+                'checkOutUntil' => $get_updated_rules->check_out_until,
+                'customRules' => $get_updated_rules->custom_rules,
+                'partiesAllowed' => $get_updated_rules->parties_events_allowed ? true : false,
+                'petsAllowed' => $get_updated_rules->pets_allowed ? true : false,
+                'noise_restrictions' => $get_updated_rules->noise_restrictions ? true : false,
+                'quietHoursEnd' => $get_updated_rules->quiet_hours_end,
+                'quietHoursStart' => $get_updated_rules->quiet_hours_start,
+                'smokingAllowed' => $get_updated_rules->smoking_allowed ? true : false
+            ];
+        }
+        if ($request->input('updated_policies')) {
+            $updated_policies = $request->input('updated_policies');
+            $existing_policies = BookingPolicy::where('propertyid', $propertyid)->first();
+            $existing_policies->is_cancel_plan = $updated_policies['standardCancellation'];
+            $existing_policies->cancel_days = $updated_policies['standardCancellation'] ? $updated_policies['cancellationDays'] : null;
+            $existing_policies->non_refundable = $updated_policies['nonRefundableRate'];
+            $existing_policies->modification_plan = $updated_policies['modificationPlan'];
+            $existing_policies->offer_discount = $updated_policies['offerDiscounts'];
+            $existing_policies->save();
+            $raw_get_updated_policies = BookingPolicy::where('propertyid', $propertyid)->first();
+            $get_updated_policies = BookingPolicy::where('propertyid', $propertyid)->first();
+            $new_policies = [
+                'standardCancellation' => $get_updated_policies->is_cancel_plan ? true : false,
+                'cancellationDays' => $get_updated_policies->cancel_days,
+                'nonRefundableRate' => $get_updated_policies->non_refundable ? true : false,
+                'modificationPlan' => $get_updated_policies->modification_plan ? true : false,
+                'offerDiscounts' => $get_updated_policies->offer_discount ? true : false
+            ];
+        }
+        return response()->json([
+            'status' => 'success',
+            'updatedRules' => $new_rules,
+            'rawUpdatedRules' => $raw_get_updated_rules,
+            'updatedPolicies' => $new_policies,
+            'rawUpdatedPolicies' => $raw_get_updated_policies
+        ]);
+    }
+
+    public function updatePropertyPricePayment(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+        if ($request->input('unitPricing')) {
+            $updated_pricing = $request->input('unitPricing');
+            $pricingid = UnitDetails::where('propertyid', $propertyid)
+                ->first();
+            $get_pricing = PropertyPricing::where('proppricingid', $pricingid->proppricingid)->first();
+            $get_pricing->min_price = $updated_pricing['min_price'];
+            $get_pricing->save();
+            $new_pricing = PropertyPricing::where('proppricingid', $pricingid->proppricingid)->first();
+
+        }
+        if ($request->input('paymentData')) {
+            $updated_payment = $request->input('paymentData');
+            $get_payment = PropertyPaymentMethods::where('propertyid', $propertyid)->first();
+            $get_payment->paymentmethod = $updated_payment['paymentmethod'];
+            $get_payment->isonline = $updated_payment['isonline'];
+            $get_payment->save();
+            $new_payment = PropertyPaymentMethods::where('propertyid', $propertyid)->first();
+        }
+        return response()->json([
+            'status' => 'success',
+            'updatedPricing' => $new_pricing,
+            'updatedPayment' => $new_payment
+        ]);
+    }
 
 }
