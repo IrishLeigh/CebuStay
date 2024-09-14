@@ -24,6 +24,8 @@ Route::put('/update-payment-link', [PaymentController::class, 'updatePaymentLink
 Route::get('/getpayments', [PaymentController::class, 'getPayments']);
 Route::post('/payment-callback', [PaymentController::class, 'paymentCallback']);
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
+Route::post('/refund-payment', [PaymentController::class, 'refundPayment']);
+Route::get('refund', [PaymentController::class, 'getRefund']);
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
 Route::post('/users', [UserController::class, 'create']);

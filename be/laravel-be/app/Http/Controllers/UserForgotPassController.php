@@ -70,9 +70,7 @@ class UserForgotPassController extends CORS
         // Return response (avoid including plain password in production)
         return response()->json([
             'message' => 'Password updated successfully.',
-            'user' => $user,
-            'plain_password' => $plainPassword, // For debugging purposes
-            'hashed_password' => $hashedPassword
+            // 'user' => $user,
         ]);
     }
     

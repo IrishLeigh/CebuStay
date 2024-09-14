@@ -84,8 +84,31 @@ class PayMongoService
             throw new \Exception('Checkout URL not found in the response.');
         }
 
+    }
 
-  
+    public function getRefund($refundId)
+    {
+        try {
+            // Send the GET request to retrieve refund details
+            $response = $this->client->request('GET', 'refunds/' . $refundId, [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Basic ' . base64_encode(env('PAYMONGO_SECRET_KEY') . ':'), // PayMongo API key
+                ],
+            ]);
+
+            // Parse the response
+            $refundData = json_decode($response->getBody(), true);
+
+            // Return the refund data
+            return $refundData;
+
+        } catch (\Exception $e) {
+            // Return the error message if the request fails
+            return [
+                'error' => $e->getMessage()
+            ];
+        }
     }
     
     

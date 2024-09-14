@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Services\PayMongoService;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use GuzzleHttp\Client;
 
 class PaymentController extends CORS
 {
@@ -21,23 +22,23 @@ class PaymentController extends CORS
     {
         // Enable CORS if needed
         $this->enableCors($request);
-    
+
         // Get request data
         $amount = $request->input('amount');
         $description = $request->input('description');
         $returnUrl = $request->input('return_url');
-        $bookingId = $request->input('bookingid'); 
-    
+        $bookingId = $request->input('bookingid');
+
         // Create the checkout session using the PayMongo service
         try {
             $checkoutUrl = $this->payMongoService->createCheckoutSession($amount, $description, $returnUrl, $bookingId);
-    
+
             // Save the payment record in the database
             $payment = new Payment();
             $payment->amount = $amount / 100;
             $payment->description = $description;
             $payment->save();
-    
+
             // Return the payment record along with the PayMongo checkout session link
             return response()->json([
                 'payment' => $payment,
@@ -49,7 +50,7 @@ class PaymentController extends CORS
             ], 500);
         }
     }
-    
+
 
 
     public function getPayments(Request $request)
@@ -60,7 +61,7 @@ class PaymentController extends CORS
         $pid = $booking->pid;
         $payments = Payment::find($pid);
 
-      
+
         return response()->json($payments);
     }
 
@@ -94,6 +95,84 @@ class PaymentController extends CORS
             ], 400);
         }
     }
+
+    public function refundPayment(Request $request)
+    {
+        $this->enableCors($request);
+
+        // Get request data
+        $paymentId = $request->input('payment_id');
+        $amount = $request->input('amount');
+        $reason = $request->input('reason', 'others'); // Default reason is 'others'
+
+        if (!$paymentId || !$amount) {
+            return response()->json(['error' => 'Payment ID and amount are required.'], 400);
+        }
+
+        // Create a Guzzle client to handle the refund request
+        $client = new Client();
+
+        try {
+            // Prepare the PayMongo secret key
+            $apiKey = env('PAYMONGO_SECRET_KEY', 'sk_test_eFrCmpKXktDTxx7avwDX7uBQ'); // Replace with your secret key
+            $encodedApiKey = base64_encode($apiKey . ':');
+
+            // Send the refund request to PayMongo
+            $response = $client->request('POST', 'https://api.paymongo.com/v1/refunds', [
+                'body' => json_encode([
+                    'data' => [
+                        'attributes' => [
+                            'amount' => $amount * 100, // Convert amount to centavos
+                            'payment_id' => $paymentId,
+                            'reason' => $reason,
+                        ]
+                    ]
+                ]),
+                'headers' => [
+                    'Authorization' => 'Basic ' . $encodedApiKey,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ]
+            ]);
+
+            // Parse the response
+            $refundData = json_decode($response->getBody(), true);
+
+            // Return the refund data
+            return response()->json([
+                'message' => 'Refund successful',
+                'refund' => $refundData,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getRefund(Request $request)
+    {
+        $this->enableCors($request);
+
+        // Get refund ID from request
+        $refundId = $request->input('refund_id');
+
+        if (!$refundId) {
+            return response()->json(['error' => 'Refund ID is required'], 400);
+        }
+
+        // Use the PayMongo service to retrieve the refund data
+        $refundData = $this->payMongoService->getRefund($refundId);
+
+        if (isset($refundData['error'])) {
+            return response()->json(['error' => $refundData['error']], 500);
+        }
+
+        // Return the refund details
+        return response()->json($refundData, 200);
+    }
+
 
 
 
