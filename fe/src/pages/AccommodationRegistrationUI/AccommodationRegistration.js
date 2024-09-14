@@ -911,117 +911,116 @@ export default function AccommodationRegistration() {
                 }
               );
               console.log("Unit Details Res:", resRoom);
-              const unitids = Array.isArray(resRoom.data.unitid)
-                ? resRoom.data.unitid
-                : [resRoom.data.unitid];
+              // const unitids = Array.isArray(resRoom.data.unitid)
+              //   ? resRoom.data.unitid
+              //   : [resRoom.data.unitid];
               if (resRoom.data.status === "success") {
-                for (const unitid of unitids) {
-                  const unitpriceres = await axios.post(
-                    "http://127.0.0.1:8000/api/propertypricing",
-                    {
-                      unitid: unitid,
-                      max_price: element.maxPrice,
-                      min_price: element.basePrice,
-                      profit: element.profit,
-                    }
-                  );
-                  console.log("Unit Price Res:", unitpriceres);
-                  if (unitpriceres.data.status === "success") {
-                    let counter = 0;
-                    for (const amenity of element.selectedAmenities) {
-                      // Make a POST request for each amenity
-                      const resAmenity = await axios.post(
-                        "http://127.0.0.1:8000/api/amenities",
-                        {
-                          propertyid: resPropertid.data.propertyid,
-                          amenity_name: amenity,
-                          unitid: unitid,
-                        }
-                      );
-                      if (resAmenity) {
-                        counter = counter + 1;
-                      }
-                    }
-                    if (counter !== 0) {
-                      console.log("Amenity successful");
-                    }
-                    for (const service of element.selectedServices) {
-                      // Make a POST request for each amenity
-                      const resService = await axios.post(
-                        "http://127.0.0.1:8000/api/services",
-                        {
-                          propertyid: resPropertid.data.propertyid,
-                          service_name: service,
-                          unitid: unitid,
-                        }
-                      );
-                      if (resService) {
-                        counter = counter + 1;
-                      }
-                    }
-                    if (counter !== 0) {
-                      console.log("Service successful");
-                    }
+                const unitid = resRoom.data.unitid;
+                // for (const unitid of unitids) {
+                const unitpriceres = await axios.post(
+                  "http://127.0.0.1:8000/api/propertypricing",
+                  {
+                    unitid: unitid,
+                    max_price: element.maxPrice,
+                    min_price: element.basePrice,
+                    profit: element.profit,
                   }
-                  const formdata = new FormData();
-                  formdata.append("propertyid", propertyid);
-                  formdata.append("unitid", unitid);
-                  if (!Array.isArray(element.photos)) {
-                    console.error("element.photos is not an array.");
-                    return;
-                  }
-                  try {
-                    await Promise.all(
-                      element.photos.map(async (base64Image, index) => {
-                        const filename = `unitImage${index}.jpg`;
-                        const file = await base64ToFile(base64Image, filename);
-                        formdata.append("files[]", file);
-                      })
-                    );
-                  } catch (error) {
-                    console.error("Error converting base64 to file:", error);
-                    return;
-                  }
-                  for (let pair of formdata.entries()) {
-                    console.log(pair[0] + ":", pair[1]);
-                  }
-                  const resImgUpload = await axios.post(
-                    "http://127.0.0.1:8000/api/upload-unit-files",
-                    formdata,
-                    {
-                      headers: {
-                        "Content-Type": "multipart/form-data",
-                      },
-                    }
-                  );
-                  console.log("Result Image Axios", resImgUpload);
-                  if (unitpriceres.data.status === "success") {
-                    const bedroomDetailsData = [
-                      Object.fromEntries(
-                        Object.entries(element.bedDetails).map(
-                          ([key, value]) => {
-                            let newKey = key;
-                            if (key === "double") {
-                              newKey = "doubleBed";
-                            } else if (key === "superLarge") {
-                              newKey = "superLargeBed";
-                            }
-                            return [newKey, value.quantity];
-                          }
-                        )
-                      ),
-                    ];
-                    console.log("Bedroom Details Data:", bedroomDetailsData);
-                    const unitroomres = await axios.post(
-                      "http://127.0.0.1:8000/api/bedroomtype",
+                );
+                console.log("Unit Price Res:", unitpriceres);
+                if (unitpriceres.data.status === "success") {
+                  let counter = 0;
+                  for (const amenity of element.selectedAmenities) {
+                    // Make a POST request for each amenity
+                    const resAmenity = await axios.post(
+                      "http://127.0.0.1:8000/api/amenities",
                       {
+                        propertyid: resPropertid.data.propertyid,
+                        amenity_name: amenity,
                         unitid: unitid,
-                        bedroomDetailsData: bedroomDetailsData,
                       }
                     );
-                    console.log("Unit Room Res:", unitroomres);
+                    if (resAmenity) {
+                      counter = counter + 1;
+                    }
+                  }
+                  if (counter !== 0) {
+                    console.log("Amenity successful");
+                  }
+                  for (const service of element.selectedServices) {
+                    // Make a POST request for each amenity
+                    const resService = await axios.post(
+                      "http://127.0.0.1:8000/api/services",
+                      {
+                        propertyid: resPropertid.data.propertyid,
+                        service_name: service,
+                        unitid: unitid,
+                      }
+                    );
+                    if (resService) {
+                      counter = counter + 1;
+                    }
+                  }
+                  if (counter !== 0) {
+                    console.log("Service successful");
                   }
                 }
+                const formdata = new FormData();
+                formdata.append("propertyid", propertyid);
+                formdata.append("unitid", unitid);
+                if (!Array.isArray(element.photos)) {
+                  console.error("element.photos is not an array.");
+                  return;
+                }
+                try {
+                  await Promise.all(
+                    element.photos.map(async (base64Image, index) => {
+                      const filename = `unitImage${index}.jpg`;
+                      const file = await base64ToFile(base64Image, filename);
+                      formdata.append("files[]", file);
+                    })
+                  );
+                } catch (error) {
+                  console.error("Error converting base64 to file:", error);
+                  return;
+                }
+                for (let pair of formdata.entries()) {
+                  console.log(pair[0] + ":", pair[1]);
+                }
+                const resImgUpload = await axios.post(
+                  "http://127.0.0.1:8000/api/upload-unit-files",
+                  formdata,
+                  {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                    },
+                  }
+                );
+                console.log("Result Image Axios", resImgUpload);
+                if (unitpriceres.data.status === "success") {
+                  const bedroomDetailsData = [
+                    Object.fromEntries(
+                      Object.entries(element.bedDetails).map(([key, value]) => {
+                        let newKey = key;
+                        if (key === "double") {
+                          newKey = "doubleBed";
+                        } else if (key === "superLarge") {
+                          newKey = "superLargeBed";
+                        }
+                        return [newKey, value.quantity];
+                      })
+                    ),
+                  ];
+                  console.log("Bedroom Details Data:", bedroomDetailsData);
+                  const unitroomres = await axios.post(
+                    "http://127.0.0.1:8000/api/bedroomtype",
+                    {
+                      unitid: unitid,
+                      bedroomDetailsData: bedroomDetailsData,
+                    }
+                  );
+                  console.log("Unit Room Res:", unitroomres);
+                }
+                // }
               }
             }
           }
