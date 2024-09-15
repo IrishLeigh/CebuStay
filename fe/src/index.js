@@ -16,6 +16,8 @@ import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
 import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";\
 // import TopRated from "./InteractiveMap/components/TopRated";
 import ViewNearby from "./InteractiveMap/components/ViewNearby";
+import CompanyHost from "./pages/AccommodationRegistrationUI/components/Partnership/companyHost";
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

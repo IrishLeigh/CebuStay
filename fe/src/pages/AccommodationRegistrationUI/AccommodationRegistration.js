@@ -27,7 +27,7 @@ import HouseRules from "./components/HouseRules";
 import Policies from "./components/BookingPolicies";
 import UnitPricing from "./components/PropertyPricing";
 import PaymentMethods from "./components/PaymentMethods";
-import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
+import PartnerVerification from "./components/Partnership/partnerVerification";
 import ConfirmationModal from "./modals/ConfirmationModal";
 import AmenitiesFacilitiesServices from "./components/AmmenitiesServiciesFacilities";
 import PropTypes from "prop-types";
@@ -44,6 +44,8 @@ import SuccessModal from "./modals/SuccessModal";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import ComplianceModal from "./modals/ComplianceModal";
+import { ThemeProvider } from '@mui/material/styles';
+import theme from "./components/theme/theme";
 
 // Customized Stepper
 const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
@@ -1455,328 +1457,325 @@ const toggleDrawer = (open) => (event) => {
 // }
 
 return (
-  <Box className="registration-body">
-  <Box
-    sx={{
-      display: "grid",
-      gridTemplateColumns: { xs: "1fr", sm: "250px 1fr" }, // Fixed width for stepper
-      height: "90 vh",
-    }}
-  >
-    {/* Stepper on the left */}
-    <Box
-      sx={{
-        display: { xs: "none", sm: "block" }, // Hide on small screens
-        position: "relative",
-        backgroundColor: "white",
-        padding: "2rem",
-        boxShadow: "0px 0.25em 0.625em rgba(0, 0, 0, 0.1)",
-        overflowY: "auto",
-        width: "250px", // Fixed width for the stepper
-      }}
-    >
-        <Stepper activeStep={step} orientation="vertical">
-          {steps.map((label, index) => (
-            <Step key={index}>
-              <StepButton onClick={() => setStep(index)}>
-                <StepLabel>{label}</StepLabel>
-              </StepButton>
-            </Step>
-          ))}
-        </Stepper>
-      </Box>
-
-      {/* Main content on the right */}
+  <ThemeProvider theme={theme}>
+    <Box className="registration-body">
       <Box
         sx={{
-          padding: "2rem",
-          overflowX: "hidden", // Prevent horizontal scrolling in main content
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", sm: "250px 1fr" }, // Fixed width for stepper
+          height: "90 vh",
         }}
       >
-        {step === 0 && <PropertyType onSelectedTypeChange={handleSelectedTypeChange} handleNext={handleNext} />}
-         {/* Flow A: Single Unit Steps */}
-         {isSingleUnit && (
-              <>
-                {step === 1 && (
-                  <PropertyType2
-                    onSelectedPropertyTypeChange={
-                      handleSelectedPropertyTypeChange
-                    }
-                    parentSelectedPropertyType={selectedPropertyType2}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 2 && (
-                  // <PropertyInformation
-                  //   onPropertyInformationChange={
-                  //     handlePropertyInformationChange
-                  //   }
-                  //   parentPropertyInfo={propertyInfo}
-                  //   handleNext={handleNext}
-                  //   handleBack={handleBack}
-                  // />
-                  <MultiPropertyInformation
-                    onMultiPropertyInformationChange={
-                      handlePropertyInformationChange
-                    }
-                    parentMultiPropertyInfo={propertyInfo}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 3 && (
-                  <RoomDetails
-                    onRoomDetailsChange={handleRoomDetailsChange}
-                    parentUnitDetailsData={unitDetailsData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 4 && (
-                  <BedroomDetails2
-                    onBedroomDetailsChange={handleBedRoomDetailsChange}
-                    parentBedroomDetails={bedroomDetails}
-                    parentTotalQTY={totalQTY}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 5 && (
-                  <UploadPhotos
-                    onImagesChange={handleImagesChange}
-                    parentImages={selectedImages}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 6 && (
-                  // <AddressForm
-                  //   handleNext={handleNext}
-                  //   handleBack={handleBack}
-                  // />
-                  <MultiPropertyLocation
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 7 && (
-                  <AmenitiesFacilitiesServices
-                    onAmenitiesChange={handleAmenitiesChange}
-                    parentAmenities={selectedAmenities}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 8 && (
-                //   <HouseRules
-                //     onHouseRulesDataChange={handleHouseRulesDataChange}
-                //     parentHouseRules={houseRulesData}
-                //     handleNext={handleNext}
-                //     handleBack={handleBack}
-                //   />
-                // )}
-                // {step === 9 && (
-                //   <Policies
-                //     onPoliciesDataChange={handlePoliciesDataChange}
-                //     parentPoliciesData={policiesData}
-                //     handleNext={handleNext}
-                //     handleBack={handleBack}
-                //   />
-                // )}
-                  <PropertyRulesPolicies
-                      onPoliciesDataChange={handlePoliciesDataChange}
-                      parentPoliciesData={policiesData}
-                      onHouseRulesDataChange={handleHouseRulesDataChange}
-                      parentHouseRules={houseRulesData}
-                      handleNext={handleNext}
-                      handleBack={handleBack}
-                    />
-                )}
-                {step === 9 && (
-                  <UnitPricing
-                    onUnitPricingChange={handleUnitPricing}
-                    parentUnitPricing={unitPricing}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 10 && (
-                  <PaymentMethods
-                    onPaymentDataChange={handlePaymentDataChange}
-                    parentPaymentData={paymentData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 11 && (
-                  <PartnerVerification
-                    onHostDataChange={handleHostDataChange}
-                    parentHostData={hostData}
-                    handleBack={handleBack}
-                    openModal={openModal}
-                  />
-                )}
-              </>
-            )}
-
-            {/* Flow B: Multi Unit Steps */}
-            {isMultiUnit && (
-              <>
-                {step === 1 && (
-                  <MultiPropertyInformation
-                    onMultiPropertyInformationChange={
-                      handlePropertyInformationChange
-                    }
-                    parentMultiPropertyInfo={propertyInfo}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 2 && (
-                  <UploadPhotos
-                    onImagesChange={handleImagesChange}
-                    parentImages={selectedImages}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 3 && (
-                  <MultiPropertyLocation
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 4 && (
-                  <MultiRoomsAndBeds
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                    onMultiRoomsAndBedsChange={handleMultiRoomsAndBedsChange}
-                    parentRoomsAndBedsData={multiRoomsAndBeds}
-                  />
-                )}
-                {step === 5 && (
-                  <MultiUnitFacilities
-                    onAmenitiesChange={handleMultiUnitFacilitiesChange}
-                    parentAmenities={multiUnitFacilities}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 6 && (
-                  <PropertyRulesPolicies
-                    onPoliciesDataChange={handlePoliciesDataChange}
-                    parentPoliciesData={policiesData}
-                    onHouseRulesDataChange={handleHouseRulesDataChange}
-                    parentHouseRules={houseRulesData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 7 && (
-                  <PaymentMethods
-                    onPaymentDataChange={handlePaymentDataChange}
-                    parentPaymentData={paymentData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 8 && (
-                  <PartnerVerification
-                    onHostDataChange={handleHostDataChange}
-                    parentHostData={hostData}
-                    handleBack={handleBack}
-                    openModal={openModal}
-                  />
-                )}
-
-                {/* Other steps for multi unit */}
-              </>
-            )}
-
-      </Box>
-        {/* Render circular progress indicator while loading */}
-          {isLoading && (
-              <Backdrop
-                open={isLoading}
-                style={{ zIndex: 1301, color: '#fff' }} // Make sure the backdrop is visible
-              >
-                <CircularProgress color="inherit" />
-                <p>Please wait...</p>
-              </Backdrop>
-            )}
-
-      </Box>
-        {/* Render circular progress indicator while loading */}
-          {isLoading && (
-              <Backdrop
-                open={isLoading}
-                style={{ zIndex: 1301, color: '#fff' }} // Make sure the backdrop is visible
-              >
-                <CircularProgress color="inherit" />
-                <p>Please wait...</p>
-              </Backdrop>
-            )}
-
-          {/* Render Circular Progress while Loading */}
-          {isLoading && (
-            <Backdrop
-              open={isLoading}
-              style={{ zIndex: 1301, color: "#fff" }} // Make sure the backdrop is visible
-            >
-              <CircularProgress color="inherit" />
-              <p>Please wait...</p>
-            </Backdrop>
-          )}
-          <ConfirmationModal
-            isOpen={isModalOpen}
-            closeModal={isModalOpen}
-            handleSubmit={handleSubmit}
-          />
-
-          <SuccessModal isOpen={isSuccessModalOpen} onClose={closeSuccessModal} />
-
-      {/* ComplianceModal */}
-      <ComplianceModal open={openCompliance} onClose={handleCloseCompliance} />
-      {/* Menu icon for mobile view */}
-      <IconButton
-        onClick={toggleDrawer(true)}
-        sx={{
-          display: { xs: "block", sm: "none" },
-          position: "fixed",
-          top: "1rem",
-          left: "1rem",
-          zIndex: 1000,
-        }}
-      >
-        <MenuIcon />
-      </IconButton>
-
-      {/* Drawer for mobile stepper */}
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={toggleDrawer(false)}
-      >
+        {/* Stepper on the left */}
         <Box
           sx={{
-            width: 250,
+            display: { xs: "none", sm: "block" }, // Hide on small screens
+            position: "relative",
+            backgroundColor: "white",
             padding: "2rem",
+            boxShadow: "0px 0.25em 0.625em rgba(0, 0, 0, 0.1)",
+            // overflowY: "auto",
+            width: "250px", // Fixed width for the stepper
           }}
         >
-          <Stepper activeStep={step} orientation="vertical">
-            {steps.map((label, index) => (
-              <Step key={index}>
-                <StepButton onClick={() => setStep(index)}>
-                  <StepLabel>{label}</StepLabel>
-                </StepButton>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
-      </Drawer>
+            <Stepper activeStep={step} orientation="vertical">
+              {steps.map((label, index) => (
+                <Step key={index}>
+                  <StepButton onClick={() => setStep(index)}>
+                    <StepLabel>{label}</StepLabel>
+                  </StepButton>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+
+          {/* Main content on the right */}
+          <Box
+            sx={{
+              padding: "2rem",
+              overflowX: "hidden", // Prevent horizontal scrolling in main content
+            }}
+          >
+            {step === 0 && <PropertyType onSelectedTypeChange={handleSelectedTypeChange} handleNext={handleNext} />}
+            {/* Flow A: Single Unit Steps */}
+            {isSingleUnit && (
+                  <>
+                    {step === 1 && (
+                      <PropertyType2
+                        onSelectedPropertyTypeChange={
+                          handleSelectedPropertyTypeChange
+                        }
+                        parentSelectedPropertyType={selectedPropertyType2}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 2 && (
+                      // <PropertyInformation
+                      //   onPropertyInformationChange={
+                      //     handlePropertyInformationChange
+                      //   }
+                      //   parentPropertyInfo={propertyInfo}
+                      //   handleNext={handleNext}
+                      //   handleBack={handleBack}
+                      // />
+                      <MultiPropertyInformation
+                        onMultiPropertyInformationChange={
+                          handlePropertyInformationChange
+                        }
+                        parentMultiPropertyInfo={propertyInfo}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 3 && (
+                      <RoomDetails
+                        onRoomDetailsChange={handleRoomDetailsChange}
+                        parentUnitDetailsData={unitDetailsData}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 4 && (
+                      <BedroomDetails2
+                        onBedroomDetailsChange={handleBedRoomDetailsChange}
+                        parentBedroomDetails={bedroomDetails}
+                        parentTotalQTY={totalQTY}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 5 && (
+                      <UploadPhotos
+                        onImagesChange={handleImagesChange}
+                        parentImages={selectedImages}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 6 && (
+                      // <AddressForm
+                      //   handleNext={handleNext}
+                      //   handleBack={handleBack}
+                      // />
+                      <MultiPropertyLocation
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 7 && (
+                      <AmenitiesFacilitiesServices
+                        onAmenitiesChange={handleAmenitiesChange}
+                        parentAmenities={selectedAmenities}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 8 && (
+                    //   <HouseRules
+                    //     onHouseRulesDataChange={handleHouseRulesDataChange}
+                    //     parentHouseRules={houseRulesData}
+                    //     handleNext={handleNext}
+                    //     handleBack={handleBack}
+                    //   />
+                    // )}
+                    // {step === 9 && (
+                    //   <Policies
+                    //     onPoliciesDataChange={handlePoliciesDataChange}
+                    //     parentPoliciesData={policiesData}
+                    //     handleNext={handleNext}
+                    //     handleBack={handleBack}
+                    //   />
+                    // )}
+                      <PropertyRulesPolicies
+                          onPoliciesDataChange={handlePoliciesDataChange}
+                          parentPoliciesData={policiesData}
+                          onHouseRulesDataChange={handleHouseRulesDataChange}
+                          parentHouseRules={houseRulesData}
+                          handleNext={handleNext}
+                          handleBack={handleBack}
+                        />
+                    )}
+                    {step === 9 && (
+                      <UnitPricing
+                        onUnitPricingChange={handleUnitPricing}
+                        parentUnitPricing={unitPricing}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 10 && (
+                      <PaymentMethods
+                        onPaymentDataChange={handlePaymentDataChange}
+                        parentPaymentData={paymentData}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 11 && (
+                      <PartnerVerification
+                        onHostDataChange={handleHostDataChange}
+                        parentHostData={hostData}
+                        handleBack={handleBack}
+                        openModal={openModal}
+                      />
+                    )}
+                  </>
+                )}
+
+                {/* Flow B: Multi Unit Steps */}
+                {isMultiUnit && (
+                  <>
+                    {step === 1 && (
+                      <MultiPropertyInformation
+                        onMultiPropertyInformationChange={
+                          handlePropertyInformationChange
+                        }
+                        parentMultiPropertyInfo={propertyInfo}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 2 && (
+                      <UploadPhotos
+                        onImagesChange={handleImagesChange}
+                        parentImages={selectedImages}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 3 && (
+                      <MultiPropertyLocation
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 4 && (
+                      <MultiRoomsAndBeds
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                        onMultiRoomsAndBedsChange={handleMultiRoomsAndBedsChange}
+                        parentRoomsAndBedsData={multiRoomsAndBeds}
+                      />
+                    )}
+                    {step === 5 && (
+                      <MultiUnitFacilities
+                        onAmenitiesChange={handleMultiUnitFacilitiesChange}
+                        parentAmenities={multiUnitFacilities}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 6 && (
+                      <PropertyRulesPolicies
+                        onPoliciesDataChange={handlePoliciesDataChange}
+                        parentPoliciesData={policiesData}
+                        onHouseRulesDataChange={handleHouseRulesDataChange}
+                        parentHouseRules={houseRulesData}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 7 && (
+                      <PaymentMethods
+                        onPaymentDataChange={handlePaymentDataChange}
+                        parentPaymentData={paymentData}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    )}
+                    {step === 8 && (
+                      <PartnerVerification
+                        onHostDataChange={handleHostDataChange}
+                        parentHostData={hostData}
+                        handleBack={handleBack}
+                        openModal={openModal}
+                      />
+                    )}
+
+                    {/* Other steps for multi unit */}
+                  </>
+                )}
+
+          </Box>
+            {/* Render circular progress indicator while loading */}
+              {isLoading && (
+                  <Backdrop
+                    open={isLoading}
+                    style={{ zIndex: 1301, color: '#fff' }} // Make sure the backdrop is visible
+                  >
+                    <CircularProgress color="inherit" />
+                    <p>Please wait...</p>
+                  </Backdrop>
+                )}
+
+              {/* Render Circular Progress while Loading */}
+              {isLoading && (
+                <Backdrop
+                  open={isLoading}
+                  style={{ zIndex: 1301, color: "#fff" }} // Make sure the backdrop is visible
+                >
+                  <CircularProgress color="inherit" />
+                  <p>Please wait...</p>
+                </Backdrop>
+              )}
+              <ConfirmationModal
+                isOpen={isModalOpen}
+                closeModal={closeModal}
+                handleSubmit={handleSubmit}
+              />
+
+              <SuccessModal isOpen={isSuccessModalOpen} onClose={closeSuccessModal} />
+
+          {/* ComplianceModal */}
+          <ComplianceModal open={openCompliance} onClose={handleCloseCompliance} />
+          {/* Menu icon for mobile view */}
+          <IconButton
+            onClick={toggleDrawer(true)}
+            sx={{
+              display: { xs: "block", sm: "none" },
+              position: "fixed",
+              top: "1rem",
+              left: "1rem",
+              zIndex: 1000,
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+        {/* Drawer for mobile stepper */}
+        <Drawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={toggleDrawer(false)}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            position: "fixed",
+            top: "1rem",
+            left: "1rem",
+            zIndex: 1000,
+          }}
+        >
+          <Box
+            sx={{
+              width: 250,
+              padding: "2rem",
+            }}
+          >
+            <Stepper activeStep={step} orientation="vertical">
+              {steps.map((label, index) => (
+                <Step key={index}>
+                  <StepButton onClick={() => setStep(index)}>
+                    <StepLabel>{label}</StepLabel>
+                  </StepButton>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+        </Drawer>
+      </Box>
     </Box>
-   </Box>
+  </ThemeProvider>
   );
 };
 

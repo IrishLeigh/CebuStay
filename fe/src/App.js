@@ -54,6 +54,7 @@ import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
 import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 
+
 // import SearchFilter from './SearchFilter_User/SearchFilter';
 function App() {
   const location = useLocation(); // Use useLocation hook to get the current route path

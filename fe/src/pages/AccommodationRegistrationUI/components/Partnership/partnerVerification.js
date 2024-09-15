@@ -1,18 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { Grid, RadioGroup } from '@mui/material';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
+import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button } from '@mui/material';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
-import Button from '@mui/material/Button';
-import '../../../components/Button/NextButton.css';
-import AnimatePage from '../../../pages/AccommodationRegistrationUI/components/AnimatedPage';
+import AnimatePage from '../AnimatedPage';
 
-export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack,openModal }) {
+export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack, openModal }) {
   const [hostType, setHostType] = useState('');
   const [individualData, setIndividualData] = useState({});
   const [companyData, setCompanyData] = useState({});
@@ -40,45 +36,55 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
     setCompanyData(data);
   };
 
-  const memoizedOnHostDataChange = useCallback(onHostDataChange, []);
-
-  useEffect(() => {
-    const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
-    memoizedOnHostDataChange(dataToSend);
-  }, [hostType, individualData, companyData, memoizedOnHostDataChange]);
+  // useEffect(() => {
+  //   const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+  //   onHostDataChange(dataToSend);
+  // }, [hostType, individualData, companyData, onHostDataChange]);
 
   const validateAndProceed = () => {
-    if ((hostType === 'Individual' && Object.keys(individualData).length > 0) ||
-        (hostType === 'Company' && Object.keys(companyData).length > 0)) {
-      const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
-      onHostDataChange(dataToSend);
-      openModal();
+    // Helper function to check for empty fields
+    const getEmptyFields = (data) => {
+      // Check if data is not an empty object
+      if (Object.keys(data).length === 0) {
+        return ['All fields are empty'];
+      }
+      return Object.keys(data).filter(key => !data[key]);
+    };
   
-    } else {
-      alert("Please provide the necessary information.");
+    // Validate Individual host data
+    if (hostType === 'Individual') {
+      const emptyFields = getEmptyFields(individualData);
+      if (emptyFields.length > 0) {
+        alert(`Please fill in the following fields for the individual host: ${emptyFields.join(', ')}.`);
+        return;
+      }
     }
+  
+    // Validate Company host data
+    if (hostType === 'Company') {
+      const emptyFields = getEmptyFields(companyData);
+      if (emptyFields.length > 0) {
+        alert(`Please fill in the following fields for the company host: ${emptyFields.join(', ')}.`);
+        return;
+      }
+    }
+  
+    // If no validation errors, proceed to submit the data
+    const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+    onHostDataChange(dataToSend);
+    openModal();
+    alert("Successfully submitted!");
   };
+  
+  console.log ("hostType", hostType);
+  console.log ("individualData", individualData);
+  console.log ("companyData", companyData);
 
   return (
     <Container maxWidth="lg">
-       <AnimatePage>
+      <AnimatePage>
         <Grid container spacing={2} className="centered-container">
           <Grid item xs={6} sx={{ textAlign: "left" }}></Grid>
-      {/* <Box
-       
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <Typography sx={{ fontSize: "2rem" ,fontFamily: "Poppins, sans-serif"}} fontWeight="bold">
-              Compliance and Trust
-            </Typography>
-
-            <Typography sx={{ fontSize: "1.5rem", width: "100%",fontFamily: "Poppins, sans-serif" }} mb={2} >
-              For verification, please tell us who you are.
-            </Typography>
-          </div>
-        </Box> */}
-
           <Paper
             sx={{
               width: '80vw',
@@ -87,15 +93,14 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
               boxShadow: 3,
             }}
           >
-          <Box
-            component="form"
-            sx={{
-              '& > :not(style)': { my: 1, width: "100%" }
-            }}
-            autoComplete="off"
-          >
-            <div>
-             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+            <Box
+              component="form"
+              sx={{
+                '& > :not(style)': { my: 1, width: "100%" }
+              }}
+              autoComplete="off"
+            >
+              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
                 Accommodation Ownership
               </Typography>
               <Typography sx={{ fontFamily: "Poppins, sans-serif", mb: 2 }}>
@@ -116,7 +121,6 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
                     </Typography>
                   }
                 />
-
                 <FormControlLabel
                   value="Company"
                   control={<Radio />}
@@ -127,30 +131,17 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
                   }
                 />
               </RadioGroup>
-            </div>
-
-            <div style={{ padding:"1rem" }}>
-              {hostType === 'Individual' && (
-                <IndividualHost onDataChange={handleIndividualDataChange} />  
-              )}
-              {hostType === 'Company' && (
-                <CompanyHost onDataChange={handleCompanyDataChange} />
-              )}
-            </div>
-          </Box>
-        </Paper>
+              <Divider sx={{ my: 2 }} />
+              {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange} />}
+              {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} prevData={parentPartnerData} />}
+            </Box>
+          </Paper>
         </Grid>
       </AnimatePage>
-      {/* </Box> */}
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
-          Back
-        </Button>
-        <Button onClick={validateAndProceed} className="stepperNext">
-          Finish
-        </Button>
+        <Button onClick={handleBack} className="stepperPrevious">Back</Button>
+        <Button onClick={validateAndProceed} className="stepperNext" sx ={{ backgroundColor: "#A334CF", }}>Finish</Button>
       </div>
-      
     </Container>
   );
 }

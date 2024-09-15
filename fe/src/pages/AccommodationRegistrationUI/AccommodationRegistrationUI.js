@@ -17,7 +17,7 @@ import "../AccommodationRegistrationUI/css/Registration.css"; // Import CSS file
 // import AnimatePage from "./AnimatedPage";
 import AnimatePage from "../AccommodationRegistrationUI/components/AnimatedPage";
 import PaymentMethods from "../../components/registration_unit/registration_pMethods/PaymentMethods";
-import PartnerVerification from "../../components/registration_unit/registration_partner/partnerVerification";
+import PartnerVerification from "./components/Partnership/partnerVerification";
 import "../AccommodationRegistrationUI/css/Registration.css";
 import {
   Modal,
