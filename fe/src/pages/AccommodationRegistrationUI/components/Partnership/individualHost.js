@@ -236,6 +236,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
               value={data.FirstName}
               onChange={handleChange}
               fullWidth
+              required
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -245,6 +246,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
                 value={data.LastName}
                 onChange={handleChange}
                 fullWidth
+                required
               />
           </Grid>
 
@@ -256,6 +258,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
               onChange={handleChange}
               helperText="This is the name that will be shown on CebuStay website and app."
               fullWidth
+              required
               sx = {{ marginTop: "1rem" }}
             />
 
@@ -267,12 +270,13 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
               renderInput={(params) => <TextField {...params} fullWidth />}
               maxDate={dayjs().subtract(18, 'year')}
               sx = {{ marginTop: "1rem" }}
+              required
             />
           </LocalizationProvider>
       
 
       {/* Upload Image */}
-      <Typography style={styles.sectionTitle}>Upload Company Photo</Typography>
+      <Typography style={styles.sectionTitle}>Upload Profile Photo</Typography>
       <div style={styles.imageUpload}>
         {data.imageSrc ? (
           <Box style={styles.cropperContainer}>
@@ -341,6 +345,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
           fullWidth
           style={styles.countryCodeSelect}
           label = "Country Code"
+          required
         >
           {countryCodes.map((country) => (
             <MenuItem key={country.code} value={country.code}>
@@ -357,6 +362,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
             value={data.PhoneNumber}
             onChange={handleChange}
             fullWidth
+            required
             style={styles.formField}
             InputProps={{
               startAdornment: (
@@ -375,7 +381,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
             <TextField
               id="Email"
               label="Email"
-             
+              required
               value={data.Email}
               onChange={handleChange}
               style= {styles.formField}
@@ -391,18 +397,18 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md = {6}>
-            <TextField id="Street" label="Street" value={data.Street} onChange={handleChange} fullWidth style={styles.formField} />
+            <TextField id="Street" label="Street" value={data.Street} onChange={handleChange} fullWidth style={styles.formField} required />
           </Grid>
           <Grid item xs={12} md = {6}>
-            <TextField id="Barangay" label="Barangay" value={data.Barangay} onChange={handleChange} fullWidth style={styles.formField} />
+            <TextField id="Barangay" label="Barangay" value={data.Barangay} onChange={handleChange} fullWidth style={styles.formField}  required/>
           </Grid>
         </Grid>
         <Grid container spacing={2}>
         <Grid item xs={12} md = {6}>
-            <TextField id="City" label="Municipality / City" value={data.City} onChange={handleChange} fullWidth style={styles.formField} />
+            <TextField id="City" label="Municipality / City" value={data.City} onChange={handleChange} fullWidth style={styles.formField} required />
           </Grid>
           <Grid item xs={12} md = {6}>
-            <TextField type ="number" id="ZipCode" label="Zip Code" value={data.ZipCode} onChange={handleChange} fullWidth style={styles.formField} />
+            <TextField type ="number" id="ZipCode" label="Zip Code" value={data.ZipCode} onChange={handleChange} fullWidth style={styles.formField} required />
           </Grid>
         </Grid>
        
@@ -418,6 +424,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
         rows={4}
         fullWidth
         style={styles.formField}
+        required
       />
     </div>
   );

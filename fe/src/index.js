@@ -5,18 +5,9 @@ import reportWebVitals from "./reportWebVitals";
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
-import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
-import Sample from "./pages/AccountManagement/Sample";
-import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
-import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
-import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
+
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
-import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
-import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";\
-// import TopRated from "./InteractiveMap/components/TopRated";
-import ViewNearby from "./InteractiveMap/components/ViewNearby";
-import CompanyHost from "./pages/AccommodationRegistrationUI/components/Partnership/companyHost";
+
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

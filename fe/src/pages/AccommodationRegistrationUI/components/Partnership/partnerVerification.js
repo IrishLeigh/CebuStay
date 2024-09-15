@@ -7,6 +7,8 @@ import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button } from '@mui
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
 import AnimatePage from '../AnimatedPage';
+import { Crop } from '@mui/icons-material';
+import { Last } from 'react-bootstrap/esm/PageItem';
 
 export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack, openModal }) {
   const [hostType, setHostType] = useState('');
@@ -42,20 +44,35 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   // }, [hostType, individualData, companyData, onHostDataChange]);
 
   const validateAndProceed = () => {
-    // Helper function to check for empty fields
+    // Mapping of field keys to user-friendly names
+    const fieldLabels = {
+      firstName: "First Name",
+      lastName: "Last Name",
+      email: "Email Address",
+      phoneNumber: "Phone Number",
+      FirstName: "First Name",
+      LastName: "Last Name",
+      croppedAreaPixels : "Image",
+      imageSrc : "Image",
+      DateOfBirth: "Date of Birth",
+      DisplayName: "Display Name",
+      
+      // Add more fields as necessary
+    };
+  
+    // Helper function to check for empty fields and map to friendly names
     const getEmptyFields = (data) => {
-      // Check if data is not an empty object
       if (Object.keys(data).length === 0) {
-        return ['All fields are empty'];
+        return ['No information has been filled out yet. Please complete the required fields before proceeding.'];
       }
-      return Object.keys(data).filter(key => !data[key]);
+      return Object.keys(data).filter(key => !data[key]).map(key => fieldLabels[key] || key);
     };
   
     // Validate Individual host data
     if (hostType === 'Individual') {
       const emptyFields = getEmptyFields(individualData);
       if (emptyFields.length > 0) {
-        alert(`Please fill in the following fields for the individual host: ${emptyFields.join(', ')}.`);
+        alert(`Please fill in the following required information for the individual host: ${emptyFields.join(', ')}.`);
         return;
       }
     }
@@ -64,7 +81,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
     if (hostType === 'Company') {
       const emptyFields = getEmptyFields(companyData);
       if (emptyFields.length > 0) {
-        alert(`Please fill in the following fields for the company host: ${emptyFields.join(', ')}.`);
+        alert(`Please provide the following required details for the company host: ${emptyFields.join(', ')}.`);
         return;
       }
     }
@@ -75,6 +92,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
     openModal();
     alert("Successfully submitted!");
   };
+  
   
   console.log ("hostType", hostType);
   console.log ("individualData", individualData);

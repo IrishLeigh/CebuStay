@@ -20,39 +20,22 @@ import { useState, useEffect } from "react";
 import PrivateRoutes from "./protectedRoutes/ProtectedRoutes";
 import axios from "axios";
 // import QuiltedImageList from "./Properties_Listing/PropListing";
-import Sidebar from "./components/Sidebar";
 import React from "react";
-import Listings from "./pages/PropertyManagementUI/Listings";
-import PropertyManagementListing from "./pages/PropertyListingTable/components/PropertyManagementListing";
-import Layout from "./Layout/Layout";
-import LayoutLandingPage from "./components/LandingPage/LayoutLandingPage";
 // import PropListing from './Properties_Listing/PropListing';
 // import ReservationForm from './Properties_Listing/Reservation';
 import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
-import AccommodationRegistrationUI from "./pages/AccommodationRegistrationUI/AccommodationRegistrationUI";
 import PaymentVerification from "./components/PaymentVerification/PaymentVerification";
-
-
 import LandingPageUI from "./pages/LandingPage/LandingPageUI";
 import PropertyListUI from "./pages/SearchAndFilter/PropertyListUI";
 import ViewPropertyUI from "./pages/PropertyDetailsUI/ViewPropertyUI";
 import CalendarUI from "./pages/PropertyManagementUI/components/calendar/calendarUI";
-
-import CalendarUI from "./pages/PropertyManagementUI/components/calendar/calendarUI";
-
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
-
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
 import EditPropertyUI from "./pages/PropertyManagementUI/components/EditPropertyUI";
 import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
-
-import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
 import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
-import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
-
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
-import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 
 
 // import SearchFilter from './SearchFilter_User/SearchFilter';
@@ -154,21 +137,14 @@ function App() {
             element={<Dashboard />}
             exact
           />
-          <Route path="/calendar" element={<CalendarUI />} />
-          <Route path="/edit-property/:id" element={<EditPropertyUI />} />
-          <Route path="/edit-property/:id" element={<EditPropertyUI />} />
+          
              {/* Admin Routes */}
           <Route path="/admin/overview" element={<Dashboard />} />
           <Route path="/admin/listings" element={< PropertyManagementListingUI/>} />
           <Route path="/admin/calendar" element={<CalendarUI />} />
           <Route path="/admin/guests" element={<AccommodationReservationUI />} />
           <Route path="/edit-property/:id" element={<EditPropertyUI />} />
-             {/* Admin Routes */}
-          <Route path="/admin/overview" element={<Dashboard />} />
-          <Route path="/admin/listings" element={< PropertyManagementListingUI/>} />
-          <Route path="/admin/calendar" element={<CalendarUI />} />
-          <Route path="/admin/guests" element={<AccommodationReservationUI />} />
-
+        
 
         </Route>
 
