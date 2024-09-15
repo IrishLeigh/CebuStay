@@ -19,6 +19,19 @@ const AddressForm = ({ handleNext, handleBack }) => {
   const [addPin, setAddPin] = useState(null);
   const [mapVal, setMapVal] = useState(null); // Track map value state
   const [showAnotherComponent, setShowAnotherComponent] = useState(false); // State to control rendering of another component
+  const [address, setAddress] = useState("");
+
+  // const handleAddressChange = (newAddress) => {
+  //   setAddress(newAddress);
+  // };
+
+  const handleAddressChange = (newAddress) => {
+    // Split newAddress to extract street and postalCode if needed
+    const [streetPart, postalCodePart] = newAddress.split(", ");
+    setStreet(streetPart || newAddress);
+    setAddress(newAddress);
+  };
+
 
   useEffect(() => {
     // Save input data to localStorage whenever it changes
@@ -108,6 +121,15 @@ const AddressForm = ({ handleNext, handleBack }) => {
                   helperText="Enter your postal or ZIP code"
                   fullWidth
                 />
+                <TextField
+                  label="Full Address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  helperText="Address from the map"
+                  fullWidth
+                  sx={{ mb: 2 }}
+                  disabled
+                />
                 <Box mt={2}>
                   <Button
                     variant="contained"
@@ -130,6 +152,7 @@ const AddressForm = ({ handleNext, handleBack }) => {
                     setAddressData({ ...addressData, mapVal });
                     setMapVal(mapVal); // Update mapVal state
                   }}
+                  onAddressChange={handleAddressChange}
                 />
               )}
             </Box>

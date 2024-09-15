@@ -99,7 +99,7 @@ export default function CalendarComponent({ propertyTypes }) {
   })) : [];
 
   return (
-    <div style={{ height: '70vh', width: 'auto', marginLeft }}>
+    <div style={{ height: '70vh', width: 'auto', marginLeft, paddingLeft: '2rem', paddingRight: '2rem' }}>
       <Fullcalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         events={events}

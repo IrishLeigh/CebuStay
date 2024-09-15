@@ -7,6 +7,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Grid,
 } from "@mui/material";
 
 import axios from "axios";
@@ -81,16 +82,27 @@ const CalendarUI = () => {
   }, [user]);
 
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar />
-      <div style={{ flex: 1 }}>
-        <Container>
-          <div style={{ paddingTop: "2rem", margin: "0 auto" }}>
+    <>
+      <Grid container>
+        <Grid item xs={2}>
+          <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Sidebar />
+          </div>
+        </Grid>
+
+        <Grid item xs={10}>
+        <div style={{ background: 'linear-gradient(to right,  #16B4DD, #A0F9FF, #4FF3FE)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%',}}>
+                <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Calendar</h1>
+                <p style={{ fontSize: '0.875rem', textAlign: 'left' }}><br/></p>
+            </div>
+
+          <Paper style={{ paddingTop: "2rem", paddingBottom: "2rem", margin: "2rem" }}>
+
             <Paper
               style={{
-                padding: "1rem",
+                padding: ".5rem",
                 width: !home ? "18rem" : "12rem",
-                margin: "0 auto",
+                margin: "1.5rem",
               }}
             >
               <div style={{ display: "flex", alignContent: "center" }}>
@@ -102,7 +114,7 @@ const CalendarUI = () => {
                     value={selectedProperty}
                     onChange={handlePropertyChange}
                     style={{ minWidth: "10rem" }}
-                    // disabled = {!propertyData ? false : true}
+                  // disabled = {!propertyData ? false : true}
                   >
                     {propertyData
                       .filter(
@@ -128,7 +140,7 @@ const CalendarUI = () => {
                       value={selectedUnitType}
                       onChange={handleUnitTypeChange}
                       style={{ minWidth: "7rem" }}
-                      // disabled = {!propertyData ? false : true}
+                    // disabled = {!propertyData ? false : true}
                     >
                       {propertyData
                         .filter(
@@ -153,11 +165,13 @@ const CalendarUI = () => {
                 )}
               </div>
             </Paper>
-          </div>
+          
           <CalendarComponent propertyTypes={propertyTypes} />
-        </Container>
-      </div>
-    </div>
+          </Paper>
+        </Grid>
+      </Grid>
+
+    </>
   );
 };
 
