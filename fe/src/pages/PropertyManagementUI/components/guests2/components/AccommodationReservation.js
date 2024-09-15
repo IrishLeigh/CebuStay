@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 // import Sidebar from "../../components/Sidebar";
-import Sidebar from "./components/sidebar";
-import EditReservationModal from "./modals/EditReservationModal";
+// import Sidebar from "../../../sidebar";
+import EditReservationModal from "../../../modals/EditReservationModal";
 import axios from "axios";
-import Grid from "@mui/material/Grid";
+// import Grid from "@mui/material/Grid";
 import { MdMenuOpen, MdSearch, MdEdit, MdDelete } from "react-icons/md";
-import "../PropertyManagementUI/css/AccommodationReservation.css";
+import "../css/AccommodationReservation.css";
+import { Box } from "@mui/material";
 
 export default function AccommodationReservation() {
   const [selectedButton, setSelectedButton] = useState("All");
@@ -161,13 +162,14 @@ export default function AccommodationReservation() {
       : [];
 
   return (
-    <div>
-      <Grid container>
-        <Grid item xs={2}>
+    <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
+      {/* <Grid container>
+        {/* <Grid item xs={2}>
           <Sidebar />
-        </Grid>
-        <Grid item xs={10}>
-          <div className="full-height bg-light">
+        </Grid> */}
+        {/* <Grid item xs={12}> */} 
+          {/* <div className="full-height bg-light"> */}
+          <div className="full-height">
             <div
               style={{
                 background:
@@ -473,8 +475,8 @@ export default function AccommodationReservation() {
               )}
             </div>
           </div>
-        </Grid>
-      </Grid>
+        {/* </Grid>
+      </Grid> */}
       <EditReservationModal
         open={editModalOpen}
         reservation={selectedReservation}
@@ -538,6 +540,6 @@ export default function AccommodationReservation() {
           </div>
         </div>
       )}
-    </div>
+    </Box>
   );
 }

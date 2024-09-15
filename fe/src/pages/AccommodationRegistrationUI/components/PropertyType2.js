@@ -44,7 +44,7 @@ export default function PropertyType2({
 
   return (
     
-      <Box sx={{ flexGrow: 1 }}>
+      <Box >
         
           <Container
             maxWidth="md"
@@ -124,7 +124,6 @@ export default function PropertyType2({
               ))}
             </Grid>
             </AnimatePage>
-
             <div className="stepperFooter">
               <Button  onClick={handleBack} className="stepperPrevious">
                 Back
@@ -133,6 +132,9 @@ export default function PropertyType2({
                 Next
               </Button>
             </div>
+            </Container>
+
+            
             {/* <Box mt={4} display="flex" justifyContent="space-between">
               <Button variant="contained" onClick={handleBack}>
                 Back
@@ -141,7 +143,7 @@ export default function PropertyType2({
                 Next
               </Button>
             </Box> */}
-          </Container>
+       
       </Box>
   );
 }

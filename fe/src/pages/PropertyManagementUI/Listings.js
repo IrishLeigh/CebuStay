@@ -118,9 +118,9 @@ const Listings = () => {
   return (
     <Grid container>
       {/* Sidebar */}
-      <Grid item xs={2}>
-        <Sidebar />
-      </Grid>
+      {/* <Grid item xs={2}>
+        <Sidebar /> */}
+      {/* </Grid> */}
       {/* Main Content */}
       <Grid
         item
