@@ -21,7 +21,7 @@ export default function Benefits({ amenities, facilities, services }) {
                     </div>
 
                 </Grid>
-                <Grid item xs={4}>
+                {/* <Grid item xs={4}>
                     <div>
                         <Typography variant="h6" sx={{ textAlign: 'left', ml: 2, fontFamily: 'Poppins' }}>Facilities</Typography>
                     </div>
@@ -33,7 +33,7 @@ export default function Benefits({ amenities, facilities, services }) {
                         ))}
                     </div>
 
-                </Grid>
+                </Grid> */}
                 <Grid item xs={4}>
                     <div>
                         <Typography variant="h6" sx={{ textAlign: 'left', ml: 2, fontFamily: 'Poppins' }}>Services</Typography>
