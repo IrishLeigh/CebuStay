@@ -210,6 +210,8 @@
     border-radius: .5rem;
     margin: 1rem;
     cursor: pointer;
+    display: flex;
+  flex-direction: column;
   }
 
 .card:hover {
@@ -239,7 +241,7 @@
   
   .card-img img {
     width: 100%;
-    height: 100%;
+    height: 90%;
     object-fit: cover;
     border-radius: 10px;
   }
@@ -249,11 +251,15 @@
     height: 20px;
     background-color: white;
   }
-  
-  .card-footer {
+  .card-title{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-footerr {
     width: 100%;
     display: flex;
-    justify-content: space-between; /* Align items to the start */
+    justify-content: space-between;
     align-items: center;
   }
   
@@ -262,7 +268,13 @@
     font-size: 1rem;
     line-height: 1.5;
     text-align: left;
-  }
+    margin-bottom: 0px;
+    
+    white-space: nowrap; /* Prevents the text from wrapping */
+    overflow: hidden; /* Hides overflowed text */
+    text-overflow: ellipsis; /* Adds '...' to the end of the overflowing text */
+}
+
   
   .text-body {
     font-size: .9em;
@@ -278,7 +290,7 @@
     align-items: center;
     
   }
-  
+
   .card-img:hover {
     background-color: lightblue;
     box-shadow: rgba(9, 5, 238, 0.25) 0px 13px 47px -5px, rgba(72, 6, 215, 0.3) 0px 8px 16px -8px;

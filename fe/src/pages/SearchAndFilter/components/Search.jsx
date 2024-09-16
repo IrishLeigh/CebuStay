@@ -82,8 +82,8 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
     
 
     return (
-        <div>
-            <div className="max-w-4xl mx-auto p-4" style={{ width: '71rem', marginTop: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div className="m" style={{ width: '100%', marginTop: '2rem' }}>
                 <div className="search-box">
                     <div style={{ display: 'flex', alignItems: 'column',  }}>
                     <input
