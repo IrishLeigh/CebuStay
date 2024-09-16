@@ -95,6 +95,8 @@ Route::post('/propertyinfo', 'App\Http\Controllers\PropertyController@InsertProp
 Route::get('/allproperties', 'App\Http\Controllers\PropertyController@getAllProperties');
 Route::get('/getproperty', 'App\Http\Controllers\PropertyController@getPropertyById');
 Route::get('/getproptest', 'App\Http\Controllers\PropertyController@show');
+Route::get('/getallunit', 'App\Http\Controllers\PropertyController@getAllUnitById');
+
 //Routes for unitdetails
 Route::post('/unitdetails', 'App\Http\Controllers\UnitDetailsController@insertUnitDetails');
 Route::post('/bedroomtype', 'App\Http\Controllers\UnitDetailsController@insertBedTypes');

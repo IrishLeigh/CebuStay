@@ -803,4 +803,87 @@ class PropertyController extends CORS
         ]);
     }
 
+    public function getAllUnitById(Request $request)
+    {
+        $this->enableCors($request);
+    
+        // Fetch the units by property ID
+        $units = DB::table('unitdetails')->where('propertyid', $request->input('propertyid'))->get();
+        $unit_details = [];
+    
+        foreach ($units as $unit) {
+            $unitid = $unit->unitid;
+    
+            // Fetch unit pricing
+            $unitpricing = DB::table('property_pricing')
+                ->select('min_price')
+                ->where('proppricingid', $unit->proppricingid)
+                ->first();
+    
+            // Fetch unit rooms
+            $unitrooms = DB::table('unitrooms')
+                ->select('unitroomid', 'roomname', 'quantity')
+                ->where('unitid', $unitid)
+                ->get();
+    
+            // Fetch bedroom type for each room
+            $bedrooms = DB::table('bedroomtype')
+                ->select('bedroomid', 'unitroomid', 'bedroomnum', 'singlebed', 'bunkbed', 'largebed', 'superlargebed')
+                ->whereIn('unitroomid', $unitrooms->pluck('unitroomid'))
+                ->get();
+    
+            // Group bedroom details by unitroomid
+            $bedrooms_by_room = $bedrooms->groupBy('unitroomid')->map(function ($bedroomList) {
+                return $bedroomList->map(function ($bedroom) {
+                    return [
+                        'bedroomid' => $bedroom->bedroomid,
+                        'bedroomnum' => $bedroom->bedroomnum,
+                        'beds' => [
+                            'singlebed' => $bedroom->singlebed,
+                            'bunkbed' => $bedroom->bunkbed,
+                            'largebed' => $bedroom->largebed,
+                            'superlargebed' => $bedroom->superlargebed,
+                        ]
+                    ];
+                });
+            });
+    
+            // Fetch unit amenities
+            $unit_amenities = DB::table('amenity')
+                ->select('amenityid', 'amenity_name')
+                ->where('unitid', $unitid)
+                ->get();
+    
+            // Fetch unit services
+            $unit_services = DB::table('services')
+                ->select('serviceid', 'service_name')
+                ->where('unitid', $unitid)
+                ->get();
+    
+            // Fetch unit images
+            $property_files = File::select('file_url as src', 'caption')
+                ->where('propertyid', $request->input('propertyid'))
+                ->where('unitid', $unitid)
+                ->get();
+    
+            // Structure unit details
+            $unit_details[] = [
+                'unitid' => $unitid,
+                'unitname' => $unit->unitname,
+                'guest_capacity' => $unit->guest_capacity,
+                'unitrooms' => $unitrooms,
+                'unitbeds' => $bedrooms_by_room,
+                'unitpricing' => $unitpricing,
+                'amenities' => $unit_amenities,
+                'services' => $unit_services,
+                'images' => $property_files
+            ];
+        }
+    
+        return response()->json([
+            "property_unitdetails" => $unit_details
+        ]);
+    }
+    
+
 }
