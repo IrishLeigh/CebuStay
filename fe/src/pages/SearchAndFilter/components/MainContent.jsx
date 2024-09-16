@@ -3,7 +3,9 @@ import './MainContent.css';
 import { MdForward } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import Loader from './loader';
-
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 const MainContent = ({
   selectedAmenities = [],
   accommodations = [], // Ensure this prop is passed correctly
@@ -77,18 +79,32 @@ const MainContent = ({
                   <img src={accommodation.src} alt={accommodation.property_name} />
                 </div>
                 <div className="card-info">
-                  <div className="flex justify-between items-center mb-1" style={{margin:'0px'}}>
+                  <div className="card-title" style={{margin:'0px'}}>
                     <p className="text-title" style={{ fontSize: '1rem' }}>{accommodation.property_name}</p>
                     {/* Star rating (dummy) */}
-                    <div className="flex items-center">
-                      <span className="text-yellow-500">★</span>
-                      <span className="text-muted-foreground ml-1">4.5</span>
+                    <div className="" style={{fontSize: '0.9rem'}}>
+                      <span className="">★</span>
+                      <span className="">4.5</span>
                     </div>
                   </div>
-                  <p className="text-muted-foreground mb-1" style={{ fontSize: '0.9375rem', margin:'0px' }}>{accommodation.property_desc}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', margin: '0px' }}>
+                    <LocationOnIcon style={{ marginRight: '2px', fontSize: '1rem', margin: '0px', padding: '0px', opacity: '0.9' }} />
+                    <p className="" style={{ fontSize: '0.8rem', margin: '0px', opacity: '0.9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {accommodation.address}
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', margin: '0px' }}>
+                    {(accommodation.property_type === 'Home' || accommodation.property_type === 'Apartment') ? 
+                    <HomeOutlinedIcon style={{ marginRight: '2px', fontSize: '1rem', margin: '0px', padding: '0px', opacity: '0.9' }} /> 
+                    : <ApartmentIcon style={{ marginRight: '2px', fontSize: '1rem', margin: '0px', padding: '0px', opacity: '0.9' }} />}
+                    <p className="" style={{ fontSize: '0.8rem', margin: '0px', opacity: '0.9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {accommodation.property_type}
+                    </p>
+                  </div>
+                  <p className="text-muted-foreground mb-1" style={{ fontSize: '0.9375rem', margin:'0px', opacity:'0.6', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontStyle: 'italic' }}>{accommodation.property_desc}</p>
                 </div>
-                <div className="card-footer">
-                  <span className="text-title" style={{ fontSize: '0.8rem', backgroundColor:'#A334CF', color:'white', padding:'5px', borderRadius:'4px', marginTop:'5px' }}>{"$" + (accommodation.min_price? accommodation.min_price : 'N/A')} night</span>
+                <div className="card-footerr">
+                  <span className="text-title" style={{ fontSize: '0.8rem', backgroundColor:'#A334CF', color:'white', padding:'5px', borderRadius:'4px', marginTop:'5px' }}>{"₱ " + (accommodation.min_price? accommodation.min_price : 'N/A')} night</span>
                 </div>
               </div>
             ))
