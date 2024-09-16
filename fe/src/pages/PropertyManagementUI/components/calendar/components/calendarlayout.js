@@ -167,6 +167,7 @@ const CalendarLayout = () => {
               </div>
             </Paper>
           
+          
           <CalendarComponent propertyTypes={propertyTypes} />
           </Paper>
         </Grid>
