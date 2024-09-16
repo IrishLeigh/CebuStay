@@ -9,18 +9,21 @@ import { useData } from "../../../../components/registration_unit/registration_l
 import { Button } from "@mui/material";
 import AnimatePage from "../AnimatedPage";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+import CebuGeoJson from "../../../../InteractiveMap/data/Cebu.MuniCities.json";
+import * as turf from "@turf/turf";
 
 const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   const { location } = useData();
   const [addressData, setAddressData] = useState({});
   const [street, setStreet] = useState(localStorage.getItem("street") || "");
+  const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState(
     localStorage.getItem("postalCode") || ""
   );
   const [addPin, setAddPin] = useState(null);
   const [mapVal, setMapVal] = useState(null); // Track map value state
   const mapRef = useRef(null);
-
+  const [isInCebu, setIsInCebu] = useState(false);
   const { location2 } = useData();
   const [position, setPosition] = useState(addPin);
   const [mapPos, setMapPos] = useState(addPin);
@@ -28,7 +31,46 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   useEffect(() => {
     // When location prop changes, update the position
     setPosition(addPin);
+    fetchAddress(addPin);
+    setMapPos(addPin);
   }, [addPin]);
+
+  const handleAddressChange = (newAddress) => {
+    // Split newAddress to extract street and postalCode if needed
+    const [streetPart, postalCodePart] = newAddress.split(", ");
+    setStreet(streetPart || newAddress);
+    setAddress(newAddress);
+  };
+
+  const fetchAddress = async (latLng) => {
+    if (!latLng) {
+      console.warn("latLng is null or undefined. Exiting fetchAddress.");
+      return; // Exit the function early if latLng is not provided
+    }
+    const { lat, lng } = latLng;
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyCekj_gI-EaiGAORCqQlLwvxrgvfgULaMM`
+      );
+      const data = await response.json();
+      if (data.results.length > 0) {
+        const formattedAddress = data.results[0].formatted_address;
+        setAddress(formattedAddress);
+        handleAddressChange(formattedAddress);
+
+        // Check if the address is within Cebu
+        const point = turf.point([lng, lat]);
+        const isInCebuArea = CebuGeoJson.features.some((feature) =>
+          turf.booleanPointInPolygon(point, feature)
+        );
+        setIsInCebu(isInCebuArea); // Update whether the point is within Cebu
+      }
+    } catch (error) {
+      console.error("Error fetching address data:", error);
+    }
+  };
+
+
 
   useEffect(() => {
     // Save input data to localStorage whenever it changes
@@ -97,6 +139,9 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
     const { latLng } = clickEvent;
     const latitude = latLng.lat();
     const longitude = latLng.lng();
+    const newPos = { lat: latitude, lng: longitude };
+
+    fetchAddress(newPos);
     setPosition({ lat: latitude, lng: longitude });
     setMapPos({ lat: latitude, lng: longitude });
     setMapVal(`${latitude}, ${longitude}`);
@@ -104,14 +149,19 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
 
   const resetPosition = () => {
     setPosition(null);
+    setAddress("");
+    setIsInCebu(false);
   };
 
   const saveLocation = () => {
     if (position) {
-      setMapVal(`${position.lat}, ${position.lng}`);
-      location2(mapPos);
-      console.log("Location saved:", position.lat, position.lng);
-      console.log();
+      if (isInCebu) {
+        setMapVal(`${position.lat}, ${position.lng}`);
+        location2(mapPos);
+        console.log("Location saved:", position.lat, position.lng);
+      } else {
+        console.log("The location is outside Cebu.");
+      }
     } else {
       console.log("No location to save");
     }
@@ -171,6 +221,15 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                     helperText="Enter your postal or ZIP code"
                     fullWidth
                   />
+                  <TextField
+                  label="Full Address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  helperText="Address from the map"
+                  fullWidth
+                  sx={{ mb: 2 }}
+                  disabled
+                />
                   <Box mt={2}>
                     <Button
                       variant="contained"
@@ -217,26 +276,34 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                         <Marker
                           position={position}
                           draggable={true}
-                          onDragend={(t, map, coords) =>
-                            setPosition(coords.latLng)
-                          }
+                          onDragend={(t, map, coords) =>{
+                            const newPosition = { lat: coords.latLng.lat(), lng: coords.latLng.lng() };
+                  setPosition(newPosition);
+                  fetchAddress(newPosition); 
+                         } }
                         />
                       )}
                     </Map>
-                    <Button
-                      variant="contained"
-                      onClick={resetPosition}
-                      style={{ fontSize: "1rem", marginTop: "1rem" }}
-                    >
-                      Reset
-                    </Button>
-                    {/* <Button
-                      variant="contained"
-                      onClick={saveLocation}
-                      style={{ fontSize: "1rem", marginTop: "1rem" }}
-                    >
-                      Save Location
-                    </Button> */}
+                    {!isInCebu && position && (
+            <Typography color="error" sx={{ marginTop: "1rem" }}>
+              The location you selected is outside Cebu.
+            </Typography>
+          )}
+          <Button
+            variant="contained"
+            onClick={resetPosition}
+            style={{ fontSize: "1rem", marginTop: "1rem" }}
+          >
+            Reset
+          </Button>
+          <Button
+            variant="contained"
+            onClick={saveLocation}
+            style={{ fontSize: "1rem", marginTop: "1rem" }}
+            disabled={!isInCebu}
+          >
+            Save Location
+          </Button>
                   </Paper>
                 </Box>
               </Grid>
