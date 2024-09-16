@@ -28,13 +28,13 @@ export default function BenefitsMobile({ amenities, facilities, services }) {
                             <div>
                                 <Typography variant="h6" sx={{ textAlign: 'left', ml: 2, fontFamily: 'Poppins' }}>Facilities</Typography>
                             </div>
-                            <div>
+                            {/* <div>
                                 {facilities.map(facility => (
                                     <div key={facility.facilitiesid} style={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography variant="body1" sx={{ textAlign: 'center', ml: 2, fontFamily: 'Poppins' }}>{facility.facilities_name}</Typography>
                                     </div>
                                 ))}
-                            </div>
+                            </div> */}
 
                         </Grid>
                         <Grid item xs={4}>
