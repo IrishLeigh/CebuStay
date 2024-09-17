@@ -302,7 +302,10 @@ class PropertyController extends CORS
         // Retrieve bedroom types
         $bedroomTypes = BedroomType::select('unitroomid', 'singlebed', 'bunkbed', 'largebed', 'superlargebed')->get();
 
-        // Create associative arrays for unit details, unit rooms, and bedroom types
+        // Retrieve property locations (addresses)
+        $locations = Location::select('propertyid', 'address', 'zipcode', 'latitude', 'longitude')->get();
+
+        // Create associative arrays for unit details, unit rooms, bedroom types, and locations
         $unitDetailsByPropertyId = [];
         foreach ($unitDetails as $unitDetail) {
             $unitDetailsByPropertyId[$unitDetail->propertyid] = $unitDetail;
@@ -313,7 +316,12 @@ class PropertyController extends CORS
             $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
         }
 
-        // Create an associative array for house rules and booking policies
+        $locationsByPropertyId = [];
+        foreach ($locations as $location) {
+            $locationsByPropertyId[$location->propertyid] = $location;
+        }
+
+        // Create associative arrays for house rules and booking policies
         $houseRulesByPropertyId = [];
         foreach ($property_hr as $rule) {
             $houseRulesByPropertyId[$rule->propertyid][] = $rule;
@@ -324,7 +332,7 @@ class PropertyController extends CORS
             $bookingPoliciesByPropertyId[$policy->propertyid][] = $policy;
         }
 
-        // Add guest_capacity, bedroomcount, bathroomcount, bedcount, house rules, and booking policies to properties list
+        // Add guest_capacity, bedroomcount, bathroomcount, bedcount, house rules, booking policies, and address to properties list
         foreach ($properties as $property) {
             $propertyId = $property->propertyid;
 
@@ -355,6 +363,19 @@ class PropertyController extends CORS
 
             // Booking Policies
             $property->booking_policies = isset($bookingPoliciesByPropertyId[$propertyId]) ? $bookingPoliciesByPropertyId[$propertyId] : [];
+
+            // Address Information
+            if (isset($locationsByPropertyId[$propertyId])) {
+                $property->address = $locationsByPropertyId[$propertyId]->address;
+                // $property->zipcode = $locationsByPropertyId[$propertyId]->zipcode;
+                // $property->latitude = $locationsByPropertyId[$propertyId]->latitude;
+                // $property->longitude = $locationsByPropertyId[$propertyId]->longitude;
+            } else {
+                $property->address = null;
+                // $property->zipcode = null;
+                // $property->latitude = null;
+                // $property->longitude = null;
+            }
         }
 
         $bedCount = 0;
@@ -377,6 +398,7 @@ class PropertyController extends CORS
 
         return response()->json($properties);
     }
+
 
 
     public function getAllPropertiesByUser(Request $request)
