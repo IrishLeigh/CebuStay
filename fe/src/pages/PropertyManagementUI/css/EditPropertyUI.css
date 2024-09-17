@@ -27,6 +27,33 @@
   object-fit: cover;
 }
 
+.edit-property-menu-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.edit-property-menu-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  background-color: transparent;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.edit-property-menu-btn:hover,
+.edit-property-menu-btn.active {
+  background-color: #3a8f97;
+}
+
+.edit-property-menu-btn .MuiSvgIcon-root {
+  font-size: 1.5rem;
+}
+
+
+
 
 
 

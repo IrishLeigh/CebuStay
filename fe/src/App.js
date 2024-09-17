@@ -32,7 +32,7 @@ import CalendarUI from "./pages/PropertyManagementUI/components/calendar/calenda
 import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
 import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
 import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
-import EditPropertyUI from "./pages/PropertyManagementUI/components/EditPropertyUI";
+import EditPropertyUI from "./pages/PropertyManagementUI/components/edit property/EditPropertyUI";
 import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";

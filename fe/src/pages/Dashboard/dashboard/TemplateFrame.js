@@ -80,7 +80,7 @@ function TemplateFrame({
             >
               <ArrowBackRoundedIcon />
             </IconButton>
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            {/* <Box sx={{ display: 'flex', gap: 1 }}>
               <FormControl variant="outlined" sx={{ minWidth: 180 }}>
                 <Select
                   size="small"
@@ -99,7 +99,7 @@ function TemplateFrame({
                 mode={mode}
                 toggleColorMode={toggleColorMode}
               />
-            </Box>
+            </Box> */}
           </Toolbar>
         </StyledAppBar>
         <Box sx={{ flex: '1 1', overflow: 'auto' }}>{children}</Box>
