@@ -72,7 +72,6 @@ class LoginUserController extends CORS
         $user->lastname = $lastname;
         $user->password = Hash::make($randomPassword);
         $user->isverified = 1; 
-        $user->google = 1;
         $user->save();
     }
 

@@ -20,9 +20,10 @@ return new class extends Migration {
             $table->date('dateofbirth');
             $table->string('contactnumber');
             $table->string('email');
-            $table->string('province');
+            $table->string('street');
+            $table->string('barangay');
             $table->string('city');
-            $table->string('primary_address');
+            $table->string('primary_address') ->nullable(); 
             $table->string('zipcode');
             $table->string('describe');
             $table->string('calendar');

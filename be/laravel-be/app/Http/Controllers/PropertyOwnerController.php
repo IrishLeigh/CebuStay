@@ -27,9 +27,10 @@ class PropertyOwnerController extends CORS
         $propertyOwner->contactnumber = $request->input('contactnumber');
         $propertyOwner->email = $request->input('email');
         // $propertyOwner->country_region = $request->input('country_region');
-        $propertyOwner->province = $request->input('province');
+        $propertyOwner->province = $request->input('street');
+        $propertyOwner->province = $request->input('barangay');
         $propertyOwner->city = $request->input('city');
-        $propertyOwner->primary_address = $request->input('primary_address');
+        $propertyOwner->primary_address = $request->input('primary_address') ? $request->input('primary_address') : null;
         $propertyOwner->zipcode = $request->input('zipcode');
         $propertyOwner->describe = $request->input('describe');
         $propertyOwner->calendar = $request->input('calendar');
