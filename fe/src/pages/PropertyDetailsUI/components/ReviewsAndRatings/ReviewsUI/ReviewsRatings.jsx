@@ -3,6 +3,8 @@ import './ReviewsRatings.css';
 import { FaStar, FaRegStar, FaStarHalfAlt, FaUsers, FaSortNumericDown, FaChartBar, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import axios from 'axios';
 import { useUser } from '../../../../../components/UserProvider';
+import ArrowRight from "@mui/icons-material/Send";
+import Divider from "@mui/material/Divider";
 
 
 const generateDummyReviews = (count) => {
@@ -133,192 +135,199 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
 
 
   return (
-    <div className="outer-container">
-      <div className="reviews-container">
-        <div className="summary">
-          <div className="summary-box">
-            <FaUsers className="summary-icon" />
-            <h3>Total Reviews</h3>
-            <p className="summary-number">{reviews.length}</p>
-            <p>People's experiences</p>
+    <>
+      
+        <div className="reviews-container">
+        <div className="info-title-cntr">
+            <ArrowRight sx={{ color: "#16B4DD" }} />
+            <div>Reviews And Ratings</div>
           </div>
+          <Divider sx={{ width: "100%", color: "#ccc", margin: "20px 0" }} />{" "}
+          <div className="summary">
+            <div className="summary-box">
+              <FaUsers className="summary-icon" />
+              <h3>Total Reviews</h3>
+              <p className="summary-number">{reviews.length}</p>
+              <p>People's experiences</p>
+            </div>
 
-          <div className="summary-box">
-            <FaStar className="summary-icon" />
-            <h3>Average Rating</h3>
-            <div className="average-rating-container">
-              <p className="average-number">{averageRating}</p>
-              <div className="average-rating">
-                {[...Array(Math.floor(averageRating))].map((_, index) => (
-                  <FaStar key={index} className="average-star filled" />
-                ))}
-                {averageRating % 1 !== 0 && <FaStarHalfAlt className="average-star filled" />}
-                {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
-                  <FaRegStar key={index} className="average-star" />
+            <div className="summary-box">
+              <FaStar className="summary-icon" />
+              <h3>Average Rating</h3>
+              <div className="average-rating-container">
+                <p className="average-number">{averageRating}</p>
+                <div className="average-rating">
+                  {[...Array(Math.floor(averageRating))].map((_, index) => (
+                    <FaStar key={index} className="average-star filled" />
+                  ))}
+                  {averageRating % 1 !== 0 && <FaStarHalfAlt className="average-star filled" />}
+                  {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
+                    <FaRegStar key={index} className="average-star" />
+                  ))}
+                </div>
+              </div>
+              <p>Based on {reviews.length} reviews</p>
+            </div>
+
+            <div className="summary-box">
+              <FaChartBar className="summary-icon" />
+              <h3>Rating Distribution</h3>
+              <div className="star-distribution">
+                {[5, 4, 3, 2, 1].map((star) => (
+                  <div key={star} className="star-distribution-item">
+                    <span className="star-rating">{star} star</span>
+                    <div className="star-visual">
+                      {[...Array(star)].map((_, idx) => (
+                        <FaStar key={idx} className="star filled" />
+                      ))}
+                      {[...Array(5 - star)].map((_, idx) => (
+                        <FaRegStar key={idx} className="star" />
+                      ))}
+                    </div>
+                    <span className="star-count">{ratingsCount[star] || 0}</span>
+                  </div>
                 ))}
               </div>
             </div>
-            <p>Based on {reviews.length} reviews</p>
           </div>
 
-          <div className="summary-box">
-            <FaChartBar className="summary-icon" />
-            <h3>Rating Distribution</h3>
-            <div className="star-distribution">
-              {[5, 4, 3, 2, 1].map((star) => (
-                <div key={star} className="star-distribution-item">
-                  <span className="star-rating">{star} star</span>
-                  <div className="star-visual">
-                    {[...Array(star)].map((_, idx) => (
+          <div className="tabs">
+            <button
+              className={`tab-button ${view === 'All' ? 'active' : ''}`}
+              onClick={() => setView('All')}
+            >
+              All
+            </button>
+            <button
+              className={`tab-button ${view === 'Latest' ? 'active' : ''}`}
+              onClick={() => setView('Latest')}
+            >
+              Latest
+            </button>
+            <button
+              className={`tab-button ${view === 'Oldest' ? 'active' : ''}`}
+              onClick={() => setView('Oldest')}
+            >
+              Oldest
+            </button>
+          </div>
+
+          {showReviewForm && (
+            <div className="review-input-container">
+              <div className="review-input">
+                <div className="rating">
+                  <div className="user-initials">{`${user.firstname?.charAt(0) || ''}${user.lastname?.charAt(0) || ''}`}</div>
+                  <div className="review-name">{user.firstname} {user.lastname}</div>
+
+                </div>
+                <div>
+                  {[...Array(5)].map((_, index) => (
+                    <span
+                      key={index}
+                      className={`star ${index < rating ? 'filled' : ''}`}
+                      onClick={() => handleRatingChange(index + 1)}
+                    >
+                      <FaStar />
+                    </span>
+                  ))}
+                </div>
+                <textarea
+                  placeholder="Write your review here..."
+                  value={comment}
+                  onChange={handleCommentChange}
+                />
+                <div className="buttons">
+                  <button className="submit" onClick={handleSubmit}>Submit</button>
+                  <button className="cancel" onClick={handleCancel}>Cancel</button>
+                </div>
+                {errorMessage && (
+                  <p style={{ color: 'red' }}>{errorMessage}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="write-review-button-container">
+            <button className="write-review-button" onClick={() => setShowReviewForm(!showReviewForm)}>
+              {showReviewForm ? 'Close Review Form' : 'Write a Review'}
+            </button>
+          </div>
+
+          <div className="reviews-list-container">
+            <h2 className="reviews-title">{view} Reviews</h2>
+            {/* <div className="reviews-list">
+              {filteredReviews.map((review, index) => (
+                <div key={index} className="review">
+                  <div className="user-info">
+                    <div className="user-name">{review.firstname} {review.lastname}</div>
+                    <div>{formatDate(review.created_at)}</div>
+                  </div>
+                  <div className="review-rating">
+                    {[...Array(review.rating)].map((_, idx) => (
                       <FaStar key={idx} className="star filled" />
                     ))}
-                    {[...Array(5 - star)].map((_, idx) => (
+                    {[...Array(5 - review.rating)].map((_, idx) => (
                       <FaRegStar key={idx} className="star" />
                     ))}
                   </div>
-                  <span className="star-count">{ratingsCount[star] || 0}</span>
+                  <div className="review-comment">{review.review}</div>
+                  <button className="read-more">Read Review</button>
+                </div>
+              ))}
+            </div> */}
+
+
+            <div className="reviews-list">
+              {filteredReviews.map((review, index) => (
+                <div
+                  key={index}
+                  className={`review-card ${review.isPositive ? "positive" : "negative"
+                    }`}
+                >
+                  <div className="review-header">
+                    <div className="review-avatar">{`${review.firstname?.charAt(0) || ''}${review.lastname?.charAt(0) || ''}`}</div>
+                    <div className="review-info">
+                      <div className="review-name">{review.firstname} {review.lastname}</div>
+                      <div className="review-location">Unknown Location</div>
+                    </div>
+
+                    <div className="review-date">
+                      Reviewed: {formatDate(review.created_at)}
+                    </div>
+                  </div>
+                  <div className="review-rating">
+                    {[...Array(review.rating)].map((_, idx) => (
+                      <FaStar key={idx} className="star filled" />
+                    ))}
+                    {[...Array(5 - review.rating)].map((_, idx) => (
+                      <FaRegStar key={idx} className="star" />
+                    ))}
+                  </div>
+                  <div className="review-content">
+                    <div>
+                      {review.review}
+                    </div>
+                  </div>
+                  <div className="review-footer">
+
+                    {/* <div className="review-buttons">
+                      <button className="like-button">
+                        <FaThumbsUp />
+                      </button>
+                      <button className="dislike-button">
+                        <FaThumbsDown />
+                      </button>
+                    </div> */}
+                  </div>
                 </div>
               ))}
             </div>
+
+
           </div>
         </div>
 
-        <div className="tabs">
-          <button
-            className={`tab-button ${view === 'All' ? 'active' : ''}`}
-            onClick={() => setView('All')}
-          >
-            All
-          </button>
-          <button
-            className={`tab-button ${view === 'Latest' ? 'active' : ''}`}
-            onClick={() => setView('Latest')}
-          >
-            Latest
-          </button>
-          <button
-            className={`tab-button ${view === 'Oldest' ? 'active' : ''}`}
-            onClick={() => setView('Oldest')}
-          >
-            Oldest
-          </button>
-        </div>
-
-        {showReviewForm && (
-          <div className="review-input-container">
-            <div className="review-input">
-              <div className="rating">
-                <div className="user-initials">{`${user.firstname?.charAt(0) || ''}${user.lastname?.charAt(0) || ''}`}</div>
-                <div className="review-name">{user.firstname} {user.lastname}</div>
-
-              </div>
-              <div>
-                {[...Array(5)].map((_, index) => (
-                  <span
-                    key={index}
-                    className={`star ${index < rating ? 'filled' : ''}`}
-                    onClick={() => handleRatingChange(index + 1)}
-                  >
-                    <FaStar />
-                  </span>
-                ))}
-              </div>
-              <textarea
-                placeholder="Write your review here..."
-                value={comment}
-                onChange={handleCommentChange}
-              />
-              <div className="buttons">
-                <button className="submit" onClick={handleSubmit}>Submit</button>
-                <button className="cancel" onClick={handleCancel}>Cancel</button>
-              </div>
-              {errorMessage && (
-                <p style={{ color: 'red' }}>{errorMessage}</p>
-              )}
-            </div>
-          </div>
-        )}
-
-        <div className="write-review-button-container">
-          <button className="write-review-button" onClick={() => setShowReviewForm(!showReviewForm)}>
-            {showReviewForm ? 'Close Review Form' : 'Write a Review'}
-          </button>
-        </div>
-
-        <div className="reviews-list-container">
-          <h2 className="reviews-title">{view} Reviews</h2>
-          {/* <div className="reviews-list">
-            {filteredReviews.map((review, index) => (
-              <div key={index} className="review">
-                <div className="user-info">
-                  <div className="user-name">{review.firstname} {review.lastname}</div>
-                  <div>{formatDate(review.created_at)}</div>
-                </div>
-                <div className="review-rating">
-                  {[...Array(review.rating)].map((_, idx) => (
-                    <FaStar key={idx} className="star filled" />
-                  ))}
-                  {[...Array(5 - review.rating)].map((_, idx) => (
-                    <FaRegStar key={idx} className="star" />
-                  ))}
-                </div>
-                <div className="review-comment">{review.review}</div>
-                <button className="read-more">Read Review</button>
-              </div>
-            ))}
-          </div> */}
-
-
-          <div className="reviews-list">
-            {filteredReviews.map((review, index) => (
-              <div
-                key={index}
-                className={`review-card ${review.isPositive ? "positive" : "negative"
-                  }`}
-              >
-                <div className="review-header">
-                  <div className="review-avatar">{`${review.firstname?.charAt(0) || ''}${review.lastname?.charAt(0) || ''}`}</div>
-                  <div className="review-info">
-                    <div className="review-name">{review.firstname} {review.lastname}</div>
-                    <div className="review-location">Unknown Location</div>
-                  </div>
-
-                  <div className="review-date">
-                    Reviewed: {formatDate(review.created_at)}
-                  </div>
-                </div>
-                <div className="review-rating">
-                  {[...Array(review.rating)].map((_, idx) => (
-                    <FaStar key={idx} className="star filled" />
-                  ))}
-                  {[...Array(5 - review.rating)].map((_, idx) => (
-                    <FaRegStar key={idx} className="star" />
-                  ))}
-                </div>
-                <div className="review-content">
-                  <div>
-                    {review.review}
-                  </div>
-                </div>
-                <div className="review-footer">
-
-                  {/* <div className="review-buttons">
-                    <button className="like-button">
-                      <FaThumbsUp />
-                    </button>
-                    <button className="dislike-button">
-                      <FaThumbsDown />
-                    </button>
-                  </div> */}
-                </div>
-              </div>
-            ))}
-          </div>
-
-
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

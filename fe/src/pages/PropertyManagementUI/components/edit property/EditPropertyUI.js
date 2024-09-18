@@ -4,7 +4,7 @@ import BasicInfo from "./components/BasicInfo";
 import Photos from "./components/Photos";
 import Amenities from "./components/Amenities";
 import RulesPolicies from "./components/RulesPolicies";
-import PricePayment from "../PricePayment";
+import PricePayment from "./components/PricePayment";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -18,7 +18,7 @@ import GavelIcon from "@mui/icons-material/Gavel";
 import EditPartnerVerification from "./components/EditPartnerVerification";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import RoomDetailsSingleUnit from "./components/RoomDetailsSingleUnit";
-import EditRoomDetailsMultipleUnit from "../EditRoomDetailsMultipleUnit";
+import EditRoomDetailsMultipleUnit from "./components/EditRoomDetailsMultipleUnit";
 import TemplateFrameEdit from "./components/TemplateFrame";
 
 function CustomTabPanel(props) {

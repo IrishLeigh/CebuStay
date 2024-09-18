@@ -511,8 +511,8 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
             <Typography sx={{ fontSize: '1rem', mb: '0.5rem', fontWeight: 'bold' }}>Your email:</Typography>
             <TextField fullWidth color={email ? "success" : "primary"} focused value={email} onChange={handleEmailChange} InputProps={{ endAdornment: email ? <InputAdornment position="end"><CheckIcon color="success" /></InputAdornment> : null }} />
           </div>
-          <Countries handleCountryChange={handleCountryChange} />
-          <PhoneNumberInput phoneNumber={phoneNumber} countryCode={countryCode} handlePhoneNumberChange={handlePhoneNumberChange} handleCountryCodeChange={handleCountryCodeChange} />
+          {/* <Countries handleCountryChange={handleCountryChange} /> */}
+          <PhoneNumberInput phoneNumber={phoneNumber} countryCode={countryCode} onPhoneNumberChange={handlePhoneNumberChange} onCountryCodeChange={handleCountryCodeChange} />
           <div style={{ width: '100%', marginTop:'16px'}}>
             <Typography sx={{ fontSize: '1rem', mb: '0.5rem', fontWeight: 'bold' }}>Who are you booking for?</Typography>
             <RadioGroup row value={bookingFor} onChange={handleBookingForChange} sx={{ justifyContent: 'flex-start' }}>
