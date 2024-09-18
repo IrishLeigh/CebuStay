@@ -187,7 +187,7 @@ export default function InteractiveMap() {
             marginBottom: "0.5rem",
             textAlign: "center",
             fontWeight: "bold",
-            color: "2A2A2E",
+            color: "#2A2A2E",
 
           }}
         >

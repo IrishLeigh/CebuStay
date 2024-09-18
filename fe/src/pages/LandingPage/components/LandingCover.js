@@ -5,7 +5,7 @@ export default function LandingCover() {
   return (
     <>
       <div className="landing-cover">
-        <img src="../../landingscream.png" alt="landing-cover" />
+        <img src="../../landingscream2.png" alt="landing-cover" />
         <button className="landing-cover-button">
           Search and Accommodation
         </button>
