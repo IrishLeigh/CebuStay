@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import BasicInfo from "./BasicInfo";
-import RoomDetails from "./RoomDetailsSingleUnit";
-import Photos from "./Photos";
-import Amenities from "./Amenities";
-import RulesPolicies from "./RulesPolicies";
-import PricePayment from "./PricePayment";
-import Button from "@mui/material/Button";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import BasicInfo from "./components/BasicInfo";
+import Photos from "./components/Photos";
+import Amenities from "./components/Amenities";
+import RulesPolicies from "./components/RulesPolicies";
+import PricePayment from "./components/PricePayment";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -18,10 +15,11 @@ import {
   AttachMoney as PricingIcon,
 } from "@mui/icons-material";
 import GavelIcon from "@mui/icons-material/Gavel";
-import EditPartnerVerification from "./EditPartnerVerification";
+import EditPartnerVerification from "./components/EditPartnerVerification";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import RoomDetailsSingleUnit from "./RoomDetailsSingleUnit";
-import EditRoomDetailsMultipleUnit from "./EditRoomDetailsMultipleUnit";
+import RoomDetailsSingleUnit from "./components/RoomDetailsSingleUnit";
+import EditRoomDetailsMultipleUnit from "./components/EditRoomDetailsMultipleUnit";
+import TemplateFrameEdit from "./components/TemplateFrame";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -68,6 +66,8 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isSingleUnit, setIsSingleUnit] = useState(false);
+  const [basicInfoStatus, setBasicInfoStatus] = useState("");
+  const [saveCount, setSaveCount] = useState(0); // Add save count state  
 
   useEffect(() => {
     if (!id) return;
@@ -132,15 +132,28 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
     };
 
     fetchPropertyData();
-  }, [id]);
+  }, [id, saveCount]);
+
+  const handleSaveStatusChange = (status) => {
+    setBasicInfoStatus(status);
+    incrementSaveCount();
+   
+  };
+  const incrementSaveCount = () => {
+    setSaveCount((prevCount) => prevCount + 1);
+  };
 
   const handleChange = (index) => {
     setValue(index);
   };
+
+  
   // console.log("Property Data TYPE?: ", propertyData.property_type);
+  console.log ("basicinfo status?: ", saveCount);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>
+     
       <div
         style={{
           background: "#15A1C6",
@@ -150,18 +163,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
           color: "#FFF",
         }}
       >
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => navigate(-1)}
-          style={{
-            color: "#FFF",
-            borderColor: "#FFF",
-            marginRight: "1rem",
-            border: "1px solid #FFF",
-          }}
-        >
-          Back
-        </Button>
+        
         <div
           style={{
             display: "flex",
@@ -199,7 +201,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
               }}
               onClick={() => handleChange(index)}
             >
-              <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+              <div style={{ fontSize: "1rem", margin: "0.5rem" }}>
                 {item.icon}
               </div>
               <div>{item.label}</div>
@@ -208,12 +210,13 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         </div>
       </div>
 
-      <div style={{ padding: "3rem 4rem", background: "#F4F7FA" }}>
+      <div style={{ background: "#F4F7FA" }}>
         <CustomTabPanel value={value} index={0}>
           <BasicInfo
             propertyData={propertyData}
             propertyAddress={propertyAddress}
             onBasicInfoChange={(updatedData) => setPropertyData(updatedData)}
+            onSaveStatusChange={handleSaveStatusChange} // Pass the callback function
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
@@ -222,6 +225,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
               isEditing={isEditing}
               propertyData={rooms}
               onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
+              onSaveStatusChange={handleSaveStatusChange}
             />
           ) : (
             <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms} />
@@ -236,6 +240,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
             setGalleryP={setGalleryImg}
             galleryImages={galleryImg}
             propertyid={id}
+            onSaveStatusChange={handleSaveStatusChange} 
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
@@ -251,6 +256,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
               setServices(newServices);
             }}
             isSingleUnit={isSingleUnit}
+            onSaveStatusChange={handleSaveStatusChange} 
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={4}>
@@ -262,7 +268,9 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
             onPoliciesChange={(updatedPolicies) => setPolicies(updatedPolicies)}
             onHouseRulesChange={(updatedHouseRules) =>
               setHouseRules(updatedHouseRules)
+              
             }
+            onSaveStatusChange={handleSaveStatusChange} 
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={5}>
@@ -274,6 +282,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
             onPricingChange={(updatedPricing) => setUnitPricing(updatedPricing)}
             onPaymentChange={(updatedPayment) => setPaymentData(updatedPayment)}
             isSingleUnit={isSingleUnit}
+            onSaveStatusChange={handleSaveStatusChange}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={6}>

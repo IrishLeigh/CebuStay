@@ -15,15 +15,21 @@ import {
   Typography,
   IconButton,
   Paper,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
+import TemplateFrameEdit from "./TemplateFrame";
+import LoadingModal from "../modal/LoadingModal";
+
 
 export default function BasicInfo({
   propertyData,
   propertyAddress,
   onBasicInfoChange,
+  onSaveStatusChange, 
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [localState, setLocalState] = useState({
@@ -36,6 +42,11 @@ export default function BasicInfo({
     postalCode: "",
   });
   const [hasChanges, setHasChanges] = useState(false);
+  const [saveCount, setSaveCount] = useState(0);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
 
   useEffect(() => {
     if (propertyData) {
@@ -64,11 +75,25 @@ export default function BasicInfo({
     }));
     setHasChanges(true);
   };
+  
+  const handleEditingChange = (editing) => {
+    if (editing === true) {
+      setIsEditing(editing);
+    }else if (editing === false) {
+      handleCancel();
+      
+    }
+   
+    console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
+  };
+
 
   const handleSave = async () => {
     console.log("Object propertyData:", localState);
     console.log("Property data:", propertyData);
+    setIsLoading(true);
     setIsEditing(false);
+    setSaveCount((prevCount) => prevCount + 1);
 
     try {
       // Use the correct route with propertyid from propertyData
@@ -94,6 +119,11 @@ export default function BasicInfo({
       // Check response status
       if (save_response.data.status === "success") {
         alert("Basic Info saved successfully!");
+        setIsEditing(false);
+        setOpenSnackbar(true);
+        onSaveStatusChange('Saved');
+        setIsLoading(false);
+        
         console.log(save_response.data);
       } else {
         alert("Failed to save Basic Info");
@@ -115,8 +145,13 @@ export default function BasicInfo({
       postalCode: propertyAddress.zipcode || "",
     });
   };
-
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+ console.log ("saveCount", saveCount);
   return (
+    <div>
+       <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave}/>
     <Paper
       style={{
         width: "auto",
@@ -143,7 +178,7 @@ export default function BasicInfo({
             >
               Basic Information Of The Property
             </Typography>
-            <div>
+            {/* <div>
               {!isEditing && (
                 <Button
                   onClick={() => setIsEditing(true)}
@@ -157,7 +192,7 @@ export default function BasicInfo({
                   Cancel
                 </Button>
               )}
-            </div>
+            </div> */}
           </div>
           <Typography
             sx={{
@@ -196,7 +231,8 @@ export default function BasicInfo({
               id="property-type-select"
               value={localState.propertyType}
               onChange={(e) => handleChange("propertyType", e.target.value)}
-              disabled={!isEditing}
+              disabled= "true"
+              helperText="You cannot edit this field"
             >
               <MenuItem value="Home" sx={{ fontFamily: "Poppins, sans-serif" }}>
                 Home
@@ -336,7 +372,22 @@ export default function BasicInfo({
           </Button>
         </div>
       )}
+      <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+          Basic Info saved successfully!
+          </Alert>
+        </Snackbar>
     </Paper>
+    <LoadingModal open={isLoading} />
+    </div>
   );
 }
 

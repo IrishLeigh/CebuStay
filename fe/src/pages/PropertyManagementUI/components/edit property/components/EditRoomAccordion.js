@@ -16,7 +16,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AddIcon from "@mui/icons-material/Add";
-import { useData } from "../../../components/registration_unit/registration_location/contextAddressData";
+import { useData } from "../../../../../components/registration_unit/registration_location/contextAddressData";
 import { Card, CardMedia, IconButton, InputLabel } from "@mui/material";
 import { Delete as DeleteIcon, Image as ImageIcon } from "@mui/icons-material";
 

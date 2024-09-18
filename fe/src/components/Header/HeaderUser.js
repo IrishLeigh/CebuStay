@@ -16,7 +16,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useNavigate, Link } from 'react-router-dom';
-import './NavigationBar.css'; // Import the CSS file from '../NavigationBar.css';
+import MenuIcon from '@mui/icons-material/Menu'; // Import the MUI icon
+// import './NavigationBar.css'; // Import the CSS file
 
 const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
 const settings = ['Account', 'Your Properties', 'Logout'];
@@ -45,9 +46,9 @@ function HeaderUser({ token, setToken }) {
 
   const handlePageClick = (page) => {
     if (page === 'Accommodation') {
-      window.location.href = '/accommodation'; // Redirect to accommodation page
+      window.location.href = '/accommodation';
     } else {
-      navigate(`/${page.toLowerCase().replace(' ', '-')}`); // Client-side navigation
+      navigate(`/${page.toLowerCase().replace(' ', '-')}`);
     }
     handleCloseNavMenu();
   };
@@ -82,42 +83,90 @@ function HeaderUser({ token, setToken }) {
     setOpenLogoutModal(false);
   };
 
-  console.log("token from header user:", token);
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
-        <Container maxWidth="xl">
+        <Container maxWidth="lg">
           <Toolbar disableGutters>
-            <div className="header-logo">
-              <img src="Logo.png" alt="Logo"/>
-            </div>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <img src="Logo2.png" alt="Logo" className="logo" style={{ height: '40px', marginRight: '10px' }} />
+              <Typography
+                noWrap
+                component="a"
+                href="/"
+                sx={{
+                  fontFamily: 'Poppins, sans-serif',
+                  fontWeight: 1000,
+                  color: '#16B4DD',
+                  textDecoration: 'none',
+                  fontSize: '1.5rem',
+                }}
+              >
+                cebustay
+              </Typography>
+            </Box>
 
             <Box sx={{ flexGrow: 1 }} />
 
+            {/* Hamburger menu for mobile */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="open navigation"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              sx={{ color: '#16B4DD' }}
+            >
+                 <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+              >
+                {pages.map((page) => (
+                  <MenuItem key={page} onClick={() => handlePageClick(page)}>
+                    <Typography textAlign="center">{page}</Typography>
+                  </MenuItem>
+                ))}
+                <MenuItem onClick={() => handlePageClick('List your property')}>
+                  <Typography textAlign="center">List your property</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+
+            {/* Full menu for larger screens */}
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={() => handlePageClick(page)}
-                  sx={{ mx: 1, color: 'black' }}
-                >
+                <Button key={page} onClick={() => handlePageClick(page)} sx={{ mx: 1, color: 'black' }}>
                   <Typography sx={{ fontSize: "0.9rem", color: '#16B4DD' }} fontWeight="bold">
                     {page}
                   </Typography>
                 </Button>
               ))}
-
-              <button className="property-listing">
+             <button className="property-listing">
                 <Link to="/list-property" style={{ textDecoration: 'none', color: 'inherit' }}>
                   List your property
                 </Link>
               </button>
-            </Box>
 
+            </Box>
+            {/* User profile settings */}
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -147,6 +196,7 @@ function HeaderUser({ token, setToken }) {
         </Container>
       </AppBar>
 
+      {/* Logout confirmation modal */}
       <Dialog
         open={openLogoutModal}
         onClose={handleCloseLogoutModal}
