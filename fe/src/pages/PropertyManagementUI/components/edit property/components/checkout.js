@@ -17,9 +17,9 @@ import {
   Button
 } from "@mui/material";
 import { Edit as EditIcon } from "@mui/icons-material";
-import EditReservationModal from "../modals/EditReservationModal";
+import EditReservationModal from "../../../modals/EditReservationModal";
 
-const Cancelled = () => {
+const Checkouts = ({data}) => {
   const [open, setOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [propertyData, setPropertyData] = useState([]);
@@ -29,8 +29,8 @@ const Cancelled = () => {
   
 
 
-  const handleOpen = (reservation) => {
-    setSelectedReservation(reservation);
+  const handleOpen = (data) => {
+    setSelectedReservation(data);
     setOpen(true);
   };
 
@@ -39,11 +39,12 @@ const Cancelled = () => {
     setSelectedReservation(null);
   };
 
-  const filteredData = propertyData.filter((reservation) => {
+  const filteredData = data.filter((data) => {
     if (filter === "all") return true;
-    return reservation.status.toLowerCase() === filter;
+    return data.status.toLowerCase() === filter;
   });
 
+  console.log("OG",data);
   return (
     <div>
             <Paper p={2}>
@@ -51,7 +52,7 @@ const Cancelled = () => {
                 component={Paper}
                 sx={{ width: "100%", boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.5)" }}
               >
-                <Table aria-label="reservations table" sx={{ minWidth: 600 }}>
+                <Table aria-label="datas table" sx={{ minWidth: 600 }}>
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>
@@ -84,26 +85,26 @@ const Cancelled = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredData.map((reservation) => (
-                      <TableRow key={reservation.id}>
+                    {filteredData.map((data) => (
+                      <TableRow key={data.id}>
                         <TableCell sx={{ fontSize: "1rem" }}>
                           <div>
-                            <div>{reservation.guestname}</div>
-                            <div>Booking id: #{reservation.bookingid}</div>
-                            <div>{reservation.booker.phonenum}</div>
+                            <div>{data.guestname}</div>
+                            <div>Booking id: #{data.bhid}</div>
+                            <div>{data.booker.phonenum}</div>
                           </div>
                         </TableCell>
-                        <TableCell sx={{ fontSize: "1rem" }}>{reservation.property_name}</TableCell>
-                        <TableCell sx={{ fontSize: "1rem" }}>{reservation.property_type}</TableCell>
+                        <TableCell sx={{ fontSize: "1rem" }}>{data.property_name}</TableCell>
+                        <TableCell sx={{ fontSize: "1rem" }}>{data.property_type}</TableCell>
                         <TableCell sx={{ fontSize: "1rem" }}>
-                          {reservation.checkin_date} to {reservation.checkout_date}
+                          {data.checkin_date} to {data.checkout_date}
                         </TableCell>
-                        <TableCell sx={{ fontSize: "1rem" }}>{reservation.guest_count}</TableCell>
-                        <TableCell sx={{ fontSize: "1rem" }}>{reservation.total_price}</TableCell>
-                        <TableCell sx={{ fontSize: "1rem" }}>{reservation.status}</TableCell>
-                        <TableCell sx={{ fontSize: "1rem" }}>{reservation.type == "booking" ? "Checked-in"  : "Upcoming"}</TableCell>
+                        <TableCell sx={{ fontSize: "1rem" }}>{data.guest_count}</TableCell>
+                        <TableCell sx={{ fontSize: "1rem" }}>{data.total_price}</TableCell>
+                        <TableCell sx={{ fontSize: "1rem" }}>{data.status}</TableCell>
+                        <TableCell sx={{ fontSize: "1rem" }}>{data.check_type}</TableCell>
                         <TableCell>
-                          <IconButton onClick={() => handleOpen(reservation)}>
+                          <IconButton onClick={() => handleOpen(data)}>
                             <EditIcon />
                           </IconButton>
                         </TableCell>
@@ -117,10 +118,10 @@ const Cancelled = () => {
             <EditReservationModal
               open={open}
               handleClose={handleClose}
-              reservation={selectedReservation}
+              data={selectedReservation}
             />
     </div>
   );
 };
 
-export default Cancelled;
+export default Checkouts;
