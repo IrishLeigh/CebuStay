@@ -15,7 +15,7 @@ import {
   AttachMoney as PricingIcon,
 } from "@mui/icons-material";
 import GavelIcon from "@mui/icons-material/Gavel";
-import EditPartnerVerification from "../EditPartnerVerification";
+import EditPartnerVerification from "./components/EditPartnerVerification";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import RoomDetailsSingleUnit from "./components/RoomDetailsSingleUnit";
 import EditRoomDetailsMultipleUnit from "../EditRoomDetailsMultipleUnit";

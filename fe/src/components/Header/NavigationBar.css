@@ -93,5 +93,7 @@ body{
 }
 /* Logo */
 .header-logo img {
-  height: 3rem; /* Adjust the height as needed */
+  height: 3.5rem; /* Adjust the height as needed */
+  padding: 0;
+  margin: 0;
 }
