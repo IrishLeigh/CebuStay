@@ -5,14 +5,15 @@ import Hidden from './components/Hidden';
 import Footer from './components/Footer';
 import BasicGrid from './components/Land';
 import InteractiveMap from '../../InteractiveMap/InteractiveMap';
-
+import LandingCover from './components/LandingCover';
 const LandingPageUI = () => {
   return (
 
 
       <>
       <div>
-      <BasicGrid/>
+      <LandingCover/>
+      {/* <BasicGrid/> */}
       <InteractiveMap />
       <Popular />
       <Hidden />

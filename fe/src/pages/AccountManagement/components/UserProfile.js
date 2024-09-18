@@ -83,7 +83,14 @@ export default function UserProfile({ profile }) {
       if (res2.data.status === "success") {
         // Update profileImage state with new URL
         setProfileImage(res2.data.file_url);
+        const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
+          params: { userid: profile.userid },
+        });
 
+        if (res.data) {
+          setProfileImage(res.data.src);
+          // Only update currentProfile if it's different
+        }
         // Display success message
         alert("Image uploaded successfully!");
       } else {

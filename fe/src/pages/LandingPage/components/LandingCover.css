@@ -1,0 +1,155 @@
+.landing-cover {
+    margin-top: 5px;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .landing-cover > img {
+    display: block;
+    width: 100%; /* Adjust the width if necessary */
+    height: auto;
+  }
+  
+  .landing-cover-button, .landing-cover-button2 {
+    position: absolute;
+    color: white;
+    padding: 1vw 1vw;
+    font-size: 1.0vw; /* Proportional font size */
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+  }
+  
+  .landing-cover-button {
+    bottom: 30%; 
+    left: 10%;   
+    background: #45B2C0;
+    background: -moz-linear-gradient(45deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
+    background: -webkit-linear-gradient(45deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
+    background: linear-gradient(45deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
+    transition: 0.5s;
+  }
+  .landing-cover-button:hover {
+    background: #45B2C0;
+    background: -moz-linear-gradient(-45deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
+    background: -webkit-linear-gradient(-45deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
+    background: linear-gradient(135deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
+    transition: 0.5s;
+    -webkit-box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38); 
+    box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38);
+  }
+  .landing-cover-button:not(){
+    transition: 0.5s;
+  }
+  
+  .landing-cover-button2 {
+    bottom: 30%; 
+    left: 29%;   
+    color: rgb(28, 39, 197);
+    background-color: rgba(255, 255, 255, 0);
+    margin-left: 8px;
+  }
+  .landing-cover-button2:hover {
+    -webkit-box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38); 
+    box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38);
+    transition: 0.5s;
+  }
+
+  .landing-cover-button2:not(:hover){
+    transition: 0.5s;
+  }
+  
+
+  
+  /* Media Queries for Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .landing-cover-button, .landing-cover-button2 {
+      font-size: 1.5vw; /* Increase the font size proportionally on smaller screens */
+      padding: 2vw 3vw; /* Adjust padding for touch-friendly buttons */
+    }
+  
+    .landing-cover-button {
+      bottom: 25%; /* Move the button higher on smaller screens */
+      left: 10%;   /* Adjust left position */
+    }
+  
+    .landing-cover-button2 {
+      bottom: 25%; /* Move the button higher on smaller screens */
+      left: 45%;   /* Center the second button */
+      transform: translateX(-50%); /* Ensure it's centered */
+      margin-left: 5px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .landing-cover-button, .landing-cover-button2 {
+      font-size: 2.0vw; /* Further increase font size for very small screens */
+      padding: 2vw 3vw;
+    }
+  
+    .landing-cover-button {
+      bottom: 25%; /* Move the button higher */
+      left: 9%;    /* Adjust the left position */
+      border-radius: 6px;
+    }
+  
+    .landing-cover-button2 {
+      bottom: 25%; 
+      left: 55%;   
+      transform: translateX(-50%);
+    }
+  }
+  
+
+  
+
+.landing-cover-2 {
+    background-image: url('/public/landingscream-2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    /* height: 980px; */
+    text-align: center;
+    /* padding: 40px; */
+    padding-bottom: 200px;
+    /* border: 10px solid black; */
+    display: grid;
+    place-items: center;
+}
+.landing-cover-2 > h2{
+    margin-top: 100px;
+    color: #16B4DD;
+    font-weight: bold;
+    margin-bottom: 50px;
+}
+.landing-cover-2-content {
+    width: 100%;
+    /* display: grid; */
+    gap: 2px; /* Space between items */
+    display: grid;
+    place-items: center;
+  }
+.landingg{
+    width: 40%;
+}
+.landingg > h4{
+    color: #1780CB;
+    font-weight: bold;
+    font-size:larger;
+}
+.landingg > p{
+    font-size: 80%;
+    color: #707070;
+}
+.landing-cover-2-content > div:nth-child(odd)  {
+    text-align: left; /* Align text for odd children */
+    margin-right: 30%;
+}
+
+.landing-cover-2-content > div:nth-child(even) {
+    text-align: right; /* Align text for even children */
+    margin-left: 30%;
+}
