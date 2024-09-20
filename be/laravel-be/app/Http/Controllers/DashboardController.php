@@ -77,13 +77,33 @@ class DashboardController extends CORS
             ->sum('tbl_payment.amount');
     }
 
-    private function getMonthlyRevenue($propertyId) {
+    private function getMonthlyRevenue($propertyId)
+    {
+        // Get the current date and 30 days ago
         $startDate = Carbon::now()->subDays(30);
-        return Booking::where('propertyid', $propertyId)
+        $endDate = Carbon::now();
+    
+        // Fetch daily revenue for the past 30 days, grouped by day
+        $dailyRevenue = Booking::where('tbl_booking.propertyid', $propertyId)
             ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
             ->where('tbl_payment.status', 'success')
-            ->where('tbl_payment.created_at', '>=', $startDate)
-            ->sum('tbl_payment.amount');
+            ->whereBetween('tbl_payment.created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(tbl_payment.created_at) as date, SUM(tbl_payment.amount) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    
+        // Initialize an array for storing daily revenue data
+        $revenueData = [];
+    
+        // Populate the array with daily revenue, defaulting to 0 if no revenue exists for a day
+        for ($i = 0; $i < 30; $i++) {
+            $date = Carbon::now()->subDays(30 - $i)->format('Y-m-d');
+            $revenueForDay = $dailyRevenue->firstWhere('date', $date);
+            $revenueData[] = $revenueForDay ? $revenueForDay->total : 0;
+        }
+    
+        return $revenueData;
     }
 
     private function getWeeklyRevenue($propertyId) {
@@ -270,4 +290,34 @@ class DashboardController extends CORS
 
         return number_format($occupancyRate, 2);
     }
+
+    public function getUserProperties(Request $request)
+{
+    $this->enableCors($request);
+
+    // Get the user ID from the request
+    $userId = $request->input('userid');
+
+    // Fetch properties owned by the user
+    $properties = Property::where('userid', $userId)->get();
+
+    if ($properties->isEmpty()) {
+        return response()->json(['status' => 'error', 'message' => 'No properties found for this user']);
+    }
+
+    // Map the properties to return necessary details
+    $propertyList = $properties->map(function ($property) {
+        return [
+            'propertyid' => $property->propertyid,
+            'property_name' => $property->property_name,
+            'property_type' => $property->property_type,
+            'location' => $property->location,
+            'created_at' => $property->created_at->format('Y-m-d'),
+            'status' => $property->status,
+        ];
+    });
+
+    return response()->json(['status' => 'success', 'data' => $propertyList]);
+}
+
 }

@@ -201,3 +201,5 @@ Route::get('/getdashroomavail', 'App\Http\Controllers\DashboardController@getDai
 
 Route::get('/getDashboardData', 'App\Http\Controllers\DashboardController@getDashboardData');
 
+Route::get('/getUserProperties', 'App\Http\Controllers\DashboardController@getUserProperties');
+
