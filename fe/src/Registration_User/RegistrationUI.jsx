@@ -164,6 +164,7 @@ const RegistrationUI = () => {
                 color: "gray",
                 textAlign: "center",
                 marginBottom: "2rem",
+                marginTop:'2rem',
               }}
             >
               Sign up now and get full access to our app
@@ -283,13 +284,7 @@ const RegistrationUI = () => {
               {loading ? <div style={loaderStyle}></div> : "Create Account"}
             </button>
 
-            {/* <button
-              className="button-submit"
-              style={{ background: "#1780CB" }}
-              onClick={handleSubmit}
-            >
-              Create Account
-            </button> */}
+          
           </form>
           <p className="p">
             Already have an account?{" "}
