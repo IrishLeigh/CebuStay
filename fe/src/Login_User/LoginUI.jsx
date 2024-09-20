@@ -341,7 +341,7 @@ const LoginUI = ({ setToken }) => {
 
             <div className="forgotpassword" style={{ textAlign: "right" }}>
               <Link to="/login/forgot-password">
-                <span className="span">Forgot password?</span>
+                <span className="span">Forgot Password?</span>
               </Link>
             </div>
           </div>
