@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
-import TemplateFrameEdit from "./TemplateFrame";
+import TemplateFrameEdit from "./edit property/components/TemplateFrame";
 export default function PricePayment({
   propertyid,
   parentUnitPricing = {},

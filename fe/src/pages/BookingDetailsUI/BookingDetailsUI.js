@@ -35,7 +35,7 @@ function BookingDetailsUI() {
     setUser(dummyUser);
   }, []);
 
-  console.log("checkin", checkin_date);
+
 
   useEffect(() => {
     const dummyPropertyData = {
@@ -105,15 +105,15 @@ function BookingDetailsUI() {
     console.log("Guests:", guestCount);
     console.log("Length of Stay:", lengthStay);
     console.log("Guest Details:", guestDetails);
-
+  
     if (!validateGuestDetails(guestDetails)) {
       setSnackbarMessage("Please fill in all required fields.");
       setOpenSnackbar(true);
       return;
     }
-
+  
     setPaymentLoading(true); // Start loading state for payment process
-
+  
     try {
       const userid = user.userid;
       const unitid = propertyData.property_unitrooms.unitid;
@@ -129,22 +129,21 @@ function BookingDetailsUI() {
       const guestemail = guestDetails.guestEmail;
       const stay_length = lengthStay;
       const guest_count = guestCount;
-      const checkin_date = checkin_date;
-      const checkout_date = checkout_date;
+      // No need to redeclare checkin_date and checkout_date here
       const total_price = price;
       const special_request = guestDetails.requests;
       const arrival_time = guestDetails.arrivalTime;
       const status = "Pending";
-
+  
       const formatDate = (date) => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
       };
-
+  
       const booking_date = formatDate(new Date());
-
+  
       console.log("Booking data:", {
         userid,
         propertyid,
@@ -168,9 +167,9 @@ function BookingDetailsUI() {
         booking_date,
         unitid,
       });
-
+  
       const checkoutUrl = "https://dummy-payment-link.com/checkout";
-
+  
       if (checkoutUrl) {
         window.location.href = checkoutUrl;
       } else {
@@ -186,6 +185,7 @@ function BookingDetailsUI() {
       setPaymentLoading(false); // End loading state for payment process
     }
   };
+  
 
   const handlePriceChange = (newPrice) => {
     setPrice(newPrice);

@@ -75,16 +75,16 @@ export default function RoomDetailsSingleUnit({
       }) !== JSON.stringify(originalData);
 
     setHasChanges(hasDataChanged);
-  }, [guestCapacity, unitRooms, unitBeds, originalData]);
+  }, [guestCapacity, unitRooms, unitBeds, originalData,hasChanges]);
 
   const handleGuestCapacityChange = (event) => {
+    setHasChanges(true);
     setGuestCapacity(event.target.value);
     // onRoomDetailsChange({
     //   guestCapacity: event.target.value,
     //   unitRooms,
     //   unitBeds,
     // });
-    setHasChanges(true);
   };
 
   const handleRoomDetailChange = (index, event) => {
@@ -105,6 +105,7 @@ export default function RoomDetailsSingleUnit({
     const updatedRooms = [...unitRooms];
     updatedRooms[index].quantity = parseInt(event.target.value, 10);
     setUnitRooms(updatedRooms);
+
   
   // Update hasChanges after state update
   setHasChanges(true);
@@ -288,6 +289,12 @@ export default function RoomDetailsSingleUnit({
     setOpenAddBedDialog(false);
   };
   const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) {
+        return; // Exit the function if the user cancels the discard action
+      }
+    }
     setIsEditing(false);
     // Revert changes by resetting state to original data
     setGuestCapacity(originalData.guestCapacity);
@@ -360,10 +367,11 @@ export default function RoomDetailsSingleUnit({
   };
 
   const handleBedDetailChange = (bedroomIndex, bedType, event) => {
+    setHasChanges(true);
     const newUnitBeds = [...unitBeds];
     newUnitBeds[bedroomIndex].beds[bedType] = event.target.value;
     setUnitBeds(newUnitBeds);
-    setHasChanges(true);
+    
   };
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -388,7 +396,7 @@ console.log("New Unit Beds:", newBedType);
 
   return (
     <>
-       <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave}/>
+         <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
       <Paper
         style={{
           width: "auto",
@@ -525,13 +533,13 @@ console.log("New Unit Beds:", newBedType);
                       }}
                     />
                   </div>
+                {/* Conditionally render the delete button visibility based on room type */}
+                <div style={{ flex: "0 0 auto", visibility: room.roomname === 'Bedroom' || room.roomname === 'Living Room' || room.roomname === 'Kitchen' || room.roomname === 'Bathroom' ? 'hidden' : 'visible' }}>
+                  <IconButton aria-label="delete">
+                    <DeleteIcon  onClick={() => handleDeleteRoom(index)}/>
+                  </IconButton>
+                </div>
 
-                  {/* Placeholder to keep the spacing consistent */}
-                  <div style={{ flex: "0 0 auto", visibility: "hidden" }}>
-                    <IconButton aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  </div>
                 </div>
               ))}
 
@@ -809,8 +817,13 @@ console.log("New Unit Beds:", newBedType);
                 </Button> */}
                 <Button
                   variant="contained"
-                  // disabled={!hasChanges}
+                  disabled={!hasChanges}
                   onClick={handleSave}
+                  sx={{
+                    backgroundColor: "#16B4DD",
+                    color: "white",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
                 >
                   Save All Changes
                 </Button>

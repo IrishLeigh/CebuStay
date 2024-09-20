@@ -5,8 +5,8 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import EditIcon from '@mui/icons-material/Edit'; // Import Edit icon
-import CancelIcon from '@mui/icons-material/Cancel'; // Import Cancel icon
+import EditIcon from '@mui/icons-material/Edit';
+import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import getDashboardTheme from '../../../../Dashboard/dashboard/theme/getDashboardTheme';
 import { useNavigate } from 'react-router-dom';
@@ -27,17 +27,16 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   flex: '0 0 auto',
 }));
 
-function TemplateFrameEdit({ onEditChange, saved, onSave }) {
+function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false); // State to track editing mode
+  const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    // Reset isEditing to false when changes are saved
-    if (saved) {
-      setIsEditing(false);
-      onEditChange(false); // Notify the parent of the new editing state
-    }
-  }, [saved, onEditChange]);
+  // useEffect(() => {
+  //   if (saved) {
+  //     setIsEditing(false);
+  //     onEditChange(false);
+  //   }
+  // }, [saved, onEditChange]);
 
   const handleBackToHome = () => {
     navigate('/admin/listings');
@@ -46,15 +45,15 @@ function TemplateFrameEdit({ onEditChange, saved, onSave }) {
   const toggleEdit = () => {
     setIsEditing((prev) => {
       const newEditingState = !prev;
-      onEditChange(newEditingState); // Notify the parent of the new editing state
+      onEditChange(newEditingState);
       return newEditingState;
     });
   };
 
   const handleSaveChanges = () => {
-    // alert("Save Changes button clicked!");
     if (onSave) {
-      onSave(); // Call the parent component's save function
+      onSave();
+      setIsEditing (false);
     }
   };
 
@@ -99,32 +98,33 @@ function TemplateFrameEdit({ onEditChange, saved, onSave }) {
 
           <div>
             <Button
-              variant="contained" // Emphasized button
+              variant="contained"
               size="small"
-              startIcon={isEditing ? <CancelIcon /> : <EditIcon />} // Toggle icon
-              onClick={toggleEdit} // Toggle editing mode on click
+              startIcon={isEditing ? <CancelIcon /> : <EditIcon />}
+              onClick={toggleEdit}
               sx={{
                 fontWeight: 'bold',
-                backgroundColor: isEditing ? '#164BDD' : '#A334CF', // Change colors
+                backgroundColor: isEditing ? '#164BDD' : '#A334CF',
                 '&:hover': {
-                  backgroundColor: isEditing ? '#A334CF' : '#A334CF', // Adjust hover effect
+                  backgroundColor: isEditing ? '#A334CF' : '#A334CF',
                 },
               }}
             >
-              {isEditing ? 'Cancel Edit' : 'Edit'} {/* Toggle text */}
+              {isEditing ? 'Cancel Edit' : 'Edit'}
             </Button>
             {isEditing && (
               <Button
-                variant="contained" // Emphasized button
+                variant="contained"
                 size="small"
-                onClick={handleSaveChanges} // Handle save action
+                onClick={handleSaveChanges}
+                disabled={!hasChanges} // Disable if no changes have been made
                 sx={{
                   fontWeight: 'bold',
-                  backgroundColor: '#4CAF50', // Save changes color
+                  backgroundColor: hasChanges ? '#4CAF50' : '#fffff', // Change color based on hasChanges
                   '&:hover': {
-                    backgroundColor: '#45A049', // Adjust hover effect
+                    backgroundColor: hasChanges ? '#45A049' : '#fffff', // Adjust hover effect
                   },
-                  ml: 2, // Add margin left
+                  ml: 2,
                 }}
               >
                 Save Changes
