@@ -44,6 +44,12 @@ Route::post('/resendemail', 'App\Http\Controllers\RegisterUserController@resendE
 // Routes for propertyowner
 Route::post('/propertyowner', 'App\Http\Controllers\PropertyOwnerController@create');
 
+// Routes for propertycompany
+Route::post('/propertycompany', 'App\Http\Controllers\PropertyCompanyController@create');
+
+// Routes for legalrepresentative
+Route::post('/legalrepresentative', 'App\Http\Controllers\LegalRepresentativeController@create');
+
 // Routes for propertyownership
 Route::post('/propertyownership', 'App\Http\Controllers\PropertyOwnershipController@create');
 
@@ -168,3 +174,30 @@ route::post('/updatepropertyfiles-gallerysingleunit/{propertyid}', [FileControll
 route::post('/updatepropertybenefits-single/{propertyid}', [PropertyController::class, 'updatePropertyBenefits']);
 route::post('/updatepropertyrules-single/{propertyid}', [PropertyController::class, 'updatePropertyRules']);
 route::post('/updatepropertypricingpayment-single/{propertyid}', [PropertyController::class, 'updatePropertyPricePayment']);
+
+//Route for Dashboard
+Route::get('/getdashrevenue', 'App\Http\Controllers\DashboardController@getTotalPropertyRevenue');
+Route::get('/getdashrevenueweekly', 'App\Http\Controllers\DashboardController@getWeeklyPropertyRevenue');
+
+Route::get('/getdashbookings', 'App\Http\Controllers\DashboardController@getTotalPropertyBookings');
+Route::get('/getdashbookingsweekly', 'App\Http\Controllers\DashboardController@getWeeklyPropertyBookings');
+
+Route::get('/getdashratings', 'App\Http\Controllers\DashboardController@getTotalCustomerRating');
+Route::get('/getdashratingsweekly', 'App\Http\Controllers\DashboardController@getWeeklyCustomerRating');
+
+Route::get('/getdashdailybookings', 'App\Http\Controllers\DashboardController@getTodaysNewBookings');
+
+Route::get('/getdashdailyguest', 'App\Http\Controllers\DashboardController@getTodaysTotalGuests');
+
+Route::get('/getdashdailmonthprofit', 'App\Http\Controllers\DashboardController@getSixMonthProfit');
+
+Route::get('/getdashyearbookingtrends', 'App\Http\Controllers\DashboardController@getMonthlyBookingTrends');
+
+Route::get('/getdashbookinglist', 'App\Http\Controllers\DashboardController@getBookingList');
+
+Route::get('/getdashoccupancylist', 'App\Http\Controllers\DashboardControllerBackUp@getWeeklyOccupancyRate');
+
+Route::get('/getdashroomavail', 'App\Http\Controllers\DashboardController@getDailyRoomAvailability');
+
+Route::get('/getDashboardData', 'App\Http\Controllers\DashboardController@getDashboardData');
+

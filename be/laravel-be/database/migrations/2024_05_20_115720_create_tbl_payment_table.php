@@ -12,8 +12,11 @@ return new class extends Migration {
     {
         Schema::create('tbl_payment', function (Blueprint $table) {
             $table->increments('pid');
+            $table->unsignedInteger('bookingid');
+            $table->foreign('bookingid')->references('bookingid')->on('tbl_booking');
             $table->double('amount');
             $table->string('description');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -26,6 +26,7 @@ class PaymentController extends CORS
         // Get request data
         $amount = $request->input('amount');
         $description = $request->input('description');
+        $status = $request->input('status');
         $returnUrl = $request->input('return_url');
         $bookingId = $request->input('bookingid');
 
@@ -37,6 +38,7 @@ class PaymentController extends CORS
             $payment = new Payment();
             $payment->amount = $amount / 100;
             $payment->description = $description;
+            $payment->status = $status;
             $payment->save();
 
             // Return the payment record along with the PayMongo checkout session link
