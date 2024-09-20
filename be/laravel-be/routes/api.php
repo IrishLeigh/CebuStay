@@ -123,6 +123,10 @@ Route::post('/uploaduserimg', 'App\Http\Controllers\FileController@uploadAvatar'
 Route::get('/getuserimg', 'App\Http\Controllers\FileController@getUserAvatar');
 Route::post('/updateavatar', 'App\Http\Controllers\FileController@updateAvatar');
 Route::post('/addcaption', 'App\Http\Controllers\FileController@addCaption');
+//UPLOAD COMPANY LOGO IMG
+Route::post('/uploadcomplogo', 'App\Http\Controllers\FileController@uploadLogo');
+Route::get('/getcomplogo', 'App\Http\Controllers\FileController@getCompanyLogo');
+Route::post('/updatecomplogo', 'App\Http\Controllers\FileController@updateCompanyLogo');
 
 
 //UPLOAD MULTIPLE IMAGES
@@ -201,3 +205,4 @@ Route::get('/getdashroomavail', 'App\Http\Controllers\DashboardController@getDai
 
 Route::get('/getDashboardData', 'App\Http\Controllers\DashboardController@getDashboardData');
 
+//Edit Property Info MultiUnit

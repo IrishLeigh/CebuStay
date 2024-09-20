@@ -11,7 +11,7 @@ class UserFile extends Model
 
     protected $primaryKey = 'userimg_id';
 
-    protected $guarded = ['userimg_id', 'userid', 'file_name', 'file_id', 'file_url'];
+    protected $guarded = ['userimg_id', 'userid', 'file_name', 'file_id', 'file_url', 'isavatar'];
 
     public function user()
     {
