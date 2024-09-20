@@ -9,10 +9,13 @@ import {
   Paper,
   Typography,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import TemplateFrameEdit from "./TemplateFrame";
+import LoadingModal from "../modal/LoadingModal";
 
-export default function Amenities({
+export default function EditAmenities({
   amenities,
   facilities,
   services,
@@ -29,6 +32,9 @@ export default function Amenities({
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [ isSaved, setIsSaved ] = useState(false);
 
   useEffect(() => {
     // setSelectedAmenities(amenities || []);
@@ -72,6 +78,7 @@ export default function Amenities({
 
   const handleSave = async () => {
     // Integrate your API save logic here
+    setIsLoading(true);
 
     console.log("Selected Amenities:", selectedAmenities);
     console.log("Selected Facilities:", selectedFacilities);
@@ -94,23 +101,33 @@ export default function Amenities({
         setSelectedFacilities(updated_F);
         setSelectedServices(updated_S);
         onAmenitiesChange(updated_A, updated_F, updated_S);
+        setIsSaved(true);
         // After saving, reset the state
         // setOriginalData({
         //   amenities: updated_A,
         //   facilities: selectedFacilities,
         //   services: selectedServices,
         // });
+        onSaveStatusChange('Saved');
+        setHasChanges(false);
+        setIsEditing(false);
+        setIsLoading(false);
+        setOpenSnackbar(true);
       }
     } catch (error) {
       console.error(error);
     }
-    onSaveStatusChange('Saved');
-    alert ("Saved successfully");
-    setIsEditing(false);
-    setHasChanges(false);
+   
+   
   };
 
   const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) {
+        return; // Exit the function if the user cancels the discard action
+      }
+    }
     setSelectedAmenities(originalData.amenities || []);
     setSelectedFacilities(originalData.facilities || []);
     setSelectedServices(originalData.services || []);
@@ -129,12 +146,15 @@ export default function Amenities({
    
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
+  const handleCloseSnackbar  = () => {
+    setOpenSnackbar(false);
+  }
 
   console.log ("isSIngleUnit:", isSingleUnit);
 
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange} />
+       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
       <Paper
         style={{
           width: "auto",
@@ -390,7 +410,21 @@ export default function Amenities({
             )}
           </Grid>
         </Grid>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+         Room Benefits saved successfully!
+          </Alert>
+        </Snackbar>
       </Paper>
+      <LoadingModal open={isLoading} />
     </>
   );
 }

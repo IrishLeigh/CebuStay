@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import BasicInfo from "./components/BasicInfo";
-import Photos from "./components/Photos";
-import Amenities from "./components/Amenities";
-import RulesPolicies from "./components/RulesPolicies";
-import PricePayment from "./components/PricePayment";
+import Amenities from "./components/EditAmenities";
+import PricePayment from "./components/EditPricePayment";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -17,9 +15,12 @@ import {
 import GavelIcon from "@mui/icons-material/Gavel";
 import EditPartnerVerification from "./components/EditPartnerVerification";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import RoomDetailsSingleUnit from "./components/RoomDetailsSingleUnit";
+import RoomDetailsSingleUnit from "./components/EditRoomDetailsSingleUnit";
 import EditRoomDetailsMultipleUnit from "./components/EditRoomDetailsMultipleUnit";
-import TemplateFrameEdit from "./components/TemplateFrame";
+import EditPhotos from "./components/EditPhotos";
+import { Box } from "@mui/material";
+import EditRulesPolicies from "./components/EditRulesPolicies";
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -164,7 +165,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         }}
       >
         
-        <div
+        <Box
           style={{
             display: "flex",
             gap: "0.5rem",
@@ -172,6 +173,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
             alignItems: "center",
             justifyContent: "center",
             flexGrow: 1,
+            maxWidth: "lg",
           }}
         >
           {[
@@ -207,10 +209,10 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
               <div>{item.label}</div>
             </div>
           ))}
-        </div>
+        </Box>
       </div>
 
-      <div style={{ background: "#F4F7FA" }}>
+      <Box style={{ background: "#F4F7FA" }}>
         <CustomTabPanel value={value} index={0}>
           <BasicInfo
             propertyData={propertyData}
@@ -233,7 +235,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         </CustomTabPanel>
 
         <CustomTabPanel value={value} index={2}>
-          <Photos
+          <EditPhotos
             isSingleUnit={isSingleUnit}
             propertyImages={coverImg}
             setCoverP={setCoverImg}
@@ -260,7 +262,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={4}>
-          <RulesPolicies
+          <EditRulesPolicies
             propertyid={id}
             isEditing={isEditing}
             policies={policies}
@@ -288,7 +290,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
         <CustomTabPanel value={value} index={6}>
           <EditPartnerVerification parentPartnerData={partnerData} />
         </CustomTabPanel>
-      </div>
+      </Box>
     </div>
   );
 }

@@ -8,10 +8,14 @@ import {
   Typography,
   Paper,
   Button,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import axios from "axios";
 import TemplateFrameEdit from "./TemplateFrame";
-export default function RulesPolicies({
+import LoadingModal from "../modal/LoadingModal";
+
+export default function EditRulesPolicies({
   propertyid,
   houseRules,
   policies,
@@ -32,7 +36,6 @@ export default function RulesPolicies({
     checkOutUntil: "14:00",
     customRules: "",
   });
-
   const [policiesData, setPoliciesData] = useState({
     standardCancellation: false,
     cancellationDays: "",
@@ -40,11 +43,12 @@ export default function RulesPolicies({
     modificationPlan: false,
     offerDiscounts: false,
   });
-
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     console.log("On Mount");
@@ -111,6 +115,24 @@ export default function RulesPolicies({
     }));
     setHasChanges(true);
   };
+  const handleStandardInputChange = (e, field) => {
+    const { type, checked, value } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+  
+    setHouseRulesData((prevData) => ({
+      ...prevData,
+      [field]: newValue,
+    }));
+    setHasChanges(true);
+  
+    // If the field is "noise_restrictions", control the time picker visibility
+    if (field === "noise_restrictions") {
+      setShowTimePicker(newValue);
+    }
+    setHasChanges(true);
+  };
+  
+  
 
   const handleDaysChange = (e) => {
     setPoliciesData((prevData) => ({
@@ -121,6 +143,12 @@ export default function RulesPolicies({
   };
 
   const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) {
+        return; // Exit the function if the user cancels the discard action
+      }
+    }
     setIsEditing(false);
     setHouseRulesData(originalData.houseRulesData);
     setPoliciesData(originalData.policiesData);
@@ -138,6 +166,8 @@ export default function RulesPolicies({
 
 
   const handleSave = async () => {
+    setIsLoading(true);
+    setIsEditing(false);
     if (
       policiesData.standardCancellation &&
       policiesData.cancellationDays === ""
@@ -171,20 +201,26 @@ export default function RulesPolicies({
           }));
           onHouseRulesChange(res.data.rawUpdatedRules);
           onPoliciesChange(res.data.rawUpdatedPolicies);
+         
+          setIsEditing(false);
+          setIsLoading(false);
+          setOpenSnackbar(true);
+          onSaveStatusChange('Saved');
         }
       }
     } catch (error) {
       console.error(error);
     }
-    onSaveStatusChange('Saved');
-    alert ("Saved Successfully");
-    setHasChanges(false);
-    setIsEditing(false);
+   
+ 
   };
+  const handleCloseSnackbar  = () => {
+    setOpenSnackbar(false);
+  }
 
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange} />
+      <TemplateFrameEdit onEditChange={handleEditingChange}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
       <Paper
         style={{
           width: "auto",
@@ -207,7 +243,7 @@ export default function RulesPolicies({
               fontWeight: "bold",
             }}
           >
-            Rooms and Details
+           Rules and Policies
           </Typography>
           {/* <div>
             {!isEditing && (
@@ -269,58 +305,42 @@ export default function RulesPolicies({
                 >
                   Standard Rules
                 </Typography>
+
                 <Checkbox
                   checked={houseRulesData.smokingAllowed}
                   color="secondary"
                   disabled={!isEditing}
-                  onChange={(e) =>
-                    setHouseRulesData((prevData) => ({
-                      ...prevData,
-                      smokingAllowed: e.target.checked,
-                    }))
-                  }
+                  onChange={(e) => handleStandardInputChange(e, 'smokingAllowed')}
                 />{" "}
                 Smoking Allowed
                 <br />
+
                 <Checkbox
                   checked={houseRulesData.petsAllowed}
                   color="secondary"
                   disabled={!isEditing}
-                  onChange={(e) =>
-                    setHouseRulesData((prevData) => ({
-                      ...prevData,
-                      petsAllowed: e.target.checked,
-                    }))
-                  }
+                  onChange={(e) => handleStandardInputChange(e, 'petsAllowed')}
                 />{" "}
-                Pets allowed
+                Pets Allowed
                 <br />
+
                 <Checkbox
                   checked={houseRulesData.partiesAllowed}
                   color="secondary"
                   disabled={!isEditing}
-                  onChange={(e) =>
-                    setHouseRulesData((prevData) => ({
-                      ...prevData,
-                      partiesAllowed: e.target.checked,
-                    }))
-                  }
+                  onChange={(e) => handleStandardInputChange(e, 'partiesAllowed')}
                 />{" "}
-                Parties/events allowed
+                Parties/Events Allowed
                 <br />
+
                 <Checkbox
                   checked={showTimePicker}
                   disabled={!isEditing}
-                  onChange={(e) => {
-                    setShowTimePicker(e.target.checked);
-                    setHouseRulesData((prevData) => ({
-                      ...prevData,
-                      noise_restrictions: e.target.checked,
-                    }));
-                  }}
+                  onChange={(e) => handleStandardInputChange(e, 'noise_restrictions')}
                   color="secondary"
                 />{" "}
                 Noise Restrictions
+
                 {showTimePicker && (
                   <div>
                     <TextField
@@ -336,12 +356,7 @@ export default function RulesPolicies({
                         step: 300, // 5 min
                       }}
                       disabled={!isEditing}
-                      onChange={(e) =>
-                        setHouseRulesData((prevData) => ({
-                          ...prevData,
-                          quietHoursStart: e.target.value,
-                        }))
-                      }
+                      onChange={(e) => handleStandardInputChange(e, 'quietHoursStart')}
                     />
                     <TextField
                       id="quiet-hours-end"
@@ -355,16 +370,12 @@ export default function RulesPolicies({
                         step: 300, // 5 min
                       }}
                       disabled={!isEditing}
-                      onChange={(e) =>
-                        setHouseRulesData((prevData) => ({
-                          ...prevData,
-                          quietHoursEnd: e.target.value,
-                        }))
-                      }
+                      onChange={(e) => handleStandardInputChange(e, 'quietHoursEnd')}
                     />
                   </div>
                 )}
               </Box>
+
               <Box>
                 <Typography
                   variant="h4"
@@ -379,31 +390,13 @@ export default function RulesPolicies({
                   maxRows={10}
                   value={houseRulesData.customRules}
                   disabled={!isEditing}
-                  onChange={(e) =>
-                    setHouseRulesData((prevData) => ({
-                      ...prevData,
-                      customRules: e.target.value,
-                    }))
-                  }
+                  onChange={(e) => handleStandardInputChange(e, 'customRules')}
                   sx={{ m: 2, width: "92%" }}
                 />
               </Box>
-              <Box
-                sx={{
-                  display: "column",
-                  justifyContent: "left",
-                  alignItems: "left",
-                  m: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "left",
-                    m: 2,
-                  }}
-                >
+
+              <Box sx={{ display: "column", justifyContent: "left", alignItems: "left", m: 2 }}>
+                <Box sx={{ display: "flex", justifyContent: "left", alignItems: "left", m: 2 }}>
                   <TextField
                     id="check-in-from"
                     label="Check-in From"
@@ -416,12 +409,7 @@ export default function RulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) =>
-                      setHouseRulesData((prevData) => ({
-                        ...prevData,
-                        checkInFrom: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => handleStandardInputChange(e, 'checkInFrom')}
                     sx={{ marginRight: 2 }}
                   />
                   <TextField
@@ -436,23 +424,12 @@ export default function RulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) =>
-                      setHouseRulesData((prevData) => ({
-                        ...prevData,
-                        checkInUntil: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => handleStandardInputChange(e, 'checkInUntil')}
                     sx={{ marginRight: 2 }}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "left",
-                    m: 2,
-                  }}
-                >
+
+                <Box sx={{ display: "flex", justifyContent: "left", alignItems: "left", m: 2 }}>
                   <TextField
                     id="check-out-from"
                     label="Check-out From"
@@ -465,12 +442,7 @@ export default function RulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) =>
-                      setHouseRulesData((prevData) => ({
-                        ...prevData,
-                        checkOutFrom: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => handleStandardInputChange(e, 'checkOutFrom')}
                     sx={{ marginRight: 2 }}
                   />
                   <TextField
@@ -485,18 +457,15 @@ export default function RulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) =>
-                      setHouseRulesData((prevData) => ({
-                        ...prevData,
-                        checkOutUntil: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => handleStandardInputChange(e, 'checkOutUntil')}
                     sx={{ marginRight: 2 }}
                   />
                 </Box>
               </Box>
             </div>
           </Grid>
+
+
 
           <Grid item xs={12} sx={{ padding: "1rem" }}>
             <div
@@ -577,7 +546,7 @@ export default function RulesPolicies({
                 </Button>
                 <Button
                   variant="contained"
-                  // disabled={!hasChanges}
+                  disabled={!hasChanges}
                   onClick={handleSave}
                 >
                   Save All Changes
@@ -586,7 +555,21 @@ export default function RulesPolicies({
             )}
           </Grid>
         </Grid>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+          Basic Info saved successfully!
+          </Alert>
+        </Snackbar>
       </Paper>
+    <LoadingModal open={isLoading} />
     </>
   );
 }

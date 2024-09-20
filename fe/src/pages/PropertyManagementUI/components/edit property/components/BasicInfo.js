@@ -19,8 +19,6 @@ import {
   Alert,
 } from "@mui/material";
 import axios from "axios";
-import EditIcon from "@mui/icons-material/Edit";
-import CancelIcon from "@mui/icons-material/Cancel";
 import TemplateFrameEdit from "./TemplateFrame";
 import LoadingModal from "../modal/LoadingModal";
 
@@ -92,6 +90,7 @@ export default function BasicInfo({
     console.log("Object propertyData:", localState);
     console.log("Property data:", propertyData);
     setIsLoading(true);
+    
     setIsEditing(false);
     setSaveCount((prevCount) => prevCount + 1);
 
@@ -118,7 +117,8 @@ export default function BasicInfo({
 
       // Check response status
       if (save_response.data.status === "success") {
-        alert("Basic Info saved successfully!");
+        // alert("Basic Info saved successfully!");
+        setIsSaved(true);
         setIsEditing(false);
         setOpenSnackbar(true);
         onSaveStatusChange('Saved');
@@ -134,6 +134,13 @@ export default function BasicInfo({
   };
 
   const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) {
+        return; // Exit the function if the user cancels the discard action
+      }
+    }
+  
     setIsEditing(false);
     setLocalState({
       propertyName: propertyData.property_name || "",
@@ -144,14 +151,16 @@ export default function BasicInfo({
       street: propertyAddress.address || "",
       postalCode: propertyAddress.zipcode || "",
     });
+    setHasChanges(false); // Reset changes flag after canceling
   };
-  const handleCloseSnackbar = () => {
+  
+  const handleCloseSnackbar  = () => {
     setOpenSnackbar(false);
-  };
+  }
  console.log ("saveCount", saveCount);
   return (
     <div>
-       <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave}/>
+       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
     <Paper
       style={{
         width: "auto",
@@ -368,11 +377,11 @@ export default function BasicInfo({
             disabled={!hasChanges}
             onClick={handleSave}
           >
-            Save All Changes
+            Save Changes
           </Button>
         </div>
       )}
-      <Snackbar
+        <Snackbar
           open={openSnackbar}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}

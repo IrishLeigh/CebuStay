@@ -18,6 +18,8 @@ import {
   Paper,
   Typography,
   InputLabel,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   ArrowBack,
@@ -39,7 +41,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LoadingModal from "../modal/LoadingModal";
 
-export default function Photos({
+
+export default function EditPhotos({
   isSingleUnit,
   propertyImages,
   propertyid,
@@ -68,6 +71,7 @@ export default function Photos({
   });
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   
     // Initialize originalData and sync with props
     useEffect(() => {
@@ -350,6 +354,7 @@ export default function Photos({
         onSaveStatusChange('Saved');
         setIsSaved(true);
         setIsLoading(false);
+        setOpenSnackbar(true);
       }
     } else {
       alert("You must add at least 5 cover photos");
@@ -381,20 +386,22 @@ export default function Photos({
    
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
+ const handleCloseSnackbar  = () => {
+    setOpenSnackbar(false);
+  }
 
-
-  const photosToDisplay =
-    currentPhotoType === "coverPhotos" ? coverPhotos : galleryPhotos;
-    // Loading indicator component
-  const LoadingIndicator = () => (
-    <div className="loading-indicator">
-      Saving, please wait...
-    </div>
-  );
+  // const photosToDisplay =
+  //   currentPhotoType === "coverPhotos" ? coverPhotos : galleryPhotos;
+  //   // Loading indicator component
+  // const LoadingIndicator = () => (
+  //   <div className="loading-indicator">
+  //     Saving, please wait...
+  //   </div>
+  // );
 
   return (
     <>
-    <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave}/>
+    <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
       <Paper
         style={{
           width: "auto",
@@ -899,7 +906,7 @@ export default function Photos({
               variant="contained"
               color="primary"
               onClick={handleSave}
-              // disabled={!hasChanges}
+              disabled={!hasChanges}
               startIcon={<Save />}
             >
               Save Changes
@@ -907,6 +914,19 @@ export default function Photos({
           </div>
         )}
       </Paper>
+      <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+          Basic Info saved successfully!
+          </Alert>
+        </Snackbar>
       <LoadingModal open={isLoading} />
     </>
   );

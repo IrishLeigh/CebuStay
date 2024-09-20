@@ -11,10 +11,13 @@ import {
   FormControlLabel,
   Radio,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 import TemplateFrameEdit from "./TemplateFrame";
+import LoadingModal from "../modal/LoadingModal";
 export default function PricePayment({
   propertyid,
   parentUnitPricing = {},
@@ -38,6 +41,11 @@ export default function PricePayment({
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+
   useEffect(() => {
     console.log("ON MOUNT");
     console.log("PRICING", parentUnitPricing);
@@ -96,6 +104,13 @@ export default function PricePayment({
   };
 
   const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) {
+        return; // Exit the function if the user cancels the discard action
+      }
+    }
+
     setIsEditing(false);
     setBasePrice(originalData.basePrice);
     setPaymentData(originalData.paymentData);
@@ -112,6 +127,8 @@ export default function PricePayment({
   };
 
   const handleSave = async () => {
+    setIsLoading(true);
+    setIsEditing(false);
     // Gather the data to be sent to the API
     const dataToSave = {
       unitPricing: {
@@ -142,21 +159,25 @@ export default function PricePayment({
             selectedPayout: res.data.updatedPayment.paymentmethod,
           });
           // parentUnitPricing.min_price = res.data.updatedPricing.min_price;
+          setIsSaved(true);
+          setIsEditing(false);
+          setOpenSnackbar(true);
+          onSaveStatusChange('Saved');
+          setIsLoading(false);
         }
       }
     } catch (error) {
       console.log("Error saving data:", error);
     }
     console.log("Saving data:", dataToSave);
-    onSaveStatusChange("Saved");
-    alert("Saved successfully");
 
-    setIsEditing(false); // Exit editing mode for now
   };
-
+  const handleCloseSnackbar  = () => {
+    setOpenSnackbar(false);
+  }
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange} />
+      <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
       <Paper
         style={{
           width: "auto",
@@ -416,7 +437,21 @@ export default function PricePayment({
             )}
           </Grid>
         </Grid>
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+            Basic Info saved successfully!
+            </Alert>
+          </Snackbar>
       </Paper>
+      <LoadingModal open={isLoading} />
     </>
   );
 }
