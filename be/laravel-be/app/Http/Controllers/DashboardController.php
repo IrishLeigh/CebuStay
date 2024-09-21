@@ -34,7 +34,7 @@ class DashboardController extends CORS
         // $data['total_payments'] = $this->getTotalPayments($propertyId);
         
         // Monthly Revenue
-        $data['monthly_revenue'] = $this->getMonthlyRevenue($propertyId);
+        // $data['monthly_revenue'] = $this->getMonthlyRevenue($propertyId);
         
         // Weekly Revenue
         // $data['weekly_revenue'] = $this->getWeeklyRevenue($propertyId);
@@ -43,11 +43,53 @@ class DashboardController extends CORS
         $data['total_bookings'] = $this->getTotalBookings($propertyId);
         
         // Weekly Bookings
-        $data['weekly_bookings'] = $this->getWeeklyBookings($propertyId);
+        // $data['weekly_bookings'] = $this->getWeeklyBookings($propertyId);
         
         // Customer Ratings
         // $data['total_rating'] = $this->getTotalCustomerRating($propertyId);
-        $data['weekly_rating'] = $this->getWeeklyCustomerRating($propertyId);
+        // $data['weekly_rating'] = $this->getWeeklyCustomerRating($propertyId);
+        $data = [
+            [
+                'title' => 'Total Revenue',
+                'value' => number_format($this->getMonthlyRevenue($propertyId)['totalRevenue'], 0, '.', ',') . 'k',
+                'interval' => 'Last 30 days',
+                'trend' => $this->calculateTrend(
+                    $this->getMonthlyRevenue($propertyId)['totalRevenue'],
+                    $this->getPreviousMonthlyRevenue($propertyId)
+                ),
+                'data' => $this->getMonthlyRevenue($propertyId)['revenueData'],
+            ],
+            // Weekly Bookings
+            [
+                'title' => 'Total Bookings',
+                'value' => number_format($this->getWeeklyBookings($propertyId)['totalBookings'], 0, '.', ',') . 'k',
+                'interval' => 'This week',
+                'trend' => $this->calculateTrend(
+                    $this->getWeeklyBookings($propertyId)['totalBookings'],
+                    $this->getPreviousWeeklyBookings($propertyId)
+                ),
+                'data' => $this->getWeeklyBookings($propertyId)['bookingData'],
+            ],
+            // Weekly Customer Ratings
+            [
+                'title' => 'Total Customer Ratings',
+                'value' => number_format($this->getWeeklyCustomerRating($propertyId)['averageRating'], 0, '.', ','),
+                'interval' => 'This week',
+                $this->calculateTrend(
+                    $this->getWeeklyCustomerRating($propertyId)['averageRating'],
+                    $this->getPreviousWeeklyCustomerRating($propertyId)
+                ),
+                'data' => $this->getWeeklyCustomerRating($propertyId)['ratingData'],
+            ],
+            // // Today's Bookings
+            // [
+            //     'title' => 'Today\'s Bookings',
+            //     'value' => number_format($this->getTodaysNewBookings($propertyId), 0, '.', ','),
+            //     'interval' => 'Today',
+            //     'trend' => 'neutral', // You may calculate trend dynamically if needed
+            //     'data' => [], // You may not need daily data for today's bookings, so this can be left empty
+            // ],
+        ];
         
         // Today's Bookings
         $data['new_bookings'] = $this->getTodaysNewBookings($propertyId);
@@ -70,6 +112,52 @@ class DashboardController extends CORS
         return response()->json(['status' => 'success', 'singleUnit' => $isSingleUnit, 'data' => $data]);
     }
 
+    private function calculateTrend($currentValue, $previousValue)
+    {
+        if ($currentValue > $previousValue) {
+            return 'up';
+        } elseif ($currentValue < $previousValue) {
+            return 'down';
+        } else {
+            return 'neutral';
+        }
+    }
+    
+    private function getPreviousMonthlyRevenue($propertyId)
+    {
+        // Calculate the previous 30-day period
+        $startDate = Carbon::now()->subDays(60);
+        $endDate = Carbon::now()->subDays(30);
+    
+        return Booking::where('tbl_booking.propertyid', $propertyId)
+            ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
+            ->where('tbl_payment.status', 'success')
+            ->whereBetween('tbl_payment.created_at', [$startDate, $endDate])
+            ->sum('tbl_payment.amount');
+    }
+    
+    private function getPreviousWeeklyBookings($propertyId)
+    {
+        // Calculate the previous week
+        $startOfPreviousWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfPreviousWeek = Carbon::now()->subWeek()->endOfWeek();
+    
+        return Booking::where('propertyid', $propertyId)
+            ->whereBetween('created_at', [$startOfPreviousWeek, $endOfPreviousWeek])
+            ->count();
+    }
+    
+    private function getPreviousWeeklyCustomerRating($propertyId)
+    {
+        // Calculate the previous week
+        $startOfPreviousWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfPreviousWeek = Carbon::now()->subWeek()->endOfWeek();
+    
+        return ReviewsAndRating::where('propertyid', $propertyId)
+            ->whereBetween('created_at', [$startOfPreviousWeek, $endOfPreviousWeek])
+            ->avg('rating');
+    }
+
     private function getTotalPayments($propertyId) {
         return Booking::where('propertyid', $propertyId)
             ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
@@ -77,13 +165,43 @@ class DashboardController extends CORS
             ->sum('tbl_payment.amount');
     }
 
-    private function getMonthlyRevenue($propertyId) {
+    private function getMonthlyRevenue($propertyId)
+    {
+        // Get the current date and 30 days ago
         $startDate = Carbon::now()->subDays(30);
-        return Booking::where('propertyid', $propertyId)
+        $endDate = Carbon::now();
+    
+        // Fetch daily revenue for the past 30 days, grouped by day
+        $dailyRevenue = Booking::where('tbl_booking.propertyid', $propertyId)
             ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
             ->where('tbl_payment.status', 'success')
-            ->where('tbl_payment.created_at', '>=', $startDate)
-            ->sum('tbl_payment.amount');
+            ->whereBetween('tbl_payment.created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(tbl_payment.created_at) as date, SUM(tbl_payment.amount) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    
+        // Initialize an array for storing daily revenue data
+        $revenueData = [];
+        $totalRevenue = 0; // Variable to store the total revenue sum
+    
+        // Populate the array with daily revenue, defaulting to 0 if no revenue exists for a day
+        for ($i = 0; $i < 30; $i++) {
+            $date = Carbon::now()->subDays(30 - $i)->format('Y-m-d');
+            $revenueForDay = $dailyRevenue->firstWhere('date', $date);
+            $dailyTotal = $revenueForDay ? $revenueForDay->total : 0;
+            $revenueData[] = $dailyTotal;
+    
+            // Add the day's revenue to the total sum
+            $totalRevenue += $dailyTotal;
+        }
+    
+        // Return both the daily revenue data and the total sum
+        return [
+            'title' => 'Total Revenue',
+            'revenueData' => $revenueData,
+            'totalRevenue' => $totalRevenue
+        ];
     }
 
     private function getWeeklyRevenue($propertyId) {
@@ -100,25 +218,91 @@ class DashboardController extends CORS
         return Booking::where('propertyid', $propertyId)->count();
     }
 
-    private function getWeeklyBookings($propertyId) {
+    private function getWeeklyBookings($propertyId)
+    {
+        // Get the start and end of the current week
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
-        return Booking::where('propertyid', $propertyId)
+    
+        // Fetch daily bookings for the current week, grouped by day
+        $dailyBookings = Booking::where('propertyid', $propertyId)
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-            ->count();
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    
+        // Initialize an array for storing daily bookings data
+        $bookingData = [];
+        $totalBookings = 0; // Variable to store the total number of bookings
+    
+        // Populate the array with daily bookings, defaulting to 0 if no bookings exist for a day
+        for ($i = 0; $i < 7; $i++) {
+            $date = Carbon::now()->startOfWeek()->addDays($i)->format('Y-m-d');
+            $bookingsForDay = $dailyBookings->firstWhere('date', $date);
+            $dailyTotal = $bookingsForDay ? $bookingsForDay->total : 0;
+            $bookingData[] = $dailyTotal;
+    
+            // Add the day's bookings to the total count
+            $totalBookings += $dailyTotal;
+        }
+    
+        // Return both the daily bookings data and the total bookings count with the title 'Total Bookings'
+        return [
+            'title' => 'Total Bookings',
+            'totalBookings' => $totalBookings,
+            'bookingData' => $bookingData
+        ];
     }
 
     private function getTotalCustomerRating($propertyId) {
         return ReviewsAndRating::where('propertyid', $propertyId)->sum('rating');
     }
 
-    private function getWeeklyCustomerRating($propertyId) {
+    private function getWeeklyCustomerRating($propertyId)
+    {
+        // Get the start and end of the current week
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
-        return ReviewsAndRating::where('propertyid', $propertyId)
+    
+        // Fetch daily customer ratings for the current week, grouped by day
+        $dailyRatings = ReviewsAndRating::where('propertyid', $propertyId)
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-            ->avg('rating');
+            ->selectRaw('DATE(created_at) as date, AVG(rating) as average_rating')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    
+        // Initialize an array for storing daily rating data
+        $ratingData = [];
+        $totalRatingSum = 0; // Variable to sum all the ratings
+        $ratingCount = 0;    // Variable to count the total number of ratings
+    
+        // Populate the array with daily rating data, defaulting to 0 if no ratings exist for a day
+        for ($i = 0; $i < 7; $i++) {
+            $date = Carbon::now()->startOfWeek()->addDays($i)->format('Y-m-d');
+            $ratingForDay = $dailyRatings->firstWhere('date', $date);
+            $dailyAverage = $ratingForDay ? $ratingForDay->average_rating : 0;
+            $ratingData[] = $dailyAverage;
+    
+            // Add the day's ratings to the total sum and count for the average
+            if ($dailyAverage > 0) {
+                $totalRatingSum += $dailyAverage;
+                $ratingCount++;
+            }
+        }
+    
+        // Calculate the overall average rating for the week
+        $averageRating = $ratingCount > 0 ? $totalRatingSum / $ratingCount : 0;
+    
+        // Return both the daily ratings data and the total average rating with the title 'Total Customer Ratings'
+        return [
+            'title' => 'Total Customer Ratings',
+            'averageRating' => $averageRating,
+            'ratingData' => $ratingData
+        ];
     }
+    
 
     private function getTodaysNewBookings($propertyId) {
         $todayStart = Carbon::today()->startOfDay();
@@ -157,7 +341,7 @@ class DashboardController extends CORS
 
             $profitsPerMonth[] = [
                 'month' => $monthStart->format('F Y'),
-                'profit' => $monthlyProfit
+                'profit' => $monthlyProfit,
             ];
         }
 
@@ -270,4 +454,34 @@ class DashboardController extends CORS
 
         return number_format($occupancyRate, 2);
     }
+
+    public function getUserProperties(Request $request)
+{
+    $this->enableCors($request);
+
+    // Get the user ID from the request
+    $userId = $request->input('userid');
+
+    // Fetch properties owned by the user
+    $properties = Property::where('userid', $userId)->get();
+
+    if ($properties->isEmpty()) {
+        return response()->json(['status' => 'error', 'message' => 'No properties found for this user']);
+    }
+
+    // Map the properties to return necessary details
+    $propertyList = $properties->map(function ($property) {
+        return [
+            'propertyid' => $property->propertyid,
+            'property_name' => $property->property_name,
+            'property_type' => $property->property_type,
+            'location' => $property->location,
+            'created_at' => $property->created_at->format('Y-m-d'),
+            'status' => $property->status,
+        ];
+    });
+
+    return response()->json(['status' => 'success', 'data' => $propertyList]);
+}
+
 }
