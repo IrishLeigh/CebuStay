@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('tbl_userimg', function (Blueprint $table) {
-            $table->unsignedInteger('propertyid');
+            $table->unsignedInteger('propertyid')->nullable(); // Allow propertyid to be null
             $table->foreign('propertyid')->references('propertyid')->on('property');
         });
     }

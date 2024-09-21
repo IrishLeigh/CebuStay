@@ -632,6 +632,7 @@ class FileController extends CORS
             $uploadedfile = new UserFile();
             $uploadedfile->file_name = $name;
             $uploadedfile->userid = $userid;
+            $uploadedfile->propertyid = null;
             $uploadedfile->file_id = $file_id;
             $uploadedfile->file_url = $file_url;
             $uploadedfile->isavatar = true;
@@ -651,6 +652,7 @@ class FileController extends CORS
 
             $src_userimg = UserFile::where('userid', $userid)
                 ->where('isavatar', true)
+                ->whereNull('propertyid')
                 ->first();
             if (!$src_userimg) {
                 return response()->json(['status' => 'error', 'message' => 'No image found']);
@@ -679,7 +681,10 @@ class FileController extends CORS
 
         try {
             // Find the existing image for the user
-            $existingFile = UserFile::where('userid', $userid)->first();
+            $existingFile = UserFile::where('userid', $userid)
+                ->where('isavatar', true)
+                ->whereNull('propertyid')
+                ->first();
             if (!$existingFile) {
                 return response()->json(['message' => 'No existing image found for this user', 'status' => 'error']);
             }
@@ -739,7 +744,7 @@ class FileController extends CORS
             $uploadedfile->file_id = $file_id;
             $uploadedfile->file_url = $file_url;
             $uploadedfile->isavatar = true;
-            $uploadedfile->propertyid = 0;
+            // $uploadedfile->propertyid = 0;
             $uploadedfile->save();
 
             return response()->json(['message' => 'Image updated successfully', 'status' => 'success']);
@@ -820,9 +825,8 @@ class FileController extends CORS
     {
         try {
             $this->enableCors($request);
-            $userid = $request->userid;
             $propertyid = $request->propertyid;
-            $src_userimg = UserFile::where('userid', $userid)
+            $src_userimg = UserFile::where('propertyid', $propertyid)
                 ->where('isavatar', false)
                 ->first();
             if (!$src_userimg) {
@@ -844,6 +848,7 @@ class FileController extends CORS
 
         $accessToken = $this->token();
         $userid = $request->userid;
+        $propertyid = $request->propertyid;
         $name = $request->file->getClientOriginalName();
         $path = $request->file->getRealPath();
         $folderId = \Config('services.google.avatar_folderid');
@@ -852,7 +857,7 @@ class FileController extends CORS
 
         try {
             // Find the existing image for the user
-            $existingFile = UserFile::where('userid', $userid)->first();
+            $existingFile = UserFile::where('propertyid', $propertyid)->first();
             if (!$existingFile) {
                 return response()->json(['message' => 'No existing image found for this user', 'status' => 'error']);
             }
@@ -909,6 +914,7 @@ class FileController extends CORS
             $uploadedfile = new UserFile();
             $uploadedfile->file_name = $name;
             $uploadedfile->userid = $userid;
+            $uploadedfile->propertyid = $propertyid;
             $uploadedfile->file_id = $file_id;
             $uploadedfile->file_url = $file_url;
             $uploadedfile->isavatar = false;
