@@ -238,7 +238,7 @@ import InfoIcon from '@mui/icons-material/Info'; // Icon for property type
 import BookingDetailsTheme from './theme/theme';
 import { Hotel } from '@mui/icons-material';
 
-function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData, guestCapacity, checkin_date, checkout_date, address , details, facilities, houseRules}) {
+function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity, checkin_date, checkout_date, address , details, facilities, houseRules}) {
   const [price, setPrice] = useState(0);
   const [vat, setVat] = useState(0);
   const [allServices, setAllServices] = useState([]);

@@ -136,7 +136,10 @@ export default function UserProfile({ profile }) {
   };
 
   return !currentProfile ? (
-    <CircularProgress />
+    <div className="loading-container">
+      <CircularProgress />
+      <p>Retrieving data...</p>
+    </div>
   ) : (
     <>
       <HeaderAccountMgnt />

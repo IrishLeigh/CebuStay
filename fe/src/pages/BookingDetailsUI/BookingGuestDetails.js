@@ -403,7 +403,7 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
   const policies = ['Non-refundable', 'Modifiable if plans change', 'Maximum 2 Guests']; // Example facilities
   const [selectedCountry, setSelectedCountry] = useState('');
   const services = ['Room service', 'Free Wi-Fi', 'Airport shuttle']; // Example services
-  const [bookingFor, setBookingFor] = useState('');
+  const [bookingFor, setBookingFor] = useState(1);
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [arrivalTime, setArrivalTime] = useState('');
@@ -443,12 +443,12 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
   const handleFirstNameChange = (event) => setFirstName(event.target.value);
   const handleLastNameChange = (event) => setLastName(event.target.value);
   const handleEmailChange = (event) => setEmail(event.target.value);
-  const handleBookingForChange = (event) => setBookingFor(event.target.value);
+  const handleBookingForChange = (event) => setBookingFor(parseInt(event.target.value)); // Update value as integer
   const handleGuestNameChange = (event) => setGuestName(event.target.value);
   const handleGuestEmailChange = (event) => setGuestEmail(event.target.value);
 
   useEffect(() => {
-    if (bookingFor === 'myself') {
+    if (bookingFor === 1) { // If booking for myself
       setGuestName(`${firstName} ${lastName}`);
     } else {
       setGuestName('');
@@ -472,14 +472,6 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
     onGuestDetailsChange(guestDetails);
   }, [email, firstName, lastName, selectedCountry, countryCode, bookingFor, guestName, guestEmail, arrivalTime, requests, phoneNumber, onGuestDetailsChange]);
 
-  const dummyPropertyData = {
-    property_houserules: [
-      {
-        check_in_from: "14:00",
-        check_in_until: "20:00"
-      }
-    ]
-  };
   return (
     <ThemeProvider theme={BookingGuestTheme}>
       <Box sx={{ borderRadius: '8px', marginTop: '2rem' }}>
@@ -540,8 +532,8 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
             <div style={{ width: '100%', marginTop: '16px' }}>
               <Typography>Who are you booking for?</Typography>
               <RadioGroup row value={bookingFor} onChange={handleBookingForChange} sx={{ justifyContent: 'flex-start' }}>
-                <FormControlLabel value="myself" control={<Radio />} label="I am booking for myself" />
-                <FormControlLabel value="other" control={<Radio />} label="Booking for someone else" />
+                <FormControlLabel value={1} control={<Radio />} label="I am booking for myself" />
+                <FormControlLabel value={0} control={<Radio />} label="Booking for someone else" />
               </RadioGroup>
             </div>
           </Stack>
@@ -565,7 +557,7 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
             </Stack>
           </Typography>
           <Divider sx={{ mt: '1rem' }} />
-          {bookingFor === 'myself' ? (
+          {bookingFor === 1 ? (
             <div style={{ width: '49%' }} />
           ) : (
             <Grid container spacing={2} mt={1}>

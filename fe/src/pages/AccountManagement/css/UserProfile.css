@@ -111,6 +111,20 @@
   background-color: #cc3940;
 }
 
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+}
+
+.loading-container p {
+  margin-top: 16px;
+  font-size: 18px;
+  color: #666; /* Adjust color to your theme */
+}
+
 /* Adjust  for resolutions below 1920px */
 @media (max-width: 1900px) {
   .account-banner-container {

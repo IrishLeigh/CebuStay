@@ -8,7 +8,7 @@ import { Container } from "react-bootstrap";
 
 function BookingDetailsUI() {
   const [price, setPrice] = useState(null);
-  const [lengthStay, setLengthStay] = useState(2);
+  const [lengthStay, setLengthStay] = useState();
   const [propertyData, setPropertyData] = useState(null);
   const [guestDetails, setGuestDetails] = useState(null);
   const { propertyid } = useParams();
@@ -28,6 +28,20 @@ function BookingDetailsUI() {
   const guestCount = searchParams.get("guestCount") || 0;
   const checkin_date = searchParams.get("checkInDate") || '';
   const checkout_date = searchParams.get("checkOutDate") || '';
+
+  useEffect(() => {
+    if (checkin_date && checkout_date) {
+      const checkIn = new Date(checkin_date);
+      const checkOut = new Date(checkout_date);
+      
+      // Calculate the difference in time and convert it to days
+      const timeDifference = checkOut - checkIn;
+      const dayDifference = timeDifference / (1000 * 3600 * 24);
+      
+      setLengthStay(dayDifference > 0 ? dayDifference : 1); // Ensure at least 1 day
+    }
+  }, [checkin_date, checkout_date]);
+  
  //  Get Token
  useEffect(() => {
   const token = localStorage.getItem("auth_token");
@@ -102,39 +116,51 @@ function BookingDetailsUI() {
 
     setPaymentLoading(true);
     try {
-        const res = await axios.post("http://127.0.0.1:8000/api/insertbooking", {
-        userid: user.userid,
-        propertyid,
-        unitid: propertyData?.property_unitrooms?.unitid,
-        booker_fname: guestDetails.firstName,
-        booker_lname: guestDetails.lastName,
-        booker_email: guestDetails.email,
-        booker_phone: guestDetails.phoneNumber,
-        booker_country: "Philippines",
-        booker_country_code: guestDetails.countryCode,
-        is_my_book: guestDetails.bookingFor === "myself",
-        guestname: guestDetails.guestName,
-        stay_length: lengthStay,
-        guest_count: guestCount,
-        checkin_date,
-        checkout_date,
-        total_price: price,
-        special_request: guestDetails.requests,
-        arrival_time: guestDetails.arrivalTime,
-        status: "Pending",
-        booking_date: new Date().toISOString().split("T")[0],
-      });
+      const res = await axios.post("http://127.0.0.1:8000/api/insertbooking", { 
+          userid: user.userid,
+          propertyid,
+          unitid: propertyData.property_unitdetails[0].unitid,
+          booker_fname: guestDetails.firstName,
+          booker_lname: guestDetails.lastName,
+          booker_email: guestDetails.email,
+          booker_phone: guestDetails.phoneNumber,
+          booker_country: "Philippines",
+          booker_country_code: guestDetails.countryCode,
+          is_my_book: guestDetails.bookingFor,
+          guestname: guestDetails.guestName,
+          stay_length: lengthStay,
+          guest_count: guestCount,
+          checkin_date,
+          checkout_date,
+          total_price: propertyData.property_unitdetails[0].unitpricing.min_price,
+          special_request: guestDetails.requests,
+          arrival_time: guestDetails.arrivalTime,
+          status: "Pending",
+          booking_date: new Date().toISOString().split("T")[0],
+        });
+        console.log("HERE", res.data);
 
-      if (res.data.status === "error") {
-        
-      }
-      console.log("Booking data:", res.data);
+        if( res.data.status === "success") {
+          const res2 = await axios.post("http://127.0.0.1:8000/api/create-payment-link", {
+              amount : propertyData.property_unitdetails[0].unitpricing.min_price*100,
+              description: "Bisag unsa",
+              status: "Paid",
+              return_url: 'http://localhost:3000/paymentVerification',
+              bookingid: res.data.bookingid,
+            });
+            const checkoutUrl = res2.data.checkout_session_url;
+            console.log("Checkout URL:", checkoutUrl);
+            window.location.href = checkoutUrl;
+            
+      
+
+          }
      
       // window.location.href = checkoutUrl;
     } catch (e) {
       console.error("Booking error:", e);
-      setSnackbarMessage("Error processing booking.");
-      setOpenSnackbar(true);
+        setSnackbarMessage("Error processing booking.");
+        setOpenSnackbar(true);
     } finally {
       setPaymentLoading(false);
     }
@@ -149,7 +175,7 @@ function BookingDetailsUI() {
     );
   }
 
-  console.log("User :", user);
+  console.log("Property Data :", propertyData);
   return (
     <div>
       <AppBar position="static" sx={{ background: "#16B4DD" }}>
