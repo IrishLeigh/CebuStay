@@ -34,6 +34,18 @@ class PropertyController extends CORS
         $find_disableproperty->save();
         return response()->json(['status' => 'success', 'message' => 'Property has been disabled']);
     }
+    public function activateProperty(Request $request)
+    {
+        $this->enableCors($request);
+        $propertyid = $request->input('propertyid');
+        $find_disableproperty = Property::find($propertyid);
+        if (!$find_disableproperty) {
+            return response()->json(['status' => 'error', 'message' => 'Property not found']);
+        }
+        $find_disableproperty->isactive = 1;
+        $find_disableproperty->save();
+        return response()->json(['status' => 'success', 'message' => 'Property has been activated']);
+    }
     public function show(Request $request)
     {
         $this->enableCors($request);
@@ -94,7 +106,7 @@ class PropertyController extends CORS
     {
         $this->enableCors($request);
 
-        $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type')
+        $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type', 'isActive')
             ->where('propertyid', $request->input('propertyid'))
             ->first();
         if ($property_info->isActive == 0) {

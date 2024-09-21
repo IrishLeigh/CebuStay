@@ -211,5 +211,6 @@ Route::get('/getUserProperties', 'App\Http\Controllers\DashboardController@getUs
 Route::post('/updateunit-multiunit/{unitid}', [UnitDetailsController::class, 'updateMultiUnit']);
 Route::post('/updatemultiunit-img/{unitid}', [FileController::class, 'updateMultiunitImg']);
 
-//DISABLE PROPERTY
+//DISABLE and ACTIVATE PROPERTY
 Route::put('/disableproperty', [PropertyController::class, 'disableProperty']);
+Route::put('/activateproperty', [PropertyController::class, 'activateProperty']);
