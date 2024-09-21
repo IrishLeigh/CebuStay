@@ -1,42 +1,58 @@
-// src/bookingGuestTheme.js
 import { createTheme } from '@mui/material/styles';
-import BookingDetailsTheme from './theme'; // Import the base theme
 
 const BookingGuestTheme = createTheme({
-  ...BookingDetailsTheme, // Extend the base theme
+  palette: {
+    text: {
+      primary: '#2A2A2E', // Primary text color
+      secondary: '#555555', // Secondary text color
+    },
+    success: {
+      main: '#4CAF50', // Set success color to green
+    },
+  },
+  typography: {
+    fontFamily: 'Poppins, sans-serif', // Set Poppins as the default font
+  },
   components: {
-    ...BookingDetailsTheme.components,
     MuiCard: {
       styleOverrides: {
         root: {
-          border: '0.1rem solid rgba(0, 0, 0, 0.1)',
-          padding: '1rem',
+          padding: '2rem', // Padding inside Card
           borderRadius: '0.6rem',
-          boxShadow: '0 0.5rem 1rem rgba(0, 0, 0, 0.15)',
-        },
-      },
-    },
-    MuiDivider: {
-      styleOverrides: {
-        root: {
-          borderColor: '#ccc', // Divider color
+          marginBottom: '1rem',
         },
       },
     },
     MuiTypography: {
       styleOverrides: {
-        h1: {
+        h6: {
           fontSize: '1.125rem',
-          fontWeight: 'bold', // Ensure h1 is bold
-        },
-        h2: {
-          fontSize: '1.125rem',
-          fontWeight: 'bold', // Ensure h2 is bold
+          fontWeight: 'bold',
         },
         body1: {
           fontSize: '1rem',
         },
       },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#4CAF50', // Set border color to green when focused and success
+          },
+          '&.Mui-focused.Mui-error .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#f44336', // Error state if needed
+          },
+        },
+      },
+    },
+  },
+  customStyles: {
+    borderCard: {
+      // border: '0.1rem solid rgba(0, 0, 0, 0.1)', // Custom style for borders
+    },
+    specialRequestTextField: {
+      marginTop: '1rem', // Custom margin for text fields
     },
   },
 });

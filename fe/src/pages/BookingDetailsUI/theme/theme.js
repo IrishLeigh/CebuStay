@@ -36,8 +36,9 @@ const BookingDetailsTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          border: '0.1rem solid rgba(0, 0, 0, 0.1)',
-          padding: '1rem',
+          // border: '0.1rem solid rgba(0, 0, 0, 0.1)',
+          padding: '2rem',
+          
           borderRadius: '0.5rem',
           boxShadow: '0 0.3rem 0.8rem rgba(0, 0, 0, 0.1)',
         },
@@ -46,9 +47,9 @@ const BookingDetailsTheme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
-          backgroundColor: '#F0F0F0',
-          color: '#16B4DD',
-          borderColor: '#16B4DD',
+          backgroundColor: '#6A6A6A',
+          color: '#fff',
+          borderColor: '#6A6A6A',
           border: '1px solid',
           fontWeight: 'bold',
         },
@@ -65,7 +66,7 @@ const BookingDetailsTheme = createTheme({
           fontWeight: 'bold', // Ensures h2 is bold
         },
         h6: {
-          fontSize: '1.125rem',
+          fontSize: '1rem',
           fontWeight: 'bold', // Ensures h2 is bold
           color: '#2A2A2E',
         },
@@ -77,7 +78,7 @@ const BookingDetailsTheme = createTheme({
     MuiDivider: {
       styleOverrides: {
         root: {
-          borderColor: '#ccc', // Set Divider color
+          borderColor: '#6A6A6A', // Set Divider color
         },
       },
     },

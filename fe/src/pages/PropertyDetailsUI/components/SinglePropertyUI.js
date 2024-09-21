@@ -46,8 +46,10 @@ export default function SinglePropertyUI(propertyid) {
         );
         if (res.data) {
           // Transform the image data
+          // console.log("CAPTION HERE", res.data)
           const images = res.data.img.map((image, index) => ({
             id: image.id,
+            caption: image.caption,
             src: image.src,
             rows: index === 0 ? 2 : 1,
             cols: index === 0 ? 2 : 1,
@@ -66,6 +68,7 @@ export default function SinglePropertyUI(propertyid) {
           );
           if (res2.data) {
             setPropertyInfo(res2.data);
+            console.log ("FULL PROPERTY INFO", res2.data);
           }
         }
       } catch (err) {
@@ -92,7 +95,7 @@ export default function SinglePropertyUI(propertyid) {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <div style={{ paddingBottom: "2rem" }}>
         <ImageGallery images={propertyImages} />
         <div

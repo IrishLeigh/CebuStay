@@ -232,24 +232,33 @@ import { Box, Card, Typography, Divider, Stack, Chip, ThemeProvider } from '@mui
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
+import HotelIcon from '@mui/icons-material/Hotel';
 import CancelIcon from '@mui/icons-material/Cancel';
-import BookingDetailsTheme from './theme/theme';
 import InfoIcon from '@mui/icons-material/Info'; // Icon for property type
+import BookingDetailsTheme from './theme/theme';
+import { Hotel } from '@mui/icons-material';
 
-function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData, guestCapacity, checkin_date, checkout_date }) {
+function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData, guestCapacity, checkin_date, checkout_date, address , details, facilities, houseRules}) {
   const [price, setPrice] = useState(0);
   const [vat, setVat] = useState(0);
   const [allServices, setAllServices] = useState([]);
+  const unitData = PropertyData?.[0]; // Access the first item in PropertyData array
+
+
 
   useEffect(() => {
-    if (PropertyData?.property_unitpricing?.min_price) {
-      const calculatedVat = (PropertyData.property_unitpricing.min_price * 0.12).toFixed(2);
-      const totalPrice = (parseFloat(PropertyData.property_unitpricing.min_price) + parseFloat(calculatedVat)).toFixed(2);
+    
+    if (unitData.unitpricing.min_price) {
+      const calculatedVat = (unitData.unitpricing.min_price * 0.12).toFixed(2);
+      const totalPrice = (parseFloat(unitData.unitpricing.min_price) + parseFloat(calculatedVat)).toFixed(2);
       setVat(calculatedVat);
       setPrice(totalPrice);
       onPriceChange(parseFloat(totalPrice));
+    } else {
+      setPrice('N/A'); // Handle case when min_price is not available
     }
-  }, [PropertyData, onPriceChange]);
+  }, [unitData, onPriceChange]);
+  
 
   useEffect(() => {
     const services = [
@@ -261,26 +270,32 @@ function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData
   }, [PropertyData]);
 
   const convertTimeTo12HourFormat = (time) => {
+    if (!time) return 'N/A'; // Fallback for undefined times
     const [hours, minutes] = time.split(':');
     const amPm = hours >= 12 ? 'PM' : 'AM';
-    const twelveHourFormat = `${((hours + 11) % 12) + 1}:${minutes} ${amPm}`;
+    const twelveHourFormat = `${((hours % 12) || 12)}:${minutes} ${amPm}`;
     return twelveHourFormat;
   };
 
+  console.log("house rules", houseRules);
+
   return (
     <ThemeProvider theme={BookingDetailsTheme}>
-      <Box sx={{ p: 3 }}>
-        <Card sx={{ p: 3, mb: 2 }}>
+      <Box mt={3} ml={0} >
+        <Card >
           <Box mb={2}>
-           <Typography variant="h6" color="primary" ml={1} display="flex" alignItems="center">
+            <Typography variant="h6" color="primary" ml={1} display="flex" alignItems="center">
               <InfoIcon sx={{ color: 'primary.main', mr: 1 }} />
-              {PropertyData?.property_details?.property_type}
+              {details.property_type}
             </Typography>
             <Typography variant="h4" ml={1} pt={0.5}>
-              {PropertyData?.property_details?.property_name}
+              {details.property_name}
             </Typography>
             <Typography variant="body1" color="textSecondary" ml={1} pt={0.5}>
-              {PropertyData?.property_address?.address}, {PropertyData?.property_address?.zipcode}
+               ID #{details.propertyid}
+            </Typography>
+            <Typography variant="body1" color="textSecondary" ml={1} pt={0.5}>
+              {address.address}, {address.zipcode}
             </Typography>
           </Box>
           <Box pt={1}>
@@ -292,12 +307,8 @@ function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData
                 alignItems: 'start'
               }}
             >
-              {allServices.map((service, index) => (
-                <Chip
-                  label={service}
-                  key={index}
-                  
-                />
+              {facilities.map((facility) => (
+                <Chip label={facility.facilities_name} key={facility.facilitiesid} />
               ))}
             </Box>
           </Box>
@@ -309,36 +320,37 @@ function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData
             Booking Details:
           </Typography>
           <Stack direction="row" alignItems="center" spacing={2} mt={2}>
-            <Box sx={{ flex: 1, p: 2 }}>
+            <Box sx={{ flex: 1, p: 1 }}>
               <Typography variant="body1">Check-in</Typography>
               <Typography variant="body1" fontWeight="bold">{checkin_date}</Typography>
               <Typography variant="body1" color="textSecondary">
-                {convertTimeTo12HourFormat(PropertyData?.property_houserules?.[0]?.check_in_from)} - 
-                {convertTimeTo12HourFormat(PropertyData?.property_houserules?.[0]?.check_in_until)}
+                {convertTimeTo12HourFormat(houseRules[0].check_in_from)} - 
+                {convertTimeTo12HourFormat(houseRules[0].check_in_until)}
               </Typography>
             </Box>
             <Divider orientation="vertical" flexItem />
-            <Box sx={{ flex: 1, p: 2 }}>
+            <Box sx={{ flex: 1, p: 1 }}>
               <Typography variant="body1">Check-out</Typography>
               <Typography variant="body1" fontWeight="bold">{checkout_date}</Typography>
               <Typography variant="body1" color="textSecondary">
-                {convertTimeTo12HourFormat(PropertyData?.property_houserules?.[0]?.check_out_from)} - 
-                {convertTimeTo12HourFormat(PropertyData?.property_houserules?.[0]?.check_out_until)}
+                {convertTimeTo12HourFormat(houseRules[0].check_out_from)} - 
+                {convertTimeTo12HourFormat(houseRules[0].check_out_from)}
               </Typography>
             </Box>
           </Stack>
           <Divider sx={{ mt: 2 }} />
           <Typography variant="h6" color="primary" ml={1} mt={2}>
-            <PriceCheckIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
+            <Hotel sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
             Length of stay:
           </Typography>
-          <Typography variant="body1" fontWeight="bold" ml={1}>
+          <Typography variant="body1" fontWeight="bold" ml={2}>
             {lengthStay} night/s
           </Typography>
           <Typography variant="h6" color="primary" ml={1} mt={2}>
-            Number of Guests:
+            <Hotel sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
+              Number of Guests:
           </Typography>
-          <Typography variant="body1" fontWeight="bold" ml={1}>
+          <Typography variant="body1" fontWeight="bold" ml={2}>
             {guestCapacity} guests
           </Typography>
         </Card>
@@ -353,7 +365,7 @@ function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData
               Base Price
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Php {PropertyData?.property_unitpricing?.min_price || 'N/A'}
+              Php {unitData?.unitpricing?.min_price || 'N/A'}
             </Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
@@ -412,3 +424,4 @@ function BookingDetails({ lengthStay, setLengthStay, onPriceChange, PropertyData
 }
 
 export default BookingDetails;
+

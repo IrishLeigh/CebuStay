@@ -5,9 +5,14 @@
   height: 100%; /* Adjusted height */
 }
 body {
-  background: linear-gradient(135deg, #e0f7fa 50%, #ffffff 50%);
+  background: linear-gradient(135deg, #F4F7FA 50%, #F4F7FA 50%);
   font-family: "Poppins", sans-serif;
 }
+
+/* body {
+  background-color: "red" ;
+  font-family : "Poppins", sans-serif;
+} */
 
 .form-container {
   background-color: #ffffff;

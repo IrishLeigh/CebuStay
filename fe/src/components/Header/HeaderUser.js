@@ -89,7 +89,7 @@ function HeaderUser({ token, setToken }) {
         <Container maxWidth="lg">
           <Toolbar disableGutters>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <img src="Logo2.png" alt="Logo" className="logo" style={{ height: '40px', marginRight: '10px' }} />
+              <img src="/Logo2.png" alt="Logo" className="logo" style={{ height: '40px', marginRight: '10px' }} />
               <Typography
                 noWrap
                 component="a"

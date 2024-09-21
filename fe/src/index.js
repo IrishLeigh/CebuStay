@@ -18,6 +18,8 @@ import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";
 // import TopRated from "./InteractiveMap/components/TopRated";
 
 import ViewNearby from "./InteractiveMap/components/ViewNearby";
+import BookingHistory from "./pages/AccountManagement/components/AccountBookingHistory";
+import CancellationAndModification from "./pages/AccountManagement/components/CancellationAndModification";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
