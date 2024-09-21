@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\UnitDetails;
 use App\Models\UnitRooms;
 use App\Models\BedroomType;
+use App\Models\PropertyPricing;
+use App\Models\Amenity;
+use App\Models\Service;
 
 class UnitDetailsController extends CORS
 {
@@ -424,6 +427,153 @@ class UnitDetailsController extends CORS
         $unit->save();
 
         return response()->json(['message' => 'Unit details updated successfully', 'status' => 'success']);
+    }
+
+
+    public function updateMultiUnit(Request $request, $unitid)
+    {
+        $this->enableCors($request);
+        $find_unit = UnitDetails::where('unitid', $unitid)->first();
+        $find_bedroom = null; // Initialize the variable
+
+        if ($request->input('unitname') && $request->input('unitname') != $find_unit->unitname) {
+            $find_unit->unitname = $request->input('unitname');
+        }
+        if ($request->input('guest_capacity') && $request->input('guest_capacity') != $find_unit->guest_capacity) {
+            $find_unit->guest_capacity = $request->input('guest_capacity');
+        }
+        if ($request->input('unitquantity') && $request->input('unitquantity') != $find_unit->unitquantity) {
+            $find_unit->unitquantity = $request->input('unitquantity');
+        }
+        if ($request->input('min_price')) {
+            $pricingid = $find_unit->proppricingid;
+            $find_pricing = PropertyPricing::where('proppricingid', $pricingid)->first();
+            if ($find_pricing) {
+                $find_pricing->min_price = $request->input('min_price');
+                $find_pricing->save();
+            }
+        }
+        if ($request->input('existing_rooms')) {
+            $existing_rooms = $request->input('existing_rooms');
+            foreach ($existing_rooms as $room) {
+                if (!empty($room['unitroomid'])) {
+                    $find_room = UnitRooms::where('unitroomid', $room['unitroomid'])->first();
+                    if ($find_room) {
+                        $find_room->quantity = $room['quantity'];
+                        $find_room->save();
+                    }
+                }
+            }
+            $updated_unitrooms = UnitRooms::where('unitid', $unitid)->get();
+        }
+        if ($request->input('new_rooms')) {
+            $new_rooms = $request->input('new_rooms');
+            foreach ($new_rooms as $new_room) {
+                $new = new UnitRooms();
+                $new->unitid = $unitid;
+                $new->roomname = $new_room['roomname'];
+                $new->quantity = $new_room['quantity'];
+                $new->save();
+            }
+            $updated_unitrooms = UnitRooms::where('unitid', $unitid)->get();
+        }
+        if ($request->input('update_beds')) {
+            $update_beds = $request->input('update_beds');
+            $find_unitroom = UnitRooms::where('unitid', $unitid)
+                ->where('roomname', 'Bedroom')
+                ->first();
+            $find_bedroom = BedroomType::where('unitroomid', $find_unitroom->unitroomid)->first();
+            // Mapping of keys to columns
+            $bedroom_columns = [
+                'bunkBed' => 'bunkbed',
+                'largeBed' => 'largebed',
+                'singleBed' => 'singlebed',
+                'superLarge' => 'superlargebed',
+            ];
+
+            // Loop through the $update_beds and update the corresponding columns
+            foreach ($update_beds as $bed_key => $bed_data) {
+                if (isset($bedroom_columns[$bed_key])) {
+                    // Update the relevant column based on the key
+                    $column = $bedroom_columns[$bed_key];
+
+                    // If selected is true, use the provided quantity, else set it to 0
+                    $find_bedroom->$column = $bed_data['selected'] ? $bed_data['quantity'] : 0;
+                }
+            }
+            $find_bedroom->save();
+        }
+        if ($request->input('updated_amenities')) {
+            //propertyid from UnitDetails model using unitid
+            $propertyid = $find_unit->propertyid;
+            $updated_amenities = $request->input('updated_amenities');
+            $existing_amenities = Amenity::where('unitid', $unitid)->get();
+            $existing_amenities = $existing_amenities->pluck('amenity_name')->toArray();
+            //delete amenity in existing_amenities that is not in updated_amenities
+            $deleted_amenities = array_diff($existing_amenities, $updated_amenities);
+            foreach ($deleted_amenities as $deleted_amenity) {
+                $find_amenity = Amenity::where('unitid', $unitid)
+                    ->where('amenity_name', $deleted_amenity)
+                    ->first();
+                $find_amenity->delete();
+            }
+            //add new amenity in updated_amenities that is not in existing_amenities
+            $new_amenities = array_diff($updated_amenities, $existing_amenities);
+            foreach ($new_amenities as $new_amenity) {
+                $new = new Amenity();
+                $new->unitid = $unitid;
+                $new->propertyid = $propertyid;
+                $new->amenity_name = $new_amenity;
+                $new->ismulti = true;
+                $new->save();
+            }
+
+        }
+        //get the updated amenities of the unit
+        $update_A = Amenity::where('unitid', $unitid)->get();
+        $updated_A = $update_A->pluck('amenity_name')->toArray();
+
+        if ($request->input('updated_services')) {
+            //propertyid from UnitDetails model using unitid
+            $propertyid = $find_unit->propertyid;
+            $updated_services = $request->input('updated_services');
+            $existing_services = Service::where('unitid', $unitid)->get();
+            $existing_services = $existing_services->pluck('service_name')->toArray();
+            //delete service in existing_services that is not in updated_services
+            $deleted_services = array_diff($existing_services, $updated_services);
+            foreach ($deleted_services as $deleted_service) {
+                $find_service = Service::where('unitid', $unitid)
+                    ->where('service_name', $deleted_service)
+                    ->first();
+                $find_service->delete();
+            }
+            //add new service in updated_services that is not in existing_services
+            $new_services = array_diff($updated_services, $existing_services);
+            foreach ($new_services as $new_service) {
+                $new = new Service();
+                $new->unitid = $unitid;
+                $new->propertyid = $propertyid;
+                $new->service_name = $new_service;
+                $new->ismulti = true;
+                $new->save();
+            }
+
+        }
+        //get the updated services of the unit
+        $update_S = Service::where('unitid', $unitid)->get();
+        $updated_S = $update_S->pluck('service_name')->toArray();
+
+        $find_unit->save();
+        $updated_unit = UnitDetails::where('unitid', $unitid)->first();
+        return response()->json([
+            'status' => 'success',
+            'updatedUnit' => $updated_unit,
+            'updatedPricing' => $find_pricing ?? null, // Optional: in case $find_pricing doesn't exist
+            'updatedRooms' => $updated_unitrooms ?? null, // Optional: in case no rooms are updated
+            'updatedBeds' => $find_bedroom ?? null, // Optional: in case $find_bedroom is not found or not updated
+            'updatedAmenities' => $updated_A ?? null,
+            'updatedServices' => $updated_S ?? null
+        ]);
     }
 
 }

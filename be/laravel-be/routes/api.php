@@ -206,3 +206,5 @@ Route::get('/getdashroomavail', 'App\Http\Controllers\DashboardController@getDai
 Route::get('/getDashboardData', 'App\Http\Controllers\DashboardController@getDashboardData');
 
 //Edit Property Info MultiUnit
+Route::post('/updateunit-multiunit/{unitid}', [UnitDetailsController::class, 'updateMultiUnit']);
+Route::post('/updatemultiunit-img/{unitid}', [FileController::class, 'updateMultiunitImg']);
