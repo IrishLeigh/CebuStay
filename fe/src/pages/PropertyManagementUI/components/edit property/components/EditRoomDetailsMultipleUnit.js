@@ -5,16 +5,17 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import AddIcon from '@mui/icons-material/Add';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import AddIcon from "@mui/icons-material/Add";
 import EditRoomAccordion from "./EditRoomAccordion";
 
-
-export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) {
+export default function EditRoomDetailsMultipleUnit({
+  parentRoomsAndBedsData,
+}) {
   const [roomDetailsList, setRoomDetailsList] = useState([]); // Existing rooms
   const [newUnitRooms, setNewUnitRooms] = useState([]); // Newly added rooms
   const [isEditing, setIsEditing] = useState(false);
@@ -37,7 +38,9 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
 
     // Check if the last room has required details filled out
     if (!lastRoom || Object.keys(lastRoom).length === 0) {
-      alert("Please complete the current room details before adding a new room.");
+      alert(
+        "Please complete the current room details before adding a new room."
+      );
       return;
     }
 
@@ -50,7 +53,7 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
       console.warn("Empty or incomplete room data received");
       return;
     }
-  
+
     // Update room details based on whether it's an existing or new room
     if (index < roomDetailsList.length) {
       // Existing room
@@ -67,7 +70,6 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
       setNewUnitRooms(updatedNewUnitRooms);
     }
   };
-  
 
   const handleDeleteRoom = (index) => {
     if (index < roomDetailsList.length) {
@@ -77,7 +79,9 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
         return;
       }
 
-      const updatedRoomDetailsList = roomDetailsList.filter((_, i) => i !== index);
+      const updatedRoomDetailsList = roomDetailsList.filter(
+        (_, i) => i !== index
+      );
       setRoomDetailsList(updatedRoomDetailsList);
     } else {
       // New room
@@ -106,6 +110,7 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
 
   const handleSubmit = () => {
     // Combine existing rooms and new rooms
+    console.log("WATITIS HOE");
     const updatedRoomDetailsList = [...roomDetailsList, ...newUnitRooms];
     setRoomDetailsList(updatedRoomDetailsList);
     setIsEditing(false);
@@ -113,20 +118,41 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
   };
 
   useEffect(() => {
-    console.log('Updayed Room Details :', roomDetailsList, newUnitRooms);
-
+    // console.log("Updayed Room Details :", roomDetailsList, newUnitRooms);
   }, [roomDetailsList, newUnitRooms]);
 
   return (
     <>
-      <Paper style={{ width: "auto", padding: "4rem", borderRadius: "0.8rem", alignItems: "center" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-          <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "1.125rem", fontWeight: "bold" }}>
+      <Paper
+        style={{
+          width: "auto",
+          padding: "4rem",
+          borderRadius: "0.8rem",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "1rem",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "1.125rem",
+              fontWeight: "bold",
+            }}
+          >
             Rooms and Details
           </Typography>
           <div>
             {!isEditing && (
-              <Button onClick={() => setIsEditing(true)} sx={{ marginRight: "1rem" }}>
+              <Button
+                onClick={() => setIsEditing(true)}
+                sx={{ marginRight: "1rem" }}
+              >
                 Edit
               </Button>
             )}
@@ -136,30 +162,43 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
               </Button>
             )}
             {isEditing && (
-              <Button onClick={handleSubmit} sx={{ marginRight: "1rem" }} variant="contained">
+              <Button
+                onClick={handleSubmit}
+                sx={{ marginRight: "1rem" }}
+                variant="contained"
+              >
                 Submit
               </Button>
             )}
           </div>
         </div>
-        <Typography sx={{ fontFamily: "Poppins, sans-serif", fontSize: "0.875rem", color: "#6b7280", marginBottom: "2rem" }}>
-          Use this section to configure your property's room and bed details. Specify guest capacity, add room types, and set up bed arrangements to accurately reflect your accommodation setup.
+        <Typography
+          sx={{
+            fontFamily: "Poppins, sans-serif",
+            fontSize: "0.875rem",
+            color: "#6b7280",
+            marginBottom: "2rem",
+          }}
+        >
+          Use this section to configure your property's room and bed details.
+          Specify guest capacity, add room types, and set up bed arrangements to
+          accurately reflect your accommodation setup.
         </Typography>
 
         <Grid container spacing={2}>
           <Grid item xs={12} md={12}>
-          {roomDetailsList.map((roomDetails, index) => (
-            <EditRoomAccordion
-              key={roomDetails.unitid} // Ensure this is unique for each room
-              index={index}
-              onRoomDetailsUpdate={handleRoomDetailsUpdate}
-              onDeleteRoom={handleDeleteRoom}
-              roomData={roomDetails}
-              isEditing={isEditing}
-              originalData={originalRoomDetailsList[index]}
-              reset={resetFlag}
-            />
-          ))}
+            {roomDetailsList.map((roomDetails, index) => (
+              <EditRoomAccordion
+                key={roomDetails.unitid} // Ensure this is unique for each room
+                index={index}
+                onRoomDetailsUpdate={handleRoomDetailsUpdate}
+                onDeleteRoom={handleDeleteRoom}
+                roomData={roomDetails}
+                isEditing={isEditing}
+                originalData={originalRoomDetailsList[index]}
+                reset={resetFlag}
+              />
+            ))}
             {newUnitRooms.map((roomDetails, index) => (
               <EditRoomAccordion
                 key={`new-${index}`}
@@ -173,7 +212,13 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
               />
             ))}
 
-            <Button onClick={handleAddRoomDetails} variant="contained" color="primary" startIcon={<AddIcon />} sx={{ mt: 2 }}>
+            <Button
+              onClick={handleAddRoomDetails}
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              sx={{ mt: 2 }}
+            >
               Add Room Details
             </Button>
           </Grid>
@@ -183,7 +228,8 @@ export default function EditRoomDetailsMultipleUnit({ parentRoomsAndBedsData }) 
         <DialogTitle>Confirm Action</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to revert changes? All unsaved changes will be lost.
+            Are you sure you want to revert changes? All unsaved changes will be
+            lost.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
