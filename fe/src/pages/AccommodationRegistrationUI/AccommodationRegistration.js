@@ -127,6 +127,13 @@ export default function AccommodationRegistration() {
       await handleSubmitMulti();
     }
   };
+
+  async function fetchBlobAsFile(blobUrl, fileName) {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
+  }
+
   //For Single Unit
   const [selectedPropertyType, setSelectedPropertyType] = useState("");
   const [selectedPropertyType2, setSelectedPropertyType2] = useState("");
@@ -169,6 +176,12 @@ const toggleDrawer = (open) => (event) => {
   }
   setDrawerOpen(open);
 };
+
+function formatDate(dateString) {
+  const [month, day, year] = dateString.split('-');
+  return `${year}-${month}-${day}`;
+}
+
   // Determine if the selected property type is single or multi-unit
   const isSingleUnit =
     selectedPropertyType === "Home" ||
@@ -678,7 +691,7 @@ const toggleDrawer = (open) => (event) => {
                                 ownershiptype: hosttype,
                               }
                             );
-                            if (ownership.data.status === "success") {
+                            if (ownership.data.status === "success" && hosttype === "Individual") {
                               const ownershipid =
                                 ownership.data.houseRule.propertyownershipid;
 
@@ -689,7 +702,8 @@ const toggleDrawer = (open) => (event) => {
                               const phoneNumber = hostData.PhoneNumber;
                               const email = hostData.Email;
                               const city = hostData.City;
-                              const province = hostData.Province;
+                              const street = hostData.Street;
+                              const barangay = hostData.Barangay;
                               const zipcode = hostData.ZipCode;
                               const address = hostData.PrimaryAddress;
                               const describe = hostData.Describe;
@@ -704,7 +718,8 @@ const toggleDrawer = (open) => (event) => {
                                   dateofbirth: dateofbirth,
                                   contactnumber: phoneNumber,
                                   email: email,
-                                  province: province,
+                                  street: street,
+                                  barangay: barangay,
                                   city: city,
                                   primary_address: address,
                                   zipcode: zipcode,
@@ -735,6 +750,83 @@ const toggleDrawer = (open) => (event) => {
                                 setIsLoading(false); // Hide the loading spinner
                                 setIsSuccessModalOpen(true); 
                               }
+                              console.log("Ownership:", ownership.data.ownershiptype);
+                              console.log("Ownership success:", ownership.data.status);
+                            }else if (ownership.data.status === "success" && hosttype === "Company") {
+                              console.log("propertycompany success");
+                                const ownershipid =
+                                  ownership.data.houseRule.propertyownershipid;
+                                const LegalBusinessName = hostData.LegalBusinessName;
+                                const Describe = hostData.Describe;
+                                // const imageSrc = hostData.imageSrc;
+                                const street = hostData.Street;
+                                const Barangay = hostData.Barangay;
+                                const email = hostData.email;
+                                const ZipCode = hostData.ZipCode;
+                                const City = hostData.City;
+                                const legalRep = hostData.legalRepresentatives;
+                                const formData = new FormData();
+                                const file = await fetchBlobAsFile(hostData.imageSrc, "photo.jpg"); 
+                                  formData.append("file", file);
+                                  formData.append("userid", user.userid);
+
+                                const company = await axios.post(
+                                  "http://127.0.0.1:8000/api/propertycompany",
+                                  {
+                                    propertyownershipid: ownershipid,
+                                    legal_business_name: LegalBusinessName,
+                                    company_description: Describe,
+                                    // company_photo: imageSrc,
+                                    street: street,
+                                    barangay: Barangay,
+                                    city: email,
+                                    zipcode: ZipCode,
+                                    city: City,
+                                  }
+                                );
+                                const companyPhoto = await axios.post("http://127.0.0.1:8000/api/uploadcomplogo",  formData,
+                                  {
+                                    headers: { "Content-Type": "multipart/form-data" },
+                                  });
+                                console.log("Owner:", company);
+                                console.log("propertycompanyid:", company.data.propertycompanyid);
+                                if (company.data.status === "success") {
+                                for (const representative of legalRep) {
+                                  const { firstName, lastName, dob, email, phone, position } = representative;
+                                  const formattedDob = formatDate(dob);
+                                  await axios.post("http://127.0.0.1:8000/api/legalrepresentative", {
+                                    propertycompanyid: company.data.propertyCompany.propertycompanyid, // Assuming ownership ID is relevant here too
+                                    firstname: firstName,
+                                    lastname: lastName,
+                                    date_of_birth: formattedDob,
+                                    email: email,
+                                    phone_number: phone, // Concatenate country code and phone
+                                    position: position,
+                                  });
+                                }
+                              }
+                                if (company.data.status === "success") {
+                                  console.log(company.data.message);
+                                  const manager = await axios.post(
+                                    "http://127.0.0.1:8000/api/becomeManager",
+                                    {
+                                      userid: user.userid,
+                                    }
+                                  );
+                                  console.log("Manager:", manager.data);
+                                  console.log("Successfully Registered");
+                                  // setModalMessage("Successfully Registered");
+  
+                                  localStorage.removeItem("postalCode");
+                                  localStorage.removeItem("street");
+                                  localStorage.removeItem("postalCode");
+                                  location2(null);
+                                  location(null);
+                                  alert("Form submitted successfully!");
+                                  alert("Form submitted successfully!");
+                                  setIsLoading(false); // Hide the loading spinner
+                                  setIsSuccessModalOpen(true); 
+                                }
                             }
                           }
                         }
