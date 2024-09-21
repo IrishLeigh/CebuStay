@@ -212,7 +212,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
             </button>
           </div>
 
-          {showReviewForm && (
+          {/* {showReviewForm && (
             <div className="review-input-container">
               <div className="review-input">
                 <div className="rating">
@@ -245,13 +245,13 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
                 )}
               </div>
             </div>
-          )}
+          )} */}
 
-          <div className="write-review-button-container">
+          {/* <div className="write-review-button-container">
             <button className="write-review-button" onClick={() => setShowReviewForm(!showReviewForm)}>
               {showReviewForm ? 'Close Review Form' : 'Write a Review'}
             </button>
-          </div>
+          </div> */}
 
           <div className="reviews-list-container">
             <h2 className="reviews-title">{view} Reviews</h2>
@@ -276,7 +276,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
               ))}
             </div> */}
 
-
+            {/* Review Card */}
             <div className="reviews-list">
               {filteredReviews.map((review, index) => (
                 <div

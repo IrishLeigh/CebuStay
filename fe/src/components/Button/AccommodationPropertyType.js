@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 
 const buttonsData = [
-  { label: "Beachfront", image: "beachfront.png" },
-  { label: "Campers", image: "Campers.png" },
-  { label: "Boat", image: "boat.png" },
-  { label: "Islands", image: "islands.png" },
-  { label: "Waterfalls", image: "waterfalls.png" },
-  { label: "Pools", image: "pools.png" },
-  { label: "Golfing", image: "Golf.png" },
-  { label: "Camping", image: "camping.png" },
-  { label: "Beach", image: "beach.png" },
+  { label: "Beachfront", image: "/beachfront.png" },
+  { label: "Campers", image: "/Campers.png" },
+  { label: "Boat", image: "/boat.png" },
+  { label: "Islands", image: "/islands.png" },
+  { label: "Waterfalls", image: "/waterfalls.png" },
+  { label: "Pools", image: "/pools.png" },
+  { label: "Golfing", image: "/Golf.png" },
+  { label: "Camping", image: "/camping.png" },
+  { label: "Beach", image: "/beach.png" },
 ];
 
 const AccommodationPropertyType = () => {

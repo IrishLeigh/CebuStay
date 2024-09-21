@@ -2,198 +2,170 @@ import React, { useEffect, useState } from "react";
 import { AppBar, Toolbar, Typography, Grid, Button, Box, CircularProgress, Snackbar, Alert } from "@mui/material";
 import BookingDetails from "./BookingDetails";
 import BookingGuestDetails from "./BookingGuestDetails";
-import "./BookingPage.css";
 import { useParams, useLocation } from "react-router-dom";
+import axios from "axios";
+import { Container } from "react-bootstrap";
 
 function BookingDetailsUI() {
-  const [price, setPrice] = useState();
-  const [lengthStay, setLengthStay] = useState(2);
+  const [price, setPrice] = useState(null);
+  const [lengthStay, setLengthStay] = useState();
   const [propertyData, setPropertyData] = useState(null);
   const [guestDetails, setGuestDetails] = useState(null);
   const { propertyid } = useParams();
-  const [user, setUser] = useState();
-  const [loading, setLoading] = useState(true); // Loading state for initial data fetching
-  const [paymentLoading, setPaymentLoading] = useState(false); // Loading state for payment process
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); 
+  const [paymentLoading, setPaymentLoading] = useState(false); 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const location = useLocation();
+  const [propertyImages, setPropertyImages] = useState([]);
+  const [propertyUnitDetails, setPropertyUnitDetails] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
+
+  
   // Extract query parameters
   const searchParams = new URLSearchParams(location.search);
   const guestCount = searchParams.get("guestCount") || 0;
   const checkin_date = searchParams.get("checkInDate") || '';
   const checkout_date = searchParams.get("checkOutDate") || '';
+
   useEffect(() => {
+    if (checkin_date && checkout_date) {
+      const checkIn = new Date(checkin_date);
+      const checkOut = new Date(checkout_date);
+      
+      // Calculate the difference in time and convert it to days
+      const timeDifference = checkOut - checkIn;
+      const dayDifference = timeDifference / (1000 * 3600 * 24);
+      
+      setLengthStay(dayDifference > 0 ? dayDifference : 1); // Ensure at least 1 day
+    }
+  }, [checkin_date, checkout_date]);
+  
+ //  Get Token
+ useEffect(() => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    axios
+      .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+      .then((response) => {
+        setUser(response.data["data"]);
+        console.log("RESPONSE DATA: ", response.data["data"]);
+      })
+      .catch((error) => {
+        alert("Error decoding JWT token:", error);
+        setUser(null);
+      });
+  } else {
+    setUser(null);
+  }
+}, []);
+
+
+
+  // Fetch property and user data
+  useEffect(() => {
+    const fetchPropertyData = async () => {
+      try {
+        const res = await axios.get(`http://127.0.0.1:8000/api/getfiles/${propertyid}`);
+        if (res.data) {
+          const images = res.data.img.map((image, index) => ({
+            id: image.id,
+            caption: image.caption,
+            src: image.src,
+            rows: index === 0 ? 2 : 1,
+            cols: index === 0 ? 2 : 1,
+          }));
+          setPropertyImages(images);
+          
+          const res2 = await axios.get("http://127.0.0.1:8000/api/getproperty", {
+            params: { propertyid }
+          });
+          if (res2.data) {
+            setPropertyData(res2.data);
+            setPropertyUnitDetails(res2.data.property_unitdetails);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching property data:", err);
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+ 
+
+    fetchPropertyData();
+
     window.scrollTo(0, 0);
-  }, []);
+  }, [propertyid]);
 
-  useEffect(() => {
-    const dummyUser = {
-      userid: 1,
-      name: "John Doe",
-      email: "john@example.com",
-    };
-    setUser(dummyUser);
-  }, []);
-
-
-
-  useEffect(() => {
-    const dummyPropertyData = {
-      property_details: {
-        property_name: "Dummy Property",
-        property_type: "Hotel",
-      },
-      property_address: {
-        address: "123 Fake St",
-        zipcode: "12345",
-      },
-      property_unitpricing: {
-        min_price: 1000,
-      },
-      property_facilities: [
-        { facilities_name: "Free WiFi" },
-        { facilities_name: "Parking Lot" },
-        { facilities_name: "Swimming Pool" },
-      ],
-      property_services: [
-        { service_name: "Room Service" },
-        { service_name: "Laundry Service" },
-      ],
-      property_amenities: [
-        { amenity_name: "Air Conditioning" },
-        { amenity_name: "Television" },
-      ],
-      property_houserules: [
-        {
-          check_in_from: "14:00",
-          check_in_until: "18:00",
-          check_out_from: "10:00",
-          check_out_until: "12:00",
-        },
-      ],
-      property_unitrooms: {
-        unitid: 1,
-      },
-    };
-    setPropertyData(dummyPropertyData);
-    setLoading(false);
-  }, []);
-
+  // Guest details validation
   const validateGuestDetails = (details) => {
     if (!details) return false;
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "phoneNumber",
-      // "selectedCountry",
-      "countryCode",
-      "guestName",
-    ];
-
-    for (let field of requiredFields) {
-      if (!details[field]) {
-        return false;
-      }
-    }
-    return true;
+    const requiredFields = ["firstName", "lastName", "email", "phoneNumber", "countryCode", "guestName"];
+    return requiredFields.every((field) => details[field]);
   };
 
-  
   const handleNextPayment = async () => {
-    console.log("Price:", price);
-    console.log("Guests:", guestCount);
-    console.log("Length of Stay:", lengthStay);
-    console.log("Guest Details:", guestDetails);
-  
     if (!validateGuestDetails(guestDetails)) {
       setSnackbarMessage("Please fill in all required fields.");
       setOpenSnackbar(true);
       return;
     }
-  
-    setPaymentLoading(true); // Start loading state for payment process
-  
+
+    setPaymentLoading(true);
     try {
-      const userid = user.userid;
-      const unitid = propertyData.property_unitrooms.unitid;
-      const booker_fname = guestDetails.firstName;
-      const booker_lname = guestDetails.lastName;
-      const booker_email = guestDetails.email;
-      const booker_phone = guestDetails.phoneNumber;
-      // const booker_country = guestDetails.selectedCountry;
-      const booker_country = "Philippines";
-      const booker_country_code = guestDetails.countryCode;
-      const is_my_book = guestDetails.bookingFor === "myself";
-      const guestname = guestDetails.guestName;
-      const guestemail = guestDetails.guestEmail;
-      const stay_length = lengthStay;
-      const guest_count = guestCount;
-      // No need to redeclare checkin_date and checkout_date here
-      const total_price = price;
-      const special_request = guestDetails.requests;
-      const arrival_time = guestDetails.arrivalTime;
-      const status = "Pending";
-  
-      const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
-      };
-  
-      const booking_date = formatDate(new Date());
-  
-      console.log("Booking data:", {
-        userid,
-        propertyid,
-        booker_fname,
-        booker_lname,
-        booker_email,
-        booker_phone,
-        booker_country,
-        booker_country_code,
-        is_my_book,
-        guestname,
-        guestemail,
-        stay_length,
-        guest_count,
-        checkin_date,
-        checkout_date,
-        total_price,
-        special_request,
-        arrival_time,
-        status,
-        booking_date,
-        unitid,
-      });
-  
-      const checkoutUrl = "https://dummy-payment-link.com/checkout";
-  
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        console.error("Checkout session URL not found in the response data");
-        setSnackbarMessage("Checkout session URL not found.");
-        setOpenSnackbar(true);
-      }
+      const res = await axios.post("http://127.0.0.1:8000/api/insertbooking", { 
+          userid: user.userid,
+          propertyid,
+          unitid: propertyData.property_unitdetails[0].unitid,
+          booker_fname: guestDetails.firstName,
+          booker_lname: guestDetails.lastName,
+          booker_email: guestDetails.email,
+          booker_phone: guestDetails.phoneNumber,
+          booker_country: "Philippines",
+          booker_country_code: guestDetails.countryCode,
+          is_my_book: guestDetails.bookingFor,
+          guestname: guestDetails.guestName,
+          stay_length: lengthStay,
+          guest_count: guestCount,
+          checkin_date,
+          checkout_date,
+          total_price: propertyData.property_unitdetails[0].unitpricing.min_price,
+          special_request: guestDetails.requests,
+          arrival_time: guestDetails.arrivalTime,
+          status: "Pending",
+          booking_date: new Date().toISOString().split("T")[0],
+        });
+        console.log("HERE", res.data);
+
+        if( res.data.status === "success") {
+          const res2 = await axios.post("http://127.0.0.1:8000/api/create-payment-link", {
+              amount : propertyData.property_unitdetails[0].unitpricing.min_price*100,
+              description: "Bisag unsa",
+              status: "Paid",
+              return_url: 'http://localhost:3000/paymentVerification',
+              bookingid: res.data.bookingid,
+            });
+            const checkoutUrl = res2.data.checkout_session_url;
+            console.log("Checkout URL:", checkoutUrl);
+            window.location.href = checkoutUrl;
+            
+      
+
+          }
+     
+      // window.location.href = checkoutUrl;
     } catch (e) {
-      console.error(e);
-      setSnackbarMessage("Error processing booking.");
-      setOpenSnackbar(true);
+      console.error("Booking error:", e);
+        setSnackbarMessage("Error processing booking.");
+        setOpenSnackbar(true);
     } finally {
-      setPaymentLoading(false); // End loading state for payment process
+      setPaymentLoading(false);
     }
   };
-  
 
-  const handlePriceChange = (newPrice) => {
-    setPrice(newPrice);
-  };
-
-  const handleGuestDetailsChange = (guestDetails) => {
-    setGuestDetails(guestDetails);
-  };
 
   if (loading) {
     return (
@@ -203,28 +175,40 @@ function BookingDetailsUI() {
     );
   }
 
+  console.log("Property Data :", propertyData);
   return (
     <div>
       <AppBar position="static" sx={{ background: "#16B4DD" }}>
         <Toolbar>
-          <Typography variant="h6">
-            Your Booking Details</Typography>
+          <Typography variant="h6" sx={{ margin: '0 auto', maxWidth: 'lg', width: '100%' ,padding: '1%' }}>
+            Booking Details
+          </Typography>
         </Toolbar>
       </AppBar>
-      <Grid container spacing={2} p={3}>
+      <Container maxWidth="lg">
+      <Grid container spacing={2} >
         <Grid item xs={12} md={4}>
           <BookingDetails
             lengthStay={lengthStay}
             setLengthStay={setLengthStay}
-            onPriceChange={handlePriceChange}
-            PropertyData={propertyData}
+            onPriceChange={setPrice}
+            PropertyData={propertyUnitDetails}
             checkin_date={checkin_date}
             checkout_date={checkout_date}
             guestCapacity={guestCount}
+            address = {propertyData?.property_address}
+            details = {propertyData?.property_details}
+            facilities = {propertyData.property_facilities}
+            houseRules = {propertyData?.property_houserules}
+         
           />
         </Grid>
-        <Grid item xs={12} md={8}>
-          <BookingGuestDetails onGuestDetailsChange={handleGuestDetailsChange} User={user} PropertyData={propertyData} />
+        <Grid item xs={12} md={8} pb = {2}>
+          <BookingGuestDetails
+            onGuestDetailsChange={setGuestDetails}
+            User={user}
+            PropertyData={propertyData}
+          />
           <Box mt={2} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               variant="contained"
@@ -242,6 +226,8 @@ function BookingDetailsUI() {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      </Container>
+     
     </div>
   );
 }

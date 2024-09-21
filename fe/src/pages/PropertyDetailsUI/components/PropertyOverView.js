@@ -111,7 +111,7 @@ export default function PropertyOverView({ propertyinfo }) {
           <div style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
             {propertyDetail?.property_owner?.property_owner?.describe}
           </div>
-          <button className="email-btn">Email Host</button>
+          {/* <button className="email-btn">Email Host</button> */}
         </div>
         <div style={{ width: "50%", paddingLeft: "1rem" }}>
           <div className="hostdetails-cntr">Host Details</div>
