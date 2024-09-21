@@ -79,8 +79,31 @@ export default function UserProfile({ profile }) {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+      if (
+        res2.data.message === "No existing image found for this user" &&
+        res2.data.status === "error"
+      ) {
+        const res3 = await axios.post(
+          "http://127.0.0.1:8000/api/uploaduserimg",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
 
-      if (res2.data.status === "success") {
+        if (res3.data.status === "success") {
+          // Update profileImage state with new URL
+          setProfileImage(res2.data.file_url);
+          const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
+            params: { userid: profile.userid },
+          });
+
+          if (res.data) {
+            setProfileImage(res.data.src);
+            // Only update currentProfile if it's different
+          }
+        }
+      } else if (res2.data.status === "success") {
         // Update profileImage state with new URL
         setProfileImage(res2.data.file_url);
         const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
