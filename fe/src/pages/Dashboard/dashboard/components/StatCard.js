@@ -42,9 +42,23 @@ AreaGradient.propTypes = {
 };
 
 function StatCard({ title, value, interval, trend, data }) {
+  function getDailyDatesForCurrentMonth() {
+    const now = new Date(); // Get the current date
+    const year = now.getFullYear(); // Get the current year
+    const month = now.getMonth() + 1; // Get the current month (0-indexed, so +1 to get the correct month)
+  
+    const daysInMonth = new Date(year, month, 0).getDate(); // Get number of days in the current month
+    const dailyDates = [];
+  
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month - 1, day); // month is 0-indexed
+      dailyDates.push(date.toISOString().split('T')[0]); // Format the date as 'YYYY-MM-DD'
+    }
+  
+    return dailyDates;
+  }
   const theme = useTheme();
-  const daysInWeek = getDaysInMonth(4, 2024);
-
+  const daysInWeek = getDailyDatesForCurrentMonth();
   const trendColors = {
     up:
       theme.palette.mode === 'light'
@@ -88,7 +102,7 @@ function StatCard({ title, value, interval, trend, data }) {
               <Typography variant="h4" component="p">
                 {value}
               </Typography>
-              <Chip size="small" color={color} label={trendValues[trend]} />
+              {/* <Chip size="small" color={color} label={trendValues[trend]} /> */}
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {interval}
@@ -97,7 +111,7 @@ function StatCard({ title, value, interval, trend, data }) {
           <Box sx={{ width: '100%', height: 50 }}>
             <SparkLineChart
               colors={[chartColor]}
-              data={data}
+              data={data || [0, 0, 0, 0, 0, 0, 0]}
               area
               showHighlight
               showTooltip

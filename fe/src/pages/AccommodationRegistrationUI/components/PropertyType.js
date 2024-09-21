@@ -69,7 +69,7 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
                   }}
                   startIcon={
                     <img
-                      src={`${type.name.toLowerCase()}.png`}
+                      src={`/${type.name.toLowerCase()}.png`}
                       alt={type.name}
                       style={{ width: "60px", height: "60px" }}
                     />
