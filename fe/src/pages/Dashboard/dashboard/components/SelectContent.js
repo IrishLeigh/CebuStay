@@ -12,6 +12,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import SmartphoneRoundedIcon from '@mui/icons-material/SmartphoneRounded';
 import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
+import { useEffect } from 'react';
 
 const Avatar = styled(MuiAvatar)(({ theme }) => ({
   width: 28,
@@ -26,21 +27,33 @@ const ListItemAvatar = styled(MuiListItemAvatar)({
   marginRight: 12,
 });
 
-export default function SelectContent() {
-  const [company, setCompany] = React.useState('');
+export default function SelectContent({ property, onPropertyChange }) {
+  const [selectedProperty, setSelectedProperty] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  console.log('property', property);
+
+  useEffect(() => {
+    if (property) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }, [property]);
 
   const handleChange = (event) => {
-    setCompany(event.target.value);
+    const propertyId = event.target.value;
+    setSelectedProperty(propertyId);
+    onPropertyChange(propertyId); // Call the parent's function with the selected property ID
   };
 
   return (
     <Select
-      labelId="company-select"
-      id="company-simple-select"
-      value={company}
+      labelId="property-select"
+      id="property-simple-select"
+      value={selectedProperty}
       onChange={handleChange}
       displayEmpty
-      inputProps={{ 'aria-label': 'Select company' }}
+      inputProps={{ 'aria-label': 'Select property' }}
       fullWidth
       sx={{
         maxHeight: 56,
@@ -56,42 +69,24 @@ export default function SelectContent() {
         },
       }}
     >
-      <ListSubheader sx={{ pt: 0 }}>Production</ListSubheader>
-      <MenuItem value="">
-        <ListItemAvatar>
-          <Avatar alt="Sitemark web">
-            <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-web" secondary="Web app" />
+      <MenuItem value="" disabled>
+        Select Property
       </MenuItem>
-      <MenuItem value={10}>
-        <ListItemAvatar>
-          <Avatar alt="Sitemark App">
-            <SmartphoneRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-app" secondary="Mobile application" />
-      </MenuItem>
-      <MenuItem value={20}>
-        <ListItemAvatar>
-          <Avatar alt="Sitemark Store">
-            <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-Store" secondary="Web app" />
-      </MenuItem>
-      <ListSubheader>Development</ListSubheader>
-      <MenuItem value={30}>
-        <ListItemAvatar>
-          <Avatar alt="Sitemark Store">
-            <ConstructionRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-Admin" secondary="Web app" />
-      </MenuItem>
+      <ListSubheader sx={{ pt: 0 }}>Properties</ListSubheader>
+      {property.data.map((prop) => (
+        <MenuItem key={prop.propertyid} value={prop.propertyid}>
+          <ListItemAvatar>
+            {/* <Avatar alt={prop.property_name}> */}
+              <Avatar alt={prop.property_name}>
+              {/* You can customize the icon here based on property type or any other logic */}
+              <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary={prop.property_name} secondary={prop.property_type} />
+        </MenuItem>
+      ))}
       <Divider sx={{ mx: -1 }} />
-      <MenuItem value={40}>
+      <MenuItem value="add-product">
         <ListItemIcon>
           <AddRoundedIcon />
         </ListItemIcon>
