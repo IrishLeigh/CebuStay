@@ -744,7 +744,7 @@ class FileController extends CORS
             $uploadedfile->file_id = $file_id;
             $uploadedfile->file_url = $file_url;
             $uploadedfile->isavatar = true;
-            $uploadedfile->propertyid = 0;
+            // $uploadedfile->propertyid = 0;
             $uploadedfile->save();
 
             return response()->json(['message' => 'Image updated successfully', 'status' => 'success']);
