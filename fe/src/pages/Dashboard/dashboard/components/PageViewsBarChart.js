@@ -7,13 +7,22 @@ import Stack from '@mui/material/Stack';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { useTheme } from '@mui/material/styles';
 
-export default function PageViewsBarChart() {
+export default function PageViewsBarChart({profitData}) {
   const theme = useTheme();
   const colorPalette = [
     theme.palette.primary.dark,
     theme.palette.primary.main,
     theme.palette.primary.light,
   ];
+
+  console.log(profitData);
+  const months = profitData.map(item => item.month.split(' ')[0]); // Get month names
+  const profits = profitData.map(item => item.profit);
+
+  const totalProfit = profits.reduce((acc, profit) => acc + profit, 0);
+  const profitMargin = (totalProfit / (totalProfit + 10000)) * 100;
+  const formattedMargin = profitMargin.toFixed(2); // Format to 2 decimal places
+  const chipLabel = `${formattedMargin > 0 ? '+' : ''}${formattedMargin}%`;
 
   return (
     <Card variant="outlined" sx={{ width: '100%' }}>
@@ -31,9 +40,9 @@ export default function PageViewsBarChart() {
             }}
           >
             <Typography variant="h4" component="p">
-              1.3M
+            {totalProfit.toLocaleString()}
             </Typography>
-            <Chip size="small" color="error" label="-8%" />
+            {/* <Chip size="small" color="error" label={chipLabel} /> */}
           </Stack>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             Profit  for the last 6 months
@@ -46,28 +55,17 @@ export default function PageViewsBarChart() {
             {
               scaleType: 'band',
               categoryGapRatio: 0.5,
-              data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+              data: months,
             },
           ]}
           series={[
             {
-              id: 'page-views',
-              label: 'Page views',
-              data: [2234, 3872, 2998, 4125, 3357, 2789, 2998],
+              id: 'profit',
+            label: 'Profit',
+            data: profits,
               stack: 'A',
             },
-            {
-              id: 'downloads',
-              label: 'Downloads',
-              data: [3098, 4215, 2384, 2101, 4752, 3593, 2384],
-              stack: 'A',
-            },
-            {
-              id: 'conversions',
-              label: 'Conversions',
-              data: [4051, 2275, 3129, 4693, 3904, 2038, 2275],
-              stack: 'A',
-            },
+
           ]}
           height={250}
           margin={{ left: 50, right: 0, top: 20, bottom: 20 }}

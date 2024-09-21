@@ -2,12 +2,21 @@ import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns, rows } from '../internals/data/gridData';
 
-export default function CustomizedDataGrid() {
+export default function CustomizedDataGrid({bookingList}) {
+  const bookingrRows = bookingList.map((booking, index) => ({
+    id: index + 1,  // or use booking.bookingid if you want bookingid as id
+    bookingId: `BK00${booking.bookingid}`,  // format the booking ID as desired
+    bookerName: booking.booker_name,
+    unitName: booking.unit_name,
+    noGuests: booking.guest_count,
+    status: booking.status,
+  }));
+  
   return (
     <DataGrid
       autoHeight
       checkboxSelection
-      rows={rows}
+      rows={bookingrRows}
       columns={columns}
       getRowClassName={(params) =>
         params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'

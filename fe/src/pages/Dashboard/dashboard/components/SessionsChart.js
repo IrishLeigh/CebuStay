@@ -39,9 +39,26 @@ function getDaysInMonth(month, year) {
   return days;
 }
 
-export default function SessionsChart() {
+export default function SessionsChart({bookingTrends}) {
   const theme = useTheme();
-  const data = getDaysInMonth(4, 2024);
+  // const data = getDaysInMonth(4, 2024);
+
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth(); // 0 (Jan) to 11 (Dec)
+  const currentYear = currentDate.getFullYear();
+
+  // Calculate last 6 months
+  const lastSixMonths = Array.from({ length: 6 }, (_, i) => {
+    const monthIndex = (currentMonth - i + 12) % 12; // Handle wrap around
+    const monthName = new Date(currentYear, monthIndex).toLocaleString('default', { month: 'long' });
+    return monthName;
+  }).reverse(); // Reverse to have the most recent month first
+
+  // Initialize dataPoints with zeros for the last 6 months
+  const dataPoints = lastSixMonths.map(month => {
+    const trend = bookingTrends.find(trend => trend.month === month);
+    return trend ? trend.bookings : 0; // Use the booking count or 0 if not found
+  });
 
   const colorPalette = [
     theme.palette.primary.light,
@@ -65,9 +82,9 @@ export default function SessionsChart() {
             }}
           >
             <Typography variant="h4" component="p">
-              13,277
+            {bookingTrends.reduce((sum, trend) => sum + trend.bookings, 0) || '0'}
             </Typography>
-            <Chip size="small" color="success" label="+35%" />
+            {/* <Chip size="small" color="success" label="+35%" /> */}
           </Stack>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             Trends in booking patterns over time
@@ -75,59 +92,22 @@ export default function SessionsChart() {
         </Stack>
         <LineChart
           colors={colorPalette}
-          xAxis={[
-            {
-              scaleType: 'point',
-              data,
-              tickInterval: (index, i) => (i + 1) % 5 === 0,
-            },
-          ]}
+          xAxis={[{ scaleType: 'point', data: lastSixMonths }]}
           series={[
             {
               id: 'direct',
-              label: 'Direct',
+              label: 'Bookings',
               showMark: false,
               curve: 'linear',
               stack: 'total',
               area: true,
               stackOrder: 'ascending',
-              data: [
-                300, 900, 600, 1200, 1500, 1800, 2400, 2100, 2700, 3000, 1800, 3300,
-                3600, 3900, 4200, 4500, 3900, 4800, 5100, 5400, 4800, 5700, 6000,
-                6300, 6600, 6900, 7200, 7500, 7800, 8100,
-              ],
+              data: dataPoints,
             },
-            {
-              id: 'referral',
-              label: 'Referral',
-              showMark: false,
-              curve: 'linear',
-              stack: 'total',
-              area: true,
-              stackOrder: 'ascending',
-              data: [
-                500, 900, 700, 1400, 1100, 1700, 2300, 2000, 2600, 2900, 2300, 3200,
-                3500, 3800, 4100, 4400, 2900, 4700, 5000, 5300, 5600, 5900, 6200,
-                6500, 5600, 6800, 7100, 7400, 7700, 8000,
-              ],
-            },
-            {
-              id: 'organic',
-              label: 'Organic',
-              showMark: false,
-              curve: 'linear',
-              stack: 'total',
-              stackOrder: 'ascending',
-              data: [
-                1000, 1500, 1200, 1700, 1300, 2000, 2400, 2200, 2600, 2800, 2500,
-                3000, 3400, 3700, 3200, 3900, 4100, 3500, 4300, 4500, 4000, 4700,
-                5000, 5200, 4800, 5400, 5600, 5900, 6100, 6300,
-              ],
-              area: true,
-            },
+            
           ]}
           height={250}
-          margin={{ left: 50, right: 20, top: 20, bottom: 20 }}
+          margin={{ left: 50, right: 40, top: 20, bottom: 20 }}
           grid={{ horizontal: true }}
           sx={{
             '& .MuiAreaElement-series-organic': {
