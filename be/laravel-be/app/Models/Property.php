@@ -16,7 +16,8 @@ class Property extends Model
         'property_type',
         'property_desc',
         'property_directions',
-        'unit_type'
+        'unit_type',
+        'isActive'
     ];
 
     public function user()
@@ -48,4 +49,8 @@ class Property extends Model
         return $this->hasMany(Booking::class, 'propertyid', 'propertyid');
     }
 
+    public function userfile()
+    {
+        return $this->hasOne(UserFile::class, 'propertyid', 'propertyid');
+    }
 }

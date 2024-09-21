@@ -22,6 +22,18 @@ use App\Models\HouseRule;
 
 class PropertyController extends CORS
 {
+    public function disableProperty(Request $request)
+    {
+        $this->enableCors($request);
+        $propertyid = $request->input('propertyid');
+        $find_disableproperty = Property::find($propertyid);
+        if (!$find_disableproperty) {
+            return response()->json(['status' => 'error', 'message' => 'Property not found']);
+        }
+        $find_disableproperty->isactive = 0;
+        $find_disableproperty->save();
+        return response()->json(['status' => 'success', 'message' => 'Property has been disabled']);
+    }
     public function show(Request $request)
     {
         $this->enableCors($request);
@@ -85,7 +97,9 @@ class PropertyController extends CORS
         $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type')
             ->where('propertyid', $request->input('propertyid'))
             ->first();
-
+        if ($property_info->isActive == 0) {
+            return response()->json(['status' => 'error', 'message' => 'Property is disabled']);
+        }
         $property_address = DB::table('location')
             ->select('address', 'zipcode', 'latitude', 'longitude')
             ->where('propertyid', $request->input('propertyid'))
@@ -291,7 +305,9 @@ class PropertyController extends CORS
         $property_bp = DB::table('booking_policy')->get();
 
         // Retrieve properties
-        $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')->get();
+        $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')
+            ->where('isActive', 1)
+            ->get();
 
         // Retrieve unit details
         $unitDetails = UnitDetails::select('unitid', 'guest_capacity', 'propertyid')->get();
@@ -490,6 +506,7 @@ class PropertyController extends CORS
         $properties = DB::table('property')
             ->join('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid')
             ->where('unitdetails.guest_capacity', '>=', $guestCount)
+            ->where('property.isActive', true) // Add this line to check if the property is active
             ->whereNotExists(function ($query) use ($checkinDate, $checkoutDate) {
                 $query->select(DB::raw(1))
                     ->from('tbl_booking')
@@ -509,6 +526,7 @@ class PropertyController extends CORS
 
         return response()->json($properties);
     }
+
 
     public function getAvailableUnits(Request $request)
     {
@@ -521,6 +539,7 @@ class PropertyController extends CORS
             ->join('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid')
             ->where('unitdetails.propertyid', $propertyId) // Filter by property ID
             ->where('unitdetails.guest_capacity', '>=', $guestCount)
+            ->where('property.isActive', true) // Check if the property is active
             ->whereNotExists(function ($query) use ($checkinDate, $checkoutDate) {
                 $query->select(DB::raw(1))
                     ->from('tbl_booking')
@@ -538,9 +557,19 @@ class PropertyController extends CORS
             ->distinct()
             ->get();
 
+        // Check if no available units were found
+        if ($properties->isEmpty()) {
+            return response()->json([
+                'message' => 'No available units found for the specified criteria.',
+                'status' => 'error'
+            ]);
+        }
+
+        // Return available units if found
         $availableunits = $properties->pluck('unitid');
-        return response()->json($properties);
+        return response()->json($availableunits);
     }
+
 
     public function updatePropertyBenefits(Request $request, $propertyid)
     {

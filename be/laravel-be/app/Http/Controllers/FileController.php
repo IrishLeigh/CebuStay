@@ -739,6 +739,7 @@ class FileController extends CORS
             $uploadedfile->file_id = $file_id;
             $uploadedfile->file_url = $file_url;
             $uploadedfile->isavatar = true;
+            $uploadedfile->propertyid = 0;
             $uploadedfile->save();
 
             return response()->json(['message' => 'Image updated successfully', 'status' => 'success']);
@@ -805,6 +806,7 @@ class FileController extends CORS
             $uploadedfile->userid = $userid;
             $uploadedfile->file_id = $file_id;
             $uploadedfile->file_url = $file_url;
+            $uploadedfile->propertyid = $request->propertyid;
             $uploadedfile->isavatar = false;
             $uploadedfile->save();
 
@@ -819,7 +821,7 @@ class FileController extends CORS
         try {
             $this->enableCors($request);
             $userid = $request->userid;
-
+            $propertyid = $request->propertyid;
             $src_userimg = UserFile::where('userid', $userid)
                 ->where('isavatar', false)
                 ->first();
