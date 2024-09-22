@@ -86,7 +86,7 @@ class UserController extends CORS
             return response()->json(['message' => 'Unauthorized.', 'status' => 'error']);
         }
 
-        $properties = Property::select('propertyid', 'property_name', 'property_type', 'created_at')->where('userid', $userid)->get();
+        $properties = Property::select('propertyid', 'property_name', 'property_type', 'created_at', 'isActive')->where('userid', $userid)->get();
 
         $userProperties = [];
 
@@ -102,8 +102,8 @@ class UserController extends CORS
                 'address' => $location ? $location->address : 'No address',
                 'paymentmethod' => $paymethod ? $paymethod->paymentmethod : 'No payment method',
                 'is_cancel_plan' => $cancel_policy ? $cancel_policy->is_cancel_plan : false,
-                'status' => 'Active', // For now, return everything as "Active"
-                // 'status' => $property->isActive == true ? 'Active' : 'Inactive'
+                // 'status' => $property->isActive == true ? 'Active' : 'Inactive', // For now, return everything as "Active"
+                'status' => $property->isActive == 1 ? 'Active' : 'Inactive',
                 'created_at' => $property->created_at->format('Y-m-d g:ia')
             ];
         }
