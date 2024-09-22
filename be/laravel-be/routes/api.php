@@ -18,7 +18,11 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CheckoutSessionController;
 use App\Http\Controllers\UnitDetailsController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\LegalRepresentativeController;
 use App\Http\Controllers\LoginUserController;
+use App\Http\Controllers\PropertyCompanyController;
+use App\Http\Controllers\PropertyOwnerController;
+
 // Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
@@ -179,7 +183,10 @@ route::post('/updatepropertyfiles-singleunit/{propertyid}', [FileController::cla
 route::post('/updatepropertyfiles-gallerysingleunit/{propertyid}', [FileController::class, 'updateGalleryPhotosSingle']);
 route::post('/updatepropertybenefits-single/{propertyid}', [PropertyController::class, 'updatePropertyBenefits']);
 route::post('/updatepropertyrules-single/{propertyid}', [PropertyController::class, 'updatePropertyRules']);
-route::post('/updatepropertypricingpayment-single/{propertyid}', [PropertyController::class, 'updatePropertyPricePayment']);
+
+route::post('/property-companies/{propertycompanyid}', [PropertyCompanyController::class, 'update']);
+route::post('/property-owners/{id}', [PropertyOwnerController::class, 'update']);
+route::post('/legal-representative/{id}', [LegalRepresentativeController::class, 'update']);
 
 //Route for Dashboard
 Route::get('/getdashrevenue', 'App\Http\Controllers\DashboardController@getTotalPropertyRevenue');
