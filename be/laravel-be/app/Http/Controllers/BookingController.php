@@ -147,6 +147,7 @@ class BookingController extends CORS
         $checkout = $booking->checkout_date;
         $status = $booking->status;
         $amount = $payment->amount;
+        $totalAmount = $amount * $length;
 
         $formattedDate = date("M d, Y", strtotime($bookingDate));
 
@@ -298,7 +299,7 @@ class BookingController extends CORS
                                 <td>$length</td>
                                 <td>$guestCount</td>
                                 <td>$status</td>
-                                <td>$amount</td>
+                                <td>$totalAmount</td>
                             </tr>
                         </table>
                     </div>

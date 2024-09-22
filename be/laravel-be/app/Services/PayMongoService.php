@@ -26,11 +26,11 @@ class PayMongoService
         ]);
     }
 
-    public function createCheckoutSession($amount, $description, $returnUrl, $bookingId)
+    public function createCheckoutSession($totalprice, $description, $returnUrl, $bookingId)
     {
         $apiKey = 'sk_test_eFrCmpKXktDTxx7avwDX7uBQ'; // Replace with your actual PayMongo API key
     
-        $amount = (int) $amount;
+        $totalprice = (int) $totalprice;
     
         $client = new Client([
             'base_uri' => 'https://api.paymongo.com/v1/',
@@ -44,7 +44,7 @@ class PayMongoService
             'json' => [
                 'data' => [
                     'attributes' => [
-                        'amount' => $amount,
+                        'amount' => $totalprice,
                         'description' => $description . " Booking",
                         'redirect' => [
                             'success' => $returnUrl,
@@ -54,7 +54,7 @@ class PayMongoService
                             [
                                 'name' => 'Booking at ' . $description ,
                                 'quantity' => 1,
-                                'amount' => $amount,
+                                'amount' => $totalprice,
                                 'currency' => 'PHP',
                             ],
                         ],

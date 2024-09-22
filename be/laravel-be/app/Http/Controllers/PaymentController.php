@@ -27,12 +27,15 @@ class PaymentController extends CORS
         $amount = $request->input('amount');
         $description = $request->input('description');
         $status = $request->input('status');
+        $lengthStay = $request->input('length');
         $returnUrl = $request->input('return_url');
         $bookingId = $request->input('bookingid');
 
+        $totalprice = $amount * $lengthStay;
+
         // Create the checkout session using the PayMongo service
         try {
-            $checkoutUrl = $this->payMongoService->createCheckoutSession($amount, $description, $returnUrl, $bookingId);
+            $checkoutUrl = $this->payMongoService->createCheckoutSession($totalprice, $description, $returnUrl, $bookingId);
 
             // Save the payment record in the database
             $payment = new Payment();
@@ -66,6 +69,22 @@ class PaymentController extends CORS
 
 
         return response()->json($payments);
+    }
+
+    public function updatePaymentStatus(Request $request)
+    {
+        $this->enableCors($request);
+        
+        $payment = Payment::where('bookingid', $request->input('bookingid'))->first();
+    
+        if (!$payment) {
+            return response()->json(['error' => 'Payment not found'], 404);
+        }
+    
+        $payment->status = $request->input('status');
+        $payment->save();
+    
+        return response()->json($payment);
     }
 
     public function paymentCallback(Request $request)
