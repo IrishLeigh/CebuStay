@@ -143,8 +143,9 @@ function BookingDetailsUI() {
         if( res.data.status === "success") {
           const res2 = await axios.post("http://127.0.0.1:8000/api/create-payment-link", {
               amount : propertyData.property_unitdetails[0].unitpricing.min_price*100,
-              description: "Bisag unsa",
-              status: "Paid",
+              description: propertyData.property_details.property_name,
+              status: "Pending",
+              length: lengthStay,
               return_url: 'http://localhost:3000/paymentVerification',
               bookingid: res.data.bookingid,
             });
