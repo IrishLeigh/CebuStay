@@ -8,6 +8,8 @@ use App\Models\Payment;
 use App\Models\Property;
 use App\Models\UnitDetails;
 use App\Models\ReviewsAndRating;
+use App\Models\PropertyOwnership;
+use App\Models\UserFile;
 use Carbon\Carbon;
 
 class DashboardController extends CORS 
@@ -19,6 +21,7 @@ class DashboardController extends CORS
         // Get the property ID from the request
         $propertyId = $request->input('propertyid');
         $property = Property::where('propertyid', $propertyId)->first();
+        $propertyOwnership = PropertyOwnership::where('propertyid', $propertyId)->first();
 
         if (!$property) {
             return response()->json(['status' => 'error', 'message' => 'Property not found']);
@@ -48,6 +51,28 @@ class DashboardController extends CORS
         // Customer Ratings
         // $data['total_rating'] = $this->getTotalCustomerRating($propertyId);
         // $data['weekly_rating'] = $this->getWeeklyCustomerRating($propertyId);
+
+        $ownershipType = $propertyOwnership->ownershiptype; // Assuming you have a method to get ownership type
+
+        // Initialize variable to store logo/avatar URL
+        $logoOrAvatarUrl = null;
+
+        if ($ownershipType === 'Company') {
+            // Call getCompanyLogo function
+            $logoResult = $this->getCompanyLogo(new Request(['propertyid' => $propertyId]));
+            if ($logoResult->getData()->status === 'success') {
+                $logoOrAvatarUrl = $logoResult->getData()->src;
+            }
+        } else {
+            // Assume Individual ownership type
+            $userId = $this->getUserIdForProperty($propertyId); // Assuming you have a way to get the user ID for the property
+            $avatarResult = $this->getUserAvatar(new Request(['userid' => $userId]));
+            if ($avatarResult->getData()->status === 'success') {
+                $logoOrAvatarUrl = $avatarResult->getData()->src;
+            }
+        }
+
+
         $data = [
             [
                 'title' => 'Total Revenue',
@@ -90,6 +115,9 @@ class DashboardController extends CORS
             //     'data' => [], // You may not need daily data for today's bookings, so this can be left empty
             // ],
         ];
+
+        // Add the logo/avatar URL to the response data
+        $data['ownership_logo'] = $logoOrAvatarUrl;
         
         // Today's Bookings
         $data['new_bookings'] = $this->getTodaysNewBookings($propertyId);
@@ -110,6 +138,82 @@ class DashboardController extends CORS
         $data['occupancy_rate'] = $this->getWeeklyOccupancyRate($propertyId, $isSingleUnit);
 
         return response()->json(['status' => 'success', 'singleUnit' => $isSingleUnit, 'data' => $data]);
+    }
+
+        public function getPropertyImage(Request $request)
+    {
+        try {
+            $this->enableCors($request);
+            $propertyId = $request->propertyid;
+
+            // Assuming you have a Property model to get the ownership type
+            $property = Property::findOrFail($propertyId);
+            $ownershipType = $property->ownershiptype;
+
+            if ($ownershipType === 'Company') {
+                return $this->getCompanyLogo($request);
+            } elseif ($ownershipType === 'Individual') {
+                return $this->getUserAvatar($request);
+            } else {
+                return response()->json(['status' => 'error', 'message' => 'Invalid ownership type']);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['status' => 'error', 'message' => 'Property not found']);
+        } catch (GuzzleException $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Company Logo Function
+    private function getCompanyLogo(Request $request)
+    {
+        try {
+            $propertyId = $request->propertyid;
+            $src_userimg = UserFile::where('propertyid', $propertyId)
+                ->where('isavatar', false)
+                ->first();
+
+            if (!$src_userimg) {
+                return response()->json(['status' => 'error', 'message' => 'No image found']);
+            } else {
+                return response()->json(['status' => 'success', 'src' => $src_userimg->file_url]);
+            }
+        } catch (GuzzleException $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    // User Avatar Function
+    private function getUserAvatar(Request $request)
+    {
+        try {
+            $userid = $request->userid;
+
+            $src_userimg = UserFile::where('userid', $userid)
+                ->where('isavatar', true)
+                ->whereNull('propertyid')
+                ->first();
+
+            if (!$src_userimg) {
+                return response()->json(['status' => 'error', 'message' => 'No image found']);
+            } else {
+                return response()->json(['status' => 'success', 'src' => $src_userimg->file_url]);
+            }
+        } catch (GuzzleException $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    private function getUserIdForProperty($propertyId)
+    {
+        // Assuming you have a model named PropertyOwnership or similar
+        $property = Property::where('propertyid', $propertyId)->first();
+
+        if ($property) {
+            return $property->userid;
+        }
+
+        return null; // Return null or handle this case as needed
     }
 
     private function calculateTrend($currentValue, $previousValue)
