@@ -69,10 +69,27 @@ export default function SideMenu() {
         sx={{
           display: 'flex',
           mt: '60px',
-          p: 1.5,
+          p: 2,
+          justifyContent: 'left',
+          alignItems: 'center',
         }}
       >
-       
+       <img src="/logo2.png" alt="Logo" style={{  height: '3rem' }}/> 
+       <Typography
+          noWrap
+          component="a"
+          href="/"
+          sx={{
+            fontFamily: 'Poppins, sans-serif',
+            fontWeight: 1000,
+            color: '#16B4DD',
+            textDecoration: 'none',
+            fontSize: '1.5rem',
+            ml: 1,
+          }}
+        >
+          cebustay
+        </Typography>
       </Box>
       <Divider />
       <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>

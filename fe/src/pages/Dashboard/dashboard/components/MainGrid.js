@@ -62,6 +62,8 @@ export default function MainGrid() {
     console.log('Selected Property ID:', propertyId); // You can use this ID as needed
   };
   console.log('selectedPropertyId', selectedPropertyId);
+
+  //User Data
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
     if (token) {
@@ -79,6 +81,7 @@ export default function MainGrid() {
     }
   }, []);
 
+  //Property Data
   useEffect(() => {
     const fetchProperty = async () => {
       if (!user) return; // Exit if user is not set
@@ -100,6 +103,8 @@ export default function MainGrid() {
 
     fetchProperty();
   }, [user]); // Add user as a dependency here
+
+  //Dashboard Data
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -133,6 +138,10 @@ export default function MainGrid() {
     data: Array.isArray(data?.data) ? data.data.map(Number) : [],
   });
 
+
+  console.log ('dashboardData', dashboardData);
+  console.log ('property', property);
+  console.log ('user', user);
   return (
     <>
       {loading ? (
@@ -143,18 +152,20 @@ export default function MainGrid() {
 
             {/* cards */}
             <Typography component="h2" variant="h6" sx={{ mb: 2, mt: 5 }}>
-              Hello Irish, Welcome Back!
+              Hello {user?.firstname}, Welcome Back!
             </Typography>
             <Box
               sx={{
-                display: 'flex',
-                // mt: '60px',
-                pt: 1,
+                display: 'flex',        // Use flex for flexbox
+                flexDirection: 'column', // Set direction to column
+              
                 pb: 1,
               }}
             >
+              View as:
               <SelectContent property={property} onPropertyChange={handlePropertyChange} />
             </Box>
+
             <Grid
               container
               spacing={2}
