@@ -560,32 +560,77 @@ class DashboardController extends CORS
     }
 
     public function getUserProperties(Request $request)
-{
-    $this->enableCors($request);
-
-    // Get the user ID from the request
-    $userId = $request->input('userid');
-
-    // Fetch properties owned by the user
-    $properties = Property::where('userid', $userId)->get();
-
-    if ($properties->isEmpty()) {
-        return response()->json(['status' => 'error', 'message' => 'No properties found for this user']);
+    {
+        $this->enableCors($request);
+    
+        // Get the user ID from the request
+        $userId = $request->input('userid');
+    
+        // Fetch properties owned by the user
+        $properties = Property::where('userid', $userId)->get();
+    
+        if ($properties->isEmpty()) {
+            return response()->json(['status' => 'error', 'message' => 'No properties found for this user']);
+        }
+    
+        // Map the properties to return necessary details
+        $propertyList = $properties->map(function ($property) {
+            $propertyOwnership = PropertyOwnership::where('propertyid', $property->propertyid)->first();
+            $ownershipType = $propertyOwnership->ownershiptype;
+            $propertyImage = $this->getPropertyImageByOwnership($propertyOwnership, $property);
+    
+            return [
+                'propertyid' => $property->propertyid,
+                'property_name' => $property->property_name,
+                'property_type' => $property->property_type,
+                'location' => $property->location,
+                'created_at' => $property->created_at->format('Y-m-d'),
+                'status' => $property->status,
+                'ownership_logo' => $propertyImage, // Include the image URL here
+            ];
+        });
+    
+        return response()->json(['status' => 'success', 'data' => $propertyList]);
     }
 
-    // Map the properties to return necessary details
-    $propertyList = $properties->map(function ($property) {
-        return [
-            'propertyid' => $property->propertyid,
-            'property_name' => $property->property_name,
-            'property_type' => $property->property_type,
-            'location' => $property->location,
-            'created_at' => $property->created_at->format('Y-m-d'),
-            'status' => $property->status,
-        ];
-    });
 
-    return response()->json(['status' => 'success', 'data' => $propertyList]);
+    private function getPropertyImageByOwnership($propertyOwnership, $property)
+{
+    try {
+        if ($propertyOwnership->ownershiptype === 'Company') {
+            return $this->getCompanyLogoByPropertyId($property->propertyid);
+        } elseif ($propertyOwnership->ownershiptype === 'Individual') {
+            return $this->getUserAvatarByPropertyId($property->propertyid);
+        }
+    } catch (ModelNotFoundException $e) {
+        return null;
+    } catch (GuzzleException $e) {
+        return null;
+    }
+
+    return null;
+}
+
+// Company Logo function refactored to return the URL
+private function getCompanyLogoByPropertyId($propertyId)
+{
+    $src_userimg = UserFile::where('propertyid', $propertyId)
+        ->where('isavatar', false)
+        ->first();
+
+    return $src_userimg ? $src_userimg->file_url : null;
+}
+
+// User Avatar function refactored to return the URL
+private function getUserAvatarByPropertyId($propertyId)
+{
+    // Assuming there's a similar logic to fetch the user avatar based on the property ID
+    $src_userimg = UserFile::where('propertyid', $propertyId)
+        ->where('isavatar', true)
+        ->first();
+
+    // return $src_userimg ? $src_userimg->file_url : null;
+    return $src_userimg ? $src_userimg->file_url : null;
 }
 
 }
