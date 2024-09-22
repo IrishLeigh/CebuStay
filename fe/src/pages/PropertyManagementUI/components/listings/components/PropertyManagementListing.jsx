@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import '../css/PropertyManagementListing.css';
 import { MdMenuOpen, MdSearch, MdEdit, MdDelete, MdClose} from 'react-icons/md';
 // import Sidebar from '../../PropertyManagementUI/components/sidebar';
-import {Box, Grid } from '@mui/material';
+import {Box, Grid, Tooltip, CircularProgress } from '@mui/material';
 import axios from 'axios';
 // import EditPropertyUI from '../../PropertyManagementUI/components/EditPropertyUI';
 import { useNavigate } from 'react-router-dom';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 export default function PropertyManagementListing() {
     const [selectedButton, setSelectedButton] = useState('ALL');
     const [showDropdown, setShowDropdown] = useState(false);
@@ -18,7 +19,7 @@ export default function PropertyManagementListing() {
     //     { id: '#P456', name: 'Mountain Lodge', type: 'Cabin', address: '456 Mountain Rd, Denver, CO', created_at: "2024-07-04 12:21pm", status: 'Inactive' },
     // ]);
 
-    
+    const [loading, setLoading] = useState(false);
     const [editItemId, setEditItemId] = useState(null);
     const [deleteItemId, setDeleteItemId] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -87,10 +88,82 @@ export default function PropertyManagementListing() {
         setEditItemId(null);
         setEditModalOpen(false);
     };
-
-    const handleDelete = (id) => {
-        setDeleteItemId(id);
-        setModalOpen(true);
+    const handleStatus = async (id) => {
+        setLoading(true);
+        console.log("id: ", id);
+        const token = localStorage.getItem("auth_token")
+        try {
+            const res = await axios.put("http://127.0.0.1:8000/api/activateproperty", {
+                propertyid: id,
+            },{
+                headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                }
+            })
+            if(res.data.status === "success"){
+                // alert(res.data.message);
+                try {
+                    const propertyres = await axios.get(
+                      "http://127.0.0.1:8000/api/user/properties",
+                      {
+                        params: {
+                          userid: user.userid,
+                        },
+                      }
+                    );
+                    console.log("Propertydata: ", propertyres.data);
+                    setData(propertyres.data.userproperties);
+                  } catch (error) {
+                    console.error(error);
+                  } finally{
+                    setLoading(false);
+                  }
+            
+            }
+        } catch (error) {
+            console.log(error);
+        } 
+    }
+    const handleDelete = async (id) => {
+        setLoading(true);
+        console.log("id: ", id);
+        const token = localStorage.getItem("auth_token")
+        console.log("token: ", token);
+        try {
+            const res = await axios.put("http://127.0.0.1:8000/api/disableproperty", {
+                propertyid: id,
+            },{
+                headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                }
+            })
+            if(res.data.status === "success"){
+                // alert(res.data.message);
+                try {
+                    const propertyres = await axios.get(
+                      "http://127.0.0.1:8000/api/user/properties",
+                      {
+                        params: {
+                          userid: user.userid,
+                        },
+                      }
+                    );
+            
+                    console.log("Propertydata: ", propertyres.data);
+                    setData(propertyres.data.userproperties);
+                  } catch (error) {
+                    console.error(error);
+                  } finally {
+                    setLoading(false);
+                  }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        // setDeleteItemId(id);
+        // setModalOpen(true);
     };
     const handleRowClick = (id) => {
         setSelectedId(id);
@@ -127,7 +200,7 @@ export default function PropertyManagementListing() {
         }
     };
 
-    console.log("DATA: ", data);
+    // console.log("DATA: ", data);
 
     return (
         // <Grid container>
@@ -140,34 +213,55 @@ export default function PropertyManagementListing() {
         //     <Grid item xs={10}>
                 // <div className="full-height bg-light">
             <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-                <div className="full-height">
-                    
+              
+                <div className="full-height" style={{position: 'relative'}}>
                     <div style={{ background: 'linear-gradient(to right, #F8A640, #F89E2D, #FCCD6E)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%' }}>
                         <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Property Management Listing</h1>
                         <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Lorem ipsum dolor sit amet</p>
                     </div>
-
+                    {loading && (
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 1000
+                    }}>
+                        <CircularProgress />
+                    </div>
+                    )}
                     <div className="full-width mt-4">
                         <div className="controls flex justify-between items-center mb-4">
                             <div className="buttons flex justify-evenly w-full" style={{ width: 'fit-content', gap: '1rem' }}>
-                                <button
-                                    className={`btn ${selectedButton === 'ALL' ? 'underline' : ''}`}
-                                    onClick={() => setSelectedButton('ALL')}
-                                >
-                                    ALL
+                                <Tooltip title="All Properties">
+                                    <button
+                                        className={`btn ${selectedButton === 'ALL' ? 'underline' : ''}`}
+                                        onClick={() => setSelectedButton('ALL')}
+                                    >
+                                        ALL
+                                    </button>
+                                </Tooltip>
+                                <Tooltip title="Active Properties">
+                                    <button
+                                        className={`btn ${selectedButton === 'ACTIVE' ? 'underline' : ''}`}
+                                        onClick={() => setSelectedButton('ACTIVE')}
+                                    >
+                                        ACTIVE
                                 </button>
-                                <button
-                                    className={`btn ${selectedButton === 'ACTIVE' ? 'underline' : ''}`}
-                                    onClick={() => setSelectedButton('ACTIVE')}
-                                >
-                                    ACTIVE
-                                </button>
-                                <button
-                                    className={`btn ${selectedButton === 'INACTIVE' ? 'underline' : ''}`}
-                                    onClick={() => setSelectedButton('INACTIVE')}
-                                >
-                                    INACTIVE
-                                </button>
+                                </Tooltip>
+                                <Tooltip title="Inactive Properties">
+                                    <button
+                                        className={`btn ${selectedButton === 'INACTIVE' ? 'underline' : ''}`}
+                                        onClick={() => setSelectedButton('INACTIVE')}
+                                    >
+                                        INACTIVE
+                                    </button>
+                                </Tooltip>
                             </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem', position: 'relative' }}>
@@ -274,7 +368,17 @@ export default function PropertyManagementListing() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {getData().map(item => (
+                                    {data.length === 0 ? (
+                                         <tr>
+                                         <td colSpan="8" style={{ textAlign: 'center', padding: '1rem' }}>
+                                           <div className="loading-container" style={{ display: "flex", justifyContent: "center", margin: '2rem', height: '100%' }}>
+                                             <CircularProgress />
+                                             <p>Retrieving data...</p>
+                                           </div>
+                                         </td>
+                                       </tr>
+                                    ) : (
+                                    getData().map(item => (
                                         <tr key={item.id} className="table-row" onClick={() => handleRowClick(item.id)}>
                                             <td className="table-cell"><input type="checkbox" /></td>
                                             <td className="table-cell">{item.editable ? <input type="text" value={item.id} onChange={(e) => setData(data.map(i => i.id === item.id ? { ...i, id: e.target.value } : i))} /> : item.id}</td>
@@ -293,13 +397,39 @@ export default function PropertyManagementListing() {
                                                     </div>
                                                 ) : (
                                                     <>
-                                                        <MdEdit onClick={() => handleEdit(item.id)} style={{ cursor: 'pointer', marginRight: '0.5rem', color: 'blue' }} />
-                                                        <MdDelete onClick={() => handleDelete(item.id)} style={{ cursor: 'pointer', color: 'red' }} />
+                                                        <Tooltip title="Edit Property">
+                                                            <span className='dajwhbdkajwbdjhab'>
+                                                                <MdEdit onClick={() => handleEdit(item.id)} style={{ cursor: 'pointer', marginRight: '0.5rem', color: 'blue' }} />
+                                                            </span>
+                                                        </Tooltip>
+                                                        <Tooltip title={item.status === 'Inactive' ? 'Currently Inactive' : 'Deactivate Property'}>
+                                                            <span className='dajwhbdkajwbdjhab'>
+                                                                <MdDelete 
+                                                                onClick={() => item.status === 'Active' && handleDelete(item.id)} 
+                                                                style={{ 
+                                                                    cursor: item.status === 'Inactive' ? 'not-allowed' : 'pointer', 
+                                                                    color: 'red', 
+                                                                    opacity: item.status === 'Inactive' ? '0.5' : '1'
+                                                                }} 
+                                                                />
+                                                            </span>
+                                                        </Tooltip>
+                                                        <Tooltip title={item.status === 'Active' ? 'Curently Active' : 'Activate Property'}>
+                                                            <RadioButtonCheckedIcon onClick={() => item.status === "Inactive" && handleStatus(item.id)} 
+                                                            style={{ 
+                                                                cursor: item.status === 'Active' ? 'not-allowed' : 'pointer', 
+                                                                color: item.status === 'Active' ? 'red' : 'green', 
+                                                                marginLeft: '0.5rem', fontSize: '1.0rem',  
+                                                                opacity: item.status === 'Active' ? '0.5' : '1',}} 
+                                                            />
+                                                        </Tooltip>
                                                     </>
                                                 )}
                                             </td>
                                         </tr>
-                                    ))}
+                                    ))
+                                    )}
+  
                                 </tbody>
                             </table>
                         </div>
