@@ -41,8 +41,6 @@ class LoginUserController extends CORS
         if ($user->isverified != 1) {
             return response()->json(['message' => 'Email not verified.', 'status' => 'error']);
         }
-        // Generate a random token for storing in the database
-        $randomToken = bin2hex(random_bytes(32)); // Generates a secure random token
         // Generate JWT token for authorization
         $userid = $user->userid;
         $key = "6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f";
@@ -56,16 +54,13 @@ class LoginUserController extends CORS
                     'firstname' => $user->firstname,
                     'lastname' => $user->lastname,
                     'email' => $user->email,
-                    'api_token' => $randomToken
                 ]
             ],
             $key,
             'HS256'
         );
 
-
-
-        $user->token = $randomToken; // Store the random token in the user's record
+        $user->token = $jwtToken;
         $user->save();
 
         return response()->json(['message' => 'Login successful.', 'status' => 'success', 'token' => $jwtToken]);
@@ -94,7 +89,6 @@ class LoginUserController extends CORS
             $user->isverified = 1;
             $user->save();
         }
-
         // Generate JWT token
         $userid = $user->userid;
         $key = "6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f";
@@ -113,7 +107,8 @@ class LoginUserController extends CORS
             $key,
             'HS256'
         );
-
+        $user->token = $token; // Store the random token in the user's record
+        $user->save();
         return response()->json(['message' => 'Login successful.', 'status' => 'success', 'token' => $token]);
     }
 
