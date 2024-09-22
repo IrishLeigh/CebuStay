@@ -133,7 +133,7 @@ class BookingController extends CORS
     {
         $booking = Booking::find($bookingId);
         $pid = $booking->pid;
-        $payment = Payment::find($pid);
+        $payment = Payment::where('bookingid', $bookingId)->first();
         $property = Property::find($booking->propertyid);
         $location = Location::find($property->propertyid);
 

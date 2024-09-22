@@ -162,6 +162,8 @@ class PropertyController extends CORS
 
         $units = DB::table('unitdetails')->where('propertyid', $request->input('propertyid'))->get();
         $unit_details = [];
+        $property_ownerdetails = [];
+        $property_companydetails = [];
 
         foreach ($units as $unit) {
             $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $unit->proppricingid)->first();
@@ -170,7 +172,19 @@ class PropertyController extends CORS
             $unitroomsCollection = collect($unitrooms);
             $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
             $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
-            $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
+            if($propownid->ownershiptype == 'Individual')
+            {
+                $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
+            }else
+            {
+                $property_companydetails = DB::table('property_company')->where('propertyownershipid', $propownid->propertyownershipid)->first();
+                $property_legalrepdetails = DB::table('legal_representative')
+                ->where('propertycompanyid', $property_companydetails->propertycompanyid)
+                ->get()
+                ->toArray();
+            }
+            
+            
             $unitbedroom_beds = DB::table('bedroomtype')->where('unitroomid', $unitbedroom->unitroomid)->get();
             $unitbeds = [];
 
@@ -220,8 +234,14 @@ class PropertyController extends CORS
 
         $property_owner = [
             'property_ownership' => $propownid,
-            'property_owner' => $property_ownerdetails
         ];
+        
+        if($propownid->ownershiptype == 'Individual') {
+            $property_owner['property_owner'] = $property_ownerdetails;
+        } else {
+            $property_owner['property_company'] = $property_companydetails;
+            $property_owner['legal_representative'] = $property_legalrepdetails;
+        }
 
         $payment_method = PropertyPaymentMethods::select('isonline', 'paymentmethod')->where('propertyid', $request->input('propertyid'))->first();
         $payment_method_details = $payment_method ? [

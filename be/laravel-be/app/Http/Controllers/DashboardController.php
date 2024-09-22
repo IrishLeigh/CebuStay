@@ -136,6 +136,7 @@ class DashboardController extends CORS
         
         // Weekly Occupancy Rate
         $data['occupancy_rate'] = $this->getWeeklyOccupancyRate($propertyId, $isSingleUnit);
+        $data['room_availability'] = $this->getDailyRoomAvailability($propertyId);
 
         return response()->json(['status' => 'success', 'singleUnit' => $isSingleUnit, 'data' => $data]);
     }
@@ -595,42 +596,96 @@ class DashboardController extends CORS
 
 
     private function getPropertyImageByOwnership($propertyOwnership, $property)
-{
-    try {
-        if ($propertyOwnership->ownershiptype === 'Company') {
-            return $this->getCompanyLogoByPropertyId($property->propertyid);
-        } elseif ($propertyOwnership->ownershiptype === 'Individual') {
-            return $this->getUserAvatarByPropertyId($property->propertyid);
+    {
+        try {
+            if ($propertyOwnership->ownershiptype === 'Company') {
+                return $this->getCompanyLogoByPropertyId($property->propertyid);
+            } elseif ($propertyOwnership->ownershiptype === 'Individual') {
+                return $this->getUserAvatarByPropertyId($property->propertyid);
+            }
+        } catch (ModelNotFoundException $e) {
+            return null;
+        } catch (GuzzleException $e) {
+            return null;
         }
-    } catch (ModelNotFoundException $e) {
-        return null;
-    } catch (GuzzleException $e) {
+
         return null;
     }
 
-    return null;
-}
-
 // Company Logo function refactored to return the URL
-private function getCompanyLogoByPropertyId($propertyId)
-{
-    $src_userimg = UserFile::where('propertyid', $propertyId)
-        ->where('isavatar', false)
-        ->first();
+    private function getCompanyLogoByPropertyId($propertyId)
+    {
+        $src_userimg = UserFile::where('propertyid', $propertyId)
+            ->where('isavatar', false)
+            ->first();
 
-    return $src_userimg ? $src_userimg->file_url : null;
-}
+        return $src_userimg ? $src_userimg->file_url : null;
+    }
 
 // User Avatar function refactored to return the URL
-private function getUserAvatarByPropertyId($propertyId)
-{
-    // Assuming there's a similar logic to fetch the user avatar based on the property ID
-    $src_userimg = UserFile::where('propertyid', $propertyId)
-        ->where('isavatar', true)
-        ->first();
+    private function getUserAvatarByPropertyId($propertyId)
+    {
+        // Assuming there's a similar logic to fetch the user avatar based on the property ID
+        $src_userimg = UserFile::where('propertyid', $propertyId)
+            ->where('isavatar', true)
+            ->first();
 
-    // return $src_userimg ? $src_userimg->file_url : null;
-    return $src_userimg ? $src_userimg->file_url : null;
-}
+        // return $src_userimg ? $src_userimg->file_url : null;
+        return $src_userimg ? $src_userimg->file_url : null;
+    }
+
+    public function getDailyRoomAvailability($propertyId)
+    {
+
+        // Get today's date
+        $today = Carbon::now()->toDateString(); // Current date
+    
+        // Get the unit details for the property
+        $unit = Property::where('propertyid', $propertyId)->first();
+    
+        if (!$unit) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unit not found for the specified property'
+            ]);
+        }
+    
+        // Check if the property is a multi-unit (i.e., Hotel) or single-unit
+        $isSingleUnit = $unit->property_type !== 'Hotel'; // If it's not a "Hotel", we assume it's a single-unit property
+    
+        // Calculate available rooms
+        if ($isSingleUnit) {
+            // Single unit availability calculation
+            $booked = Booking::where('propertyid', $propertyId)
+                ->where('checkin_date', $today) // Check-in date is today
+                ->count(); // Count the number of bookings for today
+    
+            // Total available rooms (1 for single unit)
+            $availableRooms = 1 - $booked;
+    
+        } else {
+            // Multi-unit availability calculation (for Hotels)
+    
+            // Get the total number of units for the property
+            $totalUnits = UnitDetails::where('propertyid', $propertyId)->count();
+    
+            // Get the total number of bookings for the specific property (across all units) for today
+            $bookedUnits = Booking::where('propertyid', $propertyId)
+                ->where('checkin_date', $today) // Check-in date is today
+                ->count(); // Count the total number of booked units for today
+    
+            // Calculate available rooms
+            $availableRooms = $totalUnits - $bookedUnits;
+        }
+    
+        // Return the room availability in the response
+        return response()->json([
+            'status' => 'success',
+            'property_type' => $isSingleUnit ? 'Single Unit' : 'Multi-Unit (Hotel)',
+            'available_rooms' => max(0, $availableRooms), // Ensure no negative numbers
+            'booked_rooms' => $isSingleUnit ? $booked : $bookedUnits, // Booked rooms for display
+            'total_rooms' => $isSingleUnit ? 1 : $totalUnits // Total rooms for the property
+        ]);
+    }
 
 }
