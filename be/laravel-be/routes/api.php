@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\TokenMiddleware;
+
 use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,9 +18,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CheckoutSessionController;
 use App\Http\Controllers\UnitDetailsController;
 use App\Http\Controllers\WebhookController;
-
+use App\Http\Controllers\LoginUserController;
 // Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);
-
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
 Route::put('/update-payment-link', [PaymentController::class, 'updatePaymentLink']);
@@ -33,9 +34,9 @@ Route::post('/users', [UserController::class, 'create']);
 Route::get('/getusers/{userId}', [UserController::class, 'getUserById']);
 
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 //Routes for register user
 Route::post('/registeruser', 'App\Http\Controllers\RegisterUserController@register');
 Route::post('/verifytoken', 'App\Http\Controllers\RegisterUserController@verifyToken');
@@ -92,7 +93,8 @@ Route::put('/additionalInfo/{additionalInfoId}', [EditUserProfileController::cla
 Route::put('/updateProfile/{userid}', [EditUserProfileController::class, 'updateProfile']);
 
 //Routes for login
-Route::post('/login', 'App\Http\Controllers\LoginUserController@login');
+Route::post('/login', [LoginUserController::class, 'login']);
+Route::post('/logout', 'App\Http\Controllers\LoginUserController@logout');
 Route::post('/auth/google', 'App\Http\Controllers\LoginUserController@googleLogin');
 Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToken');
 
@@ -211,5 +213,11 @@ Route::get('/getUserProperties', 'App\Http\Controllers\DashboardController@getUs
 Route::post('/updateunit-multiunit/{unitid}', [UnitDetailsController::class, 'updateMultiUnit']);
 Route::post('/updatemultiunit-img/{unitid}', [FileController::class, 'updateMultiunitImg']);
 
-//DISABLE PROPERTY
-Route::put('/disableproperty', [PropertyController::class, 'disableProperty']);
+
+//DISABLE and ACTIVATE PROPERTY
+
+route::middleware(['token'])->group(function () {
+    //DISABLE and ACTIVATE PROPERTY
+    Route::put('/disableproperty', [PropertyController::class, 'disableProperty']);
+    Route::put('/activateproperty', [PropertyController::class, 'activateProperty']);
+});
