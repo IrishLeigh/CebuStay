@@ -9,8 +9,10 @@ import { useNavigate } from "react-router-dom";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import ImagePreviewModal from "./ImagePreviewModal";
 import axios from "axios";
-
+import { Tooltip } from "@mui/material";
 export default function UserProfile({ profile }) {
+  const [changeloading, setChangeloading] = useState(false);
+  const [logoutloading, setLogoutloading] = useState(false);
   const [currentProfile, setCurrentProfile] = useState(profile);
   const [newProfileImage, setNewProfileImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -19,7 +21,11 @@ export default function UserProfile({ profile }) {
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-
+  useEffect(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset the input value
+    }
+  }, [modalOpen]);
   useEffect(() => {
     const fetchUserImage = async () => {
       try {
@@ -45,9 +51,21 @@ export default function UserProfile({ profile }) {
     setCurrentProfile(updatedProfile);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("auth_token");
-    navigate("/login");
+  const handleLogout = async () => {
+    setLogoutloading(true);
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/logout", {
+        userid: profile.userid,
+      });
+      if (res.data) {
+        console.log(res.data);
+        localStorage.removeItem("auth_token");
+        setLogoutloading(false);
+        navigate("/login");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const triggerFileInput = () => {
@@ -61,6 +79,7 @@ export default function UserProfile({ profile }) {
       setNewProfileImage({ file, imageURL });
       setModalOpen(true);
     }
+    // setModalOpen(true);
   };
 
   const handleSave = async () => {
@@ -71,6 +90,7 @@ export default function UserProfile({ profile }) {
     formData.append("userid", currentProfile.userid);
 
     try {
+      setChangeloading(true);
       setLoading(true);
       const res2 = await axios.post(
         "http://127.0.0.1:8000/api/updateavatar",
@@ -115,7 +135,9 @@ export default function UserProfile({ profile }) {
           // Only update currentProfile if it's different
         }
         // Display success message
-        alert("Image uploaded successfully!");
+
+        // alert("Image uploaded successfully!");
+        setChangeloading(false);
       } else {
         alert("Error uploading image. Please try again.");
       }
@@ -164,10 +186,12 @@ export default function UserProfile({ profile }) {
                 className="avatar-image"
               />
               <div className="camera-icon-container">
-                <PhotoCamera
-                  className="camera-icon"
-                  onClick={triggerFileInput}
-                />
+                <Tooltip title="Add profile picture">
+                  <PhotoCamera
+                    className="camera-icon"
+                    onClick={triggerFileInput}
+                  />
+                </Tooltip>
               </div>
               <input
                 type="file"
@@ -186,8 +210,17 @@ export default function UserProfile({ profile }) {
           </div>
 
           <div className="logout-btn-container">
-            <button className="logout-btn" onClick={handleLogout}>
-              Log out
+            <button
+              className="logout-btn"
+              onClick={handleLogout}
+              disabled={logoutloading}
+              autoFocus
+            >
+              {logoutloading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                "Logout"
+              )}
             </button>
           </div>
         </div>
@@ -204,12 +237,32 @@ export default function UserProfile({ profile }) {
       </div>
 
       {newProfileImage && (
-        <ImagePreviewModal
-          open={modalOpen}
-          onClose={handleCancelImage}
-          image={newProfileImage.imageURL}
-          onConfirm={handleSave}
-        />
+        <div>
+          {changeloading && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 2000,
+              }}
+            >
+              <CircularProgress />
+            </div>
+          )}
+          <ImagePreviewModal
+            open={modalOpen}
+            onClose={handleCancelImage}
+            image={newProfileImage.imageURL}
+            onConfirm={handleSave}
+          />
+        </div>
       )}
 
       {loading && <div>Uploading...</div>}
