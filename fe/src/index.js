@@ -16,9 +16,7 @@ import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
 import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";
 // import ViewNearby from "./InteractiveMap/components/ViewNearby";
 // import TopRated from "./InteractiveMap/components/TopRated";
-
-import ViewNearby from "./InteractiveMap/components/ViewNearby";
-import CheckInCheckOut from "./pages/PropertyManagementUI/modals/CheckInCheckOut";
+// import CheckInCheckOut from "./pages/PropertyManagementUI/modals/CheckInCheckOut";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -28,7 +26,6 @@ root.render(
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
             <App />
-            <CheckInCheckOut />
           </GoogleOAuthProvider>
         </UserProvider>
       </DataProvider>
