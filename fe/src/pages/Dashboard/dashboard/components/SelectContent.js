@@ -77,7 +77,7 @@ export default function SelectContent({ property, onPropertyChange }) {
         <MenuItem key={prop.propertyid} value={prop.propertyid}>
           <ListItemAvatar>
             {/* <Avatar alt={prop.property_name}> */}
-              <Avatar alt={prop.property_name}>
+            <Avatar alt={prop.property_name} src={prop.ownership_logo}><img src={prop.ownership_logo}/>
               {/* You can customize the icon here based on property type or any other logic */}
               <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
             </Avatar>
