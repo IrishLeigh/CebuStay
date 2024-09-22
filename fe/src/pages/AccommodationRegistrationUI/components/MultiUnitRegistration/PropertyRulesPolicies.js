@@ -50,32 +50,32 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
 
   const validateAndProceed = () => {
     if (!policiesData.standardCancellation && !policiesData.nonRefundableRate && !policiesData.modificationPlan && !policiesData.offerDiscounts) {
-      setError("Please select at least one reservation option.");
+      alert("Please select at least one reservation option.");
       return;
     }
 
     if (policiesData.standardCancellation && !policiesData.cancellationDays) {
-      setError("Please specify the number of days for standard cancellation.");
+      alert("Please specify the number of days for standard cancellation.");
       return;
     }
 
     if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed) {
-      setError("Please select at least one standard rule.");
+      alert("Please select at least one standard rule.");
       return;
     }
 
     if (showTimePicker && (!houseRulesData.quietHoursStart || !houseRulesData.quietHoursEnd)) {
-      setError("Please specify quiet hours.");
+      alert("Please specify quiet hours.");
       return;
     }
 
     if (!houseRulesData.customRules) {
-      setError("Please enter your custom rules.");
+      alert("Please enter your custom rules.");
       return;
     }
 
     if (!houseRulesData.checkInFrom || !houseRulesData.checkInUntil || !houseRulesData.checkOutFrom || !houseRulesData.checkOutUntil) {
-      setError("Please specify check-in and check-out times.");
+      alert("Please specify check-in and check-out times.");
       return;
     }
 

@@ -70,8 +70,6 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
     }
   };
 
-
-
   useEffect(() => {
     // Save input data to localStorage whenever it changes
     localStorage.setItem("street", street);
@@ -212,6 +210,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                     onChange={handleChange}
                     helperText="Enter your street address"
                     fullWidth
+                    sx={{ mb: 2 }}
                   />
                   <TextField
                     label="Postal/ZIP Code"
@@ -225,10 +224,11 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                   label="Full Address"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  helperText="Address from the map"
+                  helperText="You cannot edit here. Pin your exact location on the map to view the full address"
                   fullWidth
                   sx={{ mb: 2 }}
                   disabled
+                  
                 />
                   <Box mt={2}>
                     <Button
@@ -296,14 +296,14 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
           >
             Reset
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             onClick={saveLocation}
             style={{ fontSize: "1rem", marginTop: "1rem" }}
             disabled={!isInCebu}
           >
             Save Location
-          </Button>
+          </Button> */}
                   </Paper>
                 </Box>
               </Grid>
