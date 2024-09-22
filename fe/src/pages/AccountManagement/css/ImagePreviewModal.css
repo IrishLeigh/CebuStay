@@ -1,20 +1,22 @@
 .modal-content {
-  position: relative;
+  position: absolute; /* Change to absolute for proper centering */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for the modal size */
   width: 80vw; /* Adjust width as needed */
   max-width: 600px; /* Max width of the modal */
-  height: auto;
-  margin: 0 auto;
   background: white;
-  padding: 16px;
+  padding: 5px;
   border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Add some shadow for depth */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .modal-image {
-  width: 100%; /* Full width of the modal-content */
-  height: auto; /* Maintain aspect ratio */
+  width: 500px; /* Full width of the modal-content */
+  height: 500px; /* Maintain aspect ratio */
   object-fit: cover; /* Crop image to cover the container */
   border-radius: 8px; /* Optional: rounded corners */
 }
