@@ -17,6 +17,7 @@ import { Grid, InputAdornment, MenuItem, Select } from '@mui/material';
 import Cropper from 'react-easy-crop';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from './cropImageHelper';
+import { set } from 'date-fns';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -112,6 +113,7 @@ const countryCodes = [
 
 export default function IndividualHost({ parentData, onDataChange }) {
   const [data, setData] = useState({
+    id: null,
     FirstName: '',
     LastName: '',
     DateOfBirth: '',
@@ -130,6 +132,36 @@ export default function IndividualHost({ parentData, onDataChange }) {
     zoom: 1,
   });
   const [errors, setErrors] = useState({});
+  const [originalData, setOriginalData] = useState(null);
+
+  //Mount data from parent
+ useEffect(()=>{
+  if (parentData) {
+    setData({
+      id : parentData.property_ownership.propertyownershipid || null,
+      FirstName : parentData.property_owner.firstname || '',
+      LastName : parentData.property_owner.lastname || '',
+      DateOfBirth : parentData.DateOfBirth || '',
+      DisplayName :parentData.property_owner.displayname || '',
+      countryCode : parentData.countryCode || '',
+      PhoneNumber : parentData.property_owner.contactnumber || '',
+      Email : parentData.property_owner.email || '',
+      croppedAreaPixels : parentData.croppedAreaPixels || null,
+      City : parentData.property_owner.street || '',
+      ZipCode : parentData.property_owner.zipcode || '',
+      Street : parentData.Street || '',
+      Barangay : parentData.property_owner.barangay || '',
+      Describe : parentData.property_owner.describe || '',
+      imageSrc : parentData.imageSrc || null,
+      crop : parentData.crop || { x: 0, y: 0 },
+      zoom : parentData.zoom || 1,}
+
+    )
+  }
+  setOriginalData(data);
+
+ },[parentData])
+  
 
   useEffect(() => {
     const validateData = () => {

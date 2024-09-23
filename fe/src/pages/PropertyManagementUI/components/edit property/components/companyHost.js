@@ -103,7 +103,7 @@ const countryCodes = [
   { code: '+63', label: 'Philippines' },
   // Add more country codes as needed
 ];
-export default function CompanyHost( {onDataChange}) {
+export default function CompanyHost( {onDataChange, parentData}) {
   const [data, setData] = useState({
     LegalBusinessName: '',
     Describe: '',
@@ -122,8 +122,52 @@ export default function CompanyHost( {onDataChange}) {
   const [errors, setErrors] = useState({});
   // Calculate the minDate for 18 years ago
   const minDate = dayjs().subtract(18, 'year');
+  const [originalData, setOriginalData] = useState(null);
   
+  const formatDate = (dateString) => {
+    if (!dateString) return null; // Handle empty date
+    const [year, month, day] = dateString.split('-');
+    return `${month}/${day}/${year}`;  // Return in MM/DD/YYYY format
+  };
+  
+  useEffect(() => {
+    if (parentData) {
+      console.log("Parent Data:", parentData);  // Log parentData for debugging
+      
+      // Ensure the legal representative data is mapped correctly, including the date
+      const formattedRepresentatives = (parentData.legal_representative || []).map(rep => ({
+        id: rep.legalrepresentativeid || 1,
+        firstName: rep.firstname || '',
+        lastName: rep.lastname || '',
+        email: rep.email || '',
+        phone: rep.phone_number || '',
+        position: rep.position || '',
+        dob: formatDate(rep.date_of_birth) || '',  // Format the date correctly
+        countryCode: '+63',
+      }));
+  
+      setData({
+        LegalBusinessName: parentData.property_company.legal_business_name || '',
+        Describe: parentData.property_company.company_description || '',
+        City: parentData.property_company.city || '',
+        ZipCode: parentData.property_company.zipcode || '',
+        Street: parentData.property_company.street || '',
+        Barangay: parentData.property_company.barangay || '',
+        imageSrc: parentData.imageSrc || null,
+        croppedAreaPixels: parentData.croppedAreaPixels || null,
+        crop: parentData.crop || { x: 0, y: 0 },
+        zoom: parentData.zoom || 1,
+        legalRepresentatives: formattedRepresentatives || null,  // Use the formatted legal representatives array
+      });
+  
+      setOriginalData(parentData);  // Set the original data as well
+    }
+  }, [parentData]);
 
+// Function to handle cancel changes and reset form data to originalData
+const handleCancelChanges = () => {
+  setData(originalData);  // Revert to the original data
+};
   const handleCropComplete = useCallback((_, croppedAreaPixels) => {
     setData((prevData) => ({ ...prevData, croppedAreaPixels }));
   }, []);
@@ -253,6 +297,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
 
   return (
     <div style={styles.container}>
+      
       <Typography variant="h5" style={styles.sectionTitle}>
         Company Details
       </Typography>

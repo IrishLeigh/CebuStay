@@ -152,6 +152,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
   
   // console.log("Property Data TYPE?: ", propertyData.property_type);
   console.log ("basicinfo status?: ", saveCount);
+  console.log ("Parent Partner Data: ", partnerData);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>

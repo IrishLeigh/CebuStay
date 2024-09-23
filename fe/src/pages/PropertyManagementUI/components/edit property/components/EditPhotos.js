@@ -426,21 +426,6 @@ export default function EditPhotos({
           >
             Photos and Details
           </Typography>
-          {/* <div>
-            {!isEditing && (
-              <Button
-                onClick={() => setIsEditing(true)}
-                sx={{ marginRight: "1rem" }}
-              >
-                Edit
-              </Button>
-            )}
-            {isEditing && (
-              <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-                Cancel
-              </Button>
-            )}
-          </div> */}
         </div>
         <Typography
           sx={{
