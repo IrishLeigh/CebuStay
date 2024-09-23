@@ -121,7 +121,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
                 <Divider>Pricing Details</Divider>
                 <div style={{ justifyContent: "center", alignItems: "center" }}>
                   <Root>
-                    <p>Commission and charges from CebuStay totaling 18.00%</p>
+                    <p style={{textAlign : "center"}}>Commission and charges from CebuStay totaling 18.00% <br/>This amount also covers all taxes and fees. Please set your price to maximize your profit!</p>
                     <div
                       style={{
                         display: "flex",

@@ -6,21 +6,18 @@ import Container from "@mui/material/Container";
 import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button } from '@mui/material';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
+import AnimatePage from '../AnimatedPage';
 import { Crop } from '@mui/icons-material';
 import { Last } from 'react-bootstrap/esm/PageItem';
-import TemplateFrameEdit from './TemplateFrame';
 
-export default function EditPartnerVerification({ parentPartnerData}) {
+export default function EditPartnerVerification({  parentPartnerData, }) {
   const [hostType, setHostType] = useState('');
   const [individualData, setIndividualData] = useState({});
   const [companyData, setCompanyData] = useState({});
-  const [ isEditing, setIsEditing ] = useState(false);
-  const [ hasChanges, setHasChanges ] = useState(false);
-  const [ isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if (parentPartnerData) {
-      setHostType(parentPartnerData.property_ownership.ownershiptype || '');
+      setHostType(parentPartnerData.hostType || '');
       if (parentPartnerData.hostType === 'Individual') {
         setIndividualData(parentPartnerData);
       } else if (parentPartnerData.hostType === 'Company') {
@@ -45,18 +42,6 @@ export default function EditPartnerVerification({ parentPartnerData}) {
   //   const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
   //   onHostDataChange(dataToSend);
   // }, [hostType, individualData, companyData, onHostDataChange]);
-  
-  const handleEditingChange = (editing) => {
-    if (editing === true) {
-      setIsEditing(editing);
-    }else if (editing === false) {
-      // handleCancel();
-      
-    }
-   
-    
-  };
-  console.log("Parent partner data in edit partner veriofication", parentPartnerData);
 
   const validateAndProceed = () => {
     // Mapping of field keys to user-friendly names
@@ -103,58 +88,42 @@ export default function EditPartnerVerification({ parentPartnerData}) {
   
     // If no validation errors, proceed to submit the data
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
-    // onHostDataChange(dataToSend);
-    // openModal();
+    onHostDataChange(dataToSend);
+    openModal();
     alert("Successfully submitted!");
   };
   
   
   console.log ("hostType", hostType);
-  console.log ("individualData", parentPartnerData);
-  console.log ("companyData", parentPartnerData);
-
+  console.log ("individualData", individualData);
+  console.log ("companyData", companyData);
 
   return (
-  <>
-  {/* <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/> */}
-     
-<Paper
-        style={{
-          width: "auto",
-          padding: "4rem",
-          borderRadius: "0.8rem",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "1rem",
-          }}
-        >
-          <Typography
+    <Container maxWidth="lg">
+    
+        <Grid container spacing={2} className="centered-container">
+          <Grid item xs={6} sx={{ textAlign: "left" }}></Grid>
+          <Paper
             sx={{
-              fontFamily: "Poppins, sans-serif",
-              fontSize: "1.125rem",
-              fontWeight: "bold",
+              width: '80vw',
+              padding: '2rem',
+              borderRadius: '0.8rem',
+              boxShadow: 3,
             }}
           >
+            <Box
+              component="form"
+              sx={{
+                '& > :not(style)': { my: 1, width: "100%" }
+              }}
+              autoComplete="off"
+            >
+              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
                 Accommodation Ownership
               </Typography>
-              </div>
-        <Typography
-          sx={{
-            fontFamily: "Poppins, sans-serif",
-            fontSize: "0.875rem",
-            color: "#6b7280",
-            marginBottom: "2rem",
-          }}
-        >
-          
+              <Typography sx={{ fontFamily: "Poppins, sans-serif", mb: 2 }}>
                 To ensure compliance with legal and regulatory standards, we require some information about you and your property.
               </Typography>
-
               <RadioGroup
                 aria-labelledby="Host"
                 name="host"
@@ -181,11 +150,12 @@ export default function EditPartnerVerification({ parentPartnerData}) {
                 />
               </RadioGroup>
               <Divider sx={{ my: 2 }} />
-              {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData}/>}
-              {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData} />}
-          
+              {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange} />}
+              {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} prevData={parentPartnerData} />}
+            </Box>
           </Paper>
-
-    </>
+        </Grid>
+      
+    </Container>
   );
 }

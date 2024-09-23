@@ -72,7 +72,7 @@ export default function SideMenu() {
           p: 1.5,
         }}
       >
-        LOGO HERE
+       
       </Box>
       <Divider />
       <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>

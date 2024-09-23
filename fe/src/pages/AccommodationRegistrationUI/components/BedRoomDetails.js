@@ -211,15 +211,6 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
                   </div>
                 ))}
               </Paper>
-            
-              {/* <Box mt={4} display="flex" justifyContent="space-between">
-                <Button variant="contained" onClick={handleBackClick}>
-                  Back
-                </Button>
-                <Button variant="contained" onClick={handleNextStep}>
-                  Next
-                </Button>
-              </Box> */}
             </Box>
           </Grid>
         </Grid>

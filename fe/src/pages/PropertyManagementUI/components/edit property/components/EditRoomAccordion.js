@@ -17,24 +17,25 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import AddIcon from "@mui/icons-material/Add";
 import { useData } from "../../../../../components/registration_unit/registration_location/contextAddressData";
-import { Card, CardMedia, IconButton } from "@mui/material";
+import { Alert, Card, CardMedia, IconButton, Snackbar } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import axios from "axios";
+import LoadingModal from "../modal/LoadingModal";
+
 export default function EditRoomAccordion({
   index,
   onRoomDetailsUpdate,
   roomData,
   onDeleteRoom,
   originalData,
-  isEditing,
-  reset,
+  onSaveStatusChange,
   key,
 }) {
   const [toUploadUp, setToUploadUp] = useState([]);
   const [toDeleteUP, setToDeleteUP] = useState([]);
-  const [expanded, setExpanded] = useState(false);
-  const [roomName, setRoomName] = useState("");
+  const [expanded, setExpanded] = useState(false); // Keep accordion expanded during editing
   const [roomQuantity, setRoomQuantity] = useState("");
+  const [roomName, setRoomName] = useState("");
   const [guestCapacity, setGuestCapacity] = useState("");
   const [description, setDescription] = useState("");
   const [basePrice, setBasePrice] = useState("");
@@ -62,21 +63,47 @@ export default function EditRoomAccordion({
   const [photos, setPhotos] = useState(roomData?.photos || []);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  
   // Effect to handle reset and initialization
   useEffect(() => {
-    if (reset) {
-      handleCancel();
-    } else if (roomData && !isInitialized) {
+    if (roomData && !isInitialized) {
       initializeRoomData(roomData);
       setIsInitialized(true);
     }
-  }, [reset, roomData, isInitialized, originalData, isCanceled]);
+  }, [roomData, isInitialized]);
+  
 
   const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) {
+        return; // Exit the function if the user cancels the discard action
+      }
+    }
+    
+    // Reset the room data to the original data
     initializeRoomData(originalData);
-    setExpanded(false);
+ 
     setIsCanceled(true);
+    setIsEditing(false);
+    setHasChanges(false);
   };
+  
+  const handleEdit = (event) => {
+    
+    setIsEditing(true);
+    setExpanded(true);
+   
+};
+
+  const handleCloseSnackbar  = () => {
+    setOpenSnackbar(false);
+  }
 
   const initializeRoomData = (data) => {
     console.log("Room data", data);
@@ -205,10 +232,10 @@ export default function EditRoomAccordion({
     const updatedServices = checked
       ? [...selectedServices, name]
       : selectedServices.filter((item) => item !== name);
-
+    
     setSelectedServices(updatedServices);
+    setHasChanges(true);
   };
-
   const handleAmenityChange = (event) => {
     const { name, checked } = event.target;
     const updatedAmenities = checked
@@ -216,6 +243,7 @@ export default function EditRoomAccordion({
       : selectedAmenities.filter((item) => item !== name);
 
     setSelectedAmenities(updatedAmenities);
+    setHasChanges(true);
   };
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -244,12 +272,12 @@ export default function EditRoomAccordion({
       default:
         break;
     }
+    setHasChanges(true);
   };
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
-
   const totalBedrooms = unitDetailsData.roomDetails.reduce((total, room) => {
     if (room.roomname === "Bedroom") {
       total += room.quantity;
@@ -372,9 +400,7 @@ export default function EditRoomAccordion({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   // Photo upload handler
-  // Handle photo upload
   const handlePhotoUpload = (event) => {
     const files = Array.from(event.target.files);
     const newPhotos = [];
@@ -415,10 +441,20 @@ export default function EditRoomAccordion({
     // console.log("Photo DB Id: ", imgid);
   };
   const handleSubmit = async () => {
+    setIsEditing(false);
+    // Check if there are changes before proceeding
+    if (!hasChanges) {
+      alert("No changes to save.");
+      return;
+    }
+  
     if (!validate()) {
       alert("Please fill in all required fields.");
       return;
     }
+  
+    setIsLoading(true);
+    
     const roomData = {
       roomName,
       roomQuantity,
@@ -428,12 +464,12 @@ export default function EditRoomAccordion({
       maxPrice,
       profit,
       unitDetailsData,
-      // unitDetailsData,
       bedDetails,
       selectedAmenities,
       selectedServices,
       photos,
     };
+  
     console.log("UNITNAME: ", roomData.roomName);
     console.log("GUEST CAPACITY: ", roomData.guestCapacity);
     console.log("UNIT QUANTITY: ", roomData.roomQuantity);
@@ -446,6 +482,7 @@ export default function EditRoomAccordion({
     console.log("Selectect Services:", selectedServices);
     console.log("To be delete PHOTOS: ", toDeleteUP);
     console.log("To be uploaded PHOTOS:", toUploadUp);
+  
     try {
       const response = await axios.post(
         `http://127.0.0.1:8000/api/updateunit-multiunit/${unitId}`,
@@ -461,16 +498,17 @@ export default function EditRoomAccordion({
           updated_services: selectedServices,
         }
       );
+  
       if (response.data.status === "success") {
         console.log(response.data);
-
+  
         const formData = new FormData();
         formData.append("toDelete", JSON.stringify(toDeleteUP)); // Keep this as JSON
-        // Add each file from toUploadUp directly to FormData
         for (const item of toUploadUp) {
-          const file = await fetchBlobAsFile(item.src, "photo.jpg"); // You can dynamically assign file names if needed
+          const file = await fetchBlobAsFile(item.src, "photo.jpg");
           formData.append("files[]", file);
         }
+  
         const res2 = await axios.post(
           `http://127.0.0.1:8000/api/updatemultiunit-img/${unitId}`,
           formData,
@@ -480,22 +518,23 @@ export default function EditRoomAccordion({
             },
           }
         );
+  
         if (res2.data.status === "success") {
           console.log(res2.data);
-
-          // setToUploadUp([]);
-          // setToDeleteUP([]);
         }
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsEditing(false);
+      setIsLoading(false);
+      setOpenSnackbar(true);
+      onSaveStatusChange('Saved');
+      console.log("Onsave", onSaveStatusChange);
+      setExpanded(false);
     }
-    // Send the collected data to the parent
-    setExpanded(false);
-    // alert(`Room data UNIT ID ${unitId} UPDATED`);
-    // console.log("Room data UPDATED", roomData);
-    // console.log("Room Unitid: ", unitId);
   };
+
   async function fetchBlobAsFile(blobUrl, fileName) {
     const response = await fetch(blobUrl);
     const blob = await response.blob();
@@ -528,23 +567,15 @@ export default function EditRoomAccordion({
     }
   };
 
-  // console.log("Room data in EditRoomAccordion", roomData);
-
-  // console.log("Images", photos);
-  // console.log("Beds", bedDetails);
-  // console.log(`Photos ${index}`, photos);
-  // console.log("Rooms", unitDetailsData.roomDetails);
-  // console.log("New Rooms", unitDetailsData.newUnitRooms);
-  // console.log("UNITID", roomData.unitid);
-
   return (
+    <>
     <Accordion
       expanded={expanded === "panel1"}
       onChange={handleAccordionChange("panel1")}
       sx={{ border: expanded === "panel1" ? "2px solid blue" : "none" }}
     >
       <AccordionSummary
-        expandIcon={<ArrowDownwardIcon />}
+        // expandIcon={<ArrowDownwardIcon />}
         aria-controls="panel1-content"
         id="panel1-header"
         fullWidth
@@ -565,27 +596,30 @@ export default function EditRoomAccordion({
           <span style={{ color: "#ccc", fontStyle: "italic" }}>{roomName}</span>
         </Typography>
 
-        {expanded && isEditing && (
-          <Box
-            sx={{ display: "flex", alignItems: "center", gap: 1, ml: "auto" }}
-          >
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Update
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleCancel}>
-              Cancel Changes
-            </Button>
-            {index !== 0 && (
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleDelete}
-              >
-                Delete
+       
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: "auto" }}>
+            {!isEditing ? (
+              <Button variant="outlined" color="primary" onClick={handleEdit}>
+                Edit
               </Button>
+            ) : (
+              <>
+                <Button variant="contained" color="primary" onClick={handleSubmit}>
+                  Update
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleCancel}>
+                  Cancel Changes
+                </Button>
+                {index !== 0 && (
+                  <Button variant="outlined" color="secondary" onClick={handleDelete}>
+                    Delete
+                  </Button>
+                )}
+              </>
             )}
           </Box>
-        )}
+      
+
       </AccordionSummary>
       <AccordionDetails>
         {/* Basic Room Information */}
@@ -1073,6 +1107,24 @@ export default function EditRoomAccordion({
           Update Room
         </Button>
       </AccordionDetails>
+      
+    
+    <LoadingModal open={isLoading} />
     </Accordion>
+    <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+          Basic Info saved successfully!
+          </Alert>
+        </Snackbar>
+    </>
+    
   );
 }

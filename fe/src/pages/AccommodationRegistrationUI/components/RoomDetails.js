@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddIcon from "@mui/icons-material/Add";
-import { TextField, Button } from "@mui/material";
-import RemoveIcon from "@mui/icons-material/Remove";
-import CancelIcon from "@mui/icons-material/Cancel";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+import { Box, Paper, Typography, IconButton, TextField, Button, Container, Grid } from "@mui/material";
+import { AddCircle as AddCircleIcon, Add as AddIcon, Remove as RemoveIcon, Cancel as CancelIcon } from "@mui/icons-material";
 import { useData } from "../../../components/registration_unit/registration_location/contextAddressData";
 import AnimatePage from "./AnimatedPage";
 
@@ -30,7 +21,6 @@ export default function RoomDetails({
     guestCapacity: "",
   });
 
-  // Mount parent's data when the component is initialized
   useEffect(() => {
     window.scrollTo(0, 0);
     if (parentUnitDetailsData) {
@@ -94,17 +84,15 @@ export default function RoomDetails({
     const hasBedroom = unitDetailsData.roomDetails.some(
       (room) => room.roomType === "Bedroom" && room.quantity > 0
     );
-  
     return hasBedroom && unitDetailsData.guestCapacity.trim() !== "";
   };
-  
 
   const validateAndProceed = () => {
     if (!validateForm()) {
       alert("Please fill in all fields.");
       return;
     }
-    onRoomDetailsChange(unitDetailsData); // Callback with updated data
+    onRoomDetailsChange(unitDetailsData);
     handleNext();
   };
 
@@ -114,124 +102,89 @@ export default function RoomDetails({
         <Grid container justifyContent="center" alignItems="center">
           <Grid item xs={12} md={8} lg={6}>
             <Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">
-                    Unit Details
+              
+              <Paper elevation={3} sx={{ padding: "2rem" , borderRadius: "0.8rem" }}  >
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                  <Typography variant="h4" fontWeight="bold">
+                    Room Details
                   </Typography>
-                  <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2}>
-                    Describe your property in detail.
-                  </Typography>
-                </div>
-              </Box>
-              <Paper
-                elevation={3}
-                sx={{
-                  width: "100%",
-                  maxWidth: "32rem",
-                  padding: "1rem",
-                  textAlign: "center",
-                }}
-              >
-                <Typography variant="body1" m={4} sx={{ textAlign: "left" }}>
-                  Describe your property in detail. Highlight its unique features, amenities, and any additional information potential tenants or buyers should know.
+                </Box>
+                <Typography variant="body1" sx={{ textAlign: "left", mb: 3 }}>
+                  Available rooms in the unit, you can add rooms that are not in the selection
                 </Typography>
-                <Typography variant="h6" sx={{ fontSize: "1.125rem", m: "2rem", textAlign: "left" }}>
-                  List of Rooms Available
-                </Typography>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  {unitDetailsData.roomDetails.map((room, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      <TextField
-                        type="text"
-                        value={room.roomType}
-                        onChange={(e) => handleRoomTypeChange(index, e.target.value)}
-                        placeholder="Room Type"
-                        style={{ width: "8rem", marginRight: "1rem" }}
-                      />
-                      <IconButton onClick={() => incrementQuantity(index)}>
-                        <AddIcon />
-                      </IconButton>
-                      <TextField
-                        type="text"
-                        value={room.quantity}
-                        onChange={(e) => handleQuantityChange(index, e.target.value)}
-                        style={{
-                          width: "4rem",
-                          height: "2rem",
-                          border: "none",
-                          textAlign: "center",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      />
-                      <IconButton onClick={() => decrementQuantity(index)}>
-                        <RemoveIcon />
-                      </IconButton>
-                      <IconButton onClick={() => removeRoom(index)}>
-                        <CancelIcon sx={{ color: "#EE414B" }} />
-                      </IconButton>
-                    </Box>
-                  ))}
-                  <IconButton
-                    aria-label="add"
-                    onClick={addRoom}
-                    sx={{
-                      color: "grey",
-                      "&:hover": {
-                        color: "#ADC939",
-                      },
-                      fontSize: "1rem",
-                      marginRight: "auto",
-                      display: "block",
-                      marginLeft: "5.5rem",
-                    }}
-                  >
-                    <AddCircleIcon /> Add Room
-                  </IconButton>
-                </div>
-                <Box sx={{ mt: "1rem" }}>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontSize: "1.125rem",
-                      m: "2rem",
-                      textAlign: "left",
-                      alignItems: "left",
-                      justifyContent: "left",
-                    }}
-                  >
-                    How many guests can stay?
-                  </Typography>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6">How many guests can stay?</Typography>
                   <TextField
                     label="Guest Capacity"
                     value={unitDetailsData.guestCapacity}
                     onChange={(e) => handleGuestCapacityChange(e.target.value)}
-                    style={{
-                      width: "auto",
-                      marginLeft: "1rem",
-                      marginBottom: "2rem",
-                      justifyContent: "left",
-                    }}
+                    fullWidth
+                    margin="normal"
+                    type="number"
+                    InputProps={{ inputProps: { min: 1 } }}
+                    
                   />
                 </Box>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  List of Rooms Available
+                </Typography>
+                {unitDetailsData.roomDetails.map((room, index) => (
+  <Box
+    key={index}
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      mb: 2,
+    }}
+  >
+    <TextField
+      value={room.roomType}
+      onChange={(e) => handleRoomTypeChange(index, e.target.value)}
+      placeholder="Room Type"
+      sx={{ width: "40%" }}
+    />
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <IconButton onClick={() => incrementQuantity(index)}>
+        <AddIcon />
+      </IconButton>
+      <TextField
+        value={room.quantity}
+        onChange={(e) => handleQuantityChange(index, e.target.value)}
+        sx={{ width: "4rem", textAlign: "center" }}
+      />
+      <IconButton onClick={() => decrementQuantity(index)}>
+        <RemoveIcon />
+      </IconButton>
+    </Box>
+    <IconButton 
+      onClick={() => removeRoom(index)} 
+      sx={{ visibility: ["Bedroom", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? 'hidden' : 'visible' }} // Use visibility
+    >
+      <CancelIcon color="error" />
+    </IconButton>
+  </Box>
+))}
+
+                <Button
+                  startIcon={<AddCircleIcon />}
+                  onClick={addRoom}
+                  sx={{
+                    color: "grey",
+                    backgroundColor: "transparent",
+                    "&:hover": {
+                      color: "#ADC939",
+                      backgroundColor: "transparent", // Keep background transparent on hover
+                    },
+                    mt: 2,
+                  }}
+                >
+                  Add Room
+                </Button>
+
+
+
               </Paper>
-              {/* <Box mt={4} display="flex" justifyContent="space-between">
-                <Button variant="contained" onClick={handleBack}>
-                  Back
-                </Button>
-                <Button variant="contained" onClick={validateAndProceed}>
-                  Next
-                </Button>
-              </Box> */}
             </Box>
           </Grid>
         </Grid>

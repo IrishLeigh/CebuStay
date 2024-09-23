@@ -147,10 +147,12 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
   const handleChange = (index) => {
     setValue(index);
   };
+  
 
   
   // console.log("Property Data TYPE?: ", propertyData.property_type);
   console.log ("basicinfo status?: ", saveCount);
+  console.log ("Parent Partner Data: ", partnerData);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>
@@ -230,7 +232,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
               onSaveStatusChange={handleSaveStatusChange}
             />
           ) : (
-            <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms} />
+            <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms}  onSaveStatusChange={handleSaveStatusChange}/>
           )}
         </CustomTabPanel>
 
