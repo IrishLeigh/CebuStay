@@ -12,9 +12,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import AddIcon from "@mui/icons-material/Add";
 import EditRoomAccordion from "./EditRoomAccordion";
+import TemplateFrameNoEdit from "./TemplateFrameNoEdit";
 
 export default function EditRoomDetailsMultipleUnit({
-  parentRoomsAndBedsData,
+  parentRoomsAndBedsData, onSaveStatusChange
 }) {
   const [roomDetailsList, setRoomDetailsList] = useState([]); // Existing rooms
   const [newUnitRooms, setNewUnitRooms] = useState([]); // Newly added rooms
@@ -22,6 +23,7 @@ export default function EditRoomDetailsMultipleUnit({
   const [originalRoomDetailsList, setOriginalRoomDetailsList] = useState([]);
   const [resetFlag, setResetFlag] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+
 
   useEffect(() => {
     // Initialize roomDetailsList from parentRoomsAndBedsData if available
@@ -119,10 +121,13 @@ export default function EditRoomDetailsMultipleUnit({
 
   useEffect(() => {
     // console.log("Updayed Room Details :", roomDetailsList, newUnitRooms);
-  }, [roomDetailsList, newUnitRooms]);
+    console.log("Onsave child 1 :", onSaveStatusChange);
+  }, [roomDetailsList, onSaveStatusChange]);
+  
 
   return (
     <>
+     <TemplateFrameNoEdit/>
       <Paper
         style={{
           width: "auto",
@@ -197,6 +202,7 @@ export default function EditRoomDetailsMultipleUnit({
                 isEditing={isEditing}
                 originalData={originalRoomDetailsList[index]}
                 reset={resetFlag}
+                onSaveStatusChange = {onSaveStatusChange}
               />
             ))}
             {newUnitRooms.map((roomDetails, index) => (

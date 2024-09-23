@@ -147,6 +147,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
   const handleChange = (index) => {
     setValue(index);
   };
+  
 
   
   // console.log("Property Data TYPE?: ", propertyData.property_type);
@@ -230,7 +231,7 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
               onSaveStatusChange={handleSaveStatusChange}
             />
           ) : (
-            <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms} />
+            <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms}  onSaveStatusChange={handleSaveStatusChange}/>
           )}
         </CustomTabPanel>
 
