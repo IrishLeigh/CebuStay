@@ -236,7 +236,7 @@ class DashboardController extends CORS
     
         return Booking::where('tbl_booking.propertyid', $propertyId)
             ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-            ->where('tbl_payment.status', 'success')
+            ->where('tbl_payment.status', 'Paid')
             ->whereBetween('tbl_payment.created_at', [$startDate, $endDate])
             ->sum('tbl_payment.amount');
     }
@@ -266,7 +266,7 @@ class DashboardController extends CORS
     private function getTotalPayments($propertyId) {
         return Booking::where('propertyid', $propertyId)
             ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-            ->where('tbl_payment.status', 'success')
+            ->where('tbl_payment.status', 'Paid')
             ->sum('tbl_payment.amount');
     }
 
@@ -279,7 +279,7 @@ class DashboardController extends CORS
         // Fetch daily revenue for the past 30 days, grouped by day
         $dailyRevenue = Booking::where('tbl_booking.propertyid', $propertyId)
             ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-            ->where('tbl_payment.status', 'success')
+            ->where('tbl_payment.status', 'Paid')
             ->whereBetween('tbl_payment.created_at', [$startDate, $endDate])
             ->selectRaw('DATE(tbl_payment.created_at) as date, SUM(tbl_payment.amount) as total')
             ->groupBy('date')
@@ -314,7 +314,7 @@ class DashboardController extends CORS
         $endDate = Carbon::now()->endOfWeek();
         return Booking::where('propertyid', $propertyId)
             ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-            ->where('tbl_payment.status', 'success')
+            ->where('tbl_payment.status', 'Paid')
             ->whereBetween('tbl_payment.created_at', [$startDate, $endDate])
             ->sum('tbl_payment.amount');
     }
@@ -435,7 +435,7 @@ class DashboardController extends CORS
 
             $monthlyPayments = Booking::where('propertyid', $propertyId)
                 ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-                ->where('tbl_payment.status', 'success')
+                ->where('tbl_payment.status', 'Paid')
                 ->whereBetween('tbl_payment.created_at', [$monthStart, $monthEnd])
                 ->select('tbl_payment.amount')
                 ->get();
