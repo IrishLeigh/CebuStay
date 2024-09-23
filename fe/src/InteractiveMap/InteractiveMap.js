@@ -172,7 +172,7 @@ export default function InteractiveMap() {
   };
 
   return (
-    <>
+    <div className="interactive-map">
       <div
         style={{
           alignItems: "center",
@@ -188,7 +188,6 @@ export default function InteractiveMap() {
             textAlign: "center",
             fontWeight: "bold",
             color: "#2A2A2E",
-
           }}
         >
           Explore Cebu, With A Heart
@@ -331,6 +330,6 @@ export default function InteractiveMap() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

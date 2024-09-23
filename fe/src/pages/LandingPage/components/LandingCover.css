@@ -61,7 +61,17 @@
     transition: 0.5s;
   }
   
-
+  .landing-cover-2-content > div:nth-child(odd)  {
+    text-align: left; /* Align text for odd children */
+    margin-right: 30%;
+}
+.landingg{
+  width: 40%;
+}
+.landing-cover-2-content > div:nth-child(even) {
+    text-align: right; /* Align text for even children */
+    margin-left: 30%;
+}
   
   /* Media Queries for Mobile Responsiveness */
   @media (max-width: 768px) {
@@ -81,9 +91,31 @@
       transform: translateX(-50%); /* Ensure it's centered */
       margin-left: 5px;
     }
+    .landing-cover-2-buttonns{
+      display: flex;
+      flex-direction: column;
+      /* gap: 10px; */
+      /* padding: 10px; */
+      margin-top: 20px;
+    }
+    .landing-cover-buttonn1{
+      margin-bottom: 10px;
+    }
   }
   
   @media (max-width: 480px) {
+    .landingg{
+      width: 80%;
+  }
+    .landing-cover-2-content > div:nth-child(odd)  {
+      text-align: center; /* Align text for odd children */
+      margin-right: 0px;
+  }
+  
+  .landing-cover-2-content > div:nth-child(even) {
+      text-align: center; /* Align text for even children */
+      margin-left: 0px;
+  }
     .landing-cover-button, .landing-cover-button2 {
       font-size: 2.0vw; /* Further increase font size for very small screens */
       padding: 2vw 3vw;
@@ -99,6 +131,13 @@
       bottom: 25%; 
       left: 55%;   
       transform: translateX(-50%);
+    }
+    .landing-cover-2-buttonns{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      row-gap: 10px;
+      margin-top: 10px;
     }
   }
   
@@ -132,9 +171,7 @@
     display: grid;
     place-items: center;
   }
-.landingg{
-    width: 40%;
-}
+
 .landingg > h4{
     color: #1780CB;
     font-weight: bold;
@@ -144,12 +181,45 @@
     font-size: 80%;
     color: #707070;
 }
-.landing-cover-2-content > div:nth-child(odd)  {
-    text-align: left; /* Align text for odd children */
-    margin-right: 30%;
-}
 
-.landing-cover-2-content > div:nth-child(even) {
-    text-align: right; /* Align text for even children */
-    margin-left: 30%;
+
+.landing-cover-2-buttonns{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20%;
+}
+.landing-cover-buttonn1{
+  width:  275px;
+  border-radius: 50px;
+  border: 2px solid #005281;
+  color: #005281;
+  font-size: 20px;
+}
+.landing-cover-buttonn2{
+  width:  275px;
+  border-radius: 50px;
+  border: 2px solid #005281;
+  color: white;
+  font-size: 20px;
+  background-color: #005281;
+}
+.landing-cover-buttonn1:hover{
+  cursor: pointer;
+  transition: 0.3s;
+  -webkit-box-shadow: 0px 11px 15px 5px rgba(0,0,0,0.44); 
+  box-shadow: 0px 11px 15px 5px rgba(0,0,0,0.44);
+}
+.landing-cover-buttonn1:not(:hover){
+  transition: 0.3s;
+}
+.landing-cover-buttonn2:hover{
+  cursor: pointer;
+  transition: 0.3s;
+  -webkit-box-shadow: 0px 21px 15px 5px rgba(0,0,0,0.44); 
+  box-shadow: 0px 11px 15px 5px rgba(0,0,0,0.44);
+}
+.landing-cover-buttonn2:not(:hover){
+  transition: 0.3s;
 }
