@@ -6,22 +6,29 @@ import Footer from './components/Footer';
 import BasicGrid from './components/Land';
 import InteractiveMap from '../../InteractiveMap/InteractiveMap';
 import LandingCover from './components/LandingCover';
+import { useRef } from 'react';
 const LandingPageUI = () => {
+  const mapRef = useRef(null);
+
+  // Function to scroll to the map
+  const scrollToMap = () => {
+    if (mapRef.current) {
+      mapRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
-
-
       <>
       <div>
-      <LandingCover/>
+      <LandingCover onSeeMapClick={scrollToMap} />
       {/* <BasicGrid/> */}
-      <InteractiveMap />
+      <div ref={mapRef}>
+        <InteractiveMap  />
+      </div>
       <Popular />
       <Hidden />
       </div>
       <Footer/>
       </>
-      
-   
   );
 };
 

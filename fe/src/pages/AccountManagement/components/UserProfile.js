@@ -173,18 +173,19 @@ export default function UserProfile({ profile }) {
             className="account-banner-image"
           />
         </div>
-
         <div className="user-details-container">
           <div className="avatar-details-container">
             <div className="avatar-wrapper">
               <img
                 src={
-                  profileImage ||
-                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                  profileImage
+                    ? encodeURI(profileImage.trim()) // Remove extra spaces and encode the URL
+                    : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                 }
                 alt="Profile Picture"
                 className="avatar-image"
               />
+
               <div className="camera-icon-container">
                 <Tooltip title="Add profile picture">
                   <PhotoCamera
