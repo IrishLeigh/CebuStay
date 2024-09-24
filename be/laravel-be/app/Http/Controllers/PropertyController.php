@@ -172,19 +172,17 @@ class PropertyController extends CORS
             $unitroomsCollection = collect($unitrooms);
             $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
             $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
-            if($propownid->ownershiptype == 'Individual')
-            {
+            if ($propownid->ownershiptype == 'Individual') {
                 $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
-            }else
-            {
+            } else {
                 $property_companydetails = DB::table('property_company')->where('propertyownershipid', $propownid->propertyownershipid)->first();
                 $property_legalrepdetails = DB::table('legal_representative')
-                ->where('propertycompanyid', $property_companydetails->propertycompanyid)
-                ->get()
-                ->toArray();
+                    ->where('propertycompanyid', $property_companydetails->propertycompanyid)
+                    ->get()
+                    ->toArray();
             }
-            
-            
+
+
             $unitbedroom_beds = DB::table('bedroomtype')->where('unitroomid', $unitbedroom->unitroomid)->get();
             $unitbeds = [];
 
@@ -235,8 +233,8 @@ class PropertyController extends CORS
         $property_owner = [
             'property_ownership' => $propownid,
         ];
-        
-        if($propownid->ownershiptype == 'Individual') {
+
+        if ($propownid->ownershiptype == 'Individual') {
             $property_owner['property_owner'] = $property_ownerdetails;
         } else {
             $property_owner['property_company'] = $property_companydetails;
@@ -353,20 +351,15 @@ class PropertyController extends CORS
         // Retrieve property locations (addresses)
         $locations = Location::select('propertyid', 'address', 'zipcode', 'latitude', 'longitude')->get();
 
-        // Create associative arrays for unit details, unit rooms, bedroom types, and locations
+        // Create associative arrays for unit details and unit rooms
         $unitDetailsByPropertyId = [];
         foreach ($unitDetails as $unitDetail) {
-            $unitDetailsByPropertyId[$unitDetail->propertyid] = $unitDetail;
+            $unitDetailsByPropertyId[$unitDetail->propertyid][] = $unitDetail;
         }
 
         $unitRoomsByUnitId = [];
         foreach ($unitRooms as $unitRoom) {
             $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
-        }
-
-        $locationsByPropertyId = [];
-        foreach ($locations as $location) {
-            $locationsByPropertyId[$location->propertyid] = $location;
         }
 
         // Create associative arrays for house rules and booking policies
@@ -380,25 +373,35 @@ class PropertyController extends CORS
             $bookingPoliciesByPropertyId[$policy->propertyid][] = $policy;
         }
 
+        // Create associative array for locations
+        $locationsByPropertyId = [];
+        foreach ($locations as $location) {
+            $locationsByPropertyId[$location->propertyid] = $location;
+        }
+
         // Add guest_capacity, bedroomcount, bathroomcount, bedcount, house rules, booking policies, and address to properties list
         foreach ($properties as $property) {
             $propertyId = $property->propertyid;
 
             // Guest Capacity
-            $guestCapacity = isset($unitDetailsByPropertyId[$propertyId]) ? $unitDetailsByPropertyId[$propertyId]->guest_capacity : null;
-            $property->guest_capacity = $guestCapacity;
+            $unitDetail = $unitDetailsByPropertyId[$propertyId][0] ?? null; // Assuming one unit detail per property
+            $property->guest_capacity = $unitDetail->guest_capacity ?? null;
 
             // Bedroom Count
             $bedroomCount = 0;
             // Bathroom Count
             $bathroomCount = 0;
 
-            if (isset($unitRoomsByUnitId[$unitDetailsByPropertyId[$propertyId]->unitid])) {
-                foreach ($unitRoomsByUnitId[$unitDetailsByPropertyId[$propertyId]->unitid] as $unitRoom) {
-                    if ($unitRoom->roomname === 'Bedroom') {
-                        $bedroomCount += $unitRoom->quantity;
-                    } elseif ($unitRoom->roomname === 'Bathroom') {
-                        $bathroomCount += $unitRoom->quantity;
+            if (isset($unitDetailsByPropertyId[$propertyId])) {
+                foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
+                    if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
+                        foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
+                            if ($unitRoom->roomname === 'Bedroom') {
+                                $bedroomCount += $unitRoom->quantity;
+                            } elseif ($unitRoom->roomname === 'Bathroom') {
+                                $bathroomCount += $unitRoom->quantity;
+                            }
+                        }
                     }
                 }
             }
@@ -407,10 +410,10 @@ class PropertyController extends CORS
             $property->bathroomcount = $bathroomCount;
 
             // House Rules
-            $property->house_rules = isset($houseRulesByPropertyId[$propertyId]) ? $houseRulesByPropertyId[$propertyId] : [];
+            $property->house_rules = $houseRulesByPropertyId[$propertyId] ?? [];
 
             // Booking Policies
-            $property->booking_policies = isset($bookingPoliciesByPropertyId[$propertyId]) ? $bookingPoliciesByPropertyId[$propertyId] : [];
+            $property->booking_policies = $bookingPoliciesByPropertyId[$propertyId] ?? [];
 
             // Address Information
             if (isset($locationsByPropertyId[$propertyId])) {
@@ -424,28 +427,31 @@ class PropertyController extends CORS
                 // $property->latitude = null;
                 // $property->longitude = null;
             }
-        }
 
-        $bedCount = 0;
-        foreach ($properties as $property) {
-            $propertyId = $property->propertyid;
-            $unitid = $unitDetailsByPropertyId[$propertyId]->unitid;
-            foreach ($unitRooms as $unitRoom) {
-                if ($unitRoom->unitid == $unitid && $unitRoom->roomname == 'Bedroom') {
-                    $uiroomid = $unitRoom->unitroomid;
-                    foreach ($bedroomTypes as $bedroomType) {
-                        if ($bedroomType->unitroomid == $uiroomid) {
-                            $bedCount += $bedroomType->singlebed + $bedroomType->bunkbed + $bedroomType->largebed + $bedroomType->superlargebed;
+            // Bed Count Calculation
+            $bedCount = 0;
+            if (isset($unitDetailsByPropertyId[$propertyId])) {
+                foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
+                    if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
+                        foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
+                            if ($unitRoom->roomname == 'Bedroom') {
+                                foreach ($bedroomTypes as $bedroomType) {
+                                    if ($bedroomType->unitroomid == $unitRoom->unitroomid) {
+                                        $bedCount += $bedroomType->singlebed + $bedroomType->bunkbed + $bedroomType->largebed + $bedroomType->superlargebed;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
             $property->bedcount = $bedCount;
-            $bedCount = 0;
         }
 
         return response()->json($properties);
     }
+
+
 
 
 
@@ -538,18 +544,17 @@ class PropertyController extends CORS
         $properties = DB::table('property')
             ->join('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid')
             ->where('unitdetails.guest_capacity', '>=', $guestCount)
-            ->where('property.isActive', true) // Add this line to check if the property is active
+            ->where('property.isActive', 1)
             ->whereNotExists(function ($query) use ($checkinDate, $checkoutDate) {
                 $query->select(DB::raw(1))
                     ->from('tbl_booking')
                     ->whereRaw('tbl_booking.unitid = unitdetails.unitid')
                     ->where(function ($query) use ($checkinDate, $checkoutDate) {
-                        $query->whereBetween('tbl_booking.checkin_date', [$checkinDate, $checkoutDate])
-                            ->orWhereBetween('tbl_booking.checkout_date', [$checkinDate, $checkoutDate])
-                            ->orWhere(function ($query) use ($checkinDate, $checkoutDate) {
-                                $query->where('tbl_booking.checkin_date', '<=', $checkinDate)
-                                    ->where('tbl_booking.checkout_date', '>=', $checkoutDate);
-                            });
+                        $query->where(function ($query) use ($checkinDate, $checkoutDate) {
+                            // Overlap check: if booking dates overlap with the requested dates
+                            $query->where('tbl_booking.checkin_date', '<', $checkoutDate)
+                                ->where('tbl_booking.checkout_date', '>', $checkinDate);
+                        });
                     });
             })
             ->select('property.propertyid', 'unitdetails.unitid', 'unitdetails.guest_capacity')
@@ -558,6 +563,8 @@ class PropertyController extends CORS
 
         return response()->json($properties);
     }
+
+
 
 
     public function getAvailableUnits(Request $request)
