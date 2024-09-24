@@ -352,72 +352,74 @@ export default function ViewPropertyUI() {
   };
 
   return (
-    <div style={{ backgroundColor: "#F4F7FA" }}>
-      <Container maxWidth="lg" >
-        <CssBaseline />
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          <div>
-            {/* <div>
-              <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
-                <ImageGallery images={propertyImages} />
+    <div style={{ width: "100%" ,overflowY: "scroll"}}>
+      <div style={{ backgroundColor: "#F4F7FA" }}>
+        <Container maxWidth="lg" >
+          <CssBaseline />
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <div>
+              {/* <div>
+                <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
+                  <ImageGallery images={propertyImages} />
+                </div>
+                <div style={{ height: "clamp(2rem, 5vw, 3rem)", display: "flex", marginTop: "-16px" }}>
+                  <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
+                  <div style={{ flex: "1 0 0", background: "#ADC939" }} />
+                  <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
+                  <div style={{ flex: "1 0 0", background: "#F77D1E" }} />
+                  <div style={{ flex: "1 0 0", background: "#EE414B" }} />
+                  <div style={{ flex: "1 0 0", background: "#A334CF" }} />
+                  <div style={{ flex: "1 0 0", background: "#1780CB" }} />
+                </div>
               </div>
-              <div style={{ height: "clamp(2rem, 5vw, 3rem)", display: "flex", marginTop: "-16px" }}>
-                <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
-                <div style={{ flex: "1 0 0", background: "#ADC939" }} />
-                <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
-                <div style={{ flex: "1 0 0", background: "#F77D1E" }} />
-                <div style={{ flex: "1 0 0", background: "#EE414B" }} />
-                <div style={{ flex: "1 0 0", background: "#A334CF" }} />
-                <div style={{ flex: "1 0 0", background: "#1780CB" }} />
-              </div>
-            </div>
-            <Grid container spacing={3} style={{ padding: "20px 0" }}>
-              <Grid item xs={12} md={7}>
-                {propertyInfo.property_details && (
-                  <PropertyDetails property={propertyInfo.property_details} />
-                )}
-                <AmenitiesFacilitiesServices
-                  amenities={propertyInfo.property_amenities}
-                  facilities={propertyInfo.property_facilities}
-                  services={propertyInfo.property_services}
-                />
+              <Grid container spacing={3} style={{ padding: "20px 0" }}>
+                <Grid item xs={12} md={7}>
+                  {propertyInfo.property_details && (
+                    <PropertyDetails property={propertyInfo.property_details} />
+                  )}
+                  <AmenitiesFacilitiesServices
+                    amenities={propertyInfo.property_amenities}
+                    facilities={propertyInfo.property_facilities}
+                    services={propertyInfo.property_services}
+                  />
+                </Grid>
+                <Grid item xs={12} md={5}>
+                  <ReservationSection
+                    checkInDate={checkInDate}
+                    checkOutDate={checkOutDate}
+                    handleCheckInChange={handleCheckInChange}
+                    handleCheckOutChange={handleCheckOutChange}
+                    handleReserveClick={handleReserveClick}
+                    guestCount={guestCount}
+                    handleGuestCountChange={handleGuestCountChange}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={5}>
-                <ReservationSection
-                  checkInDate={checkInDate}
-                  checkOutDate={checkOutDate}
-                  handleCheckInChange={handleCheckInChange}
-                  handleCheckOutChange={handleCheckOutChange}
-                  handleReserveClick={handleReserveClick}
+              {showReservationForm && (
+                <ReservationForm
+                  propertyinfos={propertyInfo}
+                  property_images={propertyImages}
+                  amenities={propertyInfo.property_amenities} // Pass amenities as prop
+                  facilities={propertyInfo.property_facilities} // Pass facilities as prop
+                  services={propertyInfo.property_services} // Pass services as prop
                   guestCount={guestCount}
-                  handleGuestCountChange={handleGuestCountChange}
+                  propertyid={propertyid}
+                  checkin_date={checkin_date}
+                  checkout_date={checkout_date}
                 />
-              </Grid>
-            </Grid>
-            {showReservationForm && (
-              <ReservationForm
-                propertyinfos={propertyInfo}
-                property_images={propertyImages}
-                amenities={propertyInfo.property_amenities} // Pass amenities as prop
-                facilities={propertyInfo.property_facilities} // Pass facilities as prop
-                services={propertyInfo.property_services} // Pass services as prop
-                guestCount={guestCount}
-                propertyid={propertyid}
-                checkin_date={checkin_date}
-                checkout_date={checkout_date}
-              />
-            )} */}
-            {propertyInfo.property_details.property_type === "Home" ? (
-              <><SinglePropertyUI propertyid={propertyid} /></>
-            ) : (
-              <><MultiPropertyUI propertyid={propertyid} /></>
-              )}
-          </div>
+              )} */}
+              {propertyInfo.property_details.property_type === "Home" ? (
+                <><SinglePropertyUI propertyid={propertyid} /></>
+              ) : (
+                <><MultiPropertyUI propertyid={propertyid} /></>
+                )}
+            </div>
 
-        )}
-      </Container>
+          )}
+        </Container>
+      </div>
     </div>
   );
 }

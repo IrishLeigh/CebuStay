@@ -99,20 +99,22 @@ const PropertyListUI = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList} />
-      <SortMenu />
-      <div className="content-layout">
-        <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
-        <MainContent
-          selectedAmenities={selectedAmenities}
-          accommodations={accommodationList}
-          filters={filters}
-          searchData={searchData}
-          setSearchData={setSearchData}
-        />
-      </div>
-    </Container>
+    <div style ={{ overflowY: "scroll", width : "100%"}}>
+      <Container maxWidth="lg">
+        <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList} />
+        <SortMenu />
+        <div className="content-layout">
+          <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
+          <MainContent
+            selectedAmenities={selectedAmenities}
+            accommodations={accommodationList}
+            filters={filters}
+            searchData={searchData}
+            setSearchData={setSearchData}
+          />
+        </div>
+      </Container>
+    </div>
   );
 };
 

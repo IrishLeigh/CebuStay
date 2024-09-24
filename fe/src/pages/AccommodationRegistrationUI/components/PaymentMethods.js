@@ -7,10 +7,14 @@ import { RadioGroup } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PaymentIcon from '@mui/icons-material/Payment'; // Add this line
 
 export default function PaymentMethods({ onPaymentDataChange, parentPaymentData, handleNext, handleBack }) {
   const [paymentData, setPaymentData] = useState(parentPaymentData || {
-    selectedPayment: '',
+    selectedPayment: 'Online',
     selectedPayout: ''
   });
 
@@ -37,7 +41,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
   }, []);
 
   const validateAndProceed = () => {
-    if (paymentData.selectedPayment && paymentData.selectedPayout) {
+    if (paymentData.selectedPayout) {
       handleNext();
     } else {
       alert("Please select both payment and payout methods.");
@@ -57,6 +61,8 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
             {/* <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2} >
               Idk here yet.
             </Typography> */}
+
+         
           </div>
         </Box>
 
@@ -72,7 +78,8 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
               <Typography sx={{ fontSize: "1.125rem" }} mb={2} fontWeight="bold">
                 How can your guests pay for their stay?
               </Typography>
-              <RadioGroup
+              {/* <RadioGroup
+              
                 aria-labelledby="Payment"
                 name="Payment"
                 value={paymentData.selectedPayment}
@@ -103,8 +110,43 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
                 <Typography sx={{ ml: 6 }}>
                   Pay just 50% upfront and settle the remainder conveniently in cash upon your arrival.
                 </Typography>
-              </RadioGroup>
+              </RadioGroup> */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  backgroundColor: "#16B4DD",
+                  height: "100%",
+                  borderRadius: "0.8rem",
+                  padding: "1rem",
+                  color: "white",
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Online Payment
+                </Typography>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <LocalOfferIcon sx={{ mr: 1 }} />
+                  <Typography variant="body2">
+                    Your future guests can pay the full amount online through CebuStay, which will handle all payment transactions securely for you.
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <DarkModeIcon sx={{ mr: 1 }} />
+                  <Typography variant="body2">
+                    CebuStay offers a wide range of payment methods for your guests, so you don't have to worry about configuration.
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <PaymentIcon sx={{ mr: 1 }} />
+                  <Typography variant="body2">
+                    We payout to you at the end of each month, so you can manage your finances effectively.
+                  </Typography>
+                </Box>
+              </Box>
+
             </div>
+            
 
             <div>
               <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">

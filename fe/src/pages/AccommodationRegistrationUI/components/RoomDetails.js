@@ -129,42 +129,43 @@ export default function RoomDetails({
                   List of Rooms Available
                 </Typography>
                 {unitDetailsData.roomDetails.map((room, index) => (
-  <Box
-    key={index}
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      mb: 2,
-    }}
-  >
-    <TextField
-      value={room.roomType}
-      onChange={(e) => handleRoomTypeChange(index, e.target.value)}
-      placeholder="Room Type"
-      sx={{ width: "40%" }}
-    />
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <IconButton onClick={() => incrementQuantity(index)}>
-        <AddIcon />
-      </IconButton>
-      <TextField
-        value={room.quantity}
-        onChange={(e) => handleQuantityChange(index, e.target.value)}
-        sx={{ width: "4rem", textAlign: "center" }}
-      />
-      <IconButton onClick={() => decrementQuantity(index)}>
-        <RemoveIcon />
-      </IconButton>
-    </Box>
-    <IconButton 
-      onClick={() => removeRoom(index)} 
-      sx={{ visibility: ["Bedroom", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? 'hidden' : 'visible' }} // Use visibility
-    >
-      <CancelIcon color="error" />
-    </IconButton>
-  </Box>
-))}
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      mb: 2,
+                    }}
+                  >
+                    <TextField
+                      value={room.roomType}
+                      onChange={(e) => handleRoomTypeChange(index, e.target.value)}
+                      placeholder="Room Type"
+                      sx={{ width: "40%" }}
+                      disabled = {["Bedroom", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? true : false}
+                    />
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <IconButton onClick={() => incrementQuantity(index)}>
+                        <AddIcon />
+                      </IconButton>
+                      <TextField
+                        value={room.quantity}
+                        onChange={(e) => handleQuantityChange(index, e.target.value)}
+                        sx={{ width: "4rem", textAlign: "center" }}
+                      />
+                      <IconButton onClick={() => decrementQuantity(index)}>
+                        <RemoveIcon />
+                      </IconButton>
+                    </Box>
+                    <IconButton 
+                      onClick={() => removeRoom(index)} 
+                      sx={{ visibility: ["Bedroom", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? 'hidden' : 'visible' }} // Use visibility
+                    >
+                      <CancelIcon color="error" />
+                    </IconButton>
+                  </Box>
+                ))}
 
                 <Button
                   startIcon={<AddCircleIcon />}

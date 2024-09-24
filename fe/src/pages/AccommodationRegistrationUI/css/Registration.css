@@ -6,7 +6,7 @@ html, body {
 }
 
 .registration-body {
-  background-image: url("/public/RegisterBG.png");
+  background-image: url("/public/RegisterBG3.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -57,7 +57,7 @@ html, body {
   position: fixed;
   bottom: 0;
   right: 0;
-  left: 250px; /* Leave space for the stepper */
+  width: calc(100% - 16.5%);
   background-color: #FCFCFC;
   padding: 1em;
   box-shadow: 0px -0.25em 0.625em rgba(0, 0, 0, 0.1);
