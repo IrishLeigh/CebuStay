@@ -59,8 +59,8 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
 
   return (
     <div className="bg-white p-4 w-64" style={{ fontFamily: 'Poppins' }}>
-      <h2 className="text-lg font-semibold" style={{ textAlign: 'left' }}>Places to Visit</h2>
-      <p className="text-zinc-600" style={{ textAlign: 'left', marginTop: '-12px' }}>50 Places Found</p>
+      {/* <h2 className="text-lg font-semibold" style={{ textAlign: 'left' }}>Places to Visit</h2>
+      <p className="text-zinc-600" style={{ textAlign: 'left', marginTop: '-12px' }}>50 Places Found</p> */}
       <div className="mt-6"></div>
 
       <div className="mt-6">
@@ -433,17 +433,17 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
           <span>Cancellation Plan</span>
-          <input id="cbx-51-5" type="checkbox" checked={selectedBookingOptions.includes('Cancellation Plan')} onChange={() => handleBookingOptionChange('Cancellation Policy')} />
+          <input id="cbx-51-5" type="checkbox" checked={selectedBookingOptions.includes('Cancellation Plan')} onChange={() => handleBookingOptionChange('Cancellation Plan')} />
           <label className="cbx" htmlFor="cbx-51-5"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
-          <span>Refund Policy</span>
-          <input id="cbx-51-6" type="checkbox" checked={selectedBookingOptions.includes('Refund Policy')} onChange={() => handleBookingOptionChange('Refund Policy')} />
+          <span>No Refund Policy</span>
+          <input id="cbx-51-6" type="checkbox" checked={selectedBookingOptions.includes('Non-Refundable')} onChange={() => handleBookingOptionChange('Non-Refundable')} />
           <label className="cbx" htmlFor="cbx-51-6"></label>
         </div>
         <div className="flex items-center justify-between mt-2 wrap-check-51">
           <span>Modification Plan</span>
-          <input id="cbx-51-7" type="checkbox" checked={selectedBookingOptions.includes('Modification Plan')} onChange={() => handleBookingOptionChange('Modification Policy')} />
+          <input id="cbx-51-7" type="checkbox" checked={selectedBookingOptions.includes('Modification Plan')} onChange={() => handleBookingOptionChange('Modification Plan')} />
           <label className="cbx" htmlFor="cbx-51-7"></label>
         </div>
       </div>
