@@ -18,10 +18,11 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
   const handleImageChange = (event) => {
     const imageFiles = event.target.files;
     if (!imageFiles) return;
-
+  
     const oversizedImages = [];
     const newImages = Array.from(imageFiles).map((file) => {
-      if (file.size > 5 * 1024 * 1024) {
+      // Adjust the size limit to 2MB (2 * 1024 * 1024 bytes)
+      if (file.size > 2 * 1024 * 1024) {
         oversizedImages.push(file.name);
         return null;
       }
@@ -31,23 +32,28 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
         size: file.size,
       };
     });
-
+  
     if (oversizedImages.length > 0) {
       setErrors((prevErrors) => [
         ...prevErrors,
-        `The following image(s) exceed the 5MB size limit: ${oversizedImages.join(", ")}`,
+        `The following image(s) exceed the 2MB size limit: ${oversizedImages.join(", ")}`,
       ]);
     }
-
+  
     const validImages = newImages.filter((image) => image !== null);
+    const totalImages = validImages.length + selectedImages.length;
+  
+    if (totalImages > 5) {
+      alert("You can only upload a maximum of 5 images.");
+      return;
+    }
+  
     const imagesToAdd = validImages.slice(0, 5 - selectedImages.length);
-
     setSelectedImages((prevImages) => [...prevImages, ...imagesToAdd]);
   };
-
+  
   const onDrop = (acceptedFiles) => {
-    const newImages = acceptedFiles.slice(0, 5 - selectedImages.length);
-    const imagesToAdd = newImages
+    const newImages = acceptedFiles
       .filter(
         (file) => !selectedImages.some((selected) => selected.name === file.name)
       )
@@ -56,9 +62,18 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
         url: URL.createObjectURL(file),
         size: file.size,
       }));
-
+  
+    const totalImages = newImages.length + selectedImages.length;
+  
+    if (totalImages > 5) {
+      alert("You can only upload a maximum of 5 images.");
+      return;
+    }
+  
+    const imagesToAdd = newImages.slice(0, 5 - selectedImages.length);
     setSelectedImages((prevImages) => [...prevImages, ...imagesToAdd]);
   };
+  
 
   const handleDeleteImage = (index) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
@@ -82,6 +97,10 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
     // Check if there are exactly 5 images
     if (selectedImages.length !== 5) {
       alert("Please upload exactly 5 images.");
+      return;
+    }
+    if (selectedImages.length >5) {
+      alert("Please upload no more than 5 images.");
       return;
     }
 

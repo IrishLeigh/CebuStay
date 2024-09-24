@@ -673,7 +673,7 @@ export default function AccommodationRegistrationUI() {
     <div className="registration-page">
       <Container maxWidth="xl" sx={{ overflowX: "hidden" }}>
         {step === 1 && (
-          <div>
+          <div style={{ display: "flex", justifyContent: "center" , alignItems: "center"}}>
             <AnimatePage>
               <Properties
                 onSelectedTypeChange={handleSelectedTypeChange}

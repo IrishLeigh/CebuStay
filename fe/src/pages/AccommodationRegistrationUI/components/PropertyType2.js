@@ -8,12 +8,16 @@ import AnimatePage from "./AnimatedPage";
 
 const propertyTypes = [
   {
+    icon: "/EntireProperty.png", // Assuming this is in public folder
     name: "Entire Property",
-    description: "Guests are able to use the entire place and do not have to share this with the host or other guests.",
+    description:
+      "Guests are able to use the entire place and do not have to share this with the host or other guests.",
   },
   {
+    icon: "/PrivateRoom.png", // Assuming this is in public folder
     name: "Private Room",
-    description: "Guests rent a room within the property. There are common areas that are either shared with the host or other guests.",
+    description:
+      "Guests rent a room within the property. There are common areas that are either shared with the host or other guests.",
   },
 ];
 
@@ -78,7 +82,8 @@ export default function PropertyType2({
                     <Button
                       variant="contained"
                       sx={{
-                        backgroundColor: selectedPropertyType === type.name ? "#1780CB" : "white",
+                        backgroundColor:
+                          selectedPropertyType === type.name ? "#1780CB" : "white",
                         color: selectedPropertyType === type.name ? "white" : "black",
                         fontFamily: "Poppins, sans-serif",
                         width: "100%",
@@ -87,12 +92,13 @@ export default function PropertyType2({
                       }}
                       startIcon={
                         <img
-                          src={`${type.name.toLowerCase()}.png`}
+                          src={type.icon} // Make sure this resolves correctly
                           alt={type.name}
                           style={{
                             width: "60px",
                             height: "60px",
                           }}
+                          onError={() => console.error(`Image failed to load: ${type.icon}`)} // Add this to troubleshoot
                         />
                       }
                       onClick={() => handleClick(type.name)}

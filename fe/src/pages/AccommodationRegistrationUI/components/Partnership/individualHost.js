@@ -119,48 +119,57 @@ export default function IndividualHost({ onDataChange }) {
     countryCode: '+63',
     PhoneNumber: '',
     Email: '',
-    croppedAreaPixels: null,
+    // croppedAreaPixels: null,
     City: '',
     ZipCode: '',
     Street: '',
     Barangay: '',
     Describe: '',
-    imageSrc: null,
-    crop: { x: 0, y: 0 },
-    zoom: 1,
+    // imageSrc: null,
+    // crop: { x: 0, y: 0 },
+    // zoom: 1,
   });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const validateData = () => {
-      // Initialize newErrors with empty messages
-      const newErrors = { PhoneNumber: '', Email: '', DateOfBirth: '' };
-  
-      // Validate phone number
-      const phoneWithCountryCode = `${data.countryCode}${data.PhoneNumber}`;
-      const phoneNumberPattern = /^\+[1-9]\d{1,14}$/;  // Example pattern for international phone numbers
-      if (!phoneNumberPattern.test(phoneWithCountryCode)) {
-        newErrors.PhoneNumber = 'Invalid phone number';
-      }
-  
-      // Validate email
-      const emailPattern = /\S+@\S+\.\S+/;
-      if (!emailPattern.test(data.Email)) {
-        newErrors.Email = 'Invalid email address';
-      }
-  
-      // Set errors to state
-      setErrors(newErrors);
-  
-      // Return true if no errors (all error fields are empty)
-      return Object.values(newErrors).every(error => error === '');
+  const validateData = () => {
+    // Initialize newErrors with empty messages
+    const newErrors = { PhoneNumber: '', Email: '', DateOfBirth: '' };
+
+    // Validate phone number based on country code
+    const phoneWithCountryCode = `${data.countryCode}${data.PhoneNumber}`;
+    
+    // Define phone number patterns based on country code
+    const phonePatterns = {
+      '+1': /^\+1\d{10}$/, // USA/Canada
+      '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
+      '+44': /^\+44\d{10}$/, // UK
+      // Add more country codes and patterns as needed
     };
-  
-   
-  
-    onDataChange(data);
-    validateData();
-  }, [data]);  // Re-run validation whenever `data` changes
+    
+    // Validate phone number
+    const pattern = phonePatterns[data.countryCode] || /^\+[1-9]\d{1,14}$/;  // Default for other countries
+    if (!pattern.test(phoneWithCountryCode)) {
+      newErrors.PhoneNumber = 'Invalid phone number';
+    }
+
+    // Validate email
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
+    if (!emailPattern.test(data.Email)) {
+      newErrors.Email = 'Invalid email address';
+    }
+
+    // Set errors to state
+    setErrors(newErrors);
+
+    // Return true if no errors (all error fields are empty)
+    return Object.values(newErrors).every(error => error === '');
+  };
+
+  onDataChange(data);
+  validateData();
+}, [data]);  // Re-run validation whenever `data` changes
+
   
 
  // Handle image file upload
@@ -276,7 +285,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
       
 
       {/* Upload Image */}
-      <Typography style={styles.sectionTitle}>Upload Profile Photo</Typography>
+      {/* <Typography style={styles.sectionTitle}>Upload Profile Photo</Typography>
       <div style={styles.imageUpload}>
         {data.imageSrc ? (
           <Box style={styles.cropperContainer}>
@@ -332,7 +341,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
           </>
         )}
       </div>
-      
+       */}
       {/* Contact Details */}
       <Typography style= {styles.sectionTitle}  mt={1} fontWeight="bold">
           Contact Details

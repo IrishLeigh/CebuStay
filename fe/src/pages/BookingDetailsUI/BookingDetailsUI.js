@@ -178,7 +178,7 @@ function BookingDetailsUI() {
 
   console.log("Property Data :", propertyData);
   return (
-    <div>
+    <div style={{overflowY:"scroll", width: "100%"}}>
       <AppBar position="static" sx={{ background: "#16B4DD" }}>
         <Toolbar>
           <Typography variant="h6" sx={{ margin: '0 auto', maxWidth: 'lg', width: '100%' ,padding: '1%' }}>

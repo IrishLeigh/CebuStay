@@ -65,13 +65,8 @@ export default function EditPartnerVerification({ parentPartnerData}) {
       lastName: "Last Name",
       email: "Email Address",
       phoneNumber: "Phone Number",
-      FirstName: "First Name",
-      LastName: "Last Name",
-      croppedAreaPixels : "Image",
-      imageSrc : "Image",
       DateOfBirth: "Date of Birth",
       DisplayName: "Display Name",
-      
       // Add more fields as necessary
     };
   
@@ -101,13 +96,38 @@ export default function EditPartnerVerification({ parentPartnerData}) {
       }
     }
   
+    // Validate phone number and email for both types
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
+    const phoneWithCountryCode = `${individualData.countryCode}${individualData.phoneNumber || companyData.phoneNumber}`;
+    
+    // Define phone number patterns based on country code
+    const phonePatterns = {
+      '+1': /^\+1\d{10}$/, // USA/Canada (1 country code and 10 digits)
+      '+63': /^\+63\d{10}$/, // Philippines (63 country code and 10 digits)
+      '+44': /^\+44\d{10}$/, // UK (44 country code and 10 digits)
+      // Add more country codes and patterns as needed
+    };
+  
+    const pattern = phonePatterns[individualData.countryCode] || /^\+[1-9]\d{1,14}$/;  // Default for other countries
+  
+    // Check email validity
+    if (!emailPattern.test(individualData.email || companyData.email)) {
+      alert('Invalid email address. Please enter a valid email.');
+      return;
+    }
+  
+    // Check phone number validity
+    if (!pattern.test(phoneWithCountryCode)) {
+      alert('Invalid phone number. Please enter a valid phone number.');
+      return;
+    }
+  
     // If no validation errors, proceed to submit the data
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
     // onHostDataChange(dataToSend);
     // openModal();
     alert("Successfully submitted!");
   };
-  
   
   console.log ("hostType", hostType);
   console.log ("individualData", parentPartnerData);

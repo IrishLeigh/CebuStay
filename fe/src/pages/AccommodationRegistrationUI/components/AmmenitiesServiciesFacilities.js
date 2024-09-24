@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Button, Typography, Grid, Container } from "@mui/material";
+import { Button, Typography, Grid, Container, Card, CardContent, Paper } from "@mui/material";
 import { motion } from "framer-motion";
 
 // Sample data
@@ -60,10 +60,12 @@ const AmenityButton = React.memo(({ icon, text, isSelected, onClick }) => {
           fontFamily: "Poppins, sans-serif",
           width: 200,
           height: 80,
+          opacity: 100,
           "&:hover": {
             backgroundColor: isHovered && !isSelected ? "#16B4DD" : isSelected ? "#1780CB" : "white",
             color: isHovered && !isSelected ? "white" : isSelected ? "white" : "black",
           },
+          margin: "0.5rem",
         }}
         startIcon={
           <motion.img
@@ -94,16 +96,21 @@ const CategorySection = React.memo(({ category, label, onItemsChange, initialSel
       : [...selectedAmenities, itemText];
 
     setSelectedAmenities(newSelectedAmenities);
-    onItemsChange(category, newSelectedAmenities); // Call it here only
+    onItemsChange(category, newSelectedAmenities);
   };
 
   return (
-    <>
-      <Typography variant="h5" sx={{ fontWeight: "bold", mx: { xs: 2, sm: 10, md: 20 }, my: 2, textAlign: "left" }}>
+    <Paper sx={{ 
+      marginBottom: 2, 
+      p: "1rem", 
+      borderRadius: "0.8rem", 
+      backgroundColor: "rgba(255, 255, 255, 0.8)" // Adjust this color and opacity as needed
+    }}>
+      <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "left", pl: 4 }}>
         {label}
       </Typography>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Grid container spacing={1} sx={{ maxWidth: 800 }}>
+        <Grid container spacing={2} sx={{ maxWidth: 800 }}>
           {data[category].map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <AmenityButton
@@ -116,9 +123,10 @@ const CategorySection = React.memo(({ category, label, onItemsChange, initialSel
           ))}
         </Grid>
       </div>
-    </>
+    </Paper>
   );
 });
+
 
 const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handleNext, handleBack }) => {
   const [selectedAmenities, setSelectedAmenities] = useState({
@@ -153,11 +161,11 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
         marginBottom: "8rem",
       }}
     >
-      <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
-        Property Information
+      <Typography sx={{ fontSize: "2rem", fontWeight: "bold", mb: 2, fontFamily: "Poppins, sans-serif" }}>
+        Customize Your Stay
       </Typography>
-      <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
-        Please click the buttons you choose.
+      <Typography sx={{ mb: 2, fontFamily: "Poppins, sans-serif" }}>
+        Please select the amenities, services, and facilities you would like to include for your property:
       </Typography>
       <CategorySection
         category="basicAmenities"
@@ -177,8 +185,8 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
         onItemsChange={handleItemsChange}
         initialSelectedItems={selectedAmenities.facilities}
       />
-      <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
+      <div className="stepperFooter" style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
+        <Button onClick={handleBack} className="stepperPrevious" sx={{ marginRight: 1 }}>
           Back
         </Button>
         <Button onClick={handleSave} className="stepperNext">

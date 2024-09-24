@@ -16,6 +16,7 @@ import {
   Drawer,
   IconButton,
   Box,
+  Grid,
 } from "@mui/material";
 import PropertyType from "./components/PropertyType";
 import PropertyType2 from "./components/PropertyType2";
@@ -186,13 +187,24 @@ function formatDate(dateString) {
   const isSingleUnit =
     selectedPropertyType === "Home" ||
     selectedPropertyType === "Condominium" ||
-    selectedPropertyType === "Apartment";
+    selectedPropertyType === "Apartment" ||
+    selectedPropertyType ===  "Villa" || 
+    selectedPropertyType === "Cabin" ||
+    selectedPropertyType === " Luxury Home" ||
+    selectedPropertyType === "Homestay" ||
+    selectedPropertyType === "Condoinium" ||
+    selectedPropertyType === "Resort" ;
+
 
   const isMultiUnit =
     selectedPropertyType === "Hotel" ||
     selectedPropertyType === "Hostel" ||
     selectedPropertyType === "Bungalow" ||
-    selectedPropertyType === "Resort";
+    selectedPropertyType === "Resort" ||
+    selectedPropertyType === "Motel" ||
+    selectedPropertyType === "Cottage" ||
+    selectedPropertyType === "Bed & Breakfast"
+    ;
 
   //For Multi Unit
   const [multiRoomsAndBeds, setMultiRoomsAndBeds] = useState([]);
@@ -745,8 +757,8 @@ function formatDate(dateString) {
                                 localStorage.removeItem("postalCode");
                                 location2(null);
                                 location(null);
-                                alert("Form submitted successfully!");
-                                alert("Form submitted successfully!");
+                                // alert("Form submitted successfully!");
+                                // alert("Form submitted successfully!");
                                 setIsLoading(false); // Hide the loading spinner
                                 setIsSuccessModalOpen(true); 
                               }
@@ -822,8 +834,8 @@ function formatDate(dateString) {
                                   localStorage.removeItem("postalCode");
                                   location2(null);
                                   location(null);
-                                  alert("Form submitted successfully!");
-                                  alert("Form submitted successfully!");
+                                  // alert("Form submitted successfully!");
+                                  // alert("Form submitted successfully!");
                                   setIsLoading(false); // Hide the loading spinner
                                   setIsSuccessModalOpen(true); 
                                 }
@@ -847,6 +859,7 @@ function formatDate(dateString) {
       } finally {
         // Hide modal and reset loading state after a delay
         setIsLoading(false); // Hide the loading spinner
+
         
       }
     }
@@ -861,7 +874,8 @@ function formatDate(dateString) {
   const handleSubmitMulti = async () => {
     // MULTI UNIT SUBMIT
     console.log("Form submitted successfully!");
-    alert("Form submitted successfully!");
+    closeModal();
+    setIsLoading(true); // Show the loading spinner
     console.log("User", user);
     console.log("Property Information from parent", propertyInfo);
     console.log("Property Type", selectedPropertyType);
@@ -1243,6 +1257,7 @@ function formatDate(dateString) {
                   console.log("Manager:", manager.data);
                   console.log("Successfully Registered");
                   // setModalMessage("Successfully Registered");
+                
 
                   localStorage.removeItem("postalCode");
                   localStorage.removeItem("street");
@@ -1326,8 +1341,8 @@ function formatDate(dateString) {
                     localStorage.removeItem("postalCode");
                     location2(null);
                     location(null);
-                    alert("Form submitted successfully!");
-                    alert("Form submitted successfully!");
+                    // alert("Form submitted successfully!");
+                    // alert("Form submitted successfully!");
                     setIsLoading(false); // Hide the loading spinner
                     setIsSuccessModalOpen(true); 
                   }
@@ -1339,7 +1354,10 @@ function formatDate(dateString) {
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Submission failed. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
+    
     console.log("NICE ONE!");
   };
 
@@ -1636,48 +1654,64 @@ function formatDate(dateString) {
 return (
   <ThemeProvider theme={theme}>
     <Box className="registration-body">
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "250px 1fr" }, // Fixed width for stepper
-          height: "90 vh",
-        }}
-      >
-        {/* Stepper on the left */}
-        <Box
-          sx={{
-            display: { xs: "none", sm: "block" }, // Hide on small screens
-            position: "relative",
-            backgroundColor: "white",
-            padding: "2rem",
-            boxShadow: "0px 0.25em 0.625em rgba(0, 0, 0, 0.1)",
-            // overflowY: "auto",
-            width: "250px", // Fixed width for the stepper
-          }}
-        >
-            <Stepper activeStep={step} orientation="vertical">
-              {steps.map((label, index) => (
-                <Step key={index}>
-                  <StepButton onClick={() => setStep(index)}>
-                    <StepLabel>{label}</StepLabel>
-                  </StepButton>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
+   
+  <Grid container sx={{ height: "100vh" }}>
+    {/* Stepper on the left */}
+    <Grid
+      item
+      xs={12}
+      sm={2}
+      sx={{
+        display: { xs: "none", sm: "block" }, // Hide on small screens
+        position: "sticky", // Keep the stepper in place as you scroll
+        top: 0, // Stick to the top of the viewport
+        height: "100%", // Full height of the viewport
+        backgroundColor: "white", // Background color for the stepper area
+        padding: "2rem",
+        boxShadow: "0px 0.25em 0.625em rgba(0, 0, 0, 0.1)", // Optional shadow
+        overflowY: "auto", // Enable scrolling inside the stepper area
+        paddingBottom: "5rem",
+      }}
+    >
+      <Stepper activeStep={step} orientation="vertical">
+        {steps.map((label, index) => (
+          <Step key={index}>
+            <StepButton onClick={() => setStep(index)}>
+              <StepLabel>{label}</StepLabel>
+            </StepButton>
+          </Step>
+        ))}
+      </Stepper>
+    </Grid>
 
+    {/* Main content on the right */}
+    <Grid
+      item
+      xs={12}
+      sm={10} // Main content takes 10 columns on small and up
+      sx={{
+        padding: "2rem 2rem 4rem 2rem",
+        overflowY: "auto", // Allow scrolling in main content
+        height: "100vh", // Full height of the viewport
+      }}
+    >
           {/* Main content on the right */}
           <Box
             sx={{
               padding: "2rem",
               overflowX: "hidden", // Prevent horizontal scrolling in main content
+              justifyContent: "center",
+              alignItems: "center",
+              
             }}
           >
-            {step === 0 && <PropertyType onSelectedTypeChange={handleSelectedTypeChange} handleNext={handleNext} />}
+            {step === 0 && 
+              <PropertyType onSelectedTypeChange={handleSelectedTypeChange} handleNext={handleNext} />}
             {/* Flow A: Single Unit Steps */}
             {isSingleUnit && (
                   <>
                     {step === 1 && (
+
                       <PropertyType2
                         onSelectedPropertyTypeChange={
                           handleSelectedPropertyTypeChange
@@ -1875,7 +1909,9 @@ return (
                 )}
 
           </Box>
-            {/* Render circular progress indicator while loading */}
+          
+
+            {/* //Render circular progress indicator while loading */}
               {isLoading && (
                   <Backdrop
                     open={isLoading}
@@ -1950,7 +1986,8 @@ return (
             </Stepper>
           </Box>
         </Drawer>
-      </Box>
+        </Grid>
+      </Grid>
     </Box>
   </ThemeProvider>
   );

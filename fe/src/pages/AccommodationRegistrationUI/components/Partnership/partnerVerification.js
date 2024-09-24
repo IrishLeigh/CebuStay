@@ -10,7 +10,7 @@ import AnimatePage from '../AnimatedPage';
 import { Crop } from '@mui/icons-material';
 import { Last } from 'react-bootstrap/esm/PageItem';
 
-export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleSubmit, handleBack, openModal }) {
+export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleBack, openModal }) {
   const [hostType, setHostType] = useState('');
   const [individualData, setIndividualData] = useState({});
   const [companyData, setCompanyData] = useState({});
@@ -44,41 +44,43 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   // }, [hostType, individualData, companyData, onHostDataChange]);
 
   const validateAndProceed = () => {
-    // Mapping of field keys to user-friendly names
     const fieldLabels = {
-      firstName: "First Name",
-      lastName: "Last Name",
-      email: "Email Address",
-      phoneNumber: "Phone Number",
       FirstName: "First Name",
       LastName: "Last Name",
-      croppedAreaPixels : "Image",
-      imageSrc : "Image",
+      Email: "Email Address",
+      PhoneNumber: "Phone Number",
       DateOfBirth: "Date of Birth",
       DisplayName: "Display Name",
-      
-      // Add more fields as necessary
     };
   
-    // Helper function to check for empty fields and map to friendly names
     const getEmptyFields = (data) => {
       if (Object.keys(data).length === 0) {
-        return ['No information has been filled out yet. Please complete the required fields before proceeding.'];
+        return ['No information has been filled out yet.'];
       }
       return Object.keys(data).filter(key => !data[key]).map(key => fieldLabels[key] || key);
     };
   
-    // Validate Individual host data
+    const email = individualData.Email || companyData.legalRepresentatives[0].email;
+    const phoneNumber = individualData.PhoneNumber || companyData.legalRepresentatives[0].phone;
+    const countryCode = individualData.countryCode || companyData.countryCode;
+  
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
+  
+    const phonePatterns = {
+      '+1': /^\+1\d{10}$/, // USA/Canada
+      '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
+      '+44': /^\+44\d{10}$/, // UK
+      // Add more country codes and patterns as needed
+    };
+  
+    // Validate empty fields
     if (hostType === 'Individual') {
       const emptyFields = getEmptyFields(individualData);
       if (emptyFields.length > 0) {
         alert(`Please fill in the following required information for the individual host: ${emptyFields.join(', ')}.`);
         return;
       }
-    }
-  
-    // Validate Company host data
-    if (hostType === 'Company') {
+    } else if (hostType === 'Company') {
       const emptyFields = getEmptyFields(companyData);
       if (emptyFields.length > 0) {
         alert(`Please provide the following required details for the company host: ${emptyFields.join(', ')}.`);
@@ -86,17 +88,32 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
       }
     }
   
-    // If no validation errors, proceed to submit the data
+    // Email validation
+    if (!emailPattern.test(email)) {
+      alert('Invalid email address. Please enter a valid email.');
+      console.log("Email",email);
+      return;
+    }
+  
+    // Phone number validation
+    const phoneWithCountryCode = `${countryCode}${phoneNumber}`;
+    const pattern = phonePatterns[countryCode] || /^\+[1-9]\d{1,14}$/;  // Default pattern
+  
+    if (!pattern.test(phoneWithCountryCode)) {
+      alert('Invalid phone number. Please enter a valid phone number.');
+      return;
+    }
+  
+    // If all validations pass
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
     onHostDataChange(dataToSend);
     openModal();
-    alert("Successfully submitted!");
+    // alert("Successfully submitted!");
   };
   
-  
   console.log ("hostType", hostType);
-  console.log ("individualData", individualData);
-  console.log ("companyData", companyData);
+  console.log ("individualData from parent", individualData);
+  console.log ("companyData from parent", companyData);
 
   return (
     <Container maxWidth="lg">
