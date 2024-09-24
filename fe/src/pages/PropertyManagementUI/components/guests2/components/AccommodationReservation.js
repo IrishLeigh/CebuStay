@@ -6,10 +6,10 @@ import axios from "axios";
 // import Grid from "@mui/material/Grid";
 import { MdMenuOpen, MdSearch, MdEdit, MdDelete } from "react-icons/md";
 import "../css/AccommodationReservation.css";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 export default function AccommodationReservation() {
-  const [selectedButton, setSelectedButton] = useState("All");
+  const [selectedButton, setSelectedButton] = useState("all");
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [propertyData, setPropertyData] = useState([]);
@@ -21,6 +21,8 @@ export default function AccommodationReservation() {
   const [deleteItemId, setDeleteItemId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
 
   // kato ning old Token
   useEffect(() => {
@@ -142,10 +144,68 @@ export default function AccommodationReservation() {
     }
   };
 
+  const handleStatus = async (id) => {
+    setLoading(true);
+    console.log("id: ", id);
+    const token = localStorage.getItem("auth_token");
+    try {
+      const res = await axios.put(
+        "http://127.0.0.1:8000/api/activateproperty",
+        {
+          propertyid: id,
+        },
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.data.status === "success") {
+        // alert(res.data.message);
+        try {
+          const propertyres = await axios.get(
+            "http://127.0.0.1:8000/api/user/properties",
+            {
+              params: {
+                userid: user.userid,
+              },
+            }
+          );
+          console.log("Propertydata: ", propertyres.data);
+          setData(propertyres.data.userproperties);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const closeModal = () => {
     setModalOpen(false);
     setEditModalOpen(false);
     setDeleteItemId(null);
+  };
+
+  const getData = () => {
+    switch (selectedButton) {
+      case "ALL":
+        return data;
+      case "ACTIVE":
+        return data.filter((item) => item.status === "Active");
+      case "INACTIVE":
+        return data.filter((item) => item.status === "Inactive");
+      default:
+        return [];
+    }
+  };
+
+  const handleRowClick = (id) => {
+    setSelectedId(id);
   };
 
   const filteredPropertyData =
@@ -162,320 +222,436 @@ export default function AccommodationReservation() {
       : [];
 
   return (
-    <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
+    <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
       {/* <Grid container>
         {/* <Grid item xs={2}>
           <Sidebar />
         </Grid> */}
-        {/* <Grid item xs={12}> */} 
-          {/* <div className="full-height bg-light"> */}
-          <div className="full-height">
+      {/* <Grid item xs={12}> */}
+      {/* <div className="full-height bg-light"> */}
+      <div className="full-height">
+        <div
+          style={{
+            background: "linear-gradient(to right, #990099, #990099,#cc00cc)",
+            padding: "1.5rem",
+            color: "#ffffff",
+            borderBottomLeftRadius: "0.5rem",
+            borderBottomRightRadius: "0.5rem",
+            width: "100%",
+          }}
+        >
+          <h1
+            className="title"
+            style={{
+              fontSize: "1.875rem",
+              fontWeight: "700",
+              marginBottom: "0.5rem",
+              color: "white",
+              font: "poppins",
+              textAlign: "left",
+            }}
+          >
+            Accommodation Reservation
+          </h1>
+          <p style={{ fontSize: "0.875rem", textAlign: "left" }}>
+            Lorem ipsum dolor sit amet
+          </p>
+        </div>
+
+        <div className="full-width mt-4">
+          <div className="controls flex justify-between items-center mb-4">
             <div
-              style={{
-                background:
-                  "linear-gradient(to right, #990099, #990099,#cc00cc)",
-                padding: "1.5rem",
-                color: "#ffffff",
-                borderBottomLeftRadius: "0.5rem",
-                borderBottomRightRadius: "0.5rem",
-                width: "100%",
-              }}
+              className="buttons flex justify-evenly w-full"
+              style={{ width: "fit-content", gap: "1rem" }}
             >
-              <h1
-                className="title"
-                style={{
-                  fontSize: "1.875rem",
-                  fontWeight: "700",
-                  marginBottom: "0.5rem",
-                  color: "white",
-                  font: "poppins",
-                  textAlign: "left",
-                }}
-              >
-                Accommodation Reservation
-              </h1>
-              <p style={{ fontSize: "0.875rem", textAlign: "left" }}>
-                Lorem ipsum dolor sit amet
-              </p>
+              {["All", "In", "Out", "Cancelled", "Upcoming"].map((button) => (
+                <button
+                  key={button}
+                  className={`btn ${
+                    selectedButton.toLowerCase() === button.toLowerCase()
+                      ? "underline"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedButton(button.toLowerCase())}
+                >
+                  {button}
+                </button>
+              ))}
             </div>
 
-            <div className="full-width mt-4">
-              <div className="controls flex justify-between items-center mb-4">
-                <div
-                  className="buttons flex justify-evenly w-full"
-                  style={{ width: "fit-content", gap: "1rem" }}
-                >
-                  {["All", "In", "Out", "Cancelled", "Upcoming"].map(
-                    (button) => (
-                      <button
-                        key={button}
-                        className={`btn ${
-                          selectedButton.toLowerCase() === button.toLowerCase()
-                            ? "underline clicked"
-                            : ""
-                        }`}
-                        onClick={() => setSelectedButton(button.toLowerCase())}
-                      >
-                        {button}
-                      </button>
-                    )
-                  )}
-                </div>
-
-                <div
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginLeft: "1rem",
+                position: "relative",
+              }}
+            >
+              <div>
+                <MdSearch
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginLeft: "1rem",
-                    position: "relative",
+                    position: "absolute",
+                    left: "0.5rem",
+                    fontSize: "1.8rem",
+                    marginTop: "0.7rem",
                   }}
-                >
-                  <div>
-                    <MdSearch
-                      style={{
-                        position: "absolute",
-                        left: "0.5rem",
-                        fontSize: "1.8rem",
-                        marginTop: "0.7rem",
-                      }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Search here"
-                      style={{
-                        padding: "0.5rem 1rem 0.5rem 2.5rem",
-                        borderWidth: "1px",
-                        borderRadius: "0.5rem",
-                        outline: "none",
-                        height: "3rem",
-                        width: "100%",
-                        marginBottom: "-1rem",
-                        border: "none",
-                        boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.2)",
-                      }}
-                    />
-                  </div>
-
-                  <button
-                    onClick={() => setShowDropdown(!showDropdown)}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      borderWidth: "1px",
-                      borderRadius: "0.5rem",
-                      marginLeft: "0.2rem",
-                      height: "3rem",
-                      cursor: "pointer",
-                      marginBottom: "-0.9rem",
-                      backgroundColor: "white",
-                      border: "none",
-                      boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.2)",
-                    }}
-                  >
-                    <MdMenuOpen style={{ height: "2rem" }} />
-                  </button>
-                  {showDropdown && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "3rem",
-                        left: "42%",
-                        backgroundColor: "white",
-                        borderWidth: "1px",
-                        borderRadius: "0.5rem",
-                        boxShadow:
-                          "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                        zIndex: 10,
-                        padding: "0.5rem",
-                        width: "10rem",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "700",
-                          padding: "0.5rem 0",
-                          textAlign: "left",
-                          marginLeft: "0.8rem",
-                        }}
-                      >
-                        Search by
-                      </div>
-                      <hr style={{ margin: "0.5rem 0" }} />
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "0.5rem",
-                        }}
-                      >
-                        {["Property ID", "Property Name", "Type"].map(
-                          (option) => (
-                            <button
-                              key={option}
-                              onClick={() => {
-                                setSelectedOption(option);
-                                setShowDropdown(false);
-                              }}
-                              style={{
-                                padding: "0.5rem 1rem",
-                                textAlign: "left",
-                                backgroundColor:
-                                  selectedOption === option
-                                    ? "#FCCD6E"
-                                    : "white",
-                                color:
-                                  selectedOption === option ? "white" : "black",
-                                borderRadius: "0.25rem",
-                                cursor: "pointer",
-                                fontFamily: "Poppins",
-                                border: "none",
-                                outline: "none",
-                              }}
-                            >
-                              {option}
-                            </button>
-                          )
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              {loading ? (
-                <div
+                />
+                <input
+                  type="text"
+                  placeholder="Search here"
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "200px",
-                  }}
-                >
-                  <div>Loading...</div>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    position: "relative",
+                    padding: "0.5rem 1rem 0.5rem 2.5rem",
+                    borderWidth: "1px",
+                    borderRadius: "0.5rem",
+                    outline: "none",
+                    height: "3rem",
                     width: "100%",
-                    backgroundColor: "#ffffff",
+                    marginBottom: "-1rem",
+                    border: "none",
+                    boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.2)",
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderWidth: "1px",
+                  borderRadius: "0.5rem",
+                  marginLeft: "0.2rem",
+                  height: "3rem",
+                  cursor: "pointer",
+                  marginBottom: "-0.9rem",
+                  backgroundColor: "white",
+                  border: "none",
+                  boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                <MdMenuOpen style={{ height: "2rem" }} />
+              </button>
+              {showDropdown && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "3rem",
+                    left: "42%",
+                    backgroundColor: "white",
+                    borderWidth: "1px",
+                    borderRadius: "0.5rem",
                     boxShadow:
                       "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                    borderRadius: "0.5rem",
-                    marginTop: "1.5rem",
-                    marginBottom: "1.5rem",
+                    zIndex: 10,
+                    padding: "0.5rem",
+                    width: "10rem",
+                    marginTop: "0.5rem",
                   }}
                 >
-                  <table className="table-auto w-full text-center border-collapse">
-                    <thead>
-                      <tr
-                        className="border-b"
-                        style={{ backgroundColor: "#f0f0f0" }}
+                  <div
+                    style={{
+                      fontSize: "0.875rem",
+                      fontWeight: "700",
+                      padding: "0.5rem 0",
+                      textAlign: "left",
+                      marginLeft: "0.8rem",
+                    }}
+                  >
+                    Search by
+                  </div>
+                  <hr style={{ margin: "0.5rem 0" }} />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    {["Property ID", "Property Name", "Type"].map((option) => (
+                      <button
+                        key={option}
+                        onClick={() => {
+                          setSelectedOption(option);
+                          setShowDropdown(false);
+                        }}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          textAlign: "left",
+                          backgroundColor:
+                            selectedOption === option ? "#FCCD6E" : "white",
+                          color: selectedOption === option ? "white" : "black",
+                          borderRadius: "0.25rem",
+                          cursor: "pointer",
+                          fontFamily: "Poppins",
+                          border: "none",
+                          outline: "none",
+                        }}
                       >
-                        <th className="px-4 py-2">Property ID</th>
-                        <th className="px-4 py-2">Property Name</th>
-                        <th className="px-4 py-2">Type</th>
-                        <th className="px-4 py-2">Address</th>
-                        <th className="px-4 py-2">Price</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedButton === "all" &&
-                        filteredPropertyData.map((item) => (
-                          <tr key={item.id} className="border-b">
-                            <td className="px-4 py-2">{item.propertyid}</td>
-                            <td className="px-4 py-2">{item.property_name}</td>
-                            <td className="px-4 py-2">{item.property_type}</td>
-                            <td className="px-4 py-2">
-                              {item.property_address}
-                            </td>
-                            <td className="px-4 py-2">{item.total_price}</td>
-                            <td className="px-4 py-2">{item.status}</td>
-                            <td>
-                              <MdEdit
-                                onClick={() => handleEdit(item)}
-                                style={{
-                                  cursor: "pointer",
-                                  marginRight: "0.5rem",
-                                }}
-                              />
-                              <MdDelete
-                                onClick={() => handleDelete(item.id)}
-                                style={{
-                                  cursor: "pointer",
-                                  marginRight: "0.5rem",
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      {selectedButton === "in" &&
-                        checkIns.map((item) => (
-                          <tr key={item.id} className="border-b">
-                            <td className="px-4 py-2">{item.propertyid}</td>
-                            <td className="px-4 py-2">{item.property_name}</td>
-                            <td className="px-4 py-2">{item.property_type}</td>
-                            <td className="px-4 py-2">
-                              {item.property_address}
-                            </td>
-                            <td className="px-4 py-2">{item.total_price}</td>
-                            <td className="px-4 py-2">{item.status}</td>
-                            <td>
-                              <MdEdit
-                                onClick={() => handleEdit(item)}
-                                style={{
-                                  cursor: "pointer",
-                                  marginRight: "0.5rem",
-                                }}
-                              />
-                              <MdDelete
-                                onClick={() => handleDelete(item.id)}
-                                style={{
-                                  cursor: "pointer",
-                                  marginRight: "0.5rem",
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      {selectedButton === "out" &&
-                        checkOut.map((item) => (
-                          <tr key={item.id} className="border-b">
-                            <td className="px-4 py-2">{item.propertyid}</td>
-                            <td className="px-4 py-2">{item.property_name}</td>
-                            <td className="px-4 py-2">{item.property_type}</td>
-                            <td className="px-4 py-2">
-                              {item.property_address}
-                            </td>
-                            <td className="px-4 py-2">{item.total_price}</td>
-                            <td className="px-4 py-2">{item.status}</td>
-                            <td>
-                              <MdEdit
-                                onClick={() => handleEdit(item)}
-                                style={{
-                                  cursor: "pointer",
-                                  marginRight: "0.5rem",
-                                }}
-                              />
-                              <MdDelete
-                                onClick={() => handleDelete(item.id)}
-                                style={{
-                                  cursor: "pointer",
-                                  marginRight: "0.5rem",
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
+                        {option}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           </div>
-        {/* </Grid>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              backgroundColor: "#ffffff",
+              boxShadow:
+                "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              borderRadius: "0.5rem",
+              overflow: "hidden",
+              textAlign: "center",
+            }}
+          >
+            <table style={{ width: "100%", textAlign: "center" }}>
+              <thead style={{ backgroundColor: "#f0f0f0" }}>
+                <tr>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Select
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Property ID
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Property Name
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Type
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Address
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Price
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      style={{ textAlign: "center", padding: "1rem" }}
+                    >
+                      <div
+                        className="loading-container"
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          margin: "2rem",
+                          height: "100%",
+                        }}
+                      >
+                        <CircularProgress />
+                        <p>Retrieving data...</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  <>
+                    {selectedButton === "all" &&
+                      filteredPropertyData.map((item) => (
+                        <tr
+                          key={item.id}
+                          style={{ borderBottom: "1px solid #e0e0e0" }}
+                        >
+                          <td className="px-4 py-2">
+                            <input type="checkbox" />
+                          </td>
+                          <td className="px-4 py-2">{item.propertyid}</td>
+                          <td className="px-4 py-2">{item.property_name}</td>
+                          <td className="px-4 py-2">{item.property_type}</td>
+                          <td className="px-4 py-2">{item.property_address}</td>
+                          <td className="px-4 py-2">{item.total_price}</td>
+                          <td
+                            className="px-4 py-2"
+                            style={{
+                              color: item.status === "Active" ? "green" : "red",
+                            }}
+                          >
+                            {item.status}
+                          </td>
+                          <td className="px-4 py-2">
+                            <MdEdit
+                              onClick={() => handleEdit(item)}
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "0.5rem",
+                                color: "blue",
+                              }}
+                            />
+                            <MdDelete
+                              onClick={() => handleDelete(item.id)}
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "0.5rem",
+                                color: "red",
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    {selectedButton === "in" &&
+                      checkIns.map((item) => (
+                        <tr
+                          key={item.id}
+                          style={{ borderBottom: "1px solid #e0e0e0" }}
+                        >
+                          <td className="px-4 py-2">
+                            <input type="checkbox" />
+                          </td>
+                          <td className="px-4 py-2">{item.propertyid}</td>
+                          <td className="px-4 py-2">{item.property_name}</td>
+                          <td className="px-4 py-2">{item.property_type}</td>
+                          <td className="px-4 py-2">{item.property_address}</td>
+                          <td className="px-4 py-2">{item.total_price}</td>
+                          <td
+                            className="px-4 py-2"
+                            style={{
+                              color: item.status === "Active" ? "green" : "red",
+                            }}
+                          >
+                            {item.status}
+                          </td>
+                          <td className="px-4 py-2">
+                            <MdEdit
+                              onClick={() => handleEdit(item)}
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "0.5rem",
+                              }}
+                            />
+                            <MdDelete
+                              onClick={() => handleDelete(item.id)}
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "0.5rem",
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    {selectedButton === "out" &&
+                      checkOut.map((item) => (
+                        <tr
+                          key={item.id}
+                          style={{ borderBottom: "1px solid #e0e0e0" }}
+                        >
+                          <td className="px-4 py-2">
+                            <input type="checkbox" />
+                          </td>
+                          <td className="px-4 py-2">{item.propertyid}</td>
+                          <td className="px-4 py-2">{item.property_name}</td>
+                          <td className="px-4 py-2">{item.property_type}</td>
+                          <td className="px-4 py-2">{item.property_address}</td>
+                          <td className="px-4 py-2">{item.total_price}</td>
+                          <td
+                            className="px-4 py-2"
+                            style={{
+                              color: item.status === "Active" ? "green" : "red",
+                            }}
+                          >
+                            {item.status}
+                          </td>
+                          <td className="px-4 py-2">
+                            <MdEdit
+                              onClick={() => handleEdit(item)}
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "0.5rem",
+                              }}
+                            />
+                            <MdDelete
+                              onClick={() => handleDelete(item.id)}
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "0.5rem",
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                  </>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {/* </Grid>
       </Grid> */}
       <EditReservationModal
         open={editModalOpen}
