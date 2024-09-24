@@ -39,7 +39,7 @@ const MainContent = ({
     const bathroomsMatch = bathrooms === 'Any' || accommodation.bathroomcount >= parseInt(bathrooms, 10);
 
     const bookingOptionsMatch = bookingOptions.length === 0 ||
-      bookingOptions.every(option => accommodation.booking_options.includes(option));
+      bookingOptions.every(option => accommodation.bookingoptions.includes(option));
 
     const propertyTypeMatch = propertyTypes.length === 0 || 
       propertyTypes.includes(accommodation.property_type);

@@ -13,6 +13,7 @@ const ForgotPassword = () => {
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingresend, setLoadingresend] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [instructionText, setInstructionText] = useState('Password Reset');
   const [showEmailInput, setShowEmailInput] = useState(false);
@@ -27,6 +28,14 @@ const ForgotPassword = () => {
   const loaderStyle = {
     border: "4px solid rgb(178, 190, 181)",
     borderTopColor: "transparent",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    animation: loading ? "spin 1s linear infinite" : "none",
+  };
+  const loaderStyle2 = {
+    // border: "4px solid",
+    // borderTopColor: "transparent",
     borderRadius: "50%",
     width: "20px",
     height: "20px",
@@ -95,7 +104,40 @@ const ForgotPassword = () => {
     }
   };
 
-
+  const handleResendToken = async (e) => {
+ 
+    e.preventDefault();
+    setLoadingresend(true);
+    setMessage("");
+    if (!email) {
+      setMessage("Please enter an email");
+      setLoading(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+      return;
+    }
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/resendemail", {
+        email
+      });
+      console.log("forgotpass",res.data);
+      // setVerificationSent(true);
+      if (res.data) {
+        setLoadingresend(false);
+        handleSendEmail();
+        setMessage(res.data.message)
+      }
+    } catch (error) {
+      setLoadingresend(false);
+      console.error("Error validating password and email:", error);
+      console.error("Error occurred while submitting data:", error);
+      setMessage("Error occurred while submitting data");
+      setTimeout(() => {
+        setMessage("");
+      }, 1000);
+    }
+  };
 
 
   const handleSubmitToken = async (e) => {
@@ -264,6 +306,21 @@ const ForgotPassword = () => {
               "Verify"
             )}
           </button>
+
+          <button
+            type="button"
+            className="button-resnd"
+            onClick={handleResendToken}
+            style={{width:'20rem', justifyContent:'center',  background: "white", color:'#1780CB'}}
+            disabled={loadingresend}
+          >
+            {loadingresend ? (
+              <CircularProgress size={24} style={loaderStyle2} />
+            ) : (
+              "Resend Code"
+            )}
+          </button>
+         
           <div style={{ color: "red", textAlign: "center" }}>
             {message}
           </div>

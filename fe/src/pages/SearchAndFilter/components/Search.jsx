@@ -44,7 +44,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
             setSuggestions([]);
         }
     };
-
+    const today = new Date();
     const handleInputChange = (e) => {
         const inputValue = e.target.value;
         setQuery(inputValue);
@@ -150,6 +150,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                         selectsStart
                         startDate={startDate}
                         endDate={endDate}
+                        minDate={today} // Set minDate to today
                         placeholderText="From"
                         className="input-field"
                         id="dateInputFrom"
@@ -160,7 +161,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                         selectsEnd
                         startDate={startDate}
                         endDate={endDate}
-                        minDate={startDate}
+                        minDate={startDate || today} // Set minDate to startDate or today if startDate is null
                         placeholderText="To"
                         className="input-field"
                         id="dateInputTo"

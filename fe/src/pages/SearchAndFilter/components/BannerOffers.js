@@ -49,7 +49,11 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import axios from "axios";
 import Search from "./Search";
 
-export default function BannerOffers({ accommodations, setAccommodationList }) {
+export default function BannerOffers({
+  accommodations,
+  setAccommodationList,
+  originalAccommodationList,
+}) {
   const [guestCapacity, setGuestCapacity] = useState(null);
   const [availability, setAvailability] = useState({
     startDate: null,
@@ -59,6 +63,8 @@ export default function BannerOffers({ accommodations, setAccommodationList }) {
   const [checkout_date, setCheckout_date] = useState(null);
 
   const fetchProperties = async (checkin_date, checkout_date, guest_count) => {
+    const accList = originalAccommodationList;
+    console.log("Originallist: ", originalAccommodationList);
     const formattedCheckinDate = new Date(checkin_date)
       .toISOString()
       .slice(0, 10);
@@ -77,9 +83,12 @@ export default function BannerOffers({ accommodations, setAccommodationList }) {
           },
         }
       );
+
       const availablePropertyIds = response.data.map((item) => item.propertyid);
-      const filteredAccommodations = accommodations.filter((accommodation) =>
-        availablePropertyIds.includes(accommodation.propertyid)
+      console.log("Available Property Ids:", availablePropertyIds);
+      const filteredAccommodations = originalAccommodationList.filter(
+        (accommodation) =>
+          availablePropertyIds.includes(accommodation.propertyid)
       );
       console.log(filteredAccommodations);
       setAccommodationList(filteredAccommodations);
