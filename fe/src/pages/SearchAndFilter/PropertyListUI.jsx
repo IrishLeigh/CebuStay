@@ -144,7 +144,7 @@ const PropertyListUI = () => {
   return (
     <div style ={{ overflowY: "scroll", width : "100%"}}>
       <Container maxWidth="lg">
-        <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList} originalAccommodationList={originalAccommodationList} originalAccommodationList={originalAccommodationList} />
+        <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList} originalAccommodationList={originalAccommodationList} />
         <SortMenu />
         <div className="content-layout">
           <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
