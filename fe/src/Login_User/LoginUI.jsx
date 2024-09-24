@@ -238,6 +238,7 @@ const LoginUI = ({ setToken }) => {
   };
 
   return (
+    <div style={{width:"100%", overflowY: "scroll"}}>
     <div className="formContainer">
       <div className="form-container">
         <div style={{ textAlign: "center" }}>
@@ -385,6 +386,7 @@ const LoginUI = ({ setToken }) => {
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 };
