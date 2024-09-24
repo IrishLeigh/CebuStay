@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('property_pricing', function (Blueprint $table) {
             $table->increments('proppricingid');
             $table->integer('max_price');
-            $table->integer('min_price');
+            $table->integer('min_price') -> nullable();
             $table->float('profit');
             $table->timestamps();
         });

@@ -36,6 +36,7 @@ class PaymentController extends CORS
         // Create the checkout session using the PayMongo service
         try {
             $checkoutUrl = $this->payMongoService->createCheckoutSession($totalprice, $description, $returnUrl, $bookingId);
+            $paymentId = $response['paymentId'];
 
             // Save the payment record in the database
             $payment = new Payment();
@@ -43,6 +44,7 @@ class PaymentController extends CORS
             $payment->description = $description;
             $payment->status = $status;
             $payment->bookingid = $bookingId;
+            $payment->linkid = $paymentId;
             $payment->save();
 
             // Return the payment record along with the PayMongo checkout session link

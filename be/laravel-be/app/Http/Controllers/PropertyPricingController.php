@@ -13,7 +13,7 @@ class PropertyPricingController extends CORS
     {
         $this->enableCors($request);
         $propertyPricing = new PropertyPricing();
-        $propertyPricing->max_price = $request->input('max_price');
+        $propertyPricing->max_price = $request->input('max_price') ?? 0;
         $propertyPricing->min_price = $request->input('min_price');
         $propertyPricing->profit = $request->input('profit');
         $propertyPricing->save();
