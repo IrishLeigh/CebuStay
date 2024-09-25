@@ -39,52 +39,59 @@ class PayMongoService
                 'Content-Type' => 'application/json',
             ],
         ]);
+    
         $successUrl = $returnUrl . '?bookingId=' . $bookingId;
-        $response = $client->post('checkout_sessions', [
-            'json' => [
-                'data' => [
-                    'attributes' => [
-                        'amount' => $totalprice,
-                        'description' => $description . " Booking",
-                        'redirect' => [
-                            'success' => $returnUrl,
-                            'failed' => $returnUrl,
-                        ],
-                        'line_items' => [
-                            [
-                                'name' => 'Booking at ' . $description ,
-                                'quantity' => 1,
-                                'amount' => $totalprice,
-                                'currency' => 'PHP',
+    
+        try {
+            $response = $client->post('checkout_sessions', [
+                'json' => [
+                    'data' => [
+                        'attributes' => [
+                            'amount' => $totalprice,
+                            'description' => $description . " Booking",
+                            'redirect' => [
+                                'success' => $returnUrl,
+                                'failed' => $returnUrl,
                             ],
+                            'line_items' => [
+                                [
+                                    'name' => 'Booking at ' . $description,
+                                    'quantity' => 1,
+                                    'amount' => $totalprice,
+                                    'currency' => 'PHP',
+                                ],
+                            ],
+                            'payment_method_types' => [
+                                'gcash',
+                            ],
+                            'reference_number' => null,
+                            'send_email_receipt' => false,
+                            'show_description' => true,
+                            'show_line_items' => true,
+                            'status' => 'active',
+                            'success_url' => $successUrl,
+                            'metadata' => null,
                         ],
-                        'payment_method_types' => [
-                            'gcash',
-                        ],
-                        "reference_number" => null,
-                        "send_email_receipt"=> false,
-                        "show_description"=> true,
-                        "show_line_items"=> true,
-                        "status"=> "active",
-                        "success_url"=> $successUrl,
-                        "created_at"=> 1716666027,
-                        "updated_at"=> 1716666027,
-                        "metadata"=> null
                     ],
                 ],
-            ],
-        ]);
+            ]);
     
-        $data = json_decode($response->getBody(), true);
+            // Decode the response to get the checkout URL and payment ID
+            $data = json_decode($response->getBody(), true);
+            
+            // Retrieve the payment ID and checkout URL from the response
+            $checkoutUrl = $data['data']['attributes']['checkout_url']; // Adjust according to actual response
+            $paymentId = $data['data']['id']; // The payment ID from the PayMongo response
     
-        // Check if the data structure is correct and return the URL
-        if (isset($data['data']['attributes']['checkout_url'])) {
-            return $data['data']['attributes']['checkout_url'];
-        } else {
-            throw new \Exception('Checkout URL not found in the response.');
+            return [
+                'checkout_url' => $checkoutUrl,
+                'payment_id' => $paymentId,
+            ];
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to create checkout session: ' . $e->getMessage());
         }
-
     }
+    
 
     public function getRefund($refundId)
     {

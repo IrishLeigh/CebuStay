@@ -106,6 +106,7 @@ Route::post('/decodetoken', 'App\Http\Controllers\LoginUserController@decodeToke
 //Routes for property
 Route::post('/propertyinfo', 'App\Http\Controllers\PropertyController@InsertPropertyInfo');
 Route::get('/allproperties', 'App\Http\Controllers\PropertyController@getAllProperties');
+Route::get('/getallpropertiescoord', 'App\Http\Controllers\PropertyController@getAllPropertiesCoord');
 Route::get('/getproperty', 'App\Http\Controllers\PropertyController@getPropertyById');
 Route::get('/getproptest', 'App\Http\Controllers\PropertyController@show');
 Route::get('/getallunit', 'App\Http\Controllers\PropertyController@getAllUnitById');

@@ -35,16 +35,19 @@ class PaymentController extends CORS
 
         // Create the checkout session using the PayMongo service
         try {
-            $checkoutUrl = $this->payMongoService->createCheckoutSession($totalprice, $description, $returnUrl, $bookingId);
-            $paymentId = $response['paymentId'];
+            $checkoutData = $this->payMongoService->createCheckoutSession($totalprice, $description, $returnUrl, $bookingId);
+            $checkoutUrl = $checkoutData['checkout_url'];
+            $paymentId = $checkoutData['payment_id'];
+
 
             // Save the payment record in the database
             $payment = new Payment();
             $payment->amount = $amount / 100;
             $payment->description = $description;
             $payment->status = $status;
-            $payment->bookingid = $bookingId;
             $payment->linkid = $paymentId;
+            $payment->bookingid = $bookingId;
+
             $payment->save();
 
             // Return the payment record along with the PayMongo checkout session link
