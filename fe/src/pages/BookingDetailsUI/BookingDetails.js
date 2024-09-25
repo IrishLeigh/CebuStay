@@ -243,6 +243,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
   const [vat, setVat] = useState(0);
   const [allServices, setAllServices] = useState([]);
   const unitData = PropertyData?.[0]; // Access the first item in PropertyData array
+  const [basePrice, setBasePrice] = useState(0);
 
 
 
@@ -250,10 +251,13 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
     
     if (unitData.unitpricing.min_price) {
       const calculatedVat = (unitData.unitpricing.min_price * 0.12).toFixed(2);
-      const totalPrice = (parseFloat(unitData.unitpricing.min_price) + parseFloat(calculatedVat)).toFixed(2);
+      const totalPrice = (parseFloat(unitData.unitpricing.min_price) + parseFloat(calculatedVat)).
+      toFixed(2);
+      const basePrice = unitData.unitpricing.min_price - calculatedVat
       setVat(calculatedVat);
-      setPrice(totalPrice);
-      onPriceChange(parseFloat(totalPrice));
+      setPrice(unitData.unitpricing.min_price.toFixed(2));
+      setBasePrice(basePrice);
+      onPriceChange(parseFloat(unitData.unitpricing.min_price.toFixed(2)));
     } else {
       setPrice('N/A'); // Handle case when min_price is not available
     }
@@ -365,7 +369,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
               Base Price
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              Php {unitData?.unitpricing?.min_price || 'N/A'}
+              Php {basePrice || 'N/A'}
             </Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>

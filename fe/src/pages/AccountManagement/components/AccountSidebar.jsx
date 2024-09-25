@@ -94,14 +94,14 @@ const AccountSidebar = ({activeItem, handleItemClick}) => {
                     <FaCalendarCheck />
                     <span>Bookings</span>
                 </li>
-
+{/* 
                 <li
                     className={`menu-item ${activeItem === 'reviews' ? 'active' : ''}`}
                     onClick={() => handleItemClick('reviews')}
                 >
                     <FaStar />
                     <span>Reviews</span>
-                </li>
+                </li> */}
             </ul>
         </div>
     );

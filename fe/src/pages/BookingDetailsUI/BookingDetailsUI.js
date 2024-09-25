@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, Typography, Grid, Button, Box, CircularProgress, Snackbar, Alert } from "@mui/material";
+import { AppBar, Toolbar, Typography, Grid, Button, Box, CircularProgress, Snackbar, Alert, Container } from "@mui/material";
 import BookingDetails from "./BookingDetails";
 import BookingGuestDetails from "./BookingGuestDetails";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Container } from "react-bootstrap";
+
 
 function BookingDetailsUI() {
   const [price, setPrice] = useState(null);
@@ -30,6 +30,7 @@ function BookingDetailsUI() {
   const checkout_date = searchParams.get("checkOutDate") || '';
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (checkin_date && checkout_date) {
       const checkIn = new Date(checkin_date);
       const checkOut = new Date(checkout_date);
@@ -170,7 +171,7 @@ function BookingDetailsUI() {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" , width: '100%'}}>
         <CircularProgress />
       </Box>
     );
@@ -178,7 +179,7 @@ function BookingDetailsUI() {
 
   console.log("Property Data :", propertyData);
   return (
-    <div style={{overflowY:"scroll", width: "100%"}}>
+    <div style={{ width : '100%' }}>
       <AppBar position="static" sx={{ background: "#16B4DD" }}>
         <Toolbar>
           <Typography variant="h6" sx={{ margin: '0 auto', maxWidth: 'lg', width: '100%' ,padding: '1%' }}>
