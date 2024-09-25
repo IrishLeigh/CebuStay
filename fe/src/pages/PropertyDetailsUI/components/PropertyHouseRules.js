@@ -5,12 +5,11 @@ import Grid from "@mui/material/Grid";
 import ArrowRight from "@mui/icons-material/Send";
 import {
   AccessTime,
-  Hotel,
-  Pets,
-  SmokeFree,
   EventNote,
   NaturePeople,
   NoMeetingRoom,
+  Pets,
+  SmokeFree,
 } from "@mui/icons-material";
 
 // Constants for house rule properties
@@ -122,51 +121,46 @@ const HouseRules = ({ houserules = {} }) => {
         {rulesArray.length > 0 ? (
           <Grid container spacing={3}>
             {chunkedRules.map((ruleChunk, index) => (
-              <Grid key={index} item>
-                <Grid
+              <Grid key={index} item xs={12} md={4}>
+                <Paper
                   sx={{
                     padding: "16px",
                     borderRadius: "8px",
-                    height: 200,
-                    width: 357,
+                    height: 150,
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark" ? "#1A2027" : "#fff",
                     border: "1px solid #DDDDDD",
+                    boxShadow: "none", // Remove box shadow
                   }}
                 >
                   {ruleChunk.map((rule, subIndex) => (
-                    <div key={subIndex} style={{ marginBottom: "45px" }}>
-                      <div key={subIndex} style={{ marginBottom: "45px" }}>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
+                    <div key={subIndex} style={{ marginBottom: "24px" }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ display: "flex", alignItems: "center" }}
+                      >
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            marginRight: "8px",
+                            fontFamily: "poppins",
                           }}
                         >
-                          <span
-                            style={{
-                              fontWeight: "bold",
-                              marginRight: "8px",
-                              fontFamily: "poppins",
-                            }}
-                          >
-                            {rule.icon} {rule.label}
-                          </span>
-                          <span
-                            style={{
-                              fontWeight: "normal",
-                              marginLeft: "auto",
-                              fontFamily: "poppins",
-                            }}
-                          >
-                            {rule.value}
-                          </span>
-                        </Typography>
-                      </div>
+                          {rule.icon} {rule.label}
+                        </span>
+                        <span
+                          style={{
+                            fontWeight: "normal",
+                            marginLeft: "auto",
+                            fontFamily: "poppins",
+                          }}
+                        >
+                          {rule.value}
+                        </span>
+                      </Typography>
                     </div>
                   ))}
-                </Grid>
+                </Paper>
               </Grid>
             ))}
           </Grid>
