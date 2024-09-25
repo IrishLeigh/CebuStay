@@ -27,6 +27,11 @@ const PropertyListUI = () => {
   const [accommodationList, setAccommodationList] = useState([]);
   const [originalAccommodationList, setOriginalAccommodationList] = useState([]);
   const [pricingList, setPricingList] = useState([]);
+  const [searchUpdateData, setSearchUpdateData] = useState({
+    checkin_date: null,
+    checkout_date: null,
+    guestCapacity: null,
+  })
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -140,12 +145,22 @@ const PropertyListUI = () => {
   const handleAmenityChange = (amenities) => {
     setSelectedAmenities(amenities);
   };
+  const handleSearchUpdate = ({ guestCapacity, checkin_date, checkout_date }) => {
+    setSearchUpdateData({ guestCapacity, checkin_date, checkout_date });
+    // You can do other things here based on the search updates
+    console.log("Guest Capacity FROM PROPERTY LIST:", guestCapacity);
+    console.log("Checkin Date  PROPERTY LIST:", checkin_date);
+    console.log("Checkout Date  PROPERTY LIST:", checkout_date);
+
+  };
+
+  console.log("Search UPDATE FROM PORPERTY LIST:", searchUpdateData);
 
   return (
-    <div style ={{ overflowY: "scroll", width : "100%"}}>
+    // <div style ={{ overflowY: "scroll", width : "100%"}}>
       <Container maxWidth="lg">
-        <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList} originalAccommodationList={originalAccommodationList} />
-        <SortMenu />
+        <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList}  onSearchUpdate={handleSearchUpdate}/>
+        {/* <SortMenu /> */}
         <div className="content-layout">
           <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
           <MainContent
@@ -154,10 +169,11 @@ const PropertyListUI = () => {
             filters={filters}
             searchData={searchData}
             setSearchData={setSearchData}
+            searchUpdate = {searchUpdateData}
           />
         </div>
       </Container>
-    </div>
+    // </div>
   );
 };
 

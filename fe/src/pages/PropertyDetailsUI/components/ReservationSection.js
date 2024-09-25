@@ -17,12 +17,16 @@ export default function ReservationSection({
   propertyinfo,
 }) {
   const [propertyInfo, setPropertyInfo] = useState();
+  const [price , setPrice] = useState();
 
   useEffect(() => {
     try {
       if (propertyinfo) {
         setPropertyInfo(propertyinfo);
+        setPrice(propertyinfo?.property_unitdetails[0]?.unitpricing?.min_price || 1000);
+
         // console.log("PROPERTY INFO", propertyinfo);
+
       }
     } catch (err) {
       console.log(err);
@@ -36,8 +40,8 @@ export default function ReservationSection({
     }).format(price);
   };
 
-  const price = propertyInfo?.property_unitpricing?.min_price || 2000;
-
+  
+console.log("PRICE", price);
   return (
     <Paper className="reservation-cntr" sx={{ borderRadius: "12px" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
