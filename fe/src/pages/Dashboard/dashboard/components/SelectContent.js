@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
 import MuiAvatar from '@mui/material/Avatar';
 import MuiListItemAvatar from '@mui/material/ListItemAvatar';
 import MenuItem from '@mui/material/MenuItem';
@@ -11,6 +10,8 @@ import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
+import SmartphoneRoundedIcon from '@mui/icons-material/SmartphoneRounded';
+import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 import { useEffect } from 'react';
 
 const Avatar = styled(MuiAvatar)(({ theme }) => ({
@@ -29,8 +30,7 @@ const ListItemAvatar = styled(MuiListItemAvatar)({
 export default function SelectContent({ property, onPropertyChange }) {
   const [selectedProperty, setSelectedProperty] = React.useState('');
   const [loading, setLoading] = React.useState(true);
-  const navigate = useNavigate();  // Use navigate hook here
-  
+  console.log('property', property);
 
   useEffect(() => {
     if (property) {
@@ -43,15 +43,10 @@ export default function SelectContent({ property, onPropertyChange }) {
   const handleChange = (event) => {
     const propertyId = event.target.value;
     setSelectedProperty(propertyId);
-
-    if (propertyId === 'add-property') {
-      navigate('/list-property');  // Navigate to /listings when "Add property" is selected
-    } else {
-      onPropertyChange(propertyId); // Call the parent's function with the selected property ID
-    }
+    onPropertyChange(propertyId); // Call the parent's function with the selected property ID
   };
+  console.log('selectedProperty', selectedProperty);
 
-  console.log ('Property', property);
   return (
     <Select
       labelId="property-select"
@@ -79,24 +74,27 @@ export default function SelectContent({ property, onPropertyChange }) {
         Select Property
       </MenuItem>
       <ListSubheader sx={{ pt: 0 }}>Properties</ListSubheader>
-      {property.data.map((prop) => (
-        <MenuItem key={prop.propertyid} value={prop.propertyid}>
-          <ListItemAvatar>
-            {/* <Avatar alt={prop.property_name}> */}
-            <Avatar alt={prop.property_name} src={prop.ownership_logo}><img src={prop.ownership_logo}/>
-              {/* You can customize the icon here based on property type or any other logic */}
-              <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={prop.property_name} secondary={prop.property_type} />
-        </MenuItem>
-      ))}
+      {property && property.data && property.data.length > 0 ? (
+        property.data.map((prop) => (
+          <MenuItem key={prop.propertyid} value={prop.propertyid}>
+            <ListItemAvatar>
+              <Avatar alt={prop.property_name} src={prop.ownership_logo}>
+                <img src={prop.ownership_logo} alt="Ownership Logo" />
+                <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={prop.property_name} secondary={prop.property_type} />
+          </MenuItem>
+        ))
+      ) : (
+        <MenuItem disabled>No properties available</MenuItem>
+      )}
       <Divider sx={{ mx: -1 }} />
-      <MenuItem value="add-property">
+      <MenuItem value="add-product">
         <ListItemIcon>
           <AddRoundedIcon />
         </ListItemIcon>
-        <ListItemText primary="Add property" />
+        <ListItemText primary="Add product" secondary="Web app" />
       </MenuItem>
     </Select>
   );

@@ -15,6 +15,10 @@ import CalendarToday from "@mui/icons-material/CalendarToday";
 import Public from "@mui/icons-material/Public";
 import Phone from "@mui/icons-material/Phone";
 import axios from "axios";
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const countries = [
   { value: "USA", label: "USA", code: "+1" },
@@ -62,8 +66,8 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     if (profile) {
       setIsChanged(
         (profile.birthday ? formatDate(profile.birthday) : "") !== birthday ||
-          country !== profile.country ||
-          phone !== profile.cellnumber
+        country !== profile.country ||
+        phone !== profile.cellnumber
       );
       setEditedProfile({
         ...profile,
@@ -90,10 +94,25 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   const handleSaveInfo = async (e) => {
     e.preventDefault();
 
-    const phoneRegex = /^09\d{9}$/;
+    let phoneRegex;
+    switch (country) {
+      case "USA":
+      case "Canada":
+        phoneRegex = /^[2-9]\d{2}[2-9]\d{2}\d{4}$/; // Matches 10-digit numbers without country code (e.g., 2125551234)
+        break;
+      case "Mexico":
+        phoneRegex = /^\d{10}$/; // Matches 10-digit numbers without the country code (e.g., 1234567890)
+        break;
+      case "Philippines":
+        phoneRegex = /^9\d{9}$/; // Matches 11-digit numbers starting with 9 (e.g., 9123456789)
+        break;
+      default:
+        phoneRegex = /^\d+$/; // Default regex that only allows digits
+        break;
+    }
     if (!phoneRegex.test(phone)) {
       setSnackbarMessage(
-        "Invalid phone number format. Please enter a valid 11-digit mobile number starting with 09 (e.g., 09123456789)."
+        `Invalid phone number format for ${country}. Please enter a valid number.`
       );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
@@ -129,6 +148,9 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
       setSnackbarMessage("Personal information updated successfully!");
       setSnackbarSeverity("success");
+      setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
+      setCountry(profile.country);
+      setPhone(profile.cellnumber);
       setIsChanged(false);
       if (onUpdateProfile) {
         onUpdateProfile(editedProfile); // Pass updated profile back to parent component
@@ -171,26 +193,35 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
       {/* Email, Birthday, Country, and Phone Number */}
       <div className="account-id-cntr">
-        <TextField
-          required
-          id="outlined-required"
-          label="Birthday"
-          type="date"
-          value={birthday}
-          onChange={(e) => setBirthday(e.target.value)}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <CalendarToday />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Birthday"
+            value={birthday ? dayjs(birthday) : null}
+            onChange={(date) => setBirthday(date ? date.format('YYYY-MM-DD') : '')}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                required
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                  marginTop: "1rem",
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                      <CalendarToday />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+            maxDate={dayjs().subtract(18, 'year')}
+          />
+        </LocalizationProvider>
 
         <TextField
           required
@@ -246,18 +277,16 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
         <div className="account-btn-cntr">
           <button
-            className={`save-btn ${
-              isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
-            }`}
+            className={`save-btn ${isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+              }`}
             onClick={handleSaveInfo}
             disabled={!isChanged}
           >
             Save
           </button>
           <button
-            className={`cancel-btn ${
-              isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
-            }`}
+            className={`cancel-btn ${isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+              }`}
             onClick={handleCancel}
             disabled={!isChanged}
           >
