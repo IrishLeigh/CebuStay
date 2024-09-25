@@ -14,7 +14,6 @@
 }
 
 .left-section, .right-section {
-  padding: 24px;
   background-color: #f8f9fa;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -71,7 +70,7 @@
 }
 
 
-.btn-update-details-light {
+.update-details-btn {
   background-color: #f8f9fa;
   color: #007bff;
   border: 1px solid #007bff;
@@ -84,10 +83,7 @@
   font-size: 14px;
 }
 
-.btn-update-details-light:hover {
-  background-color: #007bff;
-  color: white;
-}
+
 .icon {
   display: inline-flex;
   align-items: center;
@@ -151,11 +147,13 @@
 .cancel-booking-btn {
   background-color: #e74c3c;
   color: white;
+  margin-top: 1rem;
   padding: 12px;
   border-radius: 8px;
   cursor: pointer;
   border: none;
   transition: background-color 0.3s ease;
+  width: 100%;
 }
 
 .cancel-booking-btn:hover {
@@ -165,3 +163,47 @@
 .cancel-booking-btn:focus, .pay-now-btn:focus {
   outline: none;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above other content */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+}
+
+.btn-confirm, .btn-cancel {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-confirm {
+  background-color: #d9534f; /* Bootstrap Danger Color */
+  color: white;
+}
+
+.btn-cancel {
+  background-color: #5bc0de; /* Bootstrap Info Color */
+  color: white;
+}
+
