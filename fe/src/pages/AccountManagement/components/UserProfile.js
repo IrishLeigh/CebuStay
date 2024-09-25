@@ -34,9 +34,9 @@ export default function UserProfile({ profile }) {
         });
         if (res.data) {
           setProfileImage(res.data.src);
-  
+
           // Check if profile has changed and update currentProfile accordingly
-          if (profile !== currentProfile) { 
+          if (profile !== currentProfile) {
             setCurrentProfile(profile);
           }
         }
@@ -44,10 +44,9 @@ export default function UserProfile({ profile }) {
         console.error("Error fetching image:", error.message || error);
       }
     };
-  
+
     fetchUserImage();
   }, [profile]);
-  
 
   const handleProfileUpdate = (updatedProfile) => {
     setCurrentProfile(updatedProfile);
@@ -159,8 +158,6 @@ export default function UserProfile({ profile }) {
     setModalOpen(false);
   };
 
-  console.log('ma change',currentProfile);
-
   return !currentProfile ? (
     <div className="loading-container">
       <CircularProgress />
@@ -186,7 +183,7 @@ export default function UserProfile({ profile }) {
                     ? encodeURI(profileImage.trim()) // Remove extra spaces and encode the URL
                     : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                 }
-                alt="Profile Picture"
+                alt="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                 className="avatar-image"
               />
 
