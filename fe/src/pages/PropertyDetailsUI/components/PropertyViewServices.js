@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import { Divider } from "@mui/material";
 import ArrowRight from "@mui/icons-material/Send";
-import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import CarRentalIcon from "@mui/icons-material/CarRental";
@@ -11,10 +10,11 @@ import PetsIcon from "@mui/icons-material/Pets";
 import LocalLaundryServiceIcon from "@mui/icons-material/LocalLaundryService";
 import RoomServiceIcon from "@mui/icons-material/RoomService";
 import AlarmIcon from "@mui/icons-material/Alarm";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import "../css/PropertyBenefits.css";
 
 const servicesIcons = {
-  "House Keeping": <CleaningServicesIcon sx={{ color: "#16B4DD" }} />,
+  Housekeeping: <CleaningServicesIcon sx={{ color: "#16B4DD" }} />, // Updated icon
   Breakfast: <FreeBreakfastIcon sx={{ color: "#16B4DD" }} />,
   "Shuttle Service": <DirectionsBusIcon sx={{ color: "#16B4DD" }} />,
   "Car Rental": <CarRentalIcon sx={{ color: "#16B4DD" }} />,
