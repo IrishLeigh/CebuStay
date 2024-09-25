@@ -17,7 +17,7 @@ const MainContent = ({
     bathrooms: 'Any',
     bookingOptions: [],
     propertyTypes: [],
-  },
+  },searchUpdate
 }) => {
   const [guestCapacity, setGuestCapacity] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,13 +49,19 @@ const MainContent = ({
   });
 
   const handleView = (e, propertyid) => {
-    const state = {
-      guestCapacity,
-      checkin_date,
-      checkout_date
-    };
-    navigate(`/accommodation/property/${propertyid}`, { state });
+    // Construct query params
+    const queryParams = new URLSearchParams({
+      guestCapacity: searchUpdate.guestCapacity || '', // Default to empty string if null
+      checkin_date: searchUpdate.checkin_date || '', // Default to empty string if null
+      checkout_date: searchUpdate.checkout_date || '', // Default to empty string if null
+    }).toString();
+
+    console.log("Query Params:", queryParams);
+  
+    // Navigate to the property page with query parameters
+    navigate(`/accommodation/property/${propertyid}?${queryParams}`);
   };
+  
 
   useEffect(() => {
     // Add delay before setting loading to false
@@ -66,6 +72,7 @@ const MainContent = ({
     // return () => clearTimeout(delay); // Cleanup function
   }, [filteredAccommodations, accommodations]); // Run only on component mount
 
+  console.log("SEARCH UPDATE FROM MAIN",searchUpdate );
   return (
     <div className="all-container">
       <div className="content-container" style={{ marginBottom: '76rem' }}>
