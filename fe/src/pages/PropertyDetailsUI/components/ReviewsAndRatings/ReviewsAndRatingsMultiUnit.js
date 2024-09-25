@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../css/ReviewsAndRatings.css";
-import {
-  FaStar,
-  FaRegStar,
-  FaStarHalfAlt,
-  FaUsers,
-  FaChartBar,
-  FaThumbsUp,
-  FaThumbsDown,
-} from "react-icons/fa";
+import { FaStar, FaRegStar } from "react-icons/fa";
 import axios from "axios";
 import { useUser } from "../../../../components/UserProvider";
 
@@ -308,63 +300,6 @@ const ReviewsAndRatingsMultiUnit = ({ propertyId }) => {
 
         <div className="reviews-list-container">
           <h2 className="reviews-title">{view} Reviews</h2>
-          {/* <div className="reviews-list">
-            {filteredReviews.map((review, index) => (
-              <div
-                key={index}
-                className={`review-card ${
-                  review.isPositive ? "positive" : "negative"
-                }`}
-              >
-                <div className="review-header">
-                  <div className="review-avatar">{review.user.initials}</div>
-                  <div className="review-info">
-                    <div className="review-name">{review.user.name}</div>
-                    <div className="review-location">Unknown Location</div>
-                  </div>
-
-                  <div className="review-date">
-                    Reviewed: {new Date(review.date).toLocaleDateString()}
-                  </div>
-                </div>
-                <div className="review-content">
-                  <div className="review-unit">
-                    <span>
-                      <strong>Unit:</strong> {review.unitname}
-                    </span>
-                  </div>
-                  <div
-                    className={`review-${
-                      review.isPositive ? "positive" : "negative"
-                    }`}
-                  >
-                    <span className="review-icon">
-                      {review.isPositive ? "😊" : "😞"}
-                    </span>{" "}
-                    {review.comment}
-                  </div>
-                </div>
-                <div className="review-footer">
-                  <div className="review-rating">
-                    {[...Array(review.rating)].map((_, idx) => (
-                      <FaStar key={idx} className="star filled" />
-                    ))}
-                    {[...Array(5 - review.rating)].map((_, idx) => (
-                      <FaRegStar key={idx} className="star" />
-                    ))}
-                  </div>
-                  <div className="review-buttons">
-                    <button className="like-button">
-                      <FaThumbsUp />
-                    </button>
-                    <button className="dislike-button">
-                      <FaThumbsDown />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div> */}
 
           <div className="reviews-list">
             {filteredReviews.map((review, index) => (
