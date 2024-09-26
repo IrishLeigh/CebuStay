@@ -34,9 +34,8 @@ export default function UserProfile({ profile }) {
         });
         if (res.data) {
           setProfileImage(res.data.src);
-  
-          // Check if profile has changed and update currentProfile accordingly
-          if (profile !== currentProfile) { 
+          // Only update currentProfile if it's different
+          if (profile !== currentProfile) {
             setCurrentProfile(profile);
           }
         }
@@ -44,10 +43,9 @@ export default function UserProfile({ profile }) {
         console.error("Error fetching image:", error.message || error);
       }
     };
-  
+
     fetchUserImage();
-  }, [profile]);
-  
+  }, [profile, currentProfile]);
 
   const handleProfileUpdate = (updatedProfile) => {
     setCurrentProfile(updatedProfile);
@@ -158,8 +156,6 @@ export default function UserProfile({ profile }) {
     setNewProfileImage(null);
     setModalOpen(false);
   };
-
-  console.log('ma change',currentProfile);
 
   return !currentProfile ? (
     <div className="loading-container">

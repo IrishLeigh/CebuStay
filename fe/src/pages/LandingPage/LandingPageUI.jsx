@@ -19,15 +19,19 @@ const LandingPageUI = () => {
   return (
 
 
-      < div style ={{ display: "flex", flexDirection: "column" , overflowY: "scroll"}}>
-      <div>
-      <LandingCover onSeeMapClick={scrollToMap} />
-      {/* <BasicGrid/> */}
-      <InteractiveMap />
-      {/* <Popular /> */}
-      {/* <Hidden /> */}
-      </div>
-      <Footer/>
+      < div style ={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <div>
+        <LandingCover onSeeMapClick={scrollToMap} />
+        {/* <BasicGrid/> */}
+        <div ref={mapRef}>
+          <InteractiveMap />
+
+        </div>
+        
+        {/* <Popular /> */}
+        {/* <Hidden /> */}
+        </div>
+        <Footer/>
       </div >
       
    

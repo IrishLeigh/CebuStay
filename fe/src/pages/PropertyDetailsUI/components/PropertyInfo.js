@@ -104,7 +104,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo }) {
   };
 
   return (
-    <div style={{ marginBottom: "2rem" }}>
+    <div >
       <Box className="sort-menu">
         <button className="sort-btn">View As</button>
         {isSingleUnit && (

@@ -9,6 +9,7 @@ import ImageGallery from "./ImageGallery";
 import dayjs from "dayjs";
 import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsUI/ReviewsRatings";
 import { useNavigate, useLocation } from "react-router-dom";
+import Directions from "./Directions";
 
 export default function SinglePropertyUI({ propertyid }) {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -95,7 +96,7 @@ export default function SinglePropertyUI({ propertyid }) {
   }
 
   return (
-    <Container maxWidth="xl">
+    <div>
       <div style={{ paddingBottom: "2rem" }}>
         <ImageGallery images={propertyImages} />
         <div style={{ height: "clamp(2rem, 5vw, 2rem)", display: "flex", marginTop: "-16px" }}>
@@ -107,26 +108,37 @@ export default function SinglePropertyUI({ propertyid }) {
           <div style={{ flex: "1 0 0", background: "#A334CF" }} />
           <div style={{ flex: "1 0 0", background: "#1780CB" }} />
         </div>
-        <Grid container spacing={2}>
-          <Grid item xs={8}>
-            <PropertyOverView propertyinfo={propertyInfo} />
-          </Grid>
-          <Grid item xs={4}>
-            <ReservationSection
-              checkInDate={checkInDate}
-              checkOutDate={checkOutDate}
-              handleCheckInChange={handleCheckInChange}
-              handleCheckOutChange={handleCheckOutChange}
-              handleReserveClick={handleReserveClick}
-              guestCount={guestCount}
-              handleGuestCountChange={handleGuestCountChange}
-              propertyinfo={propertyInfo}
-            />
-          </Grid>
+        <Grid container >
+          <Grid item xs={12} sm={8}>
+          <div style={{ margin: "1rem 1rem 0 0" }}>
+              <PropertyOverView propertyinfo={propertyInfo} />
+            </div>
+            </Grid> 
+            <Grid item xs={12} sm={4}>
+              <div style={{ margin: "1rem 0 " }}>
+                <ReservationSection
+                  checkInDate={checkInDate}
+                  checkOutDate={checkOutDate}
+                  handleCheckInChange={handleCheckInChange}
+                  handleCheckOutChange={handleCheckOutChange}
+                  handleReserveClick={handleReserveClick}
+                  guestCount={guestCount}
+                  handleGuestCountChange={handleGuestCountChange}
+                  propertyinfo={propertyInfo}
+                />
+              </div>
+            </Grid>
         </Grid>
-        <PropertyInfo propertyInfo={propertyInfo} propertyImages={propertyImages} />
-        <ReviewsAndRatingsSingleUnit propertyId={propertyid} />
+        <div style={{ margin: "1rem 0" }}>
+          <Directions propertyid={propertyid.propertyid} />
+        </div>
+        <div style={{ margin: "1rem 0" }}>
+          <PropertyInfo propertyInfo={propertyInfo} propertyImages={propertyImages} />
+        </div>
+        <div style={{ margin: "1rem 0" }}>
+          <ReviewsAndRatingsSingleUnit propertyId={propertyid} />
+        </div>
       </div>
-    </Container>
+    </div>
   );
 }

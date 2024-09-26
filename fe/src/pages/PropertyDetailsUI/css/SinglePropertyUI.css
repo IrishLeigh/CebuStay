@@ -1,11 +1,9 @@
 .overview-container {
   background-color: #fff;
-  margin-top: 20px;
-  margin-right: 20px;
-  margin-bottom: 20px;
+  margin-top: 1rem;
   /* border-radius: 12px; */
   height: auto;
-  padding: 1.5rem;
+  padding: 2rem;
   font-family: 'Poppins', sans-serif;
 
 }

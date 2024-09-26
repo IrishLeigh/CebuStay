@@ -20,8 +20,8 @@ import { useNavigate, Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu"; // Import the MUI icon
 // import './NavigationBar.css'; // Import the CSS file
 import axios from "axios";
-const pages = ["Home", "Accommodation", "Contact us", "About us"];
-const settings = ["Account", "Your Properties", "Logout"];
+const pages = ["Home", "Accommodation"];
+const settings = ["Account", "Your Properties","Your Bookings", "Logout"];
 
 function HeaderUser({ token, setToken }) {
   const [loading, setLoading] = useState(false);
@@ -63,6 +63,9 @@ function HeaderUser({ token, setToken }) {
         }
         break;
       case "Your Properties":
+        navigate("/admin/overview");
+        break;
+        case "Your Properties":
         navigate("/admin/overview");
         break;
       case "Logout":
@@ -110,30 +113,31 @@ function HeaderUser({ token, setToken }) {
         position="static"
         sx={{ backgroundColor: "white", color: "black" }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <img
-                src="/Logo2.png"
-                alt="Logo"
-                className="logo"
-                style={{ height: "40px", marginRight: "10px" }}
-              />
-              <Typography
-                noWrap
-                component="a"
-                href="/"
-                sx={{
-                  fontFamily: "Poppins, sans-serif",
-                  fontWeight: 1000,
-                  color: "#16B4DD",
-                  textDecoration: "none",
-                  fontSize: "1.5rem",
-                }}
-              >
-                cebustay
-              </Typography>
-            </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+  <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+    <img
+      src="/Logo2.png"
+      alt="Logo"
+      className="logo"
+      style={{ height: "40px", marginRight: "10px" }}
+    />
+    <Typography
+      noWrap
+      sx={{
+        fontFamily: "Poppins, sans-serif",
+        fontWeight: 1000,
+        color: "#16B4DD",
+        textDecoration: "none",
+        fontSize: "1.5rem",
+      }}
+    >
+      cebustay
+    </Typography>
+  </a>
+</Box>
+
 
             <Box sx={{ flexGrow: 1 }} />
 
