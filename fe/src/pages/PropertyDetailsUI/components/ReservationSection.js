@@ -43,7 +43,7 @@ export default function ReservationSection({
   
 console.log("PRICE", price);
   return (
-    <Paper className="reservation-cntr" sx={{ borderRadius: "12px" }}>
+    <Paper className="reservation-cntr" sx={{ borderRadius: "0.8rem" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <div className="reservation-price">{formatPrice(price)}</div>

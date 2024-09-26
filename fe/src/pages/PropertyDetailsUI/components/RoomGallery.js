@@ -79,10 +79,11 @@ export default function RoomGallery({ propertyImages }) {
   };
 
   return (
-    <Paper sx={{ borderRadius: 2, padding: 2, boxShadow: 3 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+    <Paper sx={{ borderRadius: 2, padding: 2, boxShadow: 3, mt: 2 }}>
+      
+      <Box sx={{ display: 'flex', alignItems: 'center',justifyContent: 'space-between'}}>
         <ArrowBack sx={{ color: "#16B4DD", cursor: 'pointer' }} onClick={() => scrollGallery('left')} />
-        <Box sx={{ flexGrow: 1, overflowX: 'auto', width: '100%' }} ref={galleryRef}>
+        <Box sx={{ flexGrow: 1, overflowX: 'auto', width: '100%', display: 'flex', justifyContent: 'center' }} ref={galleryRef}>
           <ImageList cols={getCols()} gap={8} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             {images.map((image, index) => (
               <ImageListItem key={image.id} sx={{ width: '100%', height: 'auto', minWidth: 100, minHeight: 100 }}>
@@ -110,9 +111,9 @@ export default function RoomGallery({ propertyImages }) {
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        maxWidth="lg"
+        maxWidth="md"
         fullWidth
-        sx={{ padding: 0 }}
+        sx={{ padding: 0,height: "90vh" }}
       >
         <DialogContent sx={{ padding: 0, position: 'relative' }}>
           <IconButton

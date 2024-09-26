@@ -30,6 +30,15 @@ export default function SinglePropertyUI({ propertyid }) {
 
   // Handle reservation click
   const handleReserveClick = () => {
+    if (!checkInDate && !checkOutDate ) {
+      alert("Please select check-in and check-out dates ");
+      return;
+    }
+    if (!guestCount || guestCount <= 0) {
+      alert("Please enter valid number of guests");
+      return;
+      
+    }
     const queryParams = new URLSearchParams({
       guestCount,
       checkInDate: checkInDate.format("YYYY-MM-DD"),
