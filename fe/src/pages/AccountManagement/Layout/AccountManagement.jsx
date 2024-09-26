@@ -160,7 +160,7 @@ const AccountManagement = () => {
 
     return (
         
-            <Grid container sx={{height: '100vh'}}>
+            <Grid container sx={{width: '100%'}}>
                 {/* Sidebar */}
                 <Grid item xs={2} style={{  transition: 'min-width 0.3s ease' ,backgroundColor: 'red'}}>
                     <AccountSidebar activeItem={activeItem} handleItemClick={handleItemClick} toggleSidebar={toggleSidebar} />

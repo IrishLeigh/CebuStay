@@ -86,6 +86,7 @@ console.log("PRICE", price);
             onChange={handleGuestCountChange}
             fullWidth
             label="Guests"
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" , min:1, max:50 }}
             mt={3}
             sx={{
               "& .MuiOutlinedInput-root": {

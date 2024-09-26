@@ -355,9 +355,9 @@ export default function ViewPropertyUI() {
 
   console.log ("guestCapactiy", guestCapacity);
   return (
-    <div style={{ width: "100%" ,overflowY: "scroll"}}>
+    <div style={{ width: "100%"}}>
       <div style={{ backgroundColor: "#F4F7FA" }}>
-        <Container maxWidth="lg" >
+        <Container maxWidth="xl" >
           <CssBaseline />
           {loading ? (
             <div>Loading...</div>
