@@ -50,8 +50,7 @@ export default function UserProfile({ profile }) {
         });
         if (res.data) {
           setProfileImage(res.data.src);
-
-          // Check if profile has changed and update currentProfile accordingly
+          // Only update currentProfile if it's different
           if (profile !== currentProfile) {
             setCurrentProfile(profile);
           }
@@ -62,7 +61,7 @@ export default function UserProfile({ profile }) {
     };
 
     fetchUserImage();
-  }, [profile]);
+  }, [profile, currentProfile]);
 
   const handleProfileUpdate = (updatedProfile) => {
     setCurrentProfile(updatedProfile);

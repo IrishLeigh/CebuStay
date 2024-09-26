@@ -135,7 +135,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
 
 
   return (
-    <>
+    < div id = "reviews-and-ratings">
       
         <div className="reviews-container">
         <div className="info-title-cntr">
@@ -327,7 +327,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
           </div>
         </div>
 
-    </>
+    </div>
   );
 };
 

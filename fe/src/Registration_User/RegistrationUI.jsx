@@ -144,7 +144,7 @@ const RegistrationUI = () => {
   };
 
   return (
-    <div className="center-container" style={{ height: "100vh" }}>
+    <div className="center-container" style={{ width : "100%", height: "80vh" }}>
       {!verificationSent && (
         <div className="registration-container">
           <div style={{ textAlign: "Left" }}>

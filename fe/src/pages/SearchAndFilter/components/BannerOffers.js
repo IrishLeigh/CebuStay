@@ -49,7 +49,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import axios from "axios";
 import Search from "./Search";
 
-export default function BannerOffers({ accommodations, setAccommodationList , onSearchUpdate }) {
+export default function BannerOffers({ accommodations, setAccommodationList , onSearchUpdate ,originalAccommodationList}) {
   const [guestCapacity, setGuestCapacity] = useState(null);
   const [availability, setAvailability] = useState({
     startDate: null,
