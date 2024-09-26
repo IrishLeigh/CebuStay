@@ -111,7 +111,7 @@ export default function RoomGallery({ propertyImages }) {
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        maxWidth="md"
+        maxWidth="lg"
         fullWidth
         sx={{ padding: 0,height: "90vh" }}
       >
