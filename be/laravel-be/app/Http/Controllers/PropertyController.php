@@ -66,6 +66,8 @@ class PropertyController extends CORS
 
     public function InsertPropertyInfo(Request $request)
     {
+        $singleunittype = ["Home", "Apartment", "Condominium", "Cabin", "Luxury Home", "Bungalow"];
+
         $this->enableCors($request);
         $property = new Property();
         $property->userid = $request->input('userid');
@@ -73,12 +75,11 @@ class PropertyController extends CORS
         $property->property_type = $request->input('property_type');
         $property->property_desc = $request->input('property_desc');
         $property->property_directions = $request->input('property_directions');
-        $property->unit_type = $request->input('unit_type');
+        $property->unit_type = in_array($request->input('property_type'), $singleunittype) ? $request->input('unit_type') : "Multi Unit";
 
         $property->save();
         $propertyid = $property->propertyid;
         $homeid = null;
-        $singleunittype = ["Home", "Apartment", "Condominium", "Cabin", "Luxury Home", "Bungalow"];
 
         if (in_array($property->unit_type, $singleunittype)) {
             $home = new Home();
@@ -88,7 +89,7 @@ class PropertyController extends CORS
         } else {
             $home = new Home();
             $home->propertyid = $propertyid;
-            $home->unit_type = $property->unit_type;
+            $home->unit_type = "Multi Unit";
             $home->save();
         }
         return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid]);
