@@ -23,7 +23,10 @@ const LandingPageUI = () => {
       <div>
       <LandingCover onSeeMapClick={scrollToMap} />
       {/* <BasicGrid/> */}
+      <div  ref={mapRef}>
       <InteractiveMap />
+      </div>
+      
       {/* <Popular /> */}
       {/* <Hidden /> */}
       </div>

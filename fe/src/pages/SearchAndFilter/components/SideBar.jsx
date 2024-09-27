@@ -7,13 +7,35 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   const [selectedPropertyTypes, setSelectedPropertyTypes] = useState([]);
 
   const handleMinPriceChange = (e) => {
-    onFilterChange({ minPrice: e.target.value });
+    const value = e.target.value;
+    // Allow only digits or empty input
+    if (value === '' || /^[0-9]*$/.test(value)) {
+      onFilterChange({ minPrice: value });
+    }
   };
-
+  
   const handleMaxPriceChange = (e) => {
-    onFilterChange({ maxPrice: e.target.value });
+    const value = e.target.value;
+    // Allow only digits or empty input
+    if (value === '' || /^[0-9]*$/.test(value)) {
+      onFilterChange({ maxPrice: value });
+    }
+  };
+  
+  
+// Perform validation after user finishes typing
+  const handleMinPriceBlur = () => {
+    if(filters.minPrice > filters.maxPrice && filters.maxPrice !== '') {
+      onFilterChange({ maxPrice: filters.minPrice });
+    }
   };
 
+  const handleMaxPriceBlur = () => {
+    if(filters.maxPrice < filters.minPrice && filters.minPrice !== '') {
+      onFilterChange({ maxPrice: filters.minPrice });
+    }
+  };
+  
   const handleBedroomsChange = (e) => {
     onFilterChange({ bedrooms: e.target.value });
   };
@@ -57,6 +79,8 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
     });
   };
 
+
+  
   return (
     <div className="bg-white p-4 w-64" style={{ fontFamily: 'Poppins' }}>
       {/* <h2 className="text-lg font-semibold" style={{ textAlign: 'left' }}>Places to Visit</h2>
@@ -276,6 +300,7 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   <hr className="my-2" />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1px' }}>
     <input
+     min="0" 
       type="number"
       placeholder="Min"
       className="px-3 py-2 border rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
@@ -290,6 +315,12 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
       }}
       value={filters.minPrice}
       onChange={handleMinPriceChange}
+      onBlur={handleMinPriceBlur}
+      onKeyDown={(e) => {
+        if (e.key === '-' || e.keyCode === 189) {
+          e.preventDefault(); // Prevent entering "-"
+        }
+      }}
     />
     <div style={{
       height: '1.8rem',
@@ -298,6 +329,7 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
       marginRight: '8px'
     }} />
     <input
+     min="0" 
       type="number"
       placeholder="Max"
       className="px-3 py-2 border rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
@@ -311,6 +343,12 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
       }}
       value={filters.maxPrice}
       onChange={handleMaxPriceChange}
+      onBlur={handleMaxPriceBlur}
+      onKeyDown={(e) => {
+        if (e.key === '-' || e.keyCode === 189) {
+          e.preventDefault(); // Prevent entering "-"
+        }
+      }}
     />
   </div>
 </div>

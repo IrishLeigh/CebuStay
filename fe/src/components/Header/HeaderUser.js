@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -28,7 +28,41 @@ function HeaderUser({ token, setToken }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
+  const [profileImage, setProfileImage] = useState("");
   const navigate = useNavigate();
+
+  const handleImageError = (e) => {
+    // Fallback to another image or initials
+    alert("Failed to render image");
+    e.target.src =
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+    setProfileImage(
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+    );
+  };
+
+  useEffect(() => {
+    const fetchUserImage = async () => {
+      try {
+        const jwtToken = token.split("=")[1];
+        const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+          token: token,
+        });
+        if (res1.data) {
+          const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
+            params: { userid: res1.data.data.userid },
+          });
+          if (res.data) {
+            setProfileImage(res.data.src);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error.message || error);
+      }
+    };
+
+    fetchUserImage();
+  }, []);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -204,7 +238,10 @@ function HeaderUser({ token, setToken }) {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    src={profileImage}
+                    onError={(e) => handleImageError(e)}
+                  />
                 </IconButton>
               </Tooltip>
               <Menu
