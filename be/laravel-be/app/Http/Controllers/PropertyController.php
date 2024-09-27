@@ -105,6 +105,7 @@ class PropertyController extends CORS
     //     return response()->json($properties);
     // }
 
+
     public function getPropertyById(Request $request)
     {
         $this->enableCors($request);
