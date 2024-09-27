@@ -368,7 +368,7 @@ class BookingController extends CORS
 
         // Eager load the property, location, booker, and guest relationships
         $bookings = Booking::with(['property.location', 'booker', 'guest'])
-            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
+            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'stay_length', 'total_price', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
             ->where('userid', $userid)
             ->get();
 
@@ -381,6 +381,7 @@ class BookingController extends CORS
                 'type' => $booking->property->property_type,
                 'location' => $booking->property->location->address,
                 'guests' => $booking->guest_count,
+                'stay_length' => $booking->stay_length,
                 'amount' => $booking->total_price,
                 'status' => $booking->type === 'booking' ? 'Checked In' : 'Booked',
                 'checkIn' => $booking->checkin_date,
