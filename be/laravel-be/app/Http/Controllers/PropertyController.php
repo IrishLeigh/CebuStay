@@ -78,7 +78,9 @@ class PropertyController extends CORS
         $property->save();
         $propertyid = $property->propertyid;
         $homeid = null;
-        if ($property->property_type == "Home" || $property->property_type == "Apartment") {
+        $singleunittype = ["Home", "Apartment", "Condominium", "Cabin", "Luxury Home", "Bungalow"];
+
+        if (in_array($property->unit_type, $singleunittype)) {
             $home = new Home();
             $home->propertyid = $propertyid;
             $home->unit_type = $property->unit_type;
@@ -86,7 +88,7 @@ class PropertyController extends CORS
         } else {
             $home = new Home();
             $home->propertyid = $propertyid;
-            $home->unit_type = "Multi Unit";
+            $home->unit_type = $property->unit_type;
             $home->save();
         }
         return response()->json(["status" => 'success', "message" => "Property and Home inserted to Home successfully", "propertyid" => $propertyid]);
@@ -452,10 +454,6 @@ class PropertyController extends CORS
         return response()->json($properties);
     }
 
-
-
-
-
     public function getAllPropertiesByUser(Request $request)
     {
         $this->enableCors($request);
@@ -535,7 +533,6 @@ class PropertyController extends CORS
         return response()->json($properties);
     }
 
-
     public function searchAvailableProperties(Request $request)
     {
         $checkinDate = $request->input('checkin_date');
@@ -564,9 +561,6 @@ class PropertyController extends CORS
 
         return response()->json($properties);
     }
-
-
-
 
     public function getAvailableUnits(Request $request)
     {
@@ -609,7 +603,6 @@ class PropertyController extends CORS
         $availableunits = $properties->pluck('unitid');
         return response()->json($availableunits);
     }
-
 
     public function updatePropertyBenefits(Request $request, $propertyid)
     {
@@ -955,128 +948,125 @@ class PropertyController extends CORS
     }
 
     public function getAllPropertiesCoord(Request $request)
-{
-    $this->enableCors($request);
+    {
+        $this->enableCors($request);
 
-    // Retrieve all house rules and booking policies
-    $property_hr = DB::table('house_rules')->get();
-    $property_bp = DB::table('booking_policy')->get();
+        // Retrieve all house rules and booking policies
+        $property_hr = DB::table('house_rules')->get();
+        $property_bp = DB::table('booking_policy')->get();
 
-    // Retrieve properties
-    $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')
-        ->where('isActive', 1)
-        ->get();
+        // Retrieve properties
+        $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')
+            ->where('isActive', 1)
+            ->get();
 
-    // Retrieve unit details
-    $unitDetails = UnitDetails::select('unitid', 'guest_capacity', 'propertyid')->get();
+        // Retrieve unit details
+        $unitDetails = UnitDetails::select('unitid', 'guest_capacity', 'propertyid')->get();
 
-    // Retrieve unit rooms
-    $unitRooms = UnitRooms::select('unitid', 'unitroomid', 'roomname', 'quantity')->get();
+        // Retrieve unit rooms
+        $unitRooms = UnitRooms::select('unitid', 'unitroomid', 'roomname', 'quantity')->get();
 
-    // Retrieve bedroom types
-    $bedroomTypes = BedroomType::select('unitroomid', 'singlebed', 'bunkbed', 'largebed', 'superlargebed')->get();
+        // Retrieve bedroom types
+        $bedroomTypes = BedroomType::select('unitroomid', 'singlebed', 'bunkbed', 'largebed', 'superlargebed')->get();
 
-    // Retrieve property locations (addresses)
-    $locations = Location::select('propertyid', 'address', 'zipcode', 'latitude', 'longitude')->get();
+        // Retrieve property locations (addresses)
+        $locations = Location::select('propertyid', 'address', 'zipcode', 'latitude', 'longitude')->get();
 
-    // Create associative arrays for unit details and unit rooms
-    $unitDetailsByPropertyId = [];
-    foreach ($unitDetails as $unitDetail) {
-        $unitDetailsByPropertyId[$unitDetail->propertyid][] = $unitDetail;
-    }
+        // Create associative arrays for unit details and unit rooms
+        $unitDetailsByPropertyId = [];
+        foreach ($unitDetails as $unitDetail) {
+            $unitDetailsByPropertyId[$unitDetail->propertyid][] = $unitDetail;
+        }
 
-    $unitRoomsByUnitId = [];
-    foreach ($unitRooms as $unitRoom) {
-        $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
-    }
+        $unitRoomsByUnitId = [];
+        foreach ($unitRooms as $unitRoom) {
+            $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
+        }
 
-    // Create associative arrays for house rules and booking policies
-    $houseRulesByPropertyId = [];
-    foreach ($property_hr as $rule) {
-        $houseRulesByPropertyId[$rule->propertyid][] = $rule;
-    }
+        // Create associative arrays for house rules and booking policies
+        $houseRulesByPropertyId = [];
+        foreach ($property_hr as $rule) {
+            $houseRulesByPropertyId[$rule->propertyid][] = $rule;
+        }
 
-    $bookingPoliciesByPropertyId = [];
-    foreach ($property_bp as $policy) {
-        $bookingPoliciesByPropertyId[$policy->propertyid][] = $policy;
-    }
+        $bookingPoliciesByPropertyId = [];
+        foreach ($property_bp as $policy) {
+            $bookingPoliciesByPropertyId[$policy->propertyid][] = $policy;
+        }
 
-    // Create associative array for locations
-    $locationsByPropertyId = [];
-    foreach ($locations as $location) {
-        $locationsByPropertyId[$location->propertyid] = $location;
-    }
+        // Create associative array for locations
+        $locationsByPropertyId = [];
+        foreach ($locations as $location) {
+            $locationsByPropertyId[$location->propertyid] = $location;
+        }
 
-    // Prepare final properties array
-    $finalProperties = [];
-    foreach ($properties as $property) {
-        $propertyId = $property->propertyid;
+        // Prepare final properties array
+        $finalProperties = [];
+        foreach ($properties as $property) {
+            $propertyId = $property->propertyid;
 
-        // Create a new property structure
-        $newProperty = [
-            'name' => $property->property_name,
-            'coordinates' => [
-                $locationsByPropertyId[$propertyId]->latitude ?? null,
-                $locationsByPropertyId[$propertyId]->longitude ?? null,
-            ],
-            'category' => 'Property',  // or use the property type
-            'iconUrl' => './property-icon.png',  // Update with actual icon URL if needed
-            'imageUrl' => './property-image.jpg',  // Update with actual image URL if needed
-            'description' => $property->property_desc,
-            'description2' => '',  // Add additional description if needed
-            'cityName' => 'Cebu',  // Update with actual city name if available
-            'propertyType' => $property->property_type,
-            'unitType' => $property->unit_type,
-            'guestCapacity' => $unitDetailsByPropertyId[$propertyId][0]->guest_capacity ?? null,
-            'bedroomCount' => 0,
-            'bathroomCount' => 0,
-            'houseRules' => $houseRulesByPropertyId[$propertyId] ?? [],
-            'bookingPolicies' => $bookingPoliciesByPropertyId[$propertyId] ?? [],
-            'address' => $locationsByPropertyId[$propertyId]->address ?? null,
-            'zipCode' => $locationsByPropertyId[$propertyId]->zipcode ?? null,
-            'bedCount' => 0,
-            'createdAt' => now(),  // or set the actual created timestamp
-            'updatedAt' => now()   // or set the actual updated timestamp
-        ];
+            // Create a new property structure
+            $newProperty = [
+                'name' => $property->property_name,
+                'coordinates' => [
+                    $locationsByPropertyId[$propertyId]->latitude ?? null,
+                    $locationsByPropertyId[$propertyId]->longitude ?? null,
+                ],
+                'category' => 'Property',  // or use the property type
+                'iconUrl' => './property-icon.png',  // Update with actual icon URL if needed
+                'imageUrl' => './property-image.jpg',  // Update with actual image URL if needed
+                'description' => $property->property_desc,
+                'description2' => '',  // Add additional description if needed
+                'cityName' => 'Cebu',  // Update with actual city name if available
+                'propertyType' => $property->property_type,
+                'unitType' => $property->unit_type,
+                'guestCapacity' => $unitDetailsByPropertyId[$propertyId][0]->guest_capacity ?? null,
+                'bedroomCount' => 0,
+                'bathroomCount' => 0,
+                'houseRules' => $houseRulesByPropertyId[$propertyId] ?? [],
+                'bookingPolicies' => $bookingPoliciesByPropertyId[$propertyId] ?? [],
+                'address' => $locationsByPropertyId[$propertyId]->address ?? null,
+                'zipCode' => $locationsByPropertyId[$propertyId]->zipcode ?? null,
+                'bedCount' => 0,
+                'createdAt' => now(),  // or set the actual created timestamp
+                'updatedAt' => now()   // or set the actual updated timestamp
+            ];
 
-        // Calculate bedroom and bathroom counts
-        if (isset($unitDetailsByPropertyId[$propertyId])) {
-            foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
-                if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
-                    foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
-                        if ($unitRoom->roomname === 'Bedroom') {
-                            $newProperty['bedroomCount'] += $unitRoom->quantity;
-                        } elseif ($unitRoom->roomname === 'Bathroom') {
-                            $newProperty['bathroomCount'] += $unitRoom->quantity;
+            // Calculate bedroom and bathroom counts
+            if (isset($unitDetailsByPropertyId[$propertyId])) {
+                foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
+                    if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
+                        foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
+                            if ($unitRoom->roomname === 'Bedroom') {
+                                $newProperty['bedroomCount'] += $unitRoom->quantity;
+                            } elseif ($unitRoom->roomname === 'Bathroom') {
+                                $newProperty['bathroomCount'] += $unitRoom->quantity;
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // Calculate bed count
-        if (isset($unitDetailsByPropertyId[$propertyId])) {
-            foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
-                if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
-                    foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
-                        if ($unitRoom->roomname == 'Bedroom') {
-                            foreach ($bedroomTypes as $bedroomType) {
-                                if ($bedroomType->unitroomid == $unitRoom->unitroomid) {
-                                    $newProperty['bedCount'] += $bedroomType->singlebed + $bedroomType->bunkbed + $bedroomType->largebed + $bedroomType->superlargebed;
+            // Calculate bed count
+            if (isset($unitDetailsByPropertyId[$propertyId])) {
+                foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
+                    if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
+                        foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
+                            if ($unitRoom->roomname == 'Bedroom') {
+                                foreach ($bedroomTypes as $bedroomType) {
+                                    if ($bedroomType->unitroomid == $unitRoom->unitroomid) {
+                                        $newProperty['bedCount'] += $bedroomType->singlebed + $bedroomType->bunkbed + $bedroomType->largebed + $bedroomType->superlargebed;
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
+            $finalProperties[] = $newProperty;
         }
 
-        $finalProperties[] = $newProperty;
+        return response()->json($finalProperties);
     }
-
-    return response()->json($finalProperties);
-}
-
-
-
 }
