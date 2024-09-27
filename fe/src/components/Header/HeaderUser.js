@@ -28,8 +28,19 @@ function HeaderUser({ token, setToken }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState("");
   const navigate = useNavigate();
+
+  const handleImageError = (e) => {
+    // Fallback to another image or initials
+    alert("Failed to render image");
+    e.target.src =
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+    setProfileImage(
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+    );
+  };
+
   useEffect(() => {
     const fetchUserImage = async () => {
       try {
@@ -228,12 +239,8 @@ function HeaderUser({ token, setToken }) {
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
-                    alt="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-                    src={
-                      profileImage
-                        ? encodeURI(profileImage.trim()) // Remove extra spaces and encode the URL
-                        : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-                    }
+                    src={profileImage}
+                    onError={(e) => handleImageError(e)}
                   />
                 </IconButton>
               </Tooltip>

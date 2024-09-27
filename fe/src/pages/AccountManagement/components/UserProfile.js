@@ -18,9 +18,24 @@ export default function UserProfile({ profile }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+  );
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  function onError(e) {
+    console.log("onError", e);
+    // alert("Failed to render image");
+    e.target.src =
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+  }
+  // const handleImageError = () => {
+  //   console.log("handleImageError");
+  //   // Fallback to another image or initials
+  //   setProfileImage(
+  //     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+  //   );
+  // };
   useEffect(() => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Reset the input value
@@ -28,6 +43,7 @@ export default function UserProfile({ profile }) {
   }, [modalOpen]);
   useEffect(() => {
     const fetchUserImage = async () => {
+      if (!profile) return;
       try {
         const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
           params: { userid: profile.userid },
@@ -141,6 +157,7 @@ export default function UserProfile({ profile }) {
         setChangeloading(false);
       } else {
         alert("Error uploading image. Please try again.");
+        setChangeloading(false);
       }
     } catch (error) {
       console.error("Error uploading image", error);
@@ -150,6 +167,7 @@ export default function UserProfile({ profile }) {
     } finally {
       setLoading(false);
       setModalOpen(false);
+      setChangeloading(false);
     }
   };
 
@@ -178,12 +196,9 @@ export default function UserProfile({ profile }) {
           <div className="avatar-details-container">
             <div className="avatar-wrapper">
               <img
-                src={
-                  profileImage
-                    ? encodeURI(profileImage.trim()) // Remove extra spaces and encode the URL
-                    : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-                }
-                alt="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                src={profileImage}
+                onError={(e) => onError(e)}
+                alt="user avatar"
                 className="avatar-image"
               />
 
