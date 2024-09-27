@@ -188,22 +188,22 @@ function formatDate(dateString) {
     selectedPropertyType === "Home" ||
     selectedPropertyType === "Condominium" ||
     selectedPropertyType === "Apartment" ||
-    selectedPropertyType ===  "Villa" || 
     selectedPropertyType === "Cabin" ||
-    selectedPropertyType === " Luxury Home" ||
-    selectedPropertyType === "Homestay" ||
-    selectedPropertyType === "Condoinium" ||
-    selectedPropertyType === "Resort" ;
-
-
+    selectedPropertyType === " LuxuryHome" ||
+    selectedPropertyType === "Bungalow" ||
+    selectedPropertyType === "Studio";
+    
   const isMultiUnit =
     selectedPropertyType === "Hotel" ||
     selectedPropertyType === "Hostel" ||
-    selectedPropertyType === "Bungalow" ||
     selectedPropertyType === "Resort" ||
     selectedPropertyType === "Motel" ||
     selectedPropertyType === "Cottage" ||
-    selectedPropertyType === "Bed & Breakfast"
+    selectedPropertyType === "Bed& Breakfast" ||
+    selectedPropertyType === "Homestay"  ||
+    selectedPropertyType === "ApartmenComplex" ||
+    selectedPropertyType === "CondoComplex" 
+    
     ;
 
   //For Multi Unit
@@ -248,7 +248,6 @@ function formatDate(dateString) {
     // Open the modal when the component mounts
     setOpenCompliance(true);
   }, []);
-  
   //Get the JWT token from local storage
   useEffect(() => {
     
@@ -273,16 +272,13 @@ function formatDate(dateString) {
       setUser(null);
     }
   }, []);
-
   // Modals and Loaders
   const openConfirmationModal = () => {
     setIsConfirmationModalOpen(true); // Open the confirmation modal
   };
-
   const closeConfirmationModal = () => {
     setIsConfirmationModalOpen(false); // Close the confirmation modal
   };
-
   const closeSuccessModal = () => {
     setIsSuccessModalOpen(false); // Close the success modal
     navigate('/'); // Redirect to the homepage
@@ -294,11 +290,9 @@ function formatDate(dateString) {
   useEffect(() => {
     setLocationDetails({ addressData, mapVal });
   }, [addressData, mapVal]);
-
   const handleSelectedTypeChange = (type) => {
     setSelectedPropertyType(type);
   };
-
   const handleSelectedPropertyTypeChange = useCallback((propertyType) => {
     setSelectedPropertyType2(propertyType);
     console.log("Selected Property Type:", propertyType);

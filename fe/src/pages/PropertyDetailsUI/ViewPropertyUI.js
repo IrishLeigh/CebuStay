@@ -263,7 +263,11 @@ export default function ViewPropertyUI() {
   const [propertyInfo, setPropertyInfo] = useState({});
   const [loading, setLoading] = useState(true); // Loading state
   const location = useLocation();
-  const { guestCapacity, checkin_date, checkout_date } = location.state;
+  const searchParams = new URLSearchParams(location.search);
+  const guestCapacity = searchParams.get('guestCapacity') || null;
+  const checkin_date = searchParams.get('checkin_date') || null;
+  const checkout_date = searchParams.get('checkout_date') || null;
+  const [onSearchData, setOnSearchData] = useState({});
   //fetchdata for Property ID
   useEffect(() => {
     const fetchData = async () => {
@@ -306,9 +310,7 @@ export default function ViewPropertyUI() {
   // Set initial values based on the received state
   useEffect(() => {
     if (checkin_date && checkout_date && guestCapacity) {
-      setCheckInDate(dayjs(checkin_date));
-      setCheckOutDate(dayjs(checkout_date));
-      setGuestCount(guestCapacity);
+      setOnSearchData({ checkin_date, checkout_date, guestCapacity });
     }
   }, [checkin_date, checkout_date, guestCapacity]);
 
@@ -351,10 +353,11 @@ export default function ViewPropertyUI() {
     }
   };
 
+  console.log ("guestCapactiy", guestCapacity);
   return (
-    <div style={{ width: "100%" ,overflowY: "scroll"}}>
+    <div style={{ width: "100%"}}>
       <div style={{ backgroundColor: "#F4F7FA" }}>
-        <Container maxWidth="lg" >
+        <Container maxWidth="xl" >
           <CssBaseline />
           {loading ? (
             <div>Loading...</div>
@@ -411,9 +414,9 @@ export default function ViewPropertyUI() {
                 />
               )} */}
               {propertyInfo.property_details.property_type === "Home" ? (
-                <><SinglePropertyUI propertyid={propertyid} /></>
+                <><SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/></>
               ) : (
-                <><MultiPropertyUI propertyid={propertyid} /></>
+                <><MultiPropertyUI propertyid={propertyid}  onSearchData = {onSearchData}/></>
                 )}
             </div>
 

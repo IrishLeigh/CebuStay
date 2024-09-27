@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useUser } from '../../../../../components/UserProvider';
 import ArrowRight from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
+import { Paper } from '@mui/material';
 
 
 const generateDummyReviews = (count) => {
@@ -135,9 +136,9 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
 
 
   return (
-    <>
+    < div id = "reviews-and-ratings">
       
-        <div className="reviews-container">
+        <Paper sx={{padding: "1.5rem", borderRadius: "0.8rem", width : "100%"}}>
         <div className="info-title-cntr">
             <ArrowRight sx={{ color: "#16B4DD" }} />
             <div>Reviews And Ratings</div>
@@ -325,9 +326,9 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
 
 
           </div>
-        </div>
+        </Paper>
 
-    </>
+    </div>
   );
 };
 

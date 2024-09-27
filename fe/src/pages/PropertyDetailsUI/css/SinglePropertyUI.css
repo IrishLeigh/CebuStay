@@ -1,11 +1,9 @@
 .overview-container {
   background-color: #fff;
-  margin-top: 20px;
-  margin-right: 20px;
-  margin-bottom: 20px;
+  margin-top: 1rem;
   /* border-radius: 12px; */
   height: auto;
-  padding: 1.5rem;
+  padding: 2rem;
   font-family: 'Poppins', sans-serif;
 
 }
@@ -53,13 +51,14 @@
   }
 }
 .hostdetails-cntr {
-  background-color: #A334CF;
+  background-color: #16B4DD;
   color: #fff;
   border-radius: 8px;
   padding: 0.3rem 0.3rem;
   font-family: 'Poppins', sans-serif;
   display: inline-block; /* This replaces fit-content for width */
   font-size: 0.875rem;
+  
 }
 
 .host-details-table {

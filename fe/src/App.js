@@ -209,7 +209,7 @@ function App() {
   console.log("Token from App.js: ", token);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column"}}>
       {/* Conditionally render headers based on the current route */}
       {location.pathname !== "/admin/overview" &&
       location.pathname !== "/admin/guests" &&

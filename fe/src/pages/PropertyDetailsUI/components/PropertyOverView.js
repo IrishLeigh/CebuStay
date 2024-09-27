@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../css/SinglePropertyUI.css";
-import { Avatar, Box, Button, Paper, Stack } from "@mui/material";
+import { Avatar, Paper, Stack, Grid, Divider, Typography } from "@mui/material";
 import Location from "@mui/icons-material/LocationOn";
 import ArrowRight from "@mui/icons-material/KeyboardDoubleArrowRight";
-import Divider from "@mui/material/Divider";
 import GirlIcon from "@mui/icons-material/Face3";
+import HomeIcon from '@mui/icons-material/Home';
+import RoomIcon from '@mui/icons-material/NightShelter';
+
+
 export default function PropertyOverView({ propertyinfo }) {
   const [propertyDetail, setPropertyDetail] = useState({});
 
@@ -18,128 +21,142 @@ export default function PropertyOverView({ propertyinfo }) {
   }
 
   const { property_details } = propertyDetail;
+
+  console.log("Property Details:", propertyDetail);
   return (
     <Paper className="overview-container" sx={{ borderRadius: "12px" }}>
-      {/* <Box sx={{ p: 1 }}> */}
-      {/* <div className="overview-title">Marion Gonnabathula's Residence</div> */}
-      <div className="overview-title">
-        {propertyDetail.property_details.property_name}
-      </div>
+    
+      <Grid container spacing={2} alignItems="center">
+      {/* Property Name and Address */}
+      <Grid item xs={12} sm={8} >
+     
+          <div className="overview-title">
+            {propertyDetail.property_details.property_name}
+          </div>
+          <div style={{ display: "flex", marginTop: "0.5rem" , flexDirection: "column"}}>
+          
+            <div className="overview-text">
+              <Location sx={{ color: "#16B4DD", marginRight: "0.3rem" }} />
+              {propertyDetail.property_address.address}
+            </div>
+            
+            <div className="overview-text">
+            <HomeIcon sx={{ color: "#16B4DD", marginRight: "0.3rem" }} />
+              {propertyDetail.property_details.property_type}
+            </div>
+            <div className="overview-text">
+            <RoomIcon sx={{ color: "#16B4DD", marginRight: "0.3rem" }} />
+              {propertyDetail.property_details.unit_type}
+            </div>
+          </div>
+      </Grid>
 
-      <div
-        style={{ display: "flex", alignItems: "center", marginTop: "0.5rem" }}
-      >
-        <Location sx={{ color: "#16B4DD", marginRight: "0.1rem" }} />
-        {/* <div className="overview-text">
-          #2 Sherwood Loop, Nichols Park Subdivision, Guadalupe
-        </div> */}
-        <div className="overview-text">
-          {propertyDetail.property_address.address}
-        </div>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", marginTop: "2rem" }}>
-        <div className="overview-ratings">9.2</div>
-        <div
-          className="overview-title"
-          style={{ fontSize: "1.3rem", marginLeft: "0.5rem" }}
-        >
+      {/* Rating Section */}
+      <Grid item xs={12} sm={4} sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Typography variant="h4" className="overview-ratings" sx={{ fontWeight: "bold" }}>
+          9.2
+        </Typography>
+        <Typography variant="h6" className="overview-title" sx={{ marginLeft: "0.5rem", fontWeight: "bold" }}>
           Excellent
-        </div>
+        </Typography>
       </div>
+      
       <div
         style={{
           display: "flex",
           alignItems: "center",
           marginTop: "0.5rem",
-          color: "#16B4DD",
           fontWeight: "bold",
+          cursor: "pointer", // Change cursor to indicate clickable
+        }}
+        onClick={() => {
+          // Scroll or navigate to the reviews component
+          document.getElementById("reviews-and-ratings").scrollIntoView({ behavior: "smooth" });
         }}
       >
+          <Typography sx={{ fontWeight: "bold", marginRight: "0.3rem" }}>
+            See all reviews
+          </Typography>
+          <ArrowRight sx={{ fontSize: "1rem" }} />
+
+      </div>
+
+    </Grid>
+
+    </Grid>
+
+      {/* <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem", color: "#16B4DD", fontWeight: "bold" }}>
         See all 24 reviews
         <ArrowRight sx={{ marginLeft: "0.5rem" }} />
-      </div>
-      {/* <div className="overview-text" style={{ marginTop: "2rem" }}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
       </div> */}
-      <div className="overview-text" style={{ marginTop: "2rem" }}>
+
+    <div className="overview-text" style={{ marginTop: "2rem" }}>
+      <p  component="b" style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
+         Overview
+      </p>
+      <p  style={{ lineHeight: 1.5, color: "#333" }}>
         {propertyDetail.property_details.property_desc}
-      </div>
+      </p>
+    </div>
 
-      <Divider variant="middle" sx={{ mt: "2rem", mb: "2rem" }} />
+      <Divider variant="middle" sx={{ mt: "2rem", mb: "2rem"  }} />
 
-      <div style={{ display: "flex" }}>
-        <div style={{ width: "50%", paddingRight: "1rem" }}>
+      <Grid container spacing={2}>
+        {/* Host Display */}
+        <Grid item xs={5}>
           <Stack direction="row" spacing={2}>
             <Avatar
               alt="Remy Sharp"
               src="/static/images/avatar/1.jpg"
               sx={{ width: 56, height: 56 }}
             />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              {/* <div className="overview-title">Irish Leigh</div> */}
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
               <div className="overview-title">
                 {propertyDetail?.property_owner?.property_owner?.displayname}
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  fontSize: "1rem",
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", fontSize: "1rem" }}>
                 <GirlIcon sx={{ marginRight: "0.5rem", fontSize: "1rem" }} />
                 <div>host</div>
               </div>
             </div>
           </Stack>
-          {/* <div style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
-            Hello friend! You may call me Irish. I first visited Siargao in 2018
-            and has been living the island-life eve…
-          </div> */}
           <div style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
             {propertyDetail?.property_owner?.property_owner?.describe}
           </div>
-          {/* <button className="email-btn">Email Host</button> */}
-        </div>
-        <div style={{ width: "50%", paddingLeft: "1rem" }}>
+        </Grid>
+
+        {/* Host Details */}
+        <Grid item xs={7}>
           <div className="hostdetails-cntr">Host Details</div>
           <table className="host-details-table">
             <tbody>
               <tr>
                 <td>Contact</td>
-                {/* <td>09156694676</td> */}
                 <td>
                   {propertyDetail?.property_owner?.property_owner?.contactnumber}
                 </td>
               </tr>
               <tr>
-                <td>Nationality</td>
-                <td>Filipino</td>
+                <td>Email</td>
+                <td>{propertyDetail?.property_owner?.property_owner?.email}</td>
               </tr>
               <tr>
+                <td>Address</td>
+                <td>{propertyDetail?.property_owner?.property_owner?.address}</td>
+              </tr>
+              {/* <tr>
                 <td>Gender</td>
-                <td>Female</td>
+                <td>{propertyDetail?.property_owner?.property_owner?.gender || "N/A"}</td>
               </tr>
               <tr>
                 <td>Language</td>
-                <td>English</td>
-              </tr>
+                <td>{propertyDetail?.property_owner?.property_owner?.language || "English"}</td>
+              </tr> */}
             </tbody>
           </table>
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     </Paper>
   );
 }
