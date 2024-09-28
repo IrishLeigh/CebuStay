@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDoorClosed, faHotel, faSpa, faUsers } from '@fortawesome/free-solid-svg-icons';
@@ -6,7 +6,7 @@ import '../css/CancellationAndModification.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import { set } from 'date-fns';
-import { CircularProgress } from '@mui/material';
+import { Alert, CircularProgress, Snackbar } from '@mui/material';
 
 const CancellationAndModification = ({
   selectedBooking,
@@ -26,7 +26,11 @@ const CancellationAndModification = ({
   const [error, setError] = useState('');
   const [bookings, setBookings] = useState({});
   const [properties, setProperties] = useState({});
+  const [bookingList, setBookingList] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const [bookingDetails, setBookingDetails] = useState({
     checkIn: new Date(selectedBooking.checkIn),
@@ -34,10 +38,9 @@ const CancellationAndModification = ({
     guests: selectedBooking.guests,
     rooms: 1,
   });
-  
 
   const [originalBookingDetails, setOriginalBookingDetails] = useState({});
-  
+
   const [cancelLoading, setCancelLoading] = useState(false);
 
   const [dynamicDetails, setDynamicDetails] = useState({
@@ -63,8 +66,13 @@ const CancellationAndModification = ({
         const response = await axios.get(`http://127.0.0.1:8000/api/getproperty`, {
           params: { propertyid: selectedBooking.propertyid },
         });
+        const resall = await axios.get(`http://127.0.0.1:8000/api/property/bookinglist`, {
+          params: { propertyid: selectedBooking.propertyid },
+        });
         setProperties(response.data);
+        setBookingList(resall.data);
         console.log("Response Data:", response.data);
+        console.log("resall:", resall.data);
 
         setLoading(false);
 
@@ -78,6 +86,23 @@ const CancellationAndModification = ({
     fetchProfile();
   }, [selectedBooking]);
 
+  const excludedDates = useMemo(() => {
+    let dates = [];
+
+    bookingList.forEach(booking => {
+      const checkInDate = new Date(booking.checkin_date);
+      const checkOutDate = new Date(booking.checkout_date);
+
+      // Iterate through each day between checkInDate and checkOutDate
+      let currentDate = new Date(checkInDate);
+      while (currentDate <= checkOutDate) {
+        dates.push(new Date(currentDate)); // Push a copy of the date
+        currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+      }
+    });
+
+    return dates;
+  }, [bookingList]);
 
 
 
@@ -109,24 +134,58 @@ const CancellationAndModification = ({
     setBookingDetails({ ...bookingDetails, [field]: date });
   };
 
-  const handleUpdateDetails = () => {
-    const nights = Math.ceil((bookingDetails.checkOut - bookingDetails.checkIn) / (1000 * 60 * 60 * 24));
-    const rooms = bookingDetails.rooms;
-    const guests = bookingDetails.guests;
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
-    const updatedBasePrice = basePrice * nights * rooms;
-    const updatedExtraGuestCost = extraGuestCost * (guests - 2 > 0 ? guests - 2 : 0);
-    const updatedBookingAmount = updatedBasePrice + updatedExtraGuestCost + bookingCharge;
-    const updatedPayableAtCheckIn = updatedBookingAmount;
+  const handleUpdateDetails = async () => {
+    console.log("bookingDetails:", bookingDetails);
+    console.log("selectedBooking:", selectedBooking.id);
+    console.log("new date:", bookingDetails.checkIn.toISOString().split('T')[0]);
+    console.log("check out:",  bookingDetails.checkOut.toISOString().split('T')[0]);
+    console.log("guests:", bookingDetails.guests);
+    const checkInDate = new Date(bookingDetails.checkIn);
+    const checkOutDate = new Date(bookingDetails.checkOut);
+    console.log("checkOutDate", checkOutDate.toISOString().split('T')[0]);
+    
+    if(properties.property_bookingpolicy.isModificationPolicy === 1){
+      try {
+        const response = await axios.put(`http://127.0.0.1:8000/api/updatebooking`, {
+          // checkin_date:  bookingDetails.checkIn.toISOString().split('T')[0],
+          bookingid: selectedBooking.id,
+          checkin_date:  bookingDetails.checkIn.toISOString().split('T')[0],
+          // checkout_date:  bookingDetails.checkOut.toISOString().split('T')[0],
+          checkout_date:  bookingDetails.checkOut.toISOString().split('T')[0],
+          guest_count: bookingDetails.guests,
+        });
+        if (response.data.status === 'success') {
+          setSnackbarMessage("Booking modification successfully updated.");
+          setSnackbarSeverity("success");
+          const checkoutUrl = response.data.checkout_url;
+            console.log("Checkout URL:", response.data);
+            if(checkoutUrl){
+              window.location.href = checkoutUrl;
+            }else{
+              window.location.reload();
+            }
+        } else {
+          setSnackbarMessage("Failed to update Booking. Booking dates are not available.");
+          setSnackbarSeverity("error");
+        }
+  
 
-    setDynamicDetails({
-      basePrice: updatedBasePrice,
-      extraGuestCost: updatedExtraGuestCost,
-      bookingCharge,
-      bookingAmount: updatedBookingAmount,
-      payableAtCheckIn: updatedPayableAtCheckIn,
-      forDetails: `For ${nights} night${nights > 1 ? 's' : ''}, ${rooms} room${rooms > 1 ? 's' : ''}, and ${guests} guest${guests > 1 ? 's' : ''}`,
-    });
+        // Reload the page after both operations are successful
+        // window.location.reload();
+  
+      } catch (error) {
+        console.error("Error updating booking:", error);
+  setSnackbarMessage("An error occurred while updating the booking.");
+  setSnackbarSeverity("error");
+      } finally {
+        setSnackbarOpen(true);
+      }
+    }
+    
   };
 
   // Helper function to check for changes
@@ -149,11 +208,24 @@ const CancellationAndModification = ({
     setCancelLoading(true);
     console.log("Booking Cancelled: ", selectedBooking.id);
     console.log("Cancellation: ", properties.property_bookingpolicy.CancellationCharge);
+    const priorDays = properties.property_bookingpolicy.cancellationDays;
+    const checkinDate = new Date(selectedBooking.checkIn);
+    const currentDate = new Date();
+    checkinDate.setDate(checkinDate.getDate() - priorDays);
+    let dayResult = 0;
+    if (currentDate <= checkinDate) {
+      dayResult = 1;
+  } else {
+      console.log("Current date is less than or equal to the check-in date minus prior days.");
+  }
+
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/refund-payment', {
         bookingid: selectedBooking.id,
         // percentage: properties.property_bookingpolicy.cancellationCharge ? properties.property_bookingpolicy.CancellationCharge : 100,
-        percentage: properties.property_bookingpolicy.CancellationCharge || 100
+        percentage: properties.property_bookingpolicy.CancellationCharge || 100,
+        dayResult: dayResult,
+        isCancel: properties.property_bookingpolicy.isCancellationPolicy || 0,
       });
 
       console.log("Booking Cancelled: ", selectedBooking.id);
@@ -206,7 +278,13 @@ const CancellationAndModification = ({
               <strong style={{ fontSize: '1rem' }}>{selectedBookingDetails.name}</strong>
               <p style={{ fontSize: '0.85rem', color: 'grey', margin: 0 }}>{selectedBookingDetails.location}</p>
               <p style={{ fontSize: '0.85rem', color: 'grey', margin: 0 }}>{`Booking ID: ${selectedBookingDetails.bookingId}`}</p>
-            </div>
+              <p style={{ fontSize: '0.85rem', color: 'grey', margin: 0 }}>
+                {properties && properties.property_owner ? (
+                  `Property Owner: ${properties.property_owner.property_owner.firstname} ${properties.property_owner.property_owner.lastname}`
+                ) : (
+                  'Property Owner: Not Available'
+                )}
+              </p>            </div>
           </div>
 
           {/* Editable Booking Details */}
@@ -233,6 +311,8 @@ const CancellationAndModification = ({
                           properties.property_bookingpolicy.isModificationPolicy === 0}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
+                        // excludeDates={excludedDates}
+                        minDate={new Date()}
                       />
                     </td>
                     <td>
@@ -244,6 +324,8 @@ const CancellationAndModification = ({
                           properties.property_bookingpolicy.isModificationPolicy === 0}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
+                        // excludeDates={excludedDates}
+                        minDate={new Date()}
                       />
                     </td>
                     <td>
@@ -326,7 +408,7 @@ const CancellationAndModification = ({
                     {/* Cancellation Policy */}
                     {properties.property_bookingpolicy.isCancellationPolicy === 1 ? (
                       <p style={{ fontSize: 'small' }}>
-                        <strong>Standard Cancellation Plan:</strong> If you need to cancel your booking and receive a full refund, cancellation can be made up to {properties.property_bookingpolicy.cancellationDays} days before check-in. After this point, cancellation will not be eligible for a refund.
+                        <strong>Standard Cancellation Plan:</strong> If you need to cancel your booking and receive a full refund, cancellation can be made {properties.property_bookingpolicy.cancellationDays} days before check-in. After this point, refund will be deducted by {properties.property_bookingpolicy.CancellationCharge}%.
                       </p>
                     ) : (
                       <p style={{ fontSize: 'small' }}>
@@ -337,7 +419,7 @@ const CancellationAndModification = ({
                     {/* Modification Policy */}
                     {properties.property_bookingpolicy.isModificationPolicy === 1 ? (
                       <p style={{ fontSize: 'small' }}>
-                        <strong>Flexible Modification Rate Policy:</strong> If you need to modify your booking, changes can be made up to {properties.property_bookingpolicy.modificationDays} days before check-in. After this point, no modifications are permitted.
+                        <strong>Flexible Modification Rate Policy:</strong> If you need to modify your booking, changes can be made {properties.property_bookingpolicy.modificationDays} days before check-in. After this point, no modifications are permitted.
                       </p>
                     ) : (
                       <p style={{ fontSize: 'small' }}>
@@ -503,10 +585,10 @@ const CancellationAndModification = ({
                 onMouseOut={(e) => e.target.style.backgroundColor = '#e74c3c'}
               >
                 {cancelLoading ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                "Yes"
-              )}
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  "Yes"
+                )}
               </button>
 
               <button
@@ -533,6 +615,19 @@ const CancellationAndModification = ({
         </div>
 
       )}
+              <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
     </div>
   );
 };
