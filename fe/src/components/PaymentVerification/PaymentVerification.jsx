@@ -40,6 +40,9 @@ const PaymentVerification = () => {
                     const getPayment = await axios.get('http://localhost:8000/api/getpayments', {
                         params: { bookingid: bookingId }
                     });
+                    const getpaymentid = await axios.get('http://localhost:8000/api/getpaymentid', {
+                        params: { bookingid: bookingId }
+                    });
                     setPayment(getPayment.data);
                     setBookingDetails(getDetails.data);
                 }
