@@ -191,73 +191,59 @@ import EditPropertyUI from "./pages/PropertyManagementUI/components/edit propert
 import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
+import RequireAuth from "./components/RequireAuth";
+
+import Layout from "./components/Layout";
+
 
 function App() {
-  const location = useLocation();
-  const [token, setToken] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("auth_token");
-    if (storedToken) {
-      setToken(storedToken);
-    } else {
-      setToken(null);
-    }
-  }, []);
-
-  console.log("Token from App.js: ", token);
+  
 
   return (
-    <div style={{ display: "flex", flexDirection: "column"}}>
-      {/* Conditionally render headers based on the current route */}
-      {location.pathname !== "/admin/overview" &&
-      location.pathname !== "/admin/guests" &&
-      location.pathname !== "/admin/listings" &&
-      location.pathname !== "/admin/calendar" &&
-      location.pathname !== "/account" ? (
-        token ? (
-          <HeaderUser token={token} setToken={setToken} />
-        ) : (
-          <HeaderNoUser setToken={setToken} />
-        )
-      ) : null}
-      
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <Routes>
-          <Route path="/login" element={<LoginUI setToken={setToken} />} />
-          <Route path="/" element={<LandingPageUI />} />
-          <Route path="/register" element={<RegistrationUI />} />
-          <Route path="/login/forgot-password" element={<ForgotPassword />} />
-          <Route path="/edit-name" element={<EditName />} />
-          <Route path="/forgot-password/register" element={<RegistrationUI />} />
-          <Route path="/forgot-password/otp" element={<OTP />} />
-          <Route path="/forgot-password" element={<ForgotPass />} />
-          <Route path="/accommodation" element={<PropertyListUI />} />
-          <Route path="/paymentVerification" element={<PaymentVerification />} />
+    <Routes >
+      <Route path="/" element={<Layout />} >
+        {/* Public Routes */}
+        <Route index element={<LandingPageUI />} />
+        <Route path="login" element={<LoginUI  />} />
 
-          {/* Private Routes */}
-          <Route element={<PrivateRoutes token={token} />}>
-            <Route element={<AccountManagement />} path="/account" />
-            <Route path="/list-property/create-listing" element={<AccommodationRegistration />} />
-            <Route path="/list-property" element={<GettingStartedRegistration />} />
-            <Route path="/accommodation/property/:propertyid" element={<ViewPropertyUI />} />
-            <Route path="/accommodation/booking/:propertyid" element={<BookingDetailsUI />} />
-            <Route path="/properties" element={<Dashboard />} />
+        <Route path="register" element={<RegistrationUI />} />
+        <Route path="login/forgot-password" element={<ForgotPassword />} />
+        <Route path="edit-name" element={<EditName />} />
+        <Route path="forgot-password/register" element={<RegistrationUI />} />
+        <Route path="forgot-password/otp" element={<OTP />} />
+        <Route path="forgot-password" element={<ForgotPass />} />
+        <Route path="accommodation" element={<PropertyListUI />} />
+
+
+        {/* Private Routes */}
+        <Route element={<RequireAuth />}>
+          <Route element={<AccountManagement />} path="account" />
+            <Route path="list-property/create-listing" element={<AccommodationRegistration />} />
+            <Route path="list-property" element={<GettingStartedRegistration />} />
+            <Route path="accommodation/property/:propertyid" element={<ViewPropertyUI />} />
+            <Route path="accommodation/booking/:propertyid" element={<BookingDetailsUI />} />
+            <Route path="properties" element={<Dashboard />} />
+            <Route path="accommodation" element={<PropertyListUI />} />
             
             {/* Admin Routes */}
-            <Route path="/admin/overview" element={<Dashboard />} />
-            <Route path="/admin/listings" element={<PropertyManagementListingUI />} />
-            <Route path="/admin/calendar" element={<CalendarUI />} />
-            <Route path="/admin/guests" element={<AccommodationReservationUI />} />
-            <Route path="/edit-property/:id" element={<EditPropertyUI />} />
-          </Route>
+            <Route path="admin/overview" element={<Dashboard />} />
+            <Route path="admin/listings" element={<PropertyManagementListingUI />} />
+            <Route path="admin/calendar" element={<CalendarUI />} />
+            <Route path="admin/guests" element={<AccommodationReservationUI />} />
+            <Route path="edit-property/:id" element={<EditPropertyUI />} />
+            
 
-          {/* Redirect to login for any unmatched route */}
-          <Route path="*" element={<LandingPageUI />} />
-        </Routes>
-      </div>
-    </div>
+        </Route>
+
+
+
+        
+      </Route>
+
+      
+    </Routes>
   );
 }
 

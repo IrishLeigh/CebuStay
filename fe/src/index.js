@@ -5,18 +5,8 @@ import reportWebVitals from "./reportWebVitals";
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
-import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
-import Sample from "./pages/AccountManagement/Sample";
-import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
-import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
-import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
+import { AuthProvider } from "./components/AuthProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
-import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
-import BookingDetails from "./pages/BookingDetailsUI/BookingDetails";
-// import ViewNearby from "./InteractiveMap/components/ViewNearby";
-// import TopRated from "./InteractiveMap/components/TopRated";
-// import CheckInCheckOut from "./pages/PropertyManagementUI/modals/CheckInCheckOut";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -25,7 +15,9 @@ root.render(
       <DataProvider>
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
+            <AuthProvider>
             <App />
+            </AuthProvider>
           </GoogleOAuthProvider>
         </UserProvider>
       </DataProvider>

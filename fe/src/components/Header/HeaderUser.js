@@ -82,7 +82,7 @@ function HeaderUser({ token, setToken }) {
 
   const handlePageClick = (page) => {
     if (page === "Accommodation") {
-      window.location.href = "/accommodation";
+      navigate("accommodation"); // Redirect to "accommodation";
     } else {
       navigate(`/${page.toLowerCase().replace(" ", "-")}`);
     }
