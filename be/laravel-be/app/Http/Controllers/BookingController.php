@@ -111,6 +111,73 @@ class BookingController extends CORS
         }
     }
 
+    public function updateBooking(Request $request, $bookingId)
+{
+    $this->enableCors($request);
+
+    try {
+        DB::beginTransaction();
+
+        // Retrieve and validate the check-in and check-out dates
+        $checkin = $request->input('checkin_date');
+        $checkout = $request->input('checkout_date');
+
+        if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
+            return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
+        }
+
+        // Retrieve the booking to be updated
+        $booking = Booking::find($bookingId);
+
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error']);
+        }
+
+        // Retrieve all bookings for the given unitid, excluding the current booking
+        $bookings = Booking::where('unitid', $booking->unitid)
+            ->where('bookingid', '!=', $bookingId)
+            ->get();
+
+        // Perform validation check for date conflict
+        foreach ($bookings as $existingBooking) {
+            if (
+                ($checkin >= $existingBooking->checkin_date && $checkin <= $existingBooking->checkout_date) ||
+                ($checkout >= $existingBooking->checkin_date && $checkout <= $existingBooking->checkout_date) ||
+                ($checkin < $existingBooking->checkin_date && $checkout > $existingBooking->checkout_date)
+            ) {
+                return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
+            }
+        }
+
+        // Update the booking details
+        $booking->checkin_date = $checkin;
+        $booking->checkout_date = $checkout;
+        $booking->guest_count = $request->input('guest_count');
+
+        // If there are other fields you want to update, add them here
+        if ($request->has('special_request')) {
+            $booking->special_request = $request->input('special_request');
+        }
+        if ($request->has('arrival_time')) {
+            $booking->arrival_time = $request->input('arrival_time');
+        }
+        if ($request->has('status')) {
+            $booking->status = $request->input('status');
+        }
+
+        // Save the updated booking
+        $booking->save();
+
+        DB::commit();
+
+        return response()->json(['message' => 'Booking updated successfully', 'status' => 'success', 'bookingid' => $booking->bookingid]);
+    } catch (\Exception $e) {
+        DB::rollback();
+
+        return response()->json(['message' => 'Failed to update booking: ' . $e->getMessage(), 'status' => 'error']);
+    }
+}
+
 
 
     public function updateBookingPid(Request $request)
@@ -368,7 +435,7 @@ class BookingController extends CORS
 
         // Eager load the property, location, booker, and guest relationships
         $bookings = Booking::with(['property.location', 'booker', 'guest'])
-            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'stay_length', 'total_price', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
+            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'stay_length', 'total_price', 'status', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
             ->where('userid', $userid)
             ->get();
 
@@ -377,6 +444,7 @@ class BookingController extends CORS
             return [
                 'id' => $booking->bookingid,
                 'date' => $booking->booking_date,
+                'propertyid' => $booking->propertyid,
                 'name' => $booking->property->property_name,
                 'type' => $booking->property->property_type,
                 'location' => $booking->property->location->address,
@@ -384,6 +452,7 @@ class BookingController extends CORS
                 'stay_length' => $booking->stay_length,
                 'amount' => $booking->total_price,
                 'status' => $booking->type === 'booking' ? 'Checked In' : 'Booked',
+                'isCancel' => $booking->status,
                 'checkIn' => $booking->checkin_date,
                 'checkOut' => $booking->checkout_date,
                 'special_request' => $booking->special_request,
@@ -555,6 +624,62 @@ class BookingController extends CORS
         $bookingHistory->special_request = $booking->special_request;
         $bookingHistory->arrival_time = $booking->arrival_time;
         $bookingHistory->status = $booking->status;
+        $bookingHistory->type = $booking->type;
+        $bookingHistory->check_type = "Checkout";
+        $bookingHistory->booking_date = $booking->booking_date;
+
+        // Save to BookingHistory
+        $bookingHistory->save();
+
+        // Delete the booking from Booking model
+        $booking->delete();
+
+        // Find the closest next booking by checkin_date for the same unitid
+        $nextBooking = Booking::where('unitid', $booking->unitid)
+            ->where('checkin_date', '>', $booking->checkin_date)
+            ->orderBy('checkin_date', 'asc')
+            ->first();
+
+        if ($nextBooking) {
+            // Check if the next booking's checkin_date is today
+            $today = date('Y-m-d');
+            $nextCheckinDate = date('Y-m-d', strtotime($nextBooking->checkin_date));
+
+            if ($nextCheckinDate == $today) {
+                $nextBooking->type = 'booking';
+            }
+
+            $nextBooking->save();
+        }
+
+        return response()->json(['message' => 'Checkout date set successfully, booking moved to history, and next booking updated', 'status' => 'success']);
+    }
+
+    public function setCancelBooking(Request $request)
+    {
+        $bookingid = $request->input('bookingid');
+        $booking = Booking::find($bookingid);
+
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error'], 404);
+        }
+
+        // Move booking to BookingHistory
+        $bookingHistory = new BookingHistory();
+        $bookingHistory->userid = $booking->userid;
+        $bookingHistory->propertyid = $booking->propertyid;
+        $bookingHistory->unitid = $booking->unitid;
+        $bookingHistory->bookerid = $booking->bookerid;
+        $bookingHistory->guestid = $booking->guestid;
+        $bookingHistory->pid = $booking->pid;
+        $bookingHistory->stay_length = $booking->stay_length;
+        $bookingHistory->guest_count = $booking->guest_count;
+        $bookingHistory->checkin_date = $booking->checkin_date;
+        $bookingHistory->checkout_date = date('Y-m-d H:i:s'); // Set current date and time
+        $bookingHistory->total_price = $booking->total_price;
+        $bookingHistory->special_request = $booking->special_request;
+        $bookingHistory->arrival_time = $booking->arrival_time;
+        $bookingHistory->status = "Cancelled";
         $bookingHistory->type = $booking->type;
         $bookingHistory->check_type = "Checkout";
         $bookingHistory->booking_date = $booking->booking_date;

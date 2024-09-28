@@ -14,11 +14,12 @@ return new class extends Migration {
             $table->increments('bookingpolicyid');
             $table->unsignedInteger('propertyid');
             $table->foreign('propertyid')->references('propertyid')->on('property');
-            $table->boolean('is_cancel_plan')->default(false);
-            $table->integer('cancel_days')->nullable(true);
-            $table->boolean('non_refundable');
-            $table->boolean('modification_plan');
-            $table->boolean('offer_discount');
+            $table->boolean('isCancellationPolicy');
+            $table->integer('cancellationDays')->nullable(true);
+            $table->integer('cancellationCharge')->nullable(true);
+            $table->boolean('isModificationPolicy');
+            $table->integer('modificationDays')->nullable(true);
+            $table->integer('modificationCharge')->nullable(true);
             $table->timestamps();
         });
     }

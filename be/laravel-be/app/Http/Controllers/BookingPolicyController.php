@@ -11,24 +11,73 @@ class BookingPolicyController extends CORS
     public function InsertBookingPolicyInfo(Request $request)
     {
         $this->enableCors($request);
-        $bookingpolicy = new BookingPolicy();
-        $bookingpolicy->propertyid = $request->input('propertyid');
-        $bookingpolicy->is_cancel_plan = $request->input('is_cancel_plan');
-        if ($bookingpolicy->is_cancel_plan == true) {
-            $bookingpolicy->cancel_days = $request->input('cancel_days');
-        } else {
-            $bookingpolicy->cancel_days = false;
-            $bookingpolicy->is_cancel_plan = false;
-        }
-        $request->input('non_refundable') === null ? $bookingpolicy->non_refundable = false : $bookingpolicy->non_refundable = true;
-        $request->input('modification_plan') === null ? $bookingpolicy->modification_plan = false : $bookingpolicy->modification_plan = true;
-        $request->input('offer_discount') === null ? $bookingpolicy->offer_discount = false : $bookingpolicy->offer_discount = true;
 
-        $bookingpolicy->save();
+        $bookingPolicy = new BookingPolicy();
+        $bookingPolicy->propertyid = $request->input('propertyid');
+        $bookingPolicy->isCancellationPolicy = $request->input('isCancellationPolicy');
+        $bookingPolicy->cancellationDays = $request->input('cancellationDays');
+        $bookingPolicy->cancellationCharge = $request->input('cancellationCharge');
+        $bookingPolicy->isModificationPolicy = $request->input('isModificationPolicy');
+        $bookingPolicy->modificationDays = $request->input('modificationDays');
+        $bookingPolicy->modificationCharge = $request->input('modificationCharge');
+        
+        $bookingPolicy->save();
 
         return response()->json([
             "status" => 'success',
             "message" => "Booking policy created successfully"
         ]);
+    }
+
+    public function getBookingPolicy(Request $request)
+    {
+        $this->enableCors(request());
+
+        $propertyid = $request->input('propertyid');
+
+        $bookingPolicy = BookingPolicy::where('propertyid', $propertyid)->first();
+
+        if ($bookingPolicy) {
+            return response()->json([
+                "status" => 'success',
+                "data" => $bookingPolicy
+            ]);
+        } else {
+            return response()->json([
+                "status" => 'error',
+                "message" => "Booking policy not found"
+            ], 404);
+        }
+    }
+
+    public function updateBookingPolicy(Request $request)
+    {
+        $this->enableCors($request);
+
+        $propertyid = $request->input('propertyid');
+        $bookingPolicy = BookingPolicy::where('propertyid', $propertyid)->first();
+
+
+        if ($bookingPolicy) {
+            $bookingPolicy->propertyid = $request->input('propertyid', $bookingPolicy->propertyid);
+            $bookingPolicy->isCancellationPolicy = $request->input('isCancellationPolicy', $bookingPolicy->isCancellationPolicy);
+            $bookingPolicy->cancellationDays = $request->input('cancellationDays', $bookingPolicy->cancellationDays);
+            $bookingPolicy->cancellationCharge = $request->input('cancellationCharge', $bookingPolicy->cancellationCharge);
+            $bookingPolicy->isModificationPolicy = $request->input('isModificationPolicy', $bookingPolicy->isModificationPolicy);
+            $bookingPolicy->modificationDays = $request->input('modificationDays', $bookingPolicy->modificationDays);
+            $bookingPolicy->modificationCharge = $request->input('modificationCharge', $bookingPolicy->modificationCharge);
+            
+            $bookingPolicy->save();
+
+            return response()->json([
+                "status" => 'success',
+                "message" => "Booking policy updated successfully"
+            ]);
+        } else {
+            return response()->json([
+                "status" => 'error',
+                "message" => "Booking policy not found"
+            ], 404);
+        }
     }
 }

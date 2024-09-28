@@ -15,6 +15,8 @@ class Payment extends Model
        protected $fillable = [
         'pid',
         'bookingid',
+        'paymentid',
+        'linkid',
         'amount',
         'description',
         'status',

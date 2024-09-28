@@ -154,7 +154,7 @@ class PropertyController extends CORS
             ->where('propertyid', $request->input('propertyid'))
             ->get();
 
-        $property_bookingpolicy = BookingPolicy::select('bookingpolicyid', 'is_cancel_plan', 'cancel_days', 'non_refundable', 'modification_plan', 'offer_discount')
+        $property_bookingpolicy = BookingPolicy::select('bookingpolicyid', 'isCancellationPolicy', 'cancellationDays', 'CancellationCharge', 'isModificationPolicy', 'modificationDays', 'modificationCharge')
             ->where('propertyid', $request->input('propertyid'))
             ->first();
 

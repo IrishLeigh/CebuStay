@@ -93,7 +93,7 @@ class UserController extends CORS
         foreach ($properties as $property) {
             $location = Location::select('address')->where('propertyid', $property->propertyid)->first();
             $paymethod = PropertyPaymentMethods::select('paymentmethod')->where('propertyid', $property->propertyid)->first();
-            $cancel_policy = BookingPolicy::select('is_cancel_plan')->where('propertyid', $property->propertyid)->first();
+            $cancel_policy = BookingPolicy::select('isCancellationPolicy')->where('propertyid', $property->propertyid)->first();
 
             $userProperties[] = [
                 'id' => $property->propertyid,

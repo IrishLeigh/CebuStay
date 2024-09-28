@@ -93,7 +93,7 @@ class PayMongoService
     }
     
 
-    public function getRefund($refundId)
+    public function getRefundService($refundId)
     {
         try {
             // Send the GET request to retrieve refund details

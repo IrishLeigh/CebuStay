@@ -31,6 +31,7 @@ Route::get('/getpayments', [PaymentController::class, 'getPayments']);
 Route::post('/payment-callback', [PaymentController::class, 'paymentCallback']);
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::post('/refund-payment', [PaymentController::class, 'refundPayment']);
+Route::get('/getpaymentid', [PaymentController::class, 'getPaymentId']);
 Route::get('refund', [PaymentController::class, 'getRefund']);
 Route::put('/update-payment-status', [PaymentController::class, 'updatePaymentStatus']);
 
@@ -118,6 +119,8 @@ Route::get('/getunit/{unitid}', 'App\Http\Controllers\UnitDetailsController@getU
 
 //Route for Inserting Booking Policy
 Route::post('/bookingpolicy', 'App\Http\Controllers\BookingPolicyController@InsertBookingPolicyInfo');
+Route::get('/getbookingpolicy', 'App\Http\Controllers\BookingPolicyController@getBookingPolicy');
+Route::get('/updatebookingpolicy', 'App\Http\Controllers\BookingPolicyController@updateBookingPolicy');
 //Route for Inserting Property Pricing
 Route::post('/propertypricing', 'App\Http\Controllers\PropertyPricingController@insertPropertyPricing');
 Route::get('/allpropertypricing', 'App\Http\Controllers\PropertyPricingController@getAllPropertyPricing');
@@ -161,6 +164,7 @@ Route::get('/user/bookinghistory', 'App\Http\Controllers\BookingController@getUs
 
 Route::get('/allbookinghistory', 'App\Http\Controllers\BookingController@getAllBookingHistoryByProperty');
 Route::post('/setcheckout', 'App\Http\Controllers\BookingController@setCheckOut');
+Route::post('/setcancel', 'App\Http\Controllers\BookingController@setCancelBooking');
 Route::post('/setcheckin', 'App\Http\Controllers\BookingController@setCheckin');
 //AVAILABILITY FUNCTIONS
 Route::get('/getavailableproperties', 'App\Http\Controllers\PropertyController@searchAvailableProperties');

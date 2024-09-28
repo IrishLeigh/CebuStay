@@ -12,10 +12,11 @@ class BookingPolicy extends Model
     protected $fillable = [
         'bookingpolicyid',
         'propertyid',
-        'is_cancel_plan',
-        'cancel_days',
-        'non_refundable',
-        'modification_plan',
-        'offer_discount'
+        'isCancellationPolicy',
+        'cancellationDays',
+        'CancellationCharge',
+        'isModificationPolicy',
+        'modificationDays',
+        'modificationCharge',
     ];
 }
