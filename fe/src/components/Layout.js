@@ -5,16 +5,17 @@ import HeaderUser from "./Header/HeaderUser";
 import HeaderNoUser from "./Header/HeaderNoUser";
 
 const Layout = () => {
-  const { auth } = useContext(AuthContext);
+  const token = localStorage.getItem("auth_token");
+ 
   const location = useLocation(); // Get the current route
 
-  const isLoggedIn = !!auth?.user;
+  const isLoggedIn = token !== null;
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   // Debugging log
-  useEffect(() => {
-    console.log("Auth state updated:", auth);
-  }, [auth]);
+  // useEffect(() => {
+  //   console.log("Auth state updated:", auth);
+  // }, [token]);
 
   return (
     <>

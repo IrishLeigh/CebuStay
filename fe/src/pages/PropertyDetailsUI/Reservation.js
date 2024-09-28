@@ -43,7 +43,7 @@ export default function ReservationForm({
       checkout_date
     };
   
-    navigate(`/accommodation/booking/${propertyId}`, { state });
+    navigate(`accommodation/booking/${propertyId}`, { state });
     console.log("Booking now...");
   };
   

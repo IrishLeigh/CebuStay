@@ -12,7 +12,7 @@ const pages = ['Home', 'Accommodation'];
 function HeaderNoUser() {
   const handlePageClick = (page) => {
     if (page === 'Accommodation') {
-      window.location.href = '/accommodation'; // Redirect to accommodation page
+      window.location.href = 'accommodation'; // Redirect to accommodation page
     } else {
       window.location.href = `/${page.toLowerCase().replace(' ', '-')}`; // Redirect to other pages
     }

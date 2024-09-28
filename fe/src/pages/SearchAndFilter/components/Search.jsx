@@ -108,7 +108,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                 checkin_date,
                 checkout_date
             };
-            navigate(`/accommodation/property/${suggestion.name.propertyid}`, { state });
+            navigate(`property/${suggestion.name.propertyid}`, { state });
         }
     };
 

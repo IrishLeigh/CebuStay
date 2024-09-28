@@ -169,7 +169,7 @@ import ForgotPassword from "./ForgotPassword_User/ForgotPassword";
 import EditPhone from "./components/EditPhone";
 import LocationRegistration from "./components/registration_unit/registration_location/location";
 import { useData } from "./components/registration_unit/registration_location/contextAddressData";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import OTP from "./components/OTP";
 import ForgotPass from "./ForgotPassword_User/ForgotPass";
 import { UserProvider } from "./components/UserProvider";
@@ -202,48 +202,37 @@ function App() {
   
 
   return (
-    <Routes >
-      <Route path="/" element={<Layout />} >
-        {/* Public Routes */}
-        <Route index element={<LandingPageUI />} />
-        <Route path="login" element={<LoginUI  />} />
+<Routes>
+  <Route path="/" element={<Layout />}>
+    {/* Public Routes */}
+    <Route index element={<LandingPageUI />} />
+    <Route path="login" element={<LoginUI />} />
+    <Route path="register" element={<RegistrationUI />} />
+    <Route path="login/forgot-password" element={<ForgotPassword />} />
+    <Route path="forgot-password/register" element={<RegistrationUI />} />
+    <Route path="forgot-password/otp" element={<OTP />} />
+    <Route path="forgot-password" element={<ForgotPass />} />
+    <Route path="accommodation" element={<PropertyListUI />} />
+    <Route path="property/:propertyid" element={<ViewPropertyUI />} />
+    <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
 
-        <Route path="register" element={<RegistrationUI />} />
-        <Route path="login/forgot-password" element={<ForgotPassword />} />
-        <Route path="edit-name" element={<EditName />} />
-        <Route path="forgot-password/register" element={<RegistrationUI />} />
-        <Route path="forgot-password/otp" element={<OTP />} />
-        <Route path="forgot-password" element={<ForgotPass />} />
-        <Route path="accommodation" element={<PropertyListUI />} />
-
-
-        {/* Private Routes */}
-        <Route element={<RequireAuth />}>
-          <Route element={<AccountManagement />} path="account" />
-            <Route path="list-property/create-listing" element={<AccommodationRegistration />} />
-            <Route path="list-property" element={<GettingStartedRegistration />} />
-            <Route path="accommodation/property/:propertyid" element={<ViewPropertyUI />} />
-            <Route path="accommodation/booking/:propertyid" element={<BookingDetailsUI />} />
-            <Route path="properties" element={<Dashboard />} />
-            <Route path="accommodation" element={<PropertyListUI />} />
-            
-            {/* Admin Routes */}
-            <Route path="admin/overview" element={<Dashboard />} />
-            <Route path="admin/listings" element={<PropertyManagementListingUI />} />
-            <Route path="admin/calendar" element={<CalendarUI />} />
-            <Route path="admin/guests" element={<AccommodationReservationUI />} />
-            <Route path="edit-property/:id" element={<EditPropertyUI />} />
-            
-
-        </Route>
-
-
-
-        
-      </Route>
-
+    {/* Private Routes */}
+    <Route element={<PrivateRoutes />}>
+      <Route path="account" element={<AccountManagement />} />
+      <Route path="list-property/create-listing" element={<AccommodationRegistration />} />
+      <Route path="list-property" element={<GettingStartedRegistration />} />
       
-    </Routes>
+      
+      {/* Admin Routes */}
+      <Route path="admin/overview" element={<Dashboard />} />
+      <Route path="admin/listings" element={<PropertyManagementListingUI />} />
+      <Route path="admin/calendar" element={<CalendarUI />} />
+      <Route path="admin/guests" element={<AccommodationReservationUI />} />
+      <Route path="edit-property/:id" element={<EditPropertyUI />} />
+    </Route>
+  </Route>
+</Routes>
+
   );
 }
 

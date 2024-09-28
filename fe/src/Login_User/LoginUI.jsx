@@ -7,6 +7,7 @@ import { useUser } from "../components/UserProvider";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import { Button, Snackbar, CircularProgress } from "@mui/material";
+
 import useAuth from "../components/useAuth";
 
 
@@ -26,7 +27,7 @@ const LoginUI = () => {
   const {setAuth} = useAuth();
   const navigate = useNavigate(); // Use useNavigate for navigation
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+
 
 
   const handleClick = () => {
@@ -127,7 +128,8 @@ const LoginUI = () => {
         localStorage.setItem("auth_token", token);
         setAuth({token, user});
         console.log(user);
-        navigate (from, { replace: true });
+        const from = location.state?.from || "/";
+        navigate(from, { replace: true });
 
         // Store the "Remember me" option in local storage  
         if (rememberMe) {

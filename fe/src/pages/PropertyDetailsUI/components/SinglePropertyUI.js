@@ -45,7 +45,7 @@ export default function SinglePropertyUI({ propertyid }) {
       checkOutDate: checkOutDate.format("YYYY-MM-DD"),
     }).toString();
 
-    navigate(`/accommodation/booking/${propertyid}?${queryParams}`);
+    navigate(`accommodation/booking/${propertyid}?${queryParams}`);
   };
 
   useEffect(() => {
