@@ -1,21 +1,40 @@
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import AuthContext from "./AuthProvider";
 import HeaderUser from "./Header/HeaderUser";
 import HeaderNoUser from "./Header/HeaderNoUser";
 
 const Layout = () => {
-  const token = localStorage.getItem("auth_token");
- 
   const location = useLocation(); // Get the current route
-
-  const isLoggedIn = token !== null;
   const isAdminRoute = location.pathname.startsWith("/admin");
+  
+  // Initialize state based on localStorage
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem("auth_token") !== null;
+  });
 
-  // Debugging log
-  // useEffect(() => {
-  //   console.log("Auth state updated:", auth);
-  // }, [token]);
+  useEffect(() => {
+    // Function to update the login state based on localStorage
+    const updateLoginState = () => {
+      const token = localStorage.getItem("auth_token");
+      setIsLoggedIn(token !== null);
+    };
+
+    // Check login state initially
+    updateLoginState();
+
+    // Listen for storage changes to update the state
+    window.addEventListener("storage", updateLoginState);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("storage", updateLoginState);
+    };
+  }, []);
+
+  // Optional: log the current login state for debugging
+  useEffect(() => {
+    console.log("Auth state updated:", isLoggedIn);
+  }, [isLoggedIn]);
 
   return (
     <>

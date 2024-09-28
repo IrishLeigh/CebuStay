@@ -191,48 +191,60 @@ import EditPropertyUI from "./pages/PropertyManagementUI/components/edit propert
 import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
-import RequireAuth from "./components/RequireAuth";
 
-import Layout from "./components/Layout";
+import UserLayout from "./components/Layout/UserLayout";
+import NoUserLayout from "./components/Layout/NoUserLayout";
 
 
 function App() {
-  
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem("auth_token") !== null;
+  });
 
-  
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsLoggedIn(localStorage.getItem("auth_token") !== null);
+    };
+
+    // Check authentication state every second
+    const intervalId = setInterval(checkAuth, 10);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
-<Routes>
-  <Route path="/" element={<Layout />}>
-    {/* Public Routes */}
-    <Route index element={<LandingPageUI />} />
-    <Route path="login" element={<LoginUI />} />
-    <Route path="register" element={<RegistrationUI />} />
-    <Route path="login/forgot-password" element={<ForgotPassword />} />
-    <Route path="forgot-password/register" element={<RegistrationUI />} />
-    <Route path="forgot-password/otp" element={<OTP />} />
-    <Route path="forgot-password" element={<ForgotPass />} />
-    <Route path="accommodation" element={<PropertyListUI />} />
-    <Route path="property/:propertyid" element={<ViewPropertyUI />} />
-    <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
+    <Routes>
+      <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
+        {/* Public Routes */}
+        <Route index element={<LandingPageUI />} />
+        <Route path="login" element={<LoginUI />} />
+        <Route path="register" element={<RegistrationUI />} />
+        <Route path="login/forgot-password" element={<ForgotPassword />} />
+        <Route path="forgot-password/register" element={<RegistrationUI />} />
+        <Route path="forgot-password/otp" element={<OTP />} />
+        <Route path="forgot-password" element={<ForgotPass />} />
+        <Route path="accommodation" element={<PropertyListUI />} />
+        <Route path="property/:propertyid" element={<ViewPropertyUI />} />
+        <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
+        
 
-    {/* Private Routes */}
-    <Route element={<PrivateRoutes />}>
-      <Route path="account" element={<AccountManagement />} />
-      <Route path="list-property/create-listing" element={<AccommodationRegistration />} />
-      <Route path="list-property" element={<GettingStartedRegistration />} />
-      
-      
-      {/* Admin Routes */}
-      <Route path="admin/overview" element={<Dashboard />} />
-      <Route path="admin/listings" element={<PropertyManagementListingUI />} />
-      <Route path="admin/calendar" element={<CalendarUI />} />
-      <Route path="admin/guests" element={<AccommodationReservationUI />} />
-      <Route path="edit-property/:id" element={<EditPropertyUI />} />
-    </Route>
-  </Route>
-</Routes>
-
+        {/* Private Routes */}
+        <Route element={<PrivateRoutes />}>
+          <Route path="account" element={<AccountManagement />} />
+          <Route path="list-property/create-listing" element={<AccommodationRegistration />} />
+          <Route path="list-property" element={<GettingStartedRegistration />} />
+          <Route path="login" element={<Navigate to="/" replace />} />
+          
+          {/* Admin Routes */}
+          <Route path="admin/overview" element={<Dashboard />} />
+          <Route path="admin/listings" element={<PropertyManagementListingUI />} />
+          <Route path="admin/calendar" element={<CalendarUI />} />
+          <Route path="admin/guests" element={<AccommodationReservationUI />} />
+          <Route path="edit-property/:id" element={<EditPropertyUI />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 

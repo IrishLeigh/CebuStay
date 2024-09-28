@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from "react";
 import axios from "axios";
 import "./Form.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useUser } from "../components/UserProvider";
 import { GoogleLogin } from '@react-oauth/google';
@@ -27,8 +27,15 @@ const LoginUI = () => {
   const {setAuth} = useAuth();
   const navigate = useNavigate(); // Use useNavigate for navigation
   const location = useLocation();
+  const isLoggedIn = localStorage.getItem("auth_token") !== null;
 
 
+  
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleClick = () => {
     setOpen(true);
@@ -65,21 +72,25 @@ const LoginUI = () => {
 
     // console.log("Token:", token);
     if (token) {
-      const jwtToken = token.split("=")[1];
-      axios
+
+      const res =axios
         .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((response) => {
-          setUser(response.data["data"]);
-          loginUser(response.data.data);
+        .then((res) => {
+   
+          loginUser(res.data.data);
+          setUser(res.data.data);
+          console.log("USER NI SYA BA", res.data.data);
+
         })
         .catch((error) => {
           alert("Error decoding JWT token:", error);
-          setUser(null);
+          
         });
     } else {
-      setUser(null);
+      loginUser(null);
     }
   }, [loginUser]);
+
 
   
   const handleSubmit = async (event) => {
@@ -242,6 +253,8 @@ const LoginUI = () => {
     console.log('Google Login Failed');
     setLoginGoogleError('Google login failed.');
   };
+
+  console.log('USER NI:', user);
 
   return (
     <div style={{width:"100%", overflowY: "scroll"}}>
