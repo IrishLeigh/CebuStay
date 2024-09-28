@@ -138,7 +138,7 @@ class PaymentController extends CORS
         $reason = $request->input('reason', 'others'); // Default reason is 'others'
 
         $totalAmount = $payment->amount; // Assuming this is the total amount paid
-        $amountToRefund = ($percentage / 100) * $totalAmount;
+        $amountToRefund =  round(($percentage / 100) * $totalAmount);
         // $refundAmount = $amountToRefund * 100;
 
         if (!$paymentId) {

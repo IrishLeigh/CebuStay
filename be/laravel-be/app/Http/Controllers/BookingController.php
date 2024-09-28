@@ -13,6 +13,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Models\Payment;
 use App\Models\BookingHistory;
+use App\Models\BookingPolicy;
+use App\Services\PayMongoService;
 
 class BookingController extends CORS
 {
@@ -129,6 +131,8 @@ class BookingController extends CORS
         // Retrieve the booking to be updated
         $booking = Booking::find($bookingId);
 
+        $bookingPolicy = BookingPolicy::where('propertyid', $booking->propertyid)->first();
+
         if (!$booking) {
             return response()->json(['message' => 'Booking not found', 'status' => 'error']);
         }
@@ -167,6 +171,19 @@ class BookingController extends CORS
 
         // Save the updated booking
         $booking->save();
+
+        $payment = Payment::where('bookingid', $booking->bookingid)->first();
+
+        // Check if check-in date minus cancellation days is greater than the current date
+        $cancellationDays = $bookingPolicy->cancellationDays;
+        $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($booking->checkin_date . " - $cancellationDays days"));
+        $currentDate = date('Y-m-d');
+
+
+        if ($currentDate > $checkinDateMinusCancellationDays) {
+            $totalAmount = $payment->amount; // Assuming this is the total amount paid
+            $amountToRefund = ($bookingPolicy->modificationCharge / 100) * $totalAmount;
+        }
 
         DB::commit();
 
