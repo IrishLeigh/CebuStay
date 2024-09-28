@@ -87,13 +87,13 @@ const PropertyListUI = () => {
           const bookingPolicy = property.booking_policies && property.booking_policies.length > 0 ? property.booking_policies[0] : {};
         
           // Check the booking policy and push to bookingOptionsArray if the value is 1
-          if (bookingPolicy.is_cancel_plan === 1) {
+          if (bookingPolicy.isCancellationPolicy === 1) {
             bookingOptionsArray.push("Cancellation Plan");
           }
           if (bookingPolicy.non_refundable === 1) {
             bookingOptionsArray.push("Non-Refundable");
           }
-          if (bookingPolicy.modification_plan === 1) {
+          if (bookingPolicy.isModificationPolicy === 1) {
             bookingOptionsArray.push("Modification Plan");
           }
         

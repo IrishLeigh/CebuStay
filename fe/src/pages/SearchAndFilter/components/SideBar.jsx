@@ -474,11 +474,11 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
           <input id="cbx-51-5" type="checkbox" checked={selectedBookingOptions.includes('Cancellation Plan')} onChange={() => handleBookingOptionChange('Cancellation Plan')} />
           <label className="cbx" htmlFor="cbx-51-5"></label>
         </div>
-        <div className="flex items-center justify-between mt-2 wrap-check-51">
+        {/* <div className="flex items-center justify-between mt-2 wrap-check-51">
           <span>No Refund Policy</span>
           <input id="cbx-51-6" type="checkbox" checked={selectedBookingOptions.includes('Non-Refundable')} onChange={() => handleBookingOptionChange('Non-Refundable')} />
           <label className="cbx" htmlFor="cbx-51-6"></label>
-        </div>
+        </div> */}
         <div className="flex items-center justify-between mt-2 wrap-check-51">
           <span>Modification Plan</span>
           <input id="cbx-51-7" type="checkbox" checked={selectedBookingOptions.includes('Modification Plan')} onChange={() => handleBookingOptionChange('Modification Plan')} />
