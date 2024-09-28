@@ -21,7 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu"; // Import the MUI icon
 // import './NavigationBar.css'; // Import the CSS file
 import axios from "axios";
 const pages = ["Home", "Accommodation"];
-const settings = ["Account", "Your Properties","Your Bookings", "Logout"];
+const settings = ["Account", "Your Properties", "Your Bookings", "Logout"];
 
 function HeaderUser({ token, setToken }) {
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,7 @@ function HeaderUser({ token, setToken }) {
 
   const handleImageError = (e) => {
     // Fallback to another image or initials
-    alert("Failed to render image");
+    // alert("Failed to render image");
     e.target.src =
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
     setProfileImage(
@@ -99,7 +99,7 @@ function HeaderUser({ token, setToken }) {
       case "Your Properties":
         navigate("/admin/overview");
         break;
-        case "Your Properties":
+      case "Your Properties":
         navigate("/admin/overview");
         break;
       case "Logout":
@@ -149,29 +149,35 @@ function HeaderUser({ token, setToken }) {
       >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-  <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-    <img
-      src="/Logo2.png"
-      alt="Logo"
-      className="logo"
-      style={{ height: "40px", marginRight: "10px" }}
-    />
-    <Typography
-      noWrap
-      sx={{
-        fontFamily: "Poppins, sans-serif",
-        fontWeight: 1000,
-        color: "#16B4DD",
-        textDecoration: "none",
-        fontSize: "1.5rem",
-      }}
-    >
-      cebustay
-    </Typography>
-  </a>
-</Box>
-
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <a
+                href="/"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
+                }}
+              >
+                <img
+                  src="/Logo2.png"
+                  alt="Logo"
+                  className="logo"
+                  style={{ height: "40px", marginRight: "10px" }}
+                />
+                <Typography
+                  noWrap
+                  sx={{
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: 1000,
+                    color: "#16B4DD",
+                    textDecoration: "none",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  cebustay
+                </Typography>
+              </a>
+            </Box>
 
             <Box sx={{ flexGrow: 1 }} />
 
