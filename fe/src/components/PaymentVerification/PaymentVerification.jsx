@@ -19,9 +19,13 @@ const PaymentVerification = () => {
         };
 
         const id = getQueryParam('bookingId');
-        if (id !== null) {
+        if (id) {
             setBookingId(id);
         }
+    }, []); 
+
+    useEffect(() => {
+
         const fetchData = async () => {
             setLoading(true);
             try {
