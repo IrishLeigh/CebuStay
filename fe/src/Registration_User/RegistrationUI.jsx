@@ -39,22 +39,6 @@ const RegistrationUI = () => {
         return;
       }
 
-      // Check if email already exists
-      // const emailCheckResponse = await axios.post(
-      //   "http://127.0.0.1:8000/api/registeruser",
-      //   {
-      //     firstname,
-      //     lastname,
-      //     email,
-      //     password,
-      //   }
-      // );
-
-      // if (emailCheckResponse.data.exists) {
-      //   setError("This email already exists. Please use a different email."); // Set error message
-      //   return;
-      // }
-
       var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
       if (!passwordRegex.test(password)) {
         setError(
@@ -144,7 +128,7 @@ const RegistrationUI = () => {
   };
 
   return (
-    <div className="center-container" style={{ width : "100%", height: "80vh" }}>
+    <div className="center-container" style={{ height: "100vh" }}>
       {!verificationSent && (
         <div className="registration-container">
           <div style={{ textAlign: "Left" }}>
@@ -206,61 +190,91 @@ const RegistrationUI = () => {
               </div>
             </div>
 
-            <div className="inputForm">
-              <MdEmail />
-              <input
-                type="Email"
-                className="input"
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+            <div className="inputForm" style={{ position: "relative" }}>
+  <MdEmail style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#000" }} />
+  <input
+    type="email"
+    className="input"
+    placeholder="Email"
+    onChange={(e) => setEmail(e.target.value)}
+    style={{ paddingLeft: "40px" }}  // Adjust padding to make space for the email icon
+  />
+</div>
 
-            <div className="inputForm">
-              <MdLock />
-              <input
-                type={passwordVisibility ? "text" : "password"}
-                className="input"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ paddingRight: "30px" }}
-              />
-              {passwordVisibility ? (
-                <MdVisibility
-                  onClick={togglePasswordVisibility}
-                  style={{ paddingRight: "20px" }}
-                />
-              ) : (
-                <MdVisibilityOff
-                  onClick={togglePasswordVisibility}
-                  style={{ paddingRight: "20px" }}
-                />
-              )}
-            </div>
+<div className="inputForm" style={{ position: "relative" }}>
+  <MdLock style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#000" }} />
+  <input
+    type={passwordVisibility ? "text" : "password"}
+    className="input"
+    placeholder="Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    style={{ paddingRight: "40px", paddingLeft: "40px" }} // Adjust padding for lock icon and visibility toggle
+  />
+  {passwordVisibility ? (
+    <MdVisibility
+      onClick={togglePasswordVisibility}
+      style={{
+        position: "absolute",
+        right: "10px", // Align the visibility icon on the right
+        top: "50%",
+        transform: "translateY(-50%)",
+        cursor: "pointer",
+        color: "#000", // Optional: Change color for better visibility
+      }}
+    />
+  ) : (
+    <MdVisibilityOff
+      onClick={togglePasswordVisibility}
+      style={{
+        position: "absolute",
+        right: "10px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        cursor: "pointer",
+        color: "#000",
+      }}
+    />
+  )}
+</div>
 
-            <div className="inputForm">
-              <MdLock />
-              <input
-                type={confirmPasswordVisibility ? "text" : "password"}
-                className="input"
-                placeholder="Confirm Password"
-                value={confirmpassword}
-                onChange={(e) => setConfirmpassword(e.target.value)}
-                style={{ paddingRight: "30px" }}
-              />
-              {confirmPasswordVisibility ? (
-                <MdVisibility
-                  onClick={toggleConfirmPasswordVisibility}
-                  style={{ paddingRight: "20px" }}
-                />
-              ) : (
-                <MdVisibilityOff
-                  onClick={toggleConfirmPasswordVisibility}
-                  style={{ paddingRight: "20px" }}
-                />
-              )}
-            </div>
+<div className="inputForm" style={{ position: "relative" }}>
+  <MdLock style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#000" }} />
+  <input
+    type={confirmPasswordVisibility ? "text" : "password"}
+    className="input"
+    placeholder="Confirm Password"
+    value={confirmpassword}
+    onChange={(e) => setConfirmpassword(e.target.value)}
+    style={{ paddingRight: "40px", paddingLeft: "40px" }} // Adjust padding for lock icon and visibility toggle
+  />
+  {confirmPasswordVisibility ? (
+    <MdVisibility
+      onClick={toggleConfirmPasswordVisibility}
+      style={{
+        position: "absolute",
+        right: "10px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        cursor: "pointer",
+        color: "#000",
+      }}
+    />
+  ) : (
+    <MdVisibilityOff
+      onClick={toggleConfirmPasswordVisibility}
+      style={{
+        position: "absolute",
+        right: "10px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        cursor: "pointer",
+        color: "#000",
+      }}
+    />
+  )}
+</div>
+
 
             {/* Display error message in red color */}
             {error && (
@@ -290,7 +304,7 @@ const RegistrationUI = () => {
             Already have an account?{" "}
             <Link to="/login" className="span">
               Sign In
-            </Link>
+            </Link> 
           </p>
         </div>
       )}
