@@ -114,86 +114,106 @@ class BookingController extends CORS
     }
 
     public function updateBooking(Request $request, $bookingId)
-{
-    $this->enableCors($request);
+    {
+        $this->enableCors($request);
 
-    try {
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        // Retrieve and validate the check-in and check-out dates
-        $checkin = $request->input('checkin_date');
-        $checkout = $request->input('checkout_date');
+            // Retrieve and validate the check-in and check-out dates
+            $checkin = $request->input('checkin_date');
+            $checkout = $request->input('checkout_date');
 
-        if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
-            return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
-        }
-
-        // Retrieve the booking to be updated
-        $booking = Booking::find($bookingId);
-
-        $bookingPolicy = BookingPolicy::where('propertyid', $booking->propertyid)->first();
-
-        if (!$booking) {
-            return response()->json(['message' => 'Booking not found', 'status' => 'error']);
-        }
-
-        // Retrieve all bookings for the given unitid, excluding the current booking
-        $bookings = Booking::where('unitid', $booking->unitid)
-            ->where('bookingid', '!=', $bookingId)
-            ->get();
-
-        // Perform validation check for date conflict
-        foreach ($bookings as $existingBooking) {
-            if (
-                ($checkin >= $existingBooking->checkin_date && $checkin <= $existingBooking->checkout_date) ||
-                ($checkout >= $existingBooking->checkin_date && $checkout <= $existingBooking->checkout_date) ||
-                ($checkin < $existingBooking->checkin_date && $checkout > $existingBooking->checkout_date)
-            ) {
-                return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
+            if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
+                return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
             }
+
+            // Retrieve the booking to be updated
+            $booking = Booking::find($bookingId);
+            
+
+            $bookingPolicy = BookingPolicy::where('propertyid', $booking->propertyid)->first();
+
+            if (!$booking) {
+                return response()->json(['message' => 'Booking not found', 'status' => 'error']);
+            }
+
+            // Retrieve all bookings for the given unitid, excluding the current booking
+            $bookings = Booking::where('unitid', $booking->unitid)
+                ->where('bookingid', '!=', $bookingId)
+                ->get();
+
+            // Perform validation check for date conflict
+            foreach ($bookings as $existingBooking) {
+                if (
+                    ($checkin >= $existingBooking->checkin_date && $checkin <= $existingBooking->checkout_date) ||
+                    ($checkout >= $existingBooking->checkin_date && $checkout <= $existingBooking->checkout_date) ||
+                    ($checkin < $existingBooking->checkin_date && $checkout > $existingBooking->checkout_date)
+                ) {
+                    return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
+                }
+            }
+
+            // Update the booking details
+            $booking->checkin_date = $checkin;
+            $booking->checkout_date = $checkout;
+            $booking->guest_count = $request->input('guest_count');
+
+            // If there are other fields you want to update, add them here
+            if ($request->has('special_request')) {
+                $booking->special_request = $request->input('special_request');
+            }
+            if ($request->has('arrival_time')) {
+                $booking->arrival_time = $request->input('arrival_time');
+            }
+            if ($request->has('status')) {
+                $booking->status = $request->input('status');
+            }
+
+            // Save the updated booking
+            $booking->save();
+
+            $payment = Payment::where('bookingid', $booking->bookingid)->first();
+
+            // Check if check-in date minus cancellation days is greater than the current date
+            $cancellationDays = $bookingPolicy->cancellationDays;
+            $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($booking->checkin_date . " - $cancellationDays days"));
+            $currentDate = date('Y-m-d');
+
+
+            if ($currentDate > $checkinDateMinusCancellationDays) {
+                $totalAmount = $payment->amount; // Assuming this is the total amount paid
+                $amountToRefund = ($bookingPolicy->modificationCharge / 100) * $totalAmount;
+                $property = Property::find($booking->propertyid);
+                $description = 'Modification Charge for booking ' . $property->property_name;
+                $returnUrl = 'http://localhost:3000/paymentVerification';
+                $bookingId = $booking->bookingid;
+
+                $checkoutData = $this->payMongoService->createCheckoutSession($totalprice, $description, $returnUrl, $bookingId);
+                $checkoutUrl = $checkoutData['checkout_url'];
+                $paymentId = $checkoutData['payment_id'];
+
+
+                // Save the payment record in the database
+                $payment = new Payment();
+                $payment->amount = $totalprice / 100;
+                $payment->description = $description;
+                $payment->status = $status;
+                $payment->paymentid = $paymentId;
+                $payment->bookingid = $bookingId;
+
+                $payment->save();
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => 'Booking updated successfully', 'status' => 'success', 'bookingid' => $booking->bookingid]);
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json(['message' => 'Failed to update booking: ' . $e->getMessage(), 'status' => 'error']);
         }
-
-        // Update the booking details
-        $booking->checkin_date = $checkin;
-        $booking->checkout_date = $checkout;
-        $booking->guest_count = $request->input('guest_count');
-
-        // If there are other fields you want to update, add them here
-        if ($request->has('special_request')) {
-            $booking->special_request = $request->input('special_request');
-        }
-        if ($request->has('arrival_time')) {
-            $booking->arrival_time = $request->input('arrival_time');
-        }
-        if ($request->has('status')) {
-            $booking->status = $request->input('status');
-        }
-
-        // Save the updated booking
-        $booking->save();
-
-        $payment = Payment::where('bookingid', $booking->bookingid)->first();
-
-        // Check if check-in date minus cancellation days is greater than the current date
-        $cancellationDays = $bookingPolicy->cancellationDays;
-        $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($booking->checkin_date . " - $cancellationDays days"));
-        $currentDate = date('Y-m-d');
-
-
-        if ($currentDate > $checkinDateMinusCancellationDays) {
-            $totalAmount = $payment->amount; // Assuming this is the total amount paid
-            $amountToRefund = ($bookingPolicy->modificationCharge / 100) * $totalAmount;
-        }
-
-        DB::commit();
-
-        return response()->json(['message' => 'Booking updated successfully', 'status' => 'success', 'bookingid' => $booking->bookingid]);
-    } catch (\Exception $e) {
-        DB::rollback();
-
-        return response()->json(['message' => 'Failed to update booking: ' . $e->getMessage(), 'status' => 'error']);
     }
-}
 
 
 
@@ -605,6 +625,15 @@ class BookingController extends CORS
         }
 
         return response()->json($booking);
+    }
+
+    public function getAllBookingByPropertyId (Request $request)
+    {
+        $this->enableCors($request);
+        $propertyId = $request->input('propertyid');
+
+        $bookings = Booking::where('propertyid', $propertyId)->get();
+        return response()->json($bookings);
     }
     public function setCheckin(Request $request)
     {

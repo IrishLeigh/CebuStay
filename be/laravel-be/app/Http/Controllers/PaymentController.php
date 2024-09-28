@@ -128,6 +128,8 @@ class PaymentController extends CORS
         $this->enableCors($request);
 
         $bookingid = $request->input('bookingid');
+        $dayresult = $request->input('dayResult');
+        $isCancel = $request->input('isCancel');
 
         $payment = Payment::where('bookingid', $bookingid)->first();
         $booking = Booking::find($bookingid);
@@ -136,9 +138,30 @@ class PaymentController extends CORS
         $paymentId = $payment->linkid;
         $percentage = $request->input('percentage'); 
         $reason = $request->input('reason', 'others'); // Default reason is 'others'
-
+        $amountToRefund = null;
         $totalAmount = $payment->amount; // Assuming this is the total amount paid
-        $amountToRefund =  round(($percentage / 100) * $totalAmount);
+        
+        if($isCancel === 1 )
+        {
+            if($dayresult === 1){
+                $amountToRefund =  round((100 / 100) * $totalAmount);
+            }else{
+                $amountToRefund =  round(($percentage / 100) * $totalAmount);
+            }
+        }else{
+            $payment->status = 'Cancelled'; // Set the status to 'cancelled'
+            $payment->save(); // Save changes to the database
+
+            $booking->status = 'Cancelled';
+            $booking->save();
+
+            // Return the refund data
+            return response()->json([
+                'message' => 'Cancelation successful',
+                'status' => 'cancelled',
+            ], 200);
+        }
+        
         // $refundAmount = $amountToRefund * 100;
 
         if (!$paymentId) {
