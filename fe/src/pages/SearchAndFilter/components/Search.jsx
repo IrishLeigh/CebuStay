@@ -153,7 +153,16 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
 
                     <DatePicker
                         selected={startDate}
-                        onChange={date => setStartDate(date)}
+                        onChange={date => {
+                            setStartDate(date);
+
+                            // If the new startDate is after the endDate, set endDate to the day after startDate
+                            if (endDate && date >= endDate) {
+                                const adjustedEndDate = new Date(date);
+                                adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+                                setEndDate(adjustedEndDate);
+                            }
+                        }}
                         selectsStart
                         startDate={startDate}
                         endDate={endDate}
@@ -162,13 +171,14 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                         className="input-field"
                         id="dateInputFrom"
                     />
+
                     <DatePicker
                         selected={endDate}
                         onChange={date => setEndDate(date)}
                         selectsEnd
                         startDate={startDate}
                         endDate={endDate}
-                        minDate={startDate || today} // Set minDate to startDate or today if startDate is null
+                        minDate={new Date(startDate.getTime() + 24 * 60 * 60 * 1000)} // Set minDate to startDate or today if startDate is null
                         placeholderText="To"
                         className="input-field"
                         id="dateInputTo"
