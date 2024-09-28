@@ -20,45 +20,64 @@ export default function SinglePropertyUI({ propertyid }) {
   const [guestCount, setGuestCount] = useState(2);
   const navigate = useNavigate();
   const location = useLocation(); // Get the location object
-   // Extract query parameters
-   const searchParams = new URLSearchParams(location.search);
- 
+  // Extract query parameters
+  const searchParams = new URLSearchParams(location.search);
 
   const handleCheckInChange = (date) => setCheckInDate(date);
   const handleCheckOutChange = (date) => setCheckOutDate(date);
   const handleGuestCountChange = (event) => setGuestCount(event.target.value);
 
   // Handle reservation click
-  const handleReserveClick = () => {
-    if (!checkInDate && !checkOutDate ) {
+  const handleReserveClick = async () => {
+    console.log("Reserve clicked");
+    console.log("Propertyid", propertyid);
+    console.log("Checkin Date", checkInDate.format("YYYY-MM-DD"));
+    console.log("Checkout Date", checkOutDate.format("YYYY-MM-DD"));
+    if (!checkInDate && !checkOutDate) {
       alert("Please select check-in and check-out dates ");
       return;
     }
     if (!guestCount || guestCount <= 0) {
       alert("Please enter valid number of guests");
       return;
-      
     }
     const queryParams = new URLSearchParams({
       guestCount,
       checkInDate: checkInDate.format("YYYY-MM-DD"),
       checkOutDate: checkOutDate.format("YYYY-MM-DD"),
     }).toString();
-
-    navigate(`accommodation/booking/${propertyid}?${queryParams}`);
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
+        checkin_date: checkInDate.format("YYYY-MM-DD"),
+        checkout_date: checkOutDate.format("YYYY-MM-DD"),
+        guest_count: guestCount,
+        propertyid: propertyid,
+      });
+      if (res.data) {
+        console.log("Response", res.data);
+        if (res.data.status === "error") {
+          alert(res.data.message);
+        } else if (res.data.status === "success") {
+          navigate(`/accommodation/booking/${propertyid}?${queryParams}`);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     setGuestCount(searchParams.get("guestCapacity") || 0);
     setCheckInDate(dayjs(searchParams.get("checkin_date") || ""));
     setCheckOutDate(dayjs(searchParams.get("checkout_date") || ""));
-    
   }, []);
   // Fetch property data
   const fetchPropertyData = async () => {
     const propertyId = propertyid; // Use the property ID passed as a prop
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/api/getfiles/${propertyId}`);
+      const res = await axios.get(
+        `http://127.0.0.1:8000/api/getfiles/${propertyId}`
+      );
       if (res.data) {
         const images = res.data.img.map((image, index) => ({
           id: image.id,
@@ -98,7 +117,12 @@ export default function SinglePropertyUI({ propertyid }) {
   // Conditionally render content based on loading state
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
         <CircularProgress />
       </Box>
     );
@@ -108,7 +132,13 @@ export default function SinglePropertyUI({ propertyid }) {
     <div>
       <div style={{ paddingBottom: "2rem" }}>
         <ImageGallery images={propertyImages} />
-        <div style={{ height: "clamp(2rem, 5vw, 2rem)", display: "flex", marginTop: "-16px" }}>
+        <div
+          style={{
+            height: "clamp(2rem, 5vw, 2rem)",
+            display: "flex",
+            marginTop: "-16px",
+          }}
+        >
           <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
           <div style={{ flex: "1 0 0", background: "#ADC939" }} />
           <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
@@ -117,32 +147,35 @@ export default function SinglePropertyUI({ propertyid }) {
           <div style={{ flex: "1 0 0", background: "#A334CF" }} />
           <div style={{ flex: "1 0 0", background: "#1780CB" }} />
         </div>
-        <Grid container >
+        <Grid container>
           <Grid item xs={12} sm={8}>
-          <div style={{ margin: "1rem 1rem 0 0" }}>
+            <div style={{ margin: "1rem 1rem 0 0" }}>
               <PropertyOverView propertyinfo={propertyInfo} />
             </div>
-            </Grid> 
-            <Grid item xs={12} sm={4}>
-              <div style={{ margin: "1rem 0 " }}>
-                <ReservationSection
-                  checkInDate={checkInDate}
-                  checkOutDate={checkOutDate}
-                  handleCheckInChange={handleCheckInChange}
-                  handleCheckOutChange={handleCheckOutChange}
-                  handleReserveClick={handleReserveClick}
-                  guestCount={guestCount}
-                  handleGuestCountChange={handleGuestCountChange}
-                  propertyinfo={propertyInfo}
-                />
-              </div>
-            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <div style={{ margin: "1rem 0 " }}>
+              <ReservationSection
+                checkInDate={checkInDate}
+                checkOutDate={checkOutDate}
+                handleCheckInChange={handleCheckInChange}
+                handleCheckOutChange={handleCheckOutChange}
+                handleReserveClick={handleReserveClick}
+                guestCount={guestCount}
+                handleGuestCountChange={handleGuestCountChange}
+                propertyinfo={propertyInfo}
+              />
+            </div>
+          </Grid>
         </Grid>
         <div style={{ margin: "1rem 0" }}>
           <Directions propertyid={propertyid.propertyid} />
         </div>
         <div style={{ margin: "1rem 0" }}>
-          <PropertyInfo propertyInfo={propertyInfo} propertyImages={propertyImages} />
+          <PropertyInfo
+            propertyInfo={propertyInfo}
+            propertyImages={propertyImages}
+          />
         </div>
         <div style={{ margin: "1rem 0" }}>
           <ReviewsAndRatingsSingleUnit propertyId={propertyid} />
