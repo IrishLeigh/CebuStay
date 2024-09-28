@@ -22,7 +22,7 @@ use App\Http\Controllers\LegalRepresentativeController;
 use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\PropertyCompanyController;
 use App\Http\Controllers\PropertyOwnerController;
-
+use App\Http\Controllers\BookingController;
 // Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
@@ -39,7 +39,7 @@ Route::put('/update-payment-status', [PaymentController::class, 'updatePaymentSt
 Route::post('/users', [UserController::class, 'create']);
 Route::get('/getusers/{userId}', [UserController::class, 'getUserById']);
 
-
+Route::post('/checkbooking', [BookingController::class, 'checkBooking']);
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
