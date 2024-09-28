@@ -627,20 +627,22 @@ function formatDate(dateString) {
                     );
                     console.log("houseRules: ", houseRules);
                     if (houseRules.data) {
-                      const is_cancel_plan = policiesData.standardCancellation;
-                      const cancel_days = policiesData.cancellationDays;
-                      const non_refundable = policiesData.nonRefundableRate;
-                      const modification_plan = policiesData.modificationPlan;
-                      const offer_discount = policiesData.offerDiscounts;
+                      const isCancellationPolicy = policiesData.isCancellationPolicy;
+                      const cancellationDays = policiesData.cancellationDays;
+                      const cancellationCharge = policiesData.cancellationCharge;
+                      const isModification = policiesData.isModification;
+                      const modificationDays = policiesData.modificationDays;
+                      const modificationCharge = policiesData.modificationCharge;
                       const booking_policies = await axios.post(
                         "http://127.0.0.1:8000/api/bookingpolicy",
                         {
                           propertyid: resPropertid.data.propertyid,
-                          is_cancel_plan: is_cancel_plan,
-                          cancel_days: cancel_days,
-                          non_refundable: non_refundable,
-                          modification_plan: modification_plan,
-                          offer_discount: offer_discount,
+                          isCancellationPolicy: isCancellationPolicy,
+                          cancellationDays: cancellationDays,
+                          cancellationCharge: cancellationCharge,
+                          isModificationPolicy: isModification,
+                          modificationDays: modificationDays,
+                          modificationCharge: modificationCharge,
                         }
                       );
                       if (booking_policies.data.status === "success") {
@@ -944,20 +946,22 @@ function formatDate(dateString) {
 
         if (houseRules.data) {
           console.log("Successfully Registered House Rules");
-          const is_cancel_plan = policiesData.standardCancellation;
-          const cancel_days = policiesData.cancellationDays;
-          const non_refundable = policiesData.nonRefundableRate;
-          const modification_plan = policiesData.modificationPlan;
-          const offer_discount = policiesData.offerDiscounts;
+          const isCancellationPolicy = policiesData.isCancellationPolicy;
+          const cancellationDays = policiesData.cancellationDays;
+          const cancellationCharge = policiesData.cancellationCharge;
+          const isModification = policiesData.isModification;
+          const modificationDays = policiesData.modificationDays;
+          const modificationCharge = policiesData.modificationCharge;
           const booking_policies = await axios.post(
             "http://127.0.0.1:8000/api/bookingpolicy",
             {
               propertyid: resPropertid.data.propertyid,
-              is_cancel_plan: is_cancel_plan,
-              cancel_days: cancel_days,
-              non_refundable: non_refundable,
-              modification_plan: modification_plan,
-              offer_discount: offer_discount,
+              isCancellationPolicy: isCancellationPolicy,
+              cancellationDays: cancellationDays,
+              cancellationCharge: cancellationCharge,
+              isModificationPolicy: isModification,
+              modificationDays: modificationDays,
+              modificationCharge: modificationCharge,
             }
           );
           if (booking_policies.data) {

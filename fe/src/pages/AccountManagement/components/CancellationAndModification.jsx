@@ -6,6 +6,7 @@ import '../css/CancellationAndModification.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import { set } from 'date-fns';
+import { CircularProgress } from '@mui/material';
 
 const CancellationAndModification = ({
   selectedBooking,
@@ -17,25 +18,27 @@ const CancellationAndModification = ({
     payableAtCheckIn: 0,
 
   },
-  bookingData // New prop to receive booking data
+  bookingData
 }) => {
   const { basePrice, extraGuestCost, bookingCharge, bookingAmount, payableAtCheckIn } = invoiceDetails;
-
-  const [bookingDetails, setBookingDetails] = useState({
-    checkIn: new Date(),
-    checkOut: new Date(),
-    guests: 3,
-    rooms: 1,
-  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [bookings, setBookings] = useState({});
   const [properties, setProperties] = useState({});
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [showModal, setShowModal] = useState(false);
 
-  // New state to store original booking details
+  const [bookingDetails, setBookingDetails] = useState({
+    checkIn: new Date(selectedBooking.checkIn),
+    checkOut: new Date(selectedBooking.checkOut),
+    guests: selectedBooking.guests,
+    rooms: 1,
+  });
+  
+
   const [originalBookingDetails, setOriginalBookingDetails] = useState({});
+  
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   const [dynamicDetails, setDynamicDetails] = useState({
     basePrice,
@@ -54,16 +57,15 @@ const CancellationAndModification = ({
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!selectedBooking) return; // Exit if user is not set
-      console.log("Selected Booking:", selectedBooking.id);
+      if (!selectedBooking) return;
+      console.log("Selected Booking:", selectedBooking);
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/getproperty`, {
           params: { propertyid: selectedBooking.propertyid },
         });
         setProperties(response.data);
-        console.log("Response Data:", response.data); // Log the entire response object
+        console.log("Response Data:", response.data);
 
-        // Set state variables
         setLoading(false);
 
       } catch (error) {
@@ -74,12 +76,11 @@ const CancellationAndModification = ({
     };
 
     fetchProfile();
-  }, [selectedBooking]); // Add user as a dependency here
+  }, [selectedBooking]);
 
 
 
 
-  // Use useEffect to set booking data when bookingData prop changes
   useEffect(() => {
     if (bookingData) {
       setSelectedBookingDetails({
@@ -143,11 +144,34 @@ const CancellationAndModification = ({
     setShowModal(true); // Show modal when the cancel button is clicked
   };
 
-  // Confirm Cancel Booking
-  const confirmCancelBooking = () => {
-    // Logic to handle booking cancellation
-    console.log("Booking Cancelled: ", selectedBookingDetails.bookingId);
-    setShowModal(false); // Hide modal after confirmation
+
+  const confirmCancelBooking = async () => {
+    setCancelLoading(true);
+    console.log("Booking Cancelled: ", selectedBooking.id);
+    console.log("Cancellation: ", properties.property_bookingpolicy.CancellationCharge);
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/refund-payment', {
+        bookingid: selectedBooking.id,
+        // percentage: properties.property_bookingpolicy.cancellationCharge ? properties.property_bookingpolicy.CancellationCharge : 100,
+        percentage: properties.property_bookingpolicy.CancellationCharge || 100
+      });
+
+      console.log("Booking Cancelled: ", selectedBooking.id);
+      setShowModal(false); // Hide modal after confirmation
+
+      // Now handle the set cancel request
+      // await axios.post("http://127.0.0.1:8000/api/setcancel", {
+      //   bookingid: selectedBooking.id
+      // });
+
+      // Reload the page after both operations are successful
+      setCancelLoading(false);
+      window.location.reload();
+
+    } catch (error) {
+      console.error("Error occurred during cancellation:", error);
+      setCancelLoading(false);
+    }
   };
 
   // Cancel modal click
@@ -155,7 +179,7 @@ const CancellationAndModification = ({
     setShowModal(false); // Hide modal
   };
 
-  console.log("bookings:", bookings);
+
 
 
   return (
@@ -202,16 +226,22 @@ const CancellationAndModification = ({
                   <tr>
                     <td>
                       <DatePicker
-                        selected={bookings && bookings.length > 0 ? new Date(bookings[0].checkIn) : null}
+                        selected={bookings && bookings.length > 0 ? bookingDetails.checkIn : null}
                         onChange={(date) => handleDateChange(date, 'checkIn')}
+                        disabled={properties &&
+                          properties.property_bookingpolicy &&
+                          properties.property_bookingpolicy.isModificationPolicy === 0}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
                       />
                     </td>
                     <td>
                       <DatePicker
-                        selected={bookings && bookings.length > 0 ? new Date(bookings[0].checkIn) : null}
+                        selected={bookings && bookings.length > 0 ? bookingDetails.checkOut : null}
                         onChange={(date) => handleDateChange(date, 'checkOut')}
+                        disabled={properties &&
+                          properties.property_bookingpolicy &&
+                          properties.property_bookingpolicy.isModificationPolicy === 0}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
                       />
@@ -219,16 +249,21 @@ const CancellationAndModification = ({
                     <td>
                       <select
                         name="guests"
-                        value={bookings && bookings.length > 0 ? bookings[0].guests : null}
+                        value={bookings && bookings.length > 0 ? bookingDetails.guests : null}
+                        disabled={properties &&
+                          properties.property_bookingpolicy &&
+                          properties.property_bookingpolicy.isModificationPolicy === 0}
                         onChange={handleInputChange}
                         className="table-input"
                       >
                         {/* {[1, 2, 3, 4, 5, 6].map(num => (
                           <option key={num} value={num}>{num}</option>
                         ))} */}
-                        {Array.from({ length: 7 }, (_, index) => (
-                          <option key={index + 1} value={index + 1}>{index + 1}</option>
-                        ))}
+                        {properties.property_unitdetails && properties.property_unitdetails.length > 0 &&
+                          Array.from({ length: properties.property_unitdetails[0].guest_capacity }, (_, index) => (
+                            <option key={index + 1} value={index + 1}>{index + 1}</option>
+                          ))
+                        }
                       </select>
                     </td>
 
@@ -236,6 +271,9 @@ const CancellationAndModification = ({
                       <select
                         name="rooms"
                         value={bookingDetails.rooms}
+                        disabled={properties &&
+                          properties.property_bookingpolicy &&
+                          properties.property_bookingpolicy.isModificationPolicy === 0}
                         onChange={handleInputChange}
                         className="table-input"
                       >
@@ -251,9 +289,13 @@ const CancellationAndModification = ({
               {/* Update Details Button aligned to the right */}
               <div className="update-details-container">
                 <button
+                  title={properties &&
+                    properties.property_bookingpolicy &&
+                    properties.property_bookingpolicy.isModificationPolicy === 0 ? "No Modifications Allowed" : ""}
                   className="update-details-btn"
                   onClick={handleUpdateDetails}
                   disabled={!hasChanges()} // Disable if there are no changes
+                  alt="Update Details"
                   style={{
                     backgroundColor: hasChanges() ? '#f8f9fa' : '#e9ecef', // Greyed out if no changes
                     color: hasChanges() ? '#007bff' : '#6c757d', // Darker grey if no changes
@@ -274,14 +316,37 @@ const CancellationAndModification = ({
               </div>
               <div className="refund-cancellation-note" style={{ textAlign: 'justify', marginTop: '0.5rem' }}>
                 <h2 className="text-lg mb-4 font-bold" style={{ textAlign: 'center' }}>Refund and Cancellation Policies</h2>
-                <p style={{ fontSize: 'small' }}>
+                {/* <p style={{ fontSize: 'small' }}>
                   <strong>Refund Policy:</strong> Cancellations made more than 48 hours before check-in will receive a full refund.
                   Cancellations made within 48 hours of check-in will incur a charge equivalent to the first night's stay.
-                </p>
-                <p style={{ fontSize: 'small' }}>
-                  <strong>Cancellation Policy:</strong> If you need to modify your booking, changes can be made up to 24 hours before check-in.
-                  No modifications are allowed within 24 hours of check-in, and cancellations during this period will be charged in full.
-                </p>
+                </p> */}
+
+                {properties && properties.property_bookingpolicy ? (
+                  <>
+                    {/* Cancellation Policy */}
+                    {properties.property_bookingpolicy.isCancellationPolicy === 1 ? (
+                      <p style={{ fontSize: 'small' }}>
+                        <strong>Standard Cancellation Plan:</strong> If you need to cancel your booking and receive a full refund, cancellation can be made up to {properties.property_bookingpolicy.cancellationDays} days before check-in. After this point, cancellation will not be eligible for a refund.
+                      </p>
+                    ) : (
+                      <p style={{ fontSize: 'small' }}>
+                        <strong>Non-Refundable Rate Plan:</strong> Once the guest confirms their reservation, cancellation will not be eligible for a refund.
+                      </p>
+                    )}
+
+                    {/* Modification Policy */}
+                    {properties.property_bookingpolicy.isModificationPolicy === 1 ? (
+                      <p style={{ fontSize: 'small' }}>
+                        <strong>Flexible Modification Rate Policy:</strong> If you need to modify your booking, changes can be made up to {properties.property_bookingpolicy.modificationDays} days before check-in. After this point, no modifications are permitted.
+                      </p>
+                    ) : (
+                      <p style={{ fontSize: 'small' }}>
+                        <strong>Fixed Modification Rate Policy:</strong> Once the guest confirms their reservation, no modifications will be allowed.
+                      </p>
+                    )}
+                  </>
+                ) : null}
+
               </div>
 
 
@@ -325,39 +390,39 @@ const CancellationAndModification = ({
             </div>
 
             {/* Total Amount */}
-            <div className="detail-item flex-row justify-between mb-1">
+            {/* <div className="detail-item flex-row justify-between mb-1">
               <span className="detail-label font-bold" style={{ fontSize: '1rem' }}>Total Amount</span>
               <span className="detail-price font-bold" style={{ fontSize: '1rem' }}>USD ${dynamicDetails?.bookingAmount?.toFixed(2) ?? '0.00'}</span>
             </div>
             <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
               Total charges for your booking.
-            </div>
+            </div> */}
 
             {/* Payable at Check-In */}
-            <div className="detail-item flex-row justify-between mb-1">
+            {/* <div className="detail-item flex-row justify-between mb-1">
               <span className="detail-label font-bold">Payable at Check-In</span>
               <span className="detail-price">USD ${dynamicDetails?.payableAtCheckIn?.toFixed(2) ?? '0.00'}</span>
             </div>
             <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
               This amount is due upon arrival.
-            </div>
+            </div> */}
 
             {/* Refund Policy */}
             {/* <hr className="divider" />
-    <div className="detail-item flex-row justify-between mb-1">
-      <span className="detail-label font-bold">Refund Policy</span>
-      <span className="detail-info" style={{ fontSize: '0.75rem', color: 'grey' }}>
-        Please note that refunds are processed within 5-7 business days.
-      </span>
-    </div> */}
+              <div className="detail-item flex-row justify-between mb-1">
+                <span className="detail-label font-bold">Refund Policy</span>
+                <span className="detail-info" style={{ fontSize: '0.75rem', color: 'grey' }}>
+                  Please note that refunds are processed within 5-7 business days.
+                </span>
+              </div> */}
 
             {/* Cancellation Fee */}
-            <div className="detail-item flex-row justify-between mb-1">
+            {/* <div className="detail-item flex-row justify-between mb-1">
               <span className="detail-label font-bold">Cancellation Fee</span>
               <span className="detail-price">USD $50</span>
             </div>
             <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
-            </div>
+            </div> */}
           </div>
 
           {/* Cancel Booking Button */}
@@ -433,10 +498,15 @@ const CancellationAndModification = ({
                   fontSize: '1rem',
                   transition: 'background-color 0.3s',
                 }}
+                disabled={cancelLoading}
                 onMouseOver={(e) => e.target.style.backgroundColor = '#c0392b'}
                 onMouseOut={(e) => e.target.style.backgroundColor = '#e74c3c'}
               >
-                Yes
+                {cancelLoading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                "Yes"
+              )}
               </button>
 
               <button
@@ -452,6 +522,7 @@ const CancellationAndModification = ({
                   fontSize: '1rem',
                   transition: 'background-color 0.3s',
                 }}
+                disabled={cancelLoading}
                 onMouseOver={(e) => e.target.style.backgroundColor = '#7f8c8d'}
                 onMouseOut={(e) => e.target.style.backgroundColor = '#95a5a6'}
               >

@@ -133,7 +133,7 @@ function BookingDetailsUI() {
           guest_count: guestCount,
           checkin_date,
           checkout_date,
-          total_price: propertyData.property_unitdetails[0].unitpricing.min_price,
+          total_price: propertyData.property_unitdetails[0].unitpricing.min_price * lengthStay,
           special_request: guestDetails.requests,
           arrival_time: guestDetails.arrivalTime,
           status: "Pending",

@@ -11,6 +11,8 @@
   align-items: stretch;
   max-width: 1200px;
   width: 100%;
+  height: 100%;
+  padding: 1%;
 }
 
 .left-section, .right-section {

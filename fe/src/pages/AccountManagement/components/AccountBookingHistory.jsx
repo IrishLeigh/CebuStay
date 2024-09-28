@@ -70,10 +70,12 @@ export default function BookingHistory({ profile }) {
                 // Get today's date for comparison
                 const today = new Date().toISOString().split('T')[0];
 
+                console.log("bookings:", bookings);
+                console.log("status:", bookings.status);
                 // Filter bookings
-                const upcomingBooking = bookings.filter(booking => booking.checkIn >= today);
+                const upcomingBooking = bookings.filter(booking => booking.checkIn >= today && booking.isCancel !== 'Cancelled');
                 // const completedBooking = resHistory.data.filter(booking => booking.checkOut < today && booking.status !== 'Cancelled');
-                const cancelledBooking = bookings.filter(booking => booking.status === 'Cancelled');
+                const cancelledBooking = bookings.filter(booking => booking.isCancel === 'Cancelled');
 
                 // Set state variables
                 setUpcomingBooking(upcomingBooking);
@@ -129,13 +131,14 @@ export default function BookingHistory({ profile }) {
             case 'UPCOMING':
                 return upcomingBooking || [];
             case 'CANCELLED':
-                return []; // No data for cancelled by default
+                return cancelledBooking; 
             case 'COMPLETED':
                 return completedBooking;
             default:
                 return [];
         }
     };
+    console.log("getData():", getData());
 
     const getRibbonColor = () => {
         switch (selectedButton) {
@@ -506,15 +509,19 @@ export default function BookingHistory({ profile }) {
                                                         ...getCellStyle(rowIndex, getData().length),
                                                         // cursor: item.canBeModified ? 'pointer' : 'not-allowed',
                                                         // cursor: 'pointer' ,
-                                                        cursor: item.status !== 'checkout' ? 'pointer' : 'default',
+                                                        cursor: selectedButton === 'UPCOMING' ? 'pointer' : 'default',
                                                     }}
                                                     onClick={() => {
-                                                        if (item.status !== 'checkout') {
+                                                        if (item.status !== 'checkout' && selectedButton === 'UPCOMING') {
+                                                            handleRowClick(item); // Only call if it can be modified
+                                                        }
+                                                        else if (item.isCancel !== 'Cancelled' && selectedButton === 'CANCELLED') {
                                                             handleRowClick(item); // Only call if it can be modified
                                                         }
                                                     }}
                                                 >
-                                                    {item[key]}
+                                                    {/* {item[key]} */}
+                                                    {key === 'status' && selectedButton === 'CANCELLED' ? item.isCancel : item[key]}
                                                 </td>
                                             ))}
                                             {selectedButton === 'COMPLETED' && (
