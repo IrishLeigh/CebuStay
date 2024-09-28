@@ -16,9 +16,19 @@ use App\Models\Payment;
 use App\Models\BookingHistory;
 use App\Models\BookingPolicy;
 use App\Services\PayMongoService;
+use GuzzleHttp\Client;
+use App\Http\Controllers\PaymentController;
 
 class BookingController extends CORS
 {
+
+    protected $payMongoService;
+
+    public function __construct(PayMongoService $payMongoService)
+    {
+        $this->payMongoService = $payMongoService;
+    }
+
     public function checkBooking(Request $request)
     {
         $this->enableCors($request);
@@ -148,106 +158,99 @@ class BookingController extends CORS
         }
     }
 
-    public function updateBooking(Request $request, $bookingId)
+    public function updateBooking(Request $request)
     {
         $this->enableCors($request);
 
-        try {
-            DB::beginTransaction();
+        // Retrieve and validate the check-in and check-out dates
+        $bookingId = $request->input('bookingid');
+        $checkin = $request->input('checkin_date');
+        $checkout = $request->input('checkout_date');
 
-            // Retrieve and validate the check-in and check-out dates
-            $checkin = $request->input('checkin_date');
-            $checkout = $request->input('checkout_date');
+        // $get_unit = UnitDetails::where('propertyid', $get_property->propertyid)->first();
+        // $unitid = $get_unit->unitid;
 
-            if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
-                return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
+        if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
+            return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
+        }
+
+        // Retrieve the booking to be updated
+        $booking = Booking::find($bookingId);
+
+        // $bookings = Booking::where('unitid', $unitid)->get();
+        
+
+        $bookingPolicy = BookingPolicy::where('propertyid', $booking->propertyid)->first();
+
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found', 'status' => 'error']);
+        }
+
+        // Retrieve all bookings for the given unitid, excluding the current booking
+        $bookings = Booking::where('unitid', $booking->unitid)
+            ->where('bookingid', '!=', $bookingId)
+            ->get();
+
+        // Perform validation check for date conflict
+        foreach ($bookings as $existingBooking) {
+            if (
+                ($checkin >= $existingBooking->checkin_date && $checkin <= $existingBooking->checkout_date) ||
+                ($checkout >= $existingBooking->checkin_date && $checkout <= $existingBooking->checkout_date) ||
+                ($checkin < $existingBooking->checkin_date && $checkout > $existingBooking->checkout_date)
+            ) {
+                return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
             }
+        }
 
-            // Retrieve the booking to be updated
-            $booking = Booking::find($bookingId);
+        // Update the booking details
+        $booking->checkin_date = $checkin;
+        $booking->checkout_date = $checkout;
+        $booking->guest_count = $request->input('guest_count');
+        
+        $property = Property::find($booking->propertyid);
 
+        // Save the updated booking
+        $booking->save();
 
-            $bookingPolicy = BookingPolicy::where('propertyid', $booking->propertyid)->first();
+        $payment = Payment::where('bookingid', $booking->bookingid)->first();
 
-            if (!$booking) {
-                return response()->json(['message' => 'Booking not found', 'status' => 'error']);
-            }
+        // Check if check-in date minus cancellation days is greater than the current date
+        $cancellationDays = $bookingPolicy->cancellationDays;
+        $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($booking->checkin_date . " - $cancellationDays days"));
+        $currentDate = date('Y-m-d');
+        $checkoutUrl = '';
 
-            // Retrieve all bookings for the given unitid, excluding the current booking
-            $bookings = Booking::where('unitid', $booking->unitid)
-                ->where('bookingid', '!=', $bookingId)
-                ->get();
+        $paymentController = new PaymentController(new PayMongoService());
+        if ($currentDate > $checkinDateMinusCancellationDays) {
+            $totalAmount = $payment->amount; // Assuming this is the total amount paid
+            $amountToRefund = ($bookingPolicy->modificationCharge / 100) * $totalAmount;
+            $description = 'Modification Charge for booking ' . $property->property_name;
+            $returnUrl = 'http://localhost:3000/paymentVerification';
+            $bookingId = $booking->bookingid;
+            $totalPrice = $amountToRefund * 100;
 
-            // Perform validation check for date conflict
-            foreach ($bookings as $existingBooking) {
-                if (
-                    ($checkin >= $existingBooking->checkin_date && $checkin <= $existingBooking->checkout_date) ||
-                    ($checkout >= $existingBooking->checkin_date && $checkout <= $existingBooking->checkout_date) ||
-                    ($checkin < $existingBooking->checkin_date && $checkout > $existingBooking->checkout_date)
-                ) {
-                    return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
-                }
-            }
-
-            // Update the booking details
-            $booking->checkin_date = $checkin;
-            $booking->checkout_date = $checkout;
-            $booking->guest_count = $request->input('guest_count');
-
-            // If there are other fields you want to update, add them here
-            if ($request->has('special_request')) {
-                $booking->special_request = $request->input('special_request');
-            }
-            if ($request->has('arrival_time')) {
-                $booking->arrival_time = $request->input('arrival_time');
-            }
-            if ($request->has('status')) {
-                $booking->status = $request->input('status');
-            }
-
-            // Save the updated booking
-            $booking->save();
-
-            $payment = Payment::where('bookingid', $booking->bookingid)->first();
-
-            // Check if check-in date minus cancellation days is greater than the current date
-            $cancellationDays = $bookingPolicy->cancellationDays;
-            $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($booking->checkin_date . " - $cancellationDays days"));
-            $currentDate = date('Y-m-d');
-
-
-            if ($currentDate > $checkinDateMinusCancellationDays) {
-                $totalAmount = $payment->amount; // Assuming this is the total amount paid
-                $amountToRefund = ($bookingPolicy->modificationCharge / 100) * $totalAmount;
-                $property = Property::find($booking->propertyid);
-                $description = 'Modification Charge for booking ' . $property->property_name;
-                $returnUrl = 'http://localhost:3000/paymentVerification';
-                $bookingId = $booking->bookingid;
-
-                $checkoutData = $this->payMongoService->createCheckoutSession($totalprice, $description, $returnUrl, $bookingId);
+            // $checkoutData = createCheckoutSession($amountToRefund, $description, $returnUrl, $bookingId);
+            $checkoutData = $this->payMongoService->createCheckoutSession($totalPrice, $description, $returnUrl, $bookingId);
                 $checkoutUrl = $checkoutData['checkout_url'];
                 $paymentId = $checkoutData['payment_id'];
-
-
+    
+    
                 // Save the payment record in the database
                 $payment = new Payment();
-                $payment->amount = $totalprice / 100;
+                $payment->amount = $amountToRefund;
                 $payment->description = $description;
-                $payment->status = $status;
+                $payment->status = 'Paid';
                 $payment->paymentid = $paymentId;
                 $payment->bookingid = $bookingId;
-
+    
                 $payment->save();
-            }
-
-            DB::commit();
-
-            return response()->json(['message' => 'Booking updated successfully', 'status' => 'success', 'bookingid' => $booking->bookingid]);
-        } catch (\Exception $e) {
-            DB::rollback();
-
-            return response()->json(['message' => 'Failed to update booking: ' . $e->getMessage(), 'status' => 'error']);
+    
         }
+
+        DB::commit();
+
+        return response()->json(['message' => 'Booking updated successfully', 'status' => 'success', 'bookingid' => $booking->bookingid, 'checkout_url' => $checkoutUrl, 'currentDate' => $currentDate, 'checkinDateMinusCancellationDays' => $checkinDateMinusCancellationDays]);
+    
     }
 
 
@@ -857,7 +860,71 @@ class BookingController extends CORS
         return response()->json($formattedBookings);
     }
 
-
+    public function createCheckoutSession($totalprice, $description, $returnUrl, $bookingId)
+    {
+        $apiKey = 'sk_test_eFrCmpKXktDTxx7avwDX7uBQ'; // Replace with your actual PayMongo API key
+    
+        $totalprice = (int) $totalprice;
+    
+        $client = new Client([
+            'base_uri' => 'https://api.paymongo.com/v1/',
+            'headers' => [
+                'Authorization' => 'Basic ' . base64_encode($apiKey . ':'),
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+    
+        $successUrl = $returnUrl . '?bookingId=' . $bookingId;
+    
+        try {
+            $response = $client->post('checkout_sessions', [
+                'json' => [
+                    'data' => [
+                        'attributes' => [
+                            'amount' => $totalprice,
+                            'description' => $description . " Booking",
+                            'redirect' => [
+                                'success' => $returnUrl,
+                                'failed' => $returnUrl,
+                            ],
+                            'line_items' => [
+                                [
+                                    'name' => 'Booking at ' . $description,
+                                    'quantity' => 1,
+                                    'amount' => $totalprice,
+                                    'currency' => 'PHP',
+                                ],
+                            ],
+                            'payment_method_types' => [
+                                'gcash',
+                            ],
+                            'reference_number' => null,
+                            'send_email_receipt' => false,
+                            'show_description' => true,
+                            'show_line_items' => true,
+                            'status' => 'active',
+                            'success_url' => $successUrl,
+                            'metadata' => null,
+                        ],
+                    ],
+                ],
+            ]);
+    
+            // Decode the response to get the checkout URL and payment ID
+            $data = json_decode($response->getBody(), true);
+            
+            // Retrieve the payment ID and checkout URL from the response
+            $checkoutUrl = $data['data']['attributes']['checkout_url']; // Adjust according to actual response
+            $paymentId = $data['data']['id']; // The payment ID from the PayMongo response
+    
+            return [
+                'checkout_url' => $checkoutUrl,
+                'payment_id' => $paymentId,
+            ];
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to create checkout session: ' . $e->getMessage());
+        }
+    }
 
 
 }

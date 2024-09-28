@@ -162,7 +162,7 @@ Route::get('/property/bookinglist', 'App\Http\Controllers\BookingController@getA
 
 Route::get('/user/bookings', 'App\Http\Controllers\BookingController@getAllBookingByUserId');
 Route::get('/user/bookinghistory', 'App\Http\Controllers\BookingController@getUserBookingHistory');
-Route::put('/updatebooking/{bookingId}', 'App\Http\Controllers\BookingController@updateBooking');
+Route::put('/updatebooking', 'App\Http\Controllers\BookingController@updateBooking');
 Route::get('/allbookinghistory', 'App\Http\Controllers\BookingController@getAllBookingHistoryByProperty');
 Route::post('/setcheckout', 'App\Http\Controllers\BookingController@setCheckOut');
 Route::post('/setcancel', 'App\Http\Controllers\BookingController@setCancelBooking');
