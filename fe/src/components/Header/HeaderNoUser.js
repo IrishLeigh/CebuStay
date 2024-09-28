@@ -28,11 +28,32 @@ function HeaderNoUser() {
 
   return (
     <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black', }} m={0} p={0}>
-      <Container maxWidth="xl">
+      <Container maxWidth={false} sx={{ maxWidth: '1600px' }}>
         <Toolbar disableGutters>
-          <div className="header-logo">
-            <img src="Logo.png" alt="Logo" /> 
-          </div>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+  <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+    <img
+      src="/Logo2.png"
+      alt="Logo"
+      className="logo"
+      style={{ height: "40px", marginRight: "10px" }}
+    />
+    <Typography
+      noWrap
+      sx={{
+        fontFamily: "Poppins, sans-serif",
+        fontWeight: 1000,
+        color: "#16B4DD",
+        textDecoration: "none",
+        fontSize: "1.5rem",
+      }}
+    >
+      cebustay
+    </Typography>
+  </a>
+</Box>
+
+
 
           <Box sx={{ flexGrow: 1 }} />
 

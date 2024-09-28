@@ -4,25 +4,54 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
-
+import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Link } from 'react-router-dom';
 import './NavigationBar.css'; 
 import { MenuItem } from '@mui/material';
+import {useNavigate } from 'react-router-dom';
+import {useState} from 'react';
 
 export default function HeaderAccountMgnt() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const pages = ["Home", "Accommodation"];
+  const navigate = useNavigate();
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+
 
   const isMenuOpen = Boolean(anchorEl);
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
+  
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
 
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+
+  const handlePageClick = (page) => {
+    if (page === "Accommodation") {
+      window.location.href = "/accommodation";
+    } else {
+      navigate(`/${page.toLowerCase().replace(" ", "-")}`);
+    }
+    handleCloseNavMenu();
+  };
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
@@ -56,35 +85,31 @@ export default function HeaderAccountMgnt() {
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" sx={{ color: '#A5A5A5' }}>
-              <Badge badgeContent={4} sx={{ 
-                '& .MuiBadge-badge': {
-                  backgroundColor: '#16B4DD',
-                  color: 'white',
-                },
-              }}>
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              sx={{ color: '#A5A5A5' }}
-            >
-              <Badge badgeContent={17} sx={{ 
-                '& .MuiBadge-badge': {
-                  backgroundColor: '#16B4DD',
-                  color: 'white',
-                },
-              }}>
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <button className="property-listing">
-              <Link to="/list-your-property" style={{ textDecoration: 'none', color: 'inherit' }}>
-                List your property
-              </Link>
-            </button>
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              {pages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={() => handlePageClick(page)}
+                  sx={{ mx: 1, color: "black" }}
+                >
+                  <Typography
+                    sx={{ fontSize: "0.9rem", color: "#16B4DD" }}
+                    fontWeight="bold"
+                  >
+                    {page}
+                  </Typography>
+                </Button>
+              ))}
+              <button className="property-listing">
+                <Link
+                  to="/list-property"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  List your property
+                </Link>
+              </button>
+            </Box>
+            
           </Box>
         </Toolbar>
       </AppBar>

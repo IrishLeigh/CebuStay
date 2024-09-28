@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,15 +20,49 @@ import { useNavigate, Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu"; // Import the MUI icon
 // import './NavigationBar.css'; // Import the CSS file
 import axios from "axios";
-const pages = ["Home", "Accommodation", "Contact us", "About us"];
-const settings = ["Account", "Your Properties", "Logout"];
+const pages = ["Home", "Accommodation"];
+const settings = ["Account", "Your Properties","Your Bookings", "Logout"];
 
 function HeaderUser({ token, setToken }) {
   const [loading, setLoading] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
+  const [profileImage, setProfileImage] = useState("");
   const navigate = useNavigate();
+
+  const handleImageError = (e) => {
+    // Fallback to another image or initials
+    alert("Failed to render image");
+    e.target.src =
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+    setProfileImage(
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+    );
+  };
+
+  useEffect(() => {
+    const fetchUserImage = async () => {
+      try {
+        const jwtToken = token.split("=")[1];
+        const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+          token: token,
+        });
+        if (res1.data) {
+          const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
+            params: { userid: res1.data.data.userid },
+          });
+          if (res.data) {
+            setProfileImage(res.data.src);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error.message || error);
+      }
+    };
+
+    fetchUserImage();
+  }, []);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -63,6 +97,9 @@ function HeaderUser({ token, setToken }) {
         }
         break;
       case "Your Properties":
+        navigate("/admin/overview");
+        break;
+        case "Your Properties":
         navigate("/admin/overview");
         break;
       case "Logout":
@@ -110,30 +147,31 @@ function HeaderUser({ token, setToken }) {
         position="static"
         sx={{ backgroundColor: "white", color: "black" }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <img
-                src="/Logo2.png"
-                alt="Logo"
-                className="logo"
-                style={{ height: "40px", marginRight: "10px" }}
-              />
-              <Typography
-                noWrap
-                component="a"
-                href="/"
-                sx={{
-                  fontFamily: "Poppins, sans-serif",
-                  fontWeight: 1000,
-                  color: "#16B4DD",
-                  textDecoration: "none",
-                  fontSize: "1.5rem",
-                }}
-              >
-                cebustay
-              </Typography>
-            </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+  <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+    <img
+      src="/Logo2.png"
+      alt="Logo"
+      className="logo"
+      style={{ height: "40px", marginRight: "10px" }}
+    />
+    <Typography
+      noWrap
+      sx={{
+        fontFamily: "Poppins, sans-serif",
+        fontWeight: 1000,
+        color: "#16B4DD",
+        textDecoration: "none",
+        fontSize: "1.5rem",
+      }}
+    >
+      cebustay
+    </Typography>
+  </a>
+</Box>
+
 
             <Box sx={{ flexGrow: 1 }} />
 
@@ -204,7 +242,10 @@ function HeaderUser({ token, setToken }) {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    src={profileImage}
+                    onError={(e) => handleImageError(e)}
+                  />
                 </IconButton>
               </Tooltip>
               <Menu

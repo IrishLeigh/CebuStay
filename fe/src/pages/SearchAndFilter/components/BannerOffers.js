@@ -49,11 +49,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import axios from "axios";
 import Search from "./Search";
 
-export default function BannerOffers({
-  accommodations,
-  setAccommodationList,
-  originalAccommodationList,
-}) {
+export default function BannerOffers({ accommodations, setAccommodationList , onSearchUpdate ,originalAccommodationList}) {
   const [guestCapacity, setGuestCapacity] = useState(null);
   const [availability, setAvailability] = useState({
     startDate: null,
@@ -104,6 +100,12 @@ export default function BannerOffers({
     fetchProperties(startDate, endDate, guestCapacity);
     setCheckin_date(startDate);
     setCheckout_date(endDate);
+    
+    // Call the parent callback with updated values
+    if (onSearchUpdate) {
+      onSearchUpdate({ guestCapacity, checkin_date: startDate, checkout_date: endDate });
+      console.log("NADAWAT NAKO FROM SEARCH", { guestCapacity, checkin_date: startDate, checkout_date: endDate });
+    }
   };
 
   return (

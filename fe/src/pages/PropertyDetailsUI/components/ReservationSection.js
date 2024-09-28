@@ -17,12 +17,16 @@ export default function ReservationSection({
   propertyinfo,
 }) {
   const [propertyInfo, setPropertyInfo] = useState();
+  const [price , setPrice] = useState();
 
   useEffect(() => {
     try {
       if (propertyinfo) {
         setPropertyInfo(propertyinfo);
+        setPrice(propertyinfo?.property_unitdetails[0]?.unitpricing?.min_price || 1000);
+
         // console.log("PROPERTY INFO", propertyinfo);
+
       }
     } catch (err) {
       console.log(err);
@@ -36,10 +40,10 @@ export default function ReservationSection({
     }).format(price);
   };
 
-  const price = propertyInfo?.property_unitpricing?.min_price || 2000;
-
+  
+console.log("PRICE", price);
   return (
-    <Paper className="reservation-cntr" sx={{ borderRadius: "12px" }}>
+    <Paper className="reservation-cntr" sx={{ borderRadius: "0.8rem" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <div className="reservation-price">{formatPrice(price)}</div>
@@ -82,6 +86,7 @@ export default function ReservationSection({
             onChange={handleGuestCountChange}
             fullWidth
             label="Guests"
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" , min:1, max:50 }}
             mt={3}
             sx={{
               "& .MuiOutlinedInput-root": {

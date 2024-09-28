@@ -19,10 +19,17 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
     const suggestionsRef = useRef(null);
 
     const handleSearch = () => {
+        console.log('Start Date:', startDate);
+        console.log('End Date:', endDate);
+        console.log('Guest Capacity:', guestCapacity);
+        if(endDate === null || guestCapacity === "") {
+            alert("Please select end date and enter guest capacity");
+            return;
+        }
         onSearch({ startDate, endDate, guestCapacity: guestCapacity || null });
     };
     useEffect(() => {
-        console.log('Query:', query);
+        console.log('onSearch:', onSearch);
         console.log('Suggestions:', suggestions);
         console.log('Show Suggestions:', showSuggestions);
     }, [query, suggestions, showSuggestions]);
