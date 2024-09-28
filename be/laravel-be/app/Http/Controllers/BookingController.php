@@ -579,7 +579,13 @@ class BookingController extends CORS
         return response()->json($formattedBookings);
     }
 
-
+    public function getAllBookingByPropertyId (Request $request)
+    {
+        $this->enableCors($request);
+        $propertyId = $request->input('propertyid');
+        $bookings = Booking::where('propertyid', $propertyId)->get();
+        return response()->json($bookings);
+    }
 
     public function getAllBookingByProperty(Request $request)
     {
