@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDoorClosed, faHotel, faSpa, faUsers } from '@fortawesome/free-solid-svg-icons';
 import '../css/CancellationAndModification.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios';
+import { set } from 'date-fns';
 
 const CancellationAndModification = ({
-  houseRulesComponent,
+  selectedBooking,
   invoiceDetails = {
     basePrice: 0,
     extraGuestCost: 0,
     bookingCharge: 0,
     bookingAmount: 0,
     payableAtCheckIn: 0,
-    
+
   },
   bookingData // New prop to receive booking data
 }) => {
@@ -26,8 +28,14 @@ const CancellationAndModification = ({
     rooms: 1,
   });
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [bookings, setBookings] = useState({});
+  const [properties, setProperties] = useState({});
+  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+
   // New state to store original booking details
-  const [originalBookingDetails, setOriginalBookingDetails] = useState({}); 
+  const [originalBookingDetails, setOriginalBookingDetails] = useState({});
 
   const [dynamicDetails, setDynamicDetails] = useState({
     basePrice,
@@ -44,7 +52,32 @@ const CancellationAndModification = ({
     bookingId: '',
   });
 
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!selectedBooking) return; // Exit if user is not set
+      console.log("Selected Booking:", selectedBooking.id);
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/getproperty`, {
+          params: { propertyid: selectedBooking.propertyid },
+        });
+        setProperties(response.data);
+        console.log("Response Data:", response.data); // Log the entire response object
+
+        // Set state variables
+        setLoading(false);
+
+      } catch (error) {
+        setError("Error fetching profile data.");
+        console.error(error);
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [selectedBooking]); // Add user as a dependency here
+
+
+
 
   // Use useEffect to set booking data when bookingData prop changes
   useEffect(() => {
@@ -55,7 +88,11 @@ const CancellationAndModification = ({
         bookingId: bookingData.id,
       });
     }
-  }, [bookingData]);
+
+    if (selectedBooking) {
+      setBookings([selectedBooking]);
+    }
+  }, [bookingData, selectedBooking]);
 
   // Set original booking details when component mounts
   useEffect(() => {
@@ -118,6 +155,8 @@ const CancellationAndModification = ({
     setShowModal(false); // Hide modal
   };
 
+  console.log("bookings:", bookings);
+
 
   return (
     <div className="outer-container">
@@ -125,18 +164,18 @@ const CancellationAndModification = ({
         {/* Left Section */}
         <div className="left-section flex-col p-6 bg-background rounded-lg shadow-md mr-4">
           <div className="upper" style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-            <img 
-              src={dynamicDetails?.roomImageUrl || './image1.png'} 
-              alt="Room" 
-              className="image-class" 
-              style={{ 
+            <img
+              src={dynamicDetails?.roomImageUrl || './image1.png'}
+              alt="Room"
+              className="image-class"
+              style={{
                 marginRight: '16px',  // Space between image and text
                 width: '120px',       // Image width
                 height: 'auto',       // Maintain aspect ratio
                 borderRadius: '8px',  // Add border radius for rounded corners
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Optional: add a subtle shadow for depth
                 padding: '4px'        // Optional: inner padding for a cleaner look
-              }} 
+              }}
             />
             <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
               {/* Displaying Booking Details Beside Image */}
@@ -155,14 +194,15 @@ const CancellationAndModification = ({
                     <th>Check In</th>
                     <th>Check Out</th>
                     <th>Guests</th>
-                    <th>Rooms</th>
+                    {bookings && bookings.length > 0 && bookings[0].type !== 'Home' && <th>Rooms</th>}
+                    {/* <th>Rooms</th> */}
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>
                       <DatePicker
-                        selected={bookingDetails.checkIn}
+                        selected={bookings && bookings.length > 0 ? new Date(bookings[0].checkIn) : null}
                         onChange={(date) => handleDateChange(date, 'checkIn')}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
@@ -170,7 +210,7 @@ const CancellationAndModification = ({
                     </td>
                     <td>
                       <DatePicker
-                        selected={bookingDetails.checkOut}
+                        selected={bookings && bookings.length > 0 ? new Date(bookings[0].checkIn) : null}
                         onChange={(date) => handleDateChange(date, 'checkOut')}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
@@ -179,16 +219,20 @@ const CancellationAndModification = ({
                     <td>
                       <select
                         name="guests"
-                        value={bookingDetails.guests}
+                        value={bookings && bookings.length > 0 ? bookings[0].guests : null}
                         onChange={handleInputChange}
                         className="table-input"
                       >
-                        {[1, 2, 3, 4, 5, 6].map(num => (
+                        {/* {[1, 2, 3, 4, 5, 6].map(num => (
                           <option key={num} value={num}>{num}</option>
+                        ))} */}
+                        {Array.from({ length: 7 }, (_, index) => (
+                          <option key={index + 1} value={index + 1}>{index + 1}</option>
                         ))}
                       </select>
                     </td>
-                    <td>
+
+                    {bookings && bookings.length > 0 && bookings[0].type !== "Home" && <td>
                       <select
                         name="rooms"
                         value={bookingDetails.rooms}
@@ -199,15 +243,15 @@ const CancellationAndModification = ({
                           <option key={num} value={num}>{num}</option>
                         ))}
                       </select>
-                    </td>
+                    </td>}
                   </tr>
                 </tbody>
               </table>
 
               {/* Update Details Button aligned to the right */}
               <div className="update-details-container">
-                <button 
-                  className="update-details-btn" 
+                <button
+                  className="update-details-btn"
                   onClick={handleUpdateDetails}
                   disabled={!hasChanges()} // Disable if there are no changes
                   style={{
@@ -226,19 +270,19 @@ const CancellationAndModification = ({
                   Update Details
                 </button>
 
-      
+
               </div>
-              <div className="refund-cancellation-note" style={{textAlign:'justify', marginTop:'0.5rem'}}>
-        <h2 className="text-lg mb-4 font-bold" style={{textAlign:'center'}}>Refund and Cancellation Policies</h2>
-        <p style={{fontSize:'small'}}>
-          <strong>Refund Policy:</strong> Cancellations made more than 48 hours before check-in will receive a full refund. 
-          Cancellations made within 48 hours of check-in will incur a charge equivalent to the first night's stay.
-        </p>
-        <p style={{fontSize:'small'}}>
-          <strong>Cancellation Policy:</strong> If you need to modify your booking, changes can be made up to 24 hours before check-in.
-          No modifications are allowed within 24 hours of check-in, and cancellations during this period will be charged in full.
-        </p>
-      </div>
+              <div className="refund-cancellation-note" style={{ textAlign: 'justify', marginTop: '0.5rem' }}>
+                <h2 className="text-lg mb-4 font-bold" style={{ textAlign: 'center' }}>Refund and Cancellation Policies</h2>
+                <p style={{ fontSize: 'small' }}>
+                  <strong>Refund Policy:</strong> Cancellations made more than 48 hours before check-in will receive a full refund.
+                  Cancellations made within 48 hours of check-in will incur a charge equivalent to the first night's stay.
+                </p>
+                <p style={{ fontSize: 'small' }}>
+                  <strong>Cancellation Policy:</strong> If you need to modify your booking, changes can be made up to 24 hours before check-in.
+                  No modifications are allowed within 24 hours of check-in, and cancellations during this period will be charged in full.
+                </p>
+              </div>
 
 
 
@@ -248,58 +292,58 @@ const CancellationAndModification = ({
 
         {/* Right Section */}
         <div className="right-section flex-col p-6 bg-background rounded-lg shadow-md ml-4">
-  <h2 className="text-lg mb-4 font-bold">Invoice Summary</h2>
+          <h2 className="text-lg mb-4 font-bold">Invoice Summary</h2>
 
-  {/* Invoice Details */}
-  <div className="invoice-details">
-    {/* Base Price */}
-    <div className="detail-item flex-row justify-between mb-1">
-      <span className="detail-label font-bold">Base Price</span>
-      <span className="detail-price font-bold">USD ${dynamicDetails?.basePrice?.toFixed(2) ?? '0.00'}</span>
-    </div>
-    <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
-      {dynamicDetails.forDetails} {/* Dynamic description */}
-    </div>
-    <hr className="divider" />
+          {/* Invoice Details */}
+          <div className="invoice-details">
+            {/* Base Price */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label font-bold" style={{ fontSize: '1rem' }}>Total Amount</span>
+              <span className="detail-price font-bold">PHP ₱{bookings && bookings.length > 0 ? bookings[0].amount.toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
+              <p>For {bookings && bookings.length > 0 ? bookings[0].stay_length : ''} night and {bookings && bookings.length > 0 ? bookings[0].guests : ''} guests</p>
+            </div>
+            <hr className="divider" />
 
-    {/* Extra Guest Cost */}
-    <div className="detail-item flex-row justify-between mb-1">
-      <span className="detail-label">Extra Guest Cost</span>
-      <span className="detail-price">USD ${dynamicDetails?.extraGuestCost?.toFixed(2) ?? '0.00'}</span>
-    </div>
-    <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
-      For each guest over 2.
-    </div>
+            {/* Extra Guest Cost */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label">Base Price</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (bookings[0].amount / 1.18).toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
+              Price before tax
+            </div>
 
-    {/* Booking Charge */}
-    <div className="detail-item flex-row justify-between mb-1">
-      <span className="detail-label">Booking Charge</span>
-      <span className="detail-price">USD ${dynamicDetails?.bookingCharge?.toFixed(2) ?? '0.00'}</span>
-    </div>
-    <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
-      Service fees applied.
-    </div>
+            {/* Booking Charge */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label">Tax Price</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (bookings[0].amount - (bookings[0].amount / 1.18)).toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
+              Tax fees applied
+            </div>
 
-    {/* Total Amount */}
-    <div className="detail-item flex-row justify-between mb-1">
-      <span className="detail-label font-bold" style={{ fontSize: '1rem' }}>Total Amount</span>
-      <span className="detail-price font-bold" style={{ fontSize: '1rem' }}>USD ${dynamicDetails?.bookingAmount?.toFixed(2) ?? '0.00'}</span>
-    </div>
-    <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
-      Total charges for your booking.
-    </div>
+            {/* Total Amount */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label font-bold" style={{ fontSize: '1rem' }}>Total Amount</span>
+              <span className="detail-price font-bold" style={{ fontSize: '1rem' }}>USD ${dynamicDetails?.bookingAmount?.toFixed(2) ?? '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
+              Total charges for your booking.
+            </div>
 
-    {/* Payable at Check-In */}
-    <div className="detail-item flex-row justify-between mb-1">
-      <span className="detail-label font-bold">Payable at Check-In</span>
-      <span className="detail-price">USD ${dynamicDetails?.payableAtCheckIn?.toFixed(2) ?? '0.00'}</span>
-    </div>
-    <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
-      This amount is due upon arrival.
-    </div>
+            {/* Payable at Check-In */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label font-bold">Payable at Check-In</span>
+              <span className="detail-price">USD ${dynamicDetails?.payableAtCheckIn?.toFixed(2) ?? '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
+              This amount is due upon arrival.
+            </div>
 
-    {/* Refund Policy */}
-    {/* <hr className="divider" />
+            {/* Refund Policy */}
+            {/* <hr className="divider" />
     <div className="detail-item flex-row justify-between mb-1">
       <span className="detail-label font-bold">Refund Policy</span>
       <span className="detail-info" style={{ fontSize: '0.75rem', color: 'grey' }}>
@@ -307,115 +351,115 @@ const CancellationAndModification = ({
       </span>
     </div> */}
 
-    {/* Cancellation Fee */}
-    <div className="detail-item flex-row justify-between mb-1">
-      <span className="detail-label font-bold">Cancellation Fee</span>
-      <span className="detail-price">USD $50</span>
-    </div>
-    <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
-    </div>
-  </div>
+            {/* Cancellation Fee */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label font-bold">Cancellation Fee</span>
+              <span className="detail-price">USD $50</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
+            </div>
+          </div>
 
-  {/* Cancel Booking Button */}
-  <div className="cancel-booking-container mt-4">
-    <button className="cancel-booking-btn" onClick={handleCancelBooking}>
-      Cancel Booking
-    </button>
-  </div>
-</div>
+          {/* Cancel Booking Button */}
+          <div className="cancel-booking-container mt-4">
+            <button className="cancel-booking-btn" onClick={handleCancelBooking}>
+              Cancel Booking
+            </button>
+          </div>
+        </div>
 
       </div>
 
-      
+
 
 
       {/* Modal for Cancellation Confirmation */}
       {showModal && (
-       <div 
-  className="modal-overlay" 
-  style={{
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000, // Ensures it appears above other content
-  }}
->
-  <div 
-    className="modal-content" 
-    style={{
-      backgroundColor: '#fff',
-      padding: '20px',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '400px',
-      width: '100%',
-      textAlign: 'center',
-    }}
-  >
-    <h3 
-      style={{
-        fontSize: '1.2rem',
-        marginBottom: '20px',
-        color: '#333',
-      }}
-    >
-      Are you sure you want to cancel your booking?
-    </h3>
-    
-    <div 
-      className="modal-buttons" 
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: '10px',
-      }}
-    >
-      <button 
-        onClick={confirmCancelBooking} 
-        className="btn-confirm" 
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#e74c3c', // Red for cancel confirmation
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '1rem',
-          transition: 'background-color 0.3s',
-        }}
-        onMouseOver={(e) => e.target.style.backgroundColor = '#c0392b'}
-        onMouseOut={(e) => e.target.style.backgroundColor = '#e74c3c'}
-      >
-        Yes
-      </button>
-      
-      <button 
-        onClick={closeModal} 
-        className="btn-cancel" 
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#95a5a6', // Gray for no action
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '1rem',
-          transition: 'background-color 0.3s',
-        }}
-        onMouseOver={(e) => e.target.style.backgroundColor = '#7f8c8d'}
-        onMouseOut={(e) => e.target.style.backgroundColor = '#95a5a6'}
-      >
-        No
-      </button>
-    </div>
-  </div>
-</div>
+        <div
+          className="modal-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000, // Ensures it appears above other content
+          }}
+        >
+          <div
+            className="modal-content"
+            style={{
+              backgroundColor: '#fff',
+              padding: '20px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              maxWidth: '400px',
+              width: '100%',
+              textAlign: 'center',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '1.2rem',
+                marginBottom: '20px',
+                color: '#333',
+              }}
+            >
+              Are you sure you want to cancel your booking?
+            </h3>
+
+            <div
+              className="modal-buttons"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '10px',
+              }}
+            >
+              <button
+                onClick={confirmCancelBooking}
+                className="btn-confirm"
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#e74c3c', // Red for cancel confirmation
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  transition: 'background-color 0.3s',
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#c0392b'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#e74c3c'}
+              >
+                Yes
+              </button>
+
+              <button
+                onClick={closeModal}
+                className="btn-cancel"
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#95a5a6', // Gray for no action
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  transition: 'background-color 0.3s',
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#7f8c8d'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#95a5a6'}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
 
       )}
     </div>
