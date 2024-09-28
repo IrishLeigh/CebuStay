@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-const PrivateRoutes = ({ token }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
-  // If authenticated, render the nested routes, else navigate to login
-  console.log("Authenticated?", isAuthenticated);
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
-};
+const PrivateRoutes = () => {
+ const isLoggedIn = window.localStorage.getItem("auth_token");
+ return isLoggedIn ? <Outlet /> : <Navigate to="login" />
+}
 
 export default PrivateRoutes;

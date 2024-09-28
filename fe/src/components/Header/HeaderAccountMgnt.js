@@ -46,7 +46,7 @@ export default function HeaderAccountMgnt() {
 
   const handlePageClick = (page) => {
     if (page === "Accommodation") {
-      window.location.href = "/accommodation";
+      window.location.href = "accommodation";
     } else {
       navigate(`/${page.toLowerCase().replace(" ", "-")}`);
     }

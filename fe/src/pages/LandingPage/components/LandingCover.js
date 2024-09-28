@@ -9,7 +9,7 @@ export default function LandingCover({ onSeeMapClick }) {
         <img src="../../landingscream2.png" alt="landing-cover" />
         <button
           className="landing-cover-button"
-          onClick={() => (window.location.href = "/accommodation")}
+          onClick={() => (window.location.href = "accommodation")}
         >
           Search An Accommodation
         </button>
@@ -74,7 +74,7 @@ export default function LandingCover({ onSeeMapClick }) {
           </button>
           <button
             className="landing-cover-buttonn2"
-            onClick={() => (window.location.href = "/accommodation")}
+            onClick={() => (window.location.href = "accommodation")}
           >
             Find A Stay
           </button>

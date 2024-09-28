@@ -23,13 +23,14 @@ import axios from "axios";
 const pages = ["Home", "Accommodation"];
 const settings = ["Account", "Your Properties", "Your Bookings", "Logout"];
 
-function HeaderUser({ token, setToken }) {
+function HeaderUser() {
   const [loading, setLoading] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("auth_token");
 
   const handleImageError = (e) => {
     // Fallback to another image or initials
@@ -82,9 +83,14 @@ function HeaderUser({ token, setToken }) {
 
   const handlePageClick = (page) => {
     if (page === "Accommodation") {
-      window.location.href = "/accommodation";
+      navigate("accommodation"); // Redirect to "accommodation";
+    } else if (page === "List your property") {
+      navigate("list-property"); // Redirect to the list property page
+    }else if (page === "Home") {
+      navigate("/");
+
     } else {
-      navigate(`/${page.toLowerCase().replace(" ", "-")}`);
+      navigate('/');
     }
     handleCloseNavMenu();
   };
@@ -99,7 +105,7 @@ function HeaderUser({ token, setToken }) {
       case "Your Properties":
         navigate("/admin/overview");
         break;
-      case "Your Properties":
+        case "Your Bookings":
         navigate("/admin/overview");
         break;
       case "Logout":
@@ -114,28 +120,33 @@ function HeaderUser({ token, setToken }) {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const jwtToken = token.split("=")[1];
+      console.log ("token FROM HEADER", token);
       const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
         token: token,
       });
       if (res1.data) {
-        // console.log(res1.data.data.userid);
         const res = await axios.post("http://127.0.0.1:8000/api/logout", {
           userid: res1.data.data.userid,
         });
         if (res.data) {
           console.log(res.data);
+          // Remove the token from local storage
           localStorage.removeItem("auth_token");
-          setToken(null);
+          
+          // Optionally, reset any user-related state here if applicable
+          // e.g., setUser(null); or use a context provider to reset user state
+          
           setOpenLogoutModal(false);
-          setLoading(false);
           navigate("/login");
         }
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   const handleCloseLogoutModal = () => {
     setOpenLogoutModal(false);

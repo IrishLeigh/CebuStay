@@ -40,7 +40,7 @@ function HeaderAdmin({ token, setToken }) {
 
   const handlePageClick = (page) => {
     if (page === 'Accommodation') {
-      window.location.href = '/accommodation'; // Redirect to accommodation page
+      window.location.href = 'accommodation'; // Redirect to accommodation page
     } else {
       navigate(`/${page.toLowerCase().replace(' ', '-')}`); // Client-side navigation
     }

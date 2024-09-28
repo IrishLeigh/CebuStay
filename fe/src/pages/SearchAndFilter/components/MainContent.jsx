@@ -59,7 +59,7 @@ const MainContent = ({
     console.log("Query Params:", queryParams);
   
     // Navigate to the property page with query parameters
-    navigate(`/accommodation/property/${propertyid}?${queryParams}`);
+    navigate(`/property/${propertyid}?${queryParams}`);
   };
   
 

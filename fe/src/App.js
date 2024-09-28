@@ -169,7 +169,7 @@ import ForgotPassword from "./ForgotPassword_User/ForgotPassword";
 import EditPhone from "./components/EditPhone";
 import LocationRegistration from "./components/registration_unit/registration_location/location";
 import { useData } from "./components/registration_unit/registration_location/contextAddressData";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import OTP from "./components/OTP";
 import ForgotPass from "./ForgotPassword_User/ForgotPass";
 import { UserProvider } from "./components/UserProvider";
@@ -192,72 +192,59 @@ import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
 
+import UserLayout from "./components/Layout/UserLayout";
+import NoUserLayout from "./components/Layout/NoUserLayout";
+
+
 function App() {
-  const location = useLocation();
-  const [token, setToken] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem("auth_token") !== null;
+  });
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("auth_token");
-    if (storedToken) {
-      setToken(storedToken);
-    } else {
-      setToken(null);
-    }
+    const checkAuth = () => {
+      setIsLoggedIn(localStorage.getItem("auth_token") !== null);
+    };
+
+    // Check authentication state every second
+    const intervalId = setInterval(checkAuth, 10);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
-  console.log("Token from App.js: ", token);
-
   return (
-    <div style={{ display: "flex", flexDirection: "column"}}>
-      {/* Conditionally render headers based on the current route */}
-      {location.pathname !== "/admin/overview" &&
-      location.pathname !== "/admin/guests" &&
-      location.pathname !== "/admin/listings" &&
-      location.pathname !== "/admin/calendar" &&
-      location.pathname !== "/account" ? (
-        token ? (
-          <HeaderUser token={token} setToken={setToken} />
-        ) : (
-          <HeaderNoUser setToken={setToken} />
-        )
-      ) : null}
-      
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <Routes>
-          <Route path="/login" element={<LoginUI setToken={setToken} />} />
-          <Route path="/" element={<LandingPageUI />} />
-          <Route path="/register" element={<RegistrationUI />} />
-          <Route path="/login/forgot-password" element={<ForgotPassword />} />
-          <Route path="/edit-name" element={<EditName />} />
-          <Route path="/forgot-password/register" element={<RegistrationUI />} />
-          <Route path="/forgot-password/otp" element={<OTP />} />
-          <Route path="/forgot-password" element={<ForgotPass />} />
-          <Route path="/accommodation" element={<PropertyListUI />} />
-          <Route path="/paymentVerification" element={<PaymentVerification />} />
+    <Routes>
+      <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
+        {/* Public Routes */}
+        <Route index element={<LandingPageUI />} />
+        <Route path="login" element={<LoginUI />} />
+        <Route path="register" element={<RegistrationUI />} />
+        <Route path="login/forgot-password" element={<ForgotPassword />} />
+        <Route path="forgot-password/register" element={<RegistrationUI />} />
+        <Route path="forgot-password/otp" element={<OTP />} />
+        <Route path="forgot-password" element={<ForgotPass />} />
+        <Route path="accommodation" element={<PropertyListUI />} />
+        <Route path="property/:propertyid" element={<ViewPropertyUI />} />
+        <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
+        
 
-          {/* Private Routes */}
-          <Route element={<PrivateRoutes token={token} />}>
-            <Route element={<AccountManagement />} path="/account" />
-            <Route path="/list-property/create-listing" element={<AccommodationRegistration />} />
-            <Route path="/list-property" element={<GettingStartedRegistration />} />
-            <Route path="/accommodation/property/:propertyid" element={<ViewPropertyUI />} />
-            <Route path="/accommodation/booking/:propertyid" element={<BookingDetailsUI />} />
-            <Route path="/properties" element={<Dashboard />} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin/overview" element={<Dashboard />} />
-            <Route path="/admin/listings" element={<PropertyManagementListingUI />} />
-            <Route path="/admin/calendar" element={<CalendarUI />} />
-            <Route path="/admin/guests" element={<AccommodationReservationUI />} />
-            <Route path="/edit-property/:id" element={<EditPropertyUI />} />
-          </Route>
-
-          {/* Redirect to login for any unmatched route */}
-          <Route path="*" element={<LandingPageUI />} />
-        </Routes>
-      </div>
-    </div>
+        {/* Private Routes */}
+        <Route element={<PrivateRoutes />}>
+          <Route path="account" element={<AccountManagement />} />
+          <Route path="list-property/create-listing" element={<AccommodationRegistration />} />
+          <Route path="list-property" element={<GettingStartedRegistration />} />
+          <Route path="login" element={<Navigate to="/" replace />} />
+          
+          {/* Admin Routes */}
+          <Route path="admin/overview" element={<Dashboard />} />
+          <Route path="admin/listings" element={<PropertyManagementListingUI />} />
+          <Route path="admin/calendar" element={<CalendarUI />} />
+          <Route path="admin/guests" element={<AccommodationReservationUI />} />
+          <Route path="edit-property/:id" element={<EditPropertyUI />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 

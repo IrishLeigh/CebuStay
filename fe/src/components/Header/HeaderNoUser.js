@@ -7,23 +7,23 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import './NavigationBar.css';
 
-const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
+const pages = ['Home', 'Accommodation'];
 
 function HeaderNoUser() {
   const handlePageClick = (page) => {
     if (page === 'Accommodation') {
-      window.location.href = '/accommodation'; // Redirect to accommodation page
+      window.location.href = 'accommodation'; // Redirect to accommodation page
     } else {
       window.location.href = `/${page.toLowerCase().replace(' ', '-')}`; // Redirect to other pages
     }
   };
 
   const handleSignUpClick = () => {
-    window.location.href = '/register'; // Redirect to the register page
+    window.location.href = 'register'; // Redirect to the register page
   };
 
   const handleLoginClick = () => {
-    window.location.href = '/login'; // Redirect to the login page
+    window.location.href = 'login'; // Redirect to the login page
   };
 
   return (
