@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\ReviewsAndRating;
-use App\Models\UserModel;
+use App\Models\Booking;
+use App\Models\BookingHistory;
 
 class ReviewsAndRatingsController extends CORS
 {
@@ -24,6 +25,19 @@ class ReviewsAndRatingsController extends CORS
         // $review->rid = $request->input('rid');
         $review->userid = $request->input('userid');
         $review->propertyid = $request->input('propertyid');
+        //check first is user has a booking or has booked in the property in Booking model if yes then proceed with rating if not return
+        //use the Booking and BookingHistory model to look for a record that has the userid and propertyid
+
+        $booking = Booking::where('userid', $review->userid)->where('propertyid', $review->propertyid)->get();
+        $bookingHistory = BookingHistory::where('userid', $review->userid)->where('propertyid', $review->propertyid)->get();
+        if ($booking->isEmpty() && $bookingHistory->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User has not made a booking or booked in the property.',
+            ], 404);
+        }
+
+
         $review->rating = $request->input('rating');
         $review->review = $request->input('review');
         if ($request->input('unitname')) {
