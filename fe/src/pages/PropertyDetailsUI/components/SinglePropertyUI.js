@@ -58,7 +58,7 @@ export default function SinglePropertyUI({ propertyid }) {
         if (res.data.status === "error") {
           alert(res.data.message);
         } else if (res.data.status === "success") {
-          navigate(`/accommodation/booking/${propertyid}?${queryParams}`);
+          navigate(`/booking/${propertyid}?${queryParams}`);
         }
       }
     } catch (error) {

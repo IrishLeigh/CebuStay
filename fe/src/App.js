@@ -37,7 +37,6 @@
 // import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 // import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
 
-
 // // import SearchFilter from './SearchFilter_User/SearchFilter';
 // function App() {
 //   const location = useLocation(); // Use useLocation hook to get the current route path
@@ -76,10 +75,10 @@
 //   return (
 //     <>
 //       {/* Conditionally render headers based on the current route */}
-//       {location.pathname !== "/admin/overview" && 
-//       location.pathname !== "/admin/guests"&& 
-//       location.pathname !== "/admin/listings" && 
-//       location.pathname !== "/admin/calendar" && 
+//       {location.pathname !== "/admin/overview" &&
+//       location.pathname !== "/admin/guests"&&
+//       location.pathname !== "/admin/listings" &&
+//       location.pathname !== "/admin/calendar" &&
 //       location.pathname !== "/account" &&
 
 //       (
@@ -122,8 +121,6 @@
 //           />
 //           {/* <Route path="/registration/list-your-property" element={<AccommodationRegistrationUI />} />  */}
 
-          
-          
 //           <Route
 //             path="/accommodation/property/:propertyid"
 //             element={<ViewPropertyUI />}
@@ -137,14 +134,13 @@
 //             element={<Dashboard />}
 //             exact
 //           />
-          
+
 //              {/* Admin Routes */}
 //           <Route path="/admin/overview" element={<Dashboard />} />
 //           <Route path="/admin/listings" element={< PropertyManagementListingUI/>} />
 //           <Route path="/admin/calendar" element={<CalendarUI />} />
 //           <Route path="/admin/guests" element={<AccommodationReservationUI />} />
 //           <Route path="/edit-property/:id" element={<EditPropertyUI />} />
-        
 
 //         </Route>
 
@@ -169,7 +165,13 @@ import ForgotPassword from "./ForgotPassword_User/ForgotPassword";
 import EditPhone from "./components/EditPhone";
 import LocationRegistration from "./components/registration_unit/registration_location/location";
 import { useData } from "./components/registration_unit/registration_location/contextAddressData";
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import OTP from "./components/OTP";
 import ForgotPass from "./ForgotPassword_User/ForgotPass";
 import { UserProvider } from "./components/UserProvider";
@@ -194,7 +196,6 @@ import AccommodationReservationUI from "./pages/PropertyManagementUI/components/
 
 import UserLayout from "./components/Layout/UserLayout";
 import NoUserLayout from "./components/Layout/NoUserLayout";
-
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -227,18 +228,30 @@ function App() {
         <Route path="accommodation" element={<PropertyListUI />} />
         <Route path="property/:propertyid" element={<ViewPropertyUI />} />
         <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
-        
 
         {/* Private Routes */}
         <Route element={<PrivateRoutes />}>
           <Route path="account" element={<AccountManagement />} />
-          <Route path="list-property/create-listing" element={<AccommodationRegistration />} />
-          <Route path="list-property" element={<GettingStartedRegistration />} />
+          <Route
+            path="list-property/create-listing"
+            element={<AccommodationRegistration />}
+          />
+          <Route
+            path="list-property"
+            element={<GettingStartedRegistration />}
+          />
           <Route path="login" element={<Navigate to="/" replace />} />
-          
+          <Route
+            path="/paymentVerification"
+            element={<PaymentVerification />}
+          />
+
           {/* Admin Routes */}
           <Route path="admin/overview" element={<Dashboard />} />
-          <Route path="admin/listings" element={<PropertyManagementListingUI />} />
+          <Route
+            path="admin/listings"
+            element={<PropertyManagementListingUI />}
+          />
           <Route path="admin/calendar" element={<CalendarUI />} />
           <Route path="admin/guests" element={<AccommodationReservationUI />} />
           <Route path="edit-property/:id" element={<EditPropertyUI />} />
