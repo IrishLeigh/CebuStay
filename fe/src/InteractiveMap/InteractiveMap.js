@@ -10,6 +10,11 @@
   import CulturalExperiences from "./data/CulturalExperiences.json";
   import SeeAndDo from "./data/SeeAndDo.json"; // Import see and do JSON data
   import SeeAndDoCard from "./components/SeeAndDoCard";
+  import { Chip } from "@mui/material";
+  import MyLocationIcon from '@mui/icons-material/MyLocation'; // Icon for nearby locations
+  import RefreshIcon from '@mui/icons-material/Refresh'; // Icon for reset
+  import HelpIcon from '@mui/icons-material/Help'; // Icon for instructions
+
 
   export default function InteractiveMap() {
     const [selectedCity, setSelectedCity] = useState(null);
@@ -57,7 +62,7 @@
         const screenWidth = window.innerWidth;
 
         if (screenWidth < 768) {
-          setZoom(7); // Lower zoom for smaller screens
+          setZoom(6); // Lower zoom for smaller screens
         } else if (screenWidth < 1024) {
           setZoom(8); // Medium zoom for tablet-sized screens
         } else {
@@ -89,6 +94,10 @@
       setFilteredLocations(newFilteredLocations);
     }, [selectedCategory, locations, allProperties]);
     const myLocation = () => {
+      if (!selectedCategory){
+        alert ("Please select a category first: See And Do, Culture & Experiences, or Where to stay?");
+        return ;
+      }
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -172,29 +181,64 @@
       }
     };
 
-    function ResetButton({ center, zoom }) {
+    function ResetButton({ center, zoom  , selectedCategory}) {
       const map = useMap();
-
+      const [showInstructions, setShowInstructions] = useState(false);
+      const [openInstructions, setOpenInstructions] = useState(false);
+    
       const handleReset = () => {
-        map.setView(center, zoom);
-      };
+        map.setZoom(initialZoom); // Set the desired zoom level
+        map.setView(initialCenter, initialZoom); // Recenters the view
 
+      };
+    
+      const toggleInstructions = () => {
+        setShowInstructions((prev) => !prev);
+      };
+    
+      const handleDialogOpen = () => {
+        setOpenInstructions(true);
+      };
+    
+      const handleDialogClose = () => {
+        setOpenInstructions(false);
+      };
+    
       return (
-        <button
-          className="reset-btn"
-          onClick={handleReset}
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            zIndex: 1000,
-          }}
-        >
-          Reset Map
-        </button>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          position: "absolute",
+          top: "8%",
+          left: "50%",
+          transform: 'translateX(-50%)',
+          zIndex: 500,
+          backgroundColor: 'transparent', // Remove white background
+          padding: '15px',
+        }}>
+          <Chip
+            label="Reset Zoom"
+            onClick={handleReset}
+            icon={<RefreshIcon />}
+            style={{ margin: '5px' }}
+          />
+          <Chip
+            label="Nearby Locations"
+            onClick={myLocation}
+            icon={<MyLocationIcon />}
+            style={{ margin: '5px' }}
+          />
+          {/* <Chip
+            label="Instructions"
+            onClick={toggleInstructions}
+            icon={<HelpIcon />}
+            style={{ margin: '5px' }}
+          /> */}
+        </div>
       );
     }
-
+    
     const countryStyle = {
       fillColor: "#FDF7A4",
       weight: 2,
@@ -273,7 +317,7 @@
     console.log("nearbyLocations:", nearbyLocations);
 
     return (
-      <div className="interactive-map">
+      <div className="interactive-map " >
         <div
           style={{
             alignItems: "center",
@@ -306,26 +350,59 @@
             {/* Filter buttons for categories */}
             <button
               className="map-filter-btn"
-              style={{ backgroundColor: "#16B4DD" }}
+              style={{ backgroundColor: "#16B4DD", display: 'flex', alignItems: 'center' }}
               onClick={() => { setSelectedCategory("Where to stay"); resetLocations(); }}
             >
+              <div style={{ 
+                backgroundColor: 'white', 
+                borderRadius: '50%', 
+                padding: '4px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                marginRight: '8px' 
+              }}>
+                <img src="/WhereToStay.png" alt="Where to stay" style={{ width: '1.5rem', height: '1.5rem' }} />
+              </div>
               Where to stay?
             </button>
             <button
               className="map-filter-btn"
-              style={{ backgroundColor: "#ADC939" }}
+              style={{ backgroundColor: "#ADC939", display: 'flex', alignItems: 'center' }}
               onClick={() => { setSelectedCategory("Culture & Experiences"); resetLocations(); }}
             >
+              <div style={{ 
+                backgroundColor: 'white', 
+                borderRadius: '50%', 
+                padding: '4px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                marginRight: '8px' 
+              }}>
+                <img src="/Culture.png" alt="Culture & Experiences" style={{ width: '1.5rem', height: '1.5rem' }} />
+              </div>
               Culture & Experiences
             </button>
             <button
               className="map-filter-btn"
-              style={{ backgroundColor: "#F9CC41" }}
+              style={{ backgroundColor: "#F9CC41", display: 'flex', alignItems: 'center' }}
               onClick={() => { setSelectedCategory("See And Do"); resetLocations(); }}
             >
+              <div style={{ 
+                backgroundColor: 'white', 
+                borderRadius: '50%', 
+                padding: '4px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                marginRight: '8px' 
+              }}>
+                <img src="/See.png" alt="See And Do" style={{ width: '1.5rem', height: '1.5rem' }} />
+              </div>
               See And Do
             </button>
-            <button
+            {/* <button
               className="map-filter-btn"
               style={{ backgroundColor: "#F77D1E" }}
               onClick={() => { setSelectedCategory("Hidden Jewels"); resetLocations(); }}
@@ -345,14 +422,14 @@
               onClick={() => { setSelectedCategory("What's in Cebu"); resetLocations(); }}
             >
               What's in Cebu?
-            </button>
-            <button
+            </button> */}
+            {/* <button
               className="map-filter-btn"
               style={{ backgroundColor: "#0C58BF" }}
               onClick={myLocation}
             >
               Nearby Me
-            </button>
+            </button> */}
           </div>
 
           <div className="map-container" ref={mapContainerRef}>
@@ -361,13 +438,13 @@
                 className="map"
                 center={initialCenter}
                 zoom={zoom}
-                scrollWheelZoom={false}
+                // scrollWheelZoom={false}
                 // dragging={true}
                 zoomControl={false}
-                // doubleClickZoom={false}
-                touchZoom={false}
+                doubleClickZoom={false}
+                // touchZoom={false}
                 boxZoom={false}
-                keyboard={false}
+                // keyboard={false}
                 minZoom={9}
                 maxZoom={11}
                 onClick={() => {
@@ -377,13 +454,12 @@
                 }}
               >
                 <ResetButton center={initialCenter} zoom={initialZoom} />
+
                 <GeoJSON
                   data={cebuCity.features}
                   onEachFeature={onEachCity}
                   style={getCityStyle}
                 />
-
-
                 {selectedCategory === "Where to stay" &&
                   filteredLocations.map((property, index) => {
                     const lat = parseFloat(property.coordinates[0]); // Convert latitude to float
