@@ -80,7 +80,7 @@ class PaymentController extends CORS
     {
         $this->enableCors($request);
         
-        $payment = Payment::where('bookingid', $request->input('bookingid'))->first();
+        $payment = Payment::where('bookingid', $request->input('bookingid'))->latest('created_at')->first();
     
         if (!$payment) {
             return response()->json(['error' => 'Payment not found'], 404);
@@ -231,7 +231,7 @@ class PaymentController extends CORS
 
         $bookingid = $request->input('bookingid');
 
-        $payment = Payment::where('bookingid', $bookingid)->first();
+        $payment = Payment::where('bookingid', $bookingid)->latest('created_at')->first();
 
         // Get request data
         $paymentId = $payment->paymentid;
@@ -265,11 +265,16 @@ class PaymentController extends CORS
             $paymentId = $checkoutData['data']['attributes']['payments'][0]['id'];
 
             // Update the payment record in the database
-            $payment = Payment::where('bookingid', $bookingid)->first();
+            $payment = Payment::where('bookingid', $bookingid)->latest('created_at')->first();
 
             if ($payment) {
                 $payment->linkid = $paymentId; // Set the link ID to the payment ID
                 $payment->save(); // Save the updated payment record
+
+                $booking = Booking::find($bookingid);
+                $booking->total_price += $payment->amount;
+
+                $booking->save();
             } else {
                 return response()->json(['error' => 'Payment record not found.'], 404);
             }
