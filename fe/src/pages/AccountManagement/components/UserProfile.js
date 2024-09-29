@@ -28,6 +28,9 @@ export default function UserProfile({ profile }) {
     // alert("Failed to render image");
     e.target.src =
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+    setProfileImage(
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+    );
   }
   // const handleImageError = () => {
   //   console.log("handleImageError");
@@ -54,6 +57,11 @@ export default function UserProfile({ profile }) {
           if (profile !== currentProfile) {
             setCurrentProfile(profile);
           }
+        }
+        if (res.data.status === "error") {
+          setProfileImage(
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+          );
         }
       } catch (error) {
         console.error("Error fetching image:", error.message || error);
