@@ -33,7 +33,7 @@ const TopRated = ({ onClose, onCardClick }) => {
   // Styles
   const styles = {
     card: {
-      maxWidth: isSmallScreen ? "100%" : 600,
+      maxWidth: isSmallScreen ? "50%" : 520,
       margin: "0 auto",
       boxShadow: 3,
       cursor: "pointer", // Make the card clickable

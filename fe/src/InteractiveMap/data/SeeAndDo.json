@@ -12,7 +12,7 @@
        "Best Time to Visit : Early morning or late afternoon for cooler temperatures and less crowd."
     ]
       ,
-    "city name": "Cebu City"
+    "cityName": "Cebu City"
   }
   ,
   {
@@ -27,7 +27,7 @@
       "Opening Hours : Daily from 4:00 PM to 10:00 PM.",
       "Admission Fee : Entrance is free, but purchases are required at the cafe."
     ],
-    "city name": "Cordoba"
+    "cityName": "Cordoba"
   },
   {
     "name": "Kawasan Falls",
@@ -42,7 +42,7 @@
       "Admission Fee: PHP 50 per person for entrance.",
       "Best Time to Visit: Early morning to avoid crowds and enjoy the peaceful ambiance."
     ],
-    "city name": "Badian"
+    "cityName": "Badian"
   },{
     "name": "Osmeña Peak",
     "coordinates": [9.824557947604186, 123.44096452370148],
@@ -56,7 +56,7 @@
       "Admission Fee: PHP 100 per person.",
       "Best Time to Visit: Early morning or late afternoon for cooler temperatures and clearer views."
     ],
-    "city name": "Dalaguete"
+    "cityName": "Dalaguete"
   },
   {
     "name": "Pescador Island",
@@ -71,7 +71,7 @@
       "Admission Fee: PHP 200 per person.",
       "Best Time to Visit: November to May for calm seas and clear visibility."
     ],
-    "city name": "Moalboal"
+    "cityName": "Moalboal"
   },
   {
     "name": "Oslob Whale Sharks",
@@ -86,7 +86,7 @@
       "Admission Fee: PHP 1,000 for snorkeling with whale sharks.",
       "Best Time to Visit: March to June for optimal whale shark sightings and calm sea conditions."
     ],
-    "city name": "Oslob"
+    "cityName": "Oslob"
   },
   {
     "name": "Sumilon Island Sandbar",
@@ -101,20 +101,7 @@
       "Admission Fee: PHP 500 for day access to the island.",
       "Best Time to Visit: November to May for the best weather and clear water."
     ],
-    "city name": "Oslob"
-  },{
-    "name": "Simala Church",
-    "coordinates": [9.9141, 123.5832],
-    "category": "See And Do",
-    "iconUrl": "./simalaIcon.png",
-    "imageUrl": "./SimalaChurch.jpg",
-    "description": "Simala Shrine is a popular religious destination in Cebu, known for its miraculous events and grand architectural design. It's a place for prayer, reflection, and pilgrimage.",
-    "activities": "Pilgrimage, prayer, and reflection.",
-    "more_info": [
-      "Opening Hours: Daily from 8:00 AM to 6:00 PM.",
-      "Best Time to Visit: Weekdays to avoid large crowds."
-    ],
-    "city name": "Sibonga"
+    "cityName": "Oslob"
   },
  
   {
@@ -128,12 +115,12 @@
     "more_info": [
       "Best Time to Visit: November to May for calm seas and clear skies."
     ],
-    "city name": "Poro"
+    "cityName": "Poro"
   },
  
   {
     "name": "Cebu Safari and Adventure Park",
-    "coordinates": [10.492273, 123.854071],
+    "coordinates": [10.589393529091565, 123.96158346186685],
     "category": "See And Do",
     "iconUrl": "./safari.png",
     "imageUrl": "./CebuSafari.jpg",
@@ -143,62 +130,62 @@
       "Opening Hours: 8:00 AM to 5:00 PM.",
       "Admission Fee: PHP 800 per person."
     ],
-    "city name": "Carmen"
+    "cityName": "Carmen"
   },
   {
     "name": "Cebu Ocean Park",
     "coordinates": [10.297884, 123.899064],
     "category": "See And Do",
-    "iconUrl": "./oceanParkIcon.png",
-    "imageUrl": "./CebuOceanPark.jpg",
+    "iconUrl": "./aquarium.png",
+    "imageUrl": "./CebuOcean.jpg",
     "description": "Cebu Ocean Park is a large marine-themed park featuring aquariums, animal shows, and interactive activities, offering a fun and educational experience for visitors.",
     "activities": "Aquarium viewing, interactive exhibits, and animal shows.",
     "more_info": [
       "Opening Hours: 9:00 AM to 6:00 PM.",
-      "Admission Fee: PHP 600 per person."
+      "Admission Fee: Starting at PHP  790.09. per person."
     ],
-    "city name": "Cebu City"
+    "cityName": "Cebu City"
   },
   {
     "name": "Anjo World Theme Park",
-    "coordinates": [10.277415, 123.833137],
+    "coordinates": [10.248449740508761, 123.8000041831022],
     "category": "See And Do",
-    "iconUrl": "./anjoWorldIcon.png",
-    "imageUrl": "./AnjoWorld.jpg",
+    "iconUrl": "./theme.png",
+    "imageUrl": "./Anjo.jpg",
     "description": "Anjo World Theme Park is the largest theme park in Cebu, offering various thrilling rides and attractions for both kids and adults.",
     "activities": "Rides, games, and family-friendly entertainment.",
     "more_info": [
       "Opening Hours: 10:00 AM to 8:00 PM.",
       "Admission Fee: PHP 600 per person."
     ],
-    "city name": "Minglanilla"
+    "cityName": "Minglanilla"
   },
   {
     "name": "Bojo River Aloguinsan",
-    "coordinates": [10.2228, 123.5289],
+    "coordinates": [10.206151053073024, 123.54468668859317],
     "category": "See And Do",
-    "iconUrl": "./bojoRiverIcon.png",
-    "imageUrl": "./BojoRiver.jpg",
+    "iconUrl": "./kayaking.png",
+    "imageUrl": "./Bojor.jpg",
     "description": "Bojo River in Aloguinsan is famous for its eco-tourism river cruise, where you can enjoy the scenic views of mangroves and wildlife while learning about the local ecosystem.",
     "activities": "River cruise, eco-tour, and bird watching.",
     "more_info": [
       "Opening Hours: 9:00 AM to 5:00 PM.",
       "Admission Fee: PHP 300 per person."
     ],
-    "city name": "Aloguinsan"
+    "cityName": "Aloguinsan"
   },
   {
     "name": "Mantayupan Falls",
-    "coordinates": [10.0602, 123.5551],
+    "coordinates": [10.10119219149934, 123.536090693213991],
     "category": "See And Do",
-    "iconUrl": "./mantayupanIcon.png",
-    "imageUrl": "./MantayupanFalls.jpg",
+    "iconUrl": "./kawasanfalls.png",
+    "imageUrl": "./Mantayupan.jpg",
     "description": "Mantayupan Falls is one of Cebu's tallest waterfalls, offering visitors a peaceful escape into nature with its refreshing water and lush surroundings.",
     "activities": "Swimming, hiking, and photography.",
     "more_info": [
       "Best Time to Visit: June to February for the full flow of the waterfall."
     ],
-    "city name": "Barili"
+    "cityName": "Barili"
   },
   {
     "name": "Ogtong Cave",
@@ -212,7 +199,7 @@
       "The resort offers ocean views.",
       "Cave is located within Ogtong Cave Resort."
     ],
-    "city name": "Bantayan"
+    "cityName": "Bantayan"
   },
   {
     "name": "Kota Beach",
@@ -226,7 +213,7 @@
       "Best time to visit during sunrise or sunset.",
       "Calm waters ideal for water sports."
     ],
-    "city name": "Santa Fe, Bantayan"
+    "cityName": "Santa Fe, Bantayan"
   },
   {
     "name": "Virgin Island (Silion Island)",
@@ -240,7 +227,7 @@
       "Accessible via a 30-minute boat ride from Bantayan Island.",
       "Popular island-hopping destination."
     ],
-    "city name": "Bantayan"
+    "cityName": "Bantayan"
   }
   
   
