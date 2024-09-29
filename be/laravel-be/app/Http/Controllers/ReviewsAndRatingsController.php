@@ -21,7 +21,7 @@ class ReviewsAndRatingsController extends CORS
 
         $review = new ReviewsAndRating();
 
-        $review->rid = $request->input('rid');
+        // $review->rid = $request->input('rid');
         $review->userid = $request->input('userid');
         $review->propertyid = $request->input('propertyid');
         $review->rating = $request->input('rating');
@@ -76,9 +76,9 @@ class ReviewsAndRatingsController extends CORS
     public function getAllReviewsAndRatings(Request $request)
     {
         $this->enableCors($request);
-    
+
         $propertyId = $request->input('propertyid');
-    
+
         $reviews = DB::table('reviewsandratings')
             ->join('users', 'reviewsandratings.userid', '=', 'users.userid')
             ->select(
@@ -94,14 +94,37 @@ class ReviewsAndRatingsController extends CORS
             )
             ->where('reviewsandratings.propertyid', $propertyId)
             ->get();
-    
+
+        //calculate the average of column rating in $reviews and put it in $propertyrating
+        $propertyrating = $reviews->avg('rating');
+
         if ($reviews->isEmpty()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'No reviews found for the specified property.',
             ], 404);
         }
-    
+
+        return response()->json([
+            'status' => 'success',
+            'propertyrating' => $propertyrating,
+            'reviews' => $reviews,
+        ]);
+    }
+    public function getUserReviewsAndRatings(Request $request)
+    {
+        $this->enableCors($request);
+        $userid = $request->input('userid');
+
+        $reviews = ReviewsAndRating::where('userid', $userid)->get();
+
+        if ($reviews->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No reviews found for the specified user.',
+            ], 404);
+        }
+
         return response()->json([
             'status' => 'success',
             'reviews' => $reviews,

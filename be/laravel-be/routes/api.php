@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReviewsAndRatingsController;
 use App\Http\Middleware\TokenMiddleware;
 
 use App\Http\Controllers\FileController;
@@ -178,6 +179,7 @@ Route::get('/user/properties', 'App\Http\Controllers\UserController@getAllProper
 Route::post('/reviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@insertReviewsAndRating');
 Route::get('/getreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getReviewsAndRatingByReviewId');
 Route::get('/getallreviewsandratings', 'App\Http\Controllers\ReviewsAndRatingsController@getAllReviewsAndRatings');
+Route::get('/user/reviewsandratings', [ReviewsAndRatingsController::class, 'getUserReviewsAndRatings']);
 
 //EDIT PROPERTY INFO Single Unit
 Route::put('/updatepropertyinfo/{propertyid}', [PropertyController::class, 'UpdatePropertyInfo']);
