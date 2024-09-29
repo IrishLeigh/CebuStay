@@ -178,7 +178,7 @@ class BookingController extends CORS
         $booking = Booking::find($bookingId);
 
         // $bookings = Booking::where('unitid', $unitid)->get();
-        
+
 
         $bookingPolicy = BookingPolicy::where('propertyid', $booking->propertyid)->first();
 
@@ -206,7 +206,7 @@ class BookingController extends CORS
         $booking->checkin_date = $checkin;
         $booking->checkout_date = $checkout;
         $booking->guest_count = $request->input('guest_count');
-        
+
         $property = Property::find($booking->propertyid);
 
         // Save the updated booking
@@ -231,26 +231,26 @@ class BookingController extends CORS
 
             // $checkoutData = createCheckoutSession($amountToRefund, $description, $returnUrl, $bookingId);
             $checkoutData = $this->payMongoService->createCheckoutSession($totalPrice, $description, $returnUrl, $bookingId);
-                $checkoutUrl = $checkoutData['checkout_url'];
-                $paymentId = $checkoutData['payment_id'];
-    
-    
-                // Save the payment record in the database
-                $payment = new Payment();
-                $payment->amount = $amountToRefund;
-                $payment->description = $description;
-                $payment->status = 'Pending';
-                $payment->paymentid = $paymentId;
-                $payment->bookingid = $bookingId;
-    
-                $payment->save();
-    
+            $checkoutUrl = $checkoutData['checkout_url'];
+            $paymentId = $checkoutData['payment_id'];
+
+
+            // Save the payment record in the database
+            $payment = new Payment();
+            $payment->amount = $amountToRefund;
+            $payment->description = $description;
+            $payment->status = 'Pending';
+            $payment->paymentid = $paymentId;
+            $payment->bookingid = $bookingId;
+
+            $payment->save();
+
         }
 
         DB::commit();
 
         return response()->json(['message' => 'Booking updated successfully', 'status' => 'success', 'bookingid' => $booking->bookingid, 'checkout_url' => $checkoutUrl, 'currentDate' => $currentDate, 'checkinDateMinusCancellationDays' => $checkinDateMinusCancellationDays]);
-    
+
     }
 
 
@@ -582,7 +582,7 @@ class BookingController extends CORS
         return response()->json($formattedBookings);
     }
 
-    public function getAllBookingByPropertyId (Request $request)
+    public function getAllBookingByPropertyId(Request $request)
     {
         $this->enableCors($request);
         $propertyId = $request->input('propertyid');
@@ -711,9 +711,13 @@ class BookingController extends CORS
 
         // Save to BookingHistory
         $bookingHistory->save();
-
+        $find_payment = Payment::where('bookingid', $bookingid)->first();
+        $find_payment->bookingid = null;
+        $find_payment->bhid = $bookingHistory->bhid;
+        $find_payment->save();
         // Delete the booking from Booking model
         $booking->delete();
+
 
         // Find the closest next booking by checkin_date for the same unitid
         $nextBooking = Booking::where('unitid', $booking->unitid)
@@ -863,9 +867,9 @@ class BookingController extends CORS
     public function createCheckoutSession($totalprice, $description, $returnUrl, $bookingId)
     {
         $apiKey = 'sk_test_eFrCmpKXktDTxx7avwDX7uBQ'; // Replace with your actual PayMongo API key
-    
+
         $totalprice = (int) $totalprice;
-    
+
         $client = new Client([
             'base_uri' => 'https://api.paymongo.com/v1/',
             'headers' => [
@@ -873,9 +877,9 @@ class BookingController extends CORS
                 'Content-Type' => 'application/json',
             ],
         ]);
-    
+
         $successUrl = $returnUrl . '?bookingId=' . $bookingId;
-    
+
         try {
             $response = $client->post('checkout_sessions', [
                 'json' => [
@@ -909,14 +913,14 @@ class BookingController extends CORS
                     ],
                 ],
             ]);
-    
+
             // Decode the response to get the checkout URL and payment ID
             $data = json_decode($response->getBody(), true);
-            
+
             // Retrieve the payment ID and checkout URL from the response
             $checkoutUrl = $data['data']['attributes']['checkout_url']; // Adjust according to actual response
             $paymentId = $data['data']['id']; // The payment ID from the PayMongo response
-    
+
             return [
                 'checkout_url' => $checkoutUrl,
                 'payment_id' => $paymentId,

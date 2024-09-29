@@ -12,7 +12,7 @@ class Payment extends Model
 
     protected $primaryKey = 'pid';
 
-       protected $fillable = [
+    protected $fillable = [
         'pid',
         'bookingid',
         'paymentid',
@@ -20,7 +20,8 @@ class Payment extends Model
         'amount',
         'description',
         'status',
+        'bhid'
     ];
 
- 
+
 }
