@@ -239,7 +239,7 @@ class BookingController extends CORS
                 $payment = new Payment();
                 $payment->amount = $amountToRefund;
                 $payment->description = $description;
-                $payment->status = 'Paid';
+                $payment->status = 'Pending';
                 $payment->paymentid = $paymentId;
                 $payment->bookingid = $bookingId;
     
