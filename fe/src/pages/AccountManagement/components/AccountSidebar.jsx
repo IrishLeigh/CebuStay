@@ -59,7 +59,7 @@
 import React, { useState } from 'react';
 import { FaUser, FaCalendarCheck, FaStar, FaBars } from 'react-icons/fa';
 import '../css/AccountSidebar.css';
-
+import { Typography } from '@mui/material';
 const AccountSidebar = ({activeItem, handleItemClick}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -72,9 +72,30 @@ const AccountSidebar = ({activeItem, handleItemClick}) => {
             <div className="sidebar-toggle" onClick={toggleSidebar}>
                 <FaBars />
             </div>
-            <div className="logo">
+            {/* <div className="logo">
                 <img src="logo.png" alt="Logo" />
+            </div> */}
+            <div style={{display: 'flex', alignItems: 'center'}}>
+                <img
+                  src="/Logo2.png"
+                  alt="Logo"
+                  className="logo"
+                  style={{ height: "40px", marginRight: "10px" }}
+                />
+                <Typography
+                  noWrap
+                  sx={{
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: 1000,
+                    color: "#16B4DD",
+                    textDecoration: "none",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  cebustay
+                </Typography>
             </div>
+            
             <div className="main-menu">
                 Main Menu
             </div>
