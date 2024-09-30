@@ -154,13 +154,14 @@ export default function BookingHistory({ profile }) {
         }
     };
 
-    const openReviewModal = (propertyId, propertyName) => {
-        setCurrentPropertyId(propertyId);
-        setRating(reviews[propertyId]?.rating || 0);
-        setReviewText(reviews[propertyId]?.text || '');
-        setReviewSubmitted(!!reviews[propertyId]);
-        setSelectedPropertyName(propertyName); // Set the property name
+    const openReviewModal = (item) => {
+        // setCurrentPropertyId(propertyId);
+        // setRating(reviews[propertyId]?.rating || 0);
+        // setReviewText(reviews[propertyId]?.text || '');
+        // setReviewSubmitted(!!reviews[propertyId]);
+        // setSelectedPropertyName(propertyName); // Set the property name
         setModalIsOpen(true);
+        console.log("Review",item)
     };
 
     const handleCancelBooking = (bookingId) => {
@@ -191,22 +192,24 @@ export default function BookingHistory({ profile }) {
             setError('Please enter a review.');
         } else {
             setError('');
-            setReviews((prev) => ({
-                ...prev,
-                [currentPropertyId]: {
-                    rating,
-                    text: reviewText,
-                }
-            }));
+            console.log("Review:", reviewText);
+            console.log("Rating:", rating);
+            // setReviews((prev) => ({
+            //     ...prev,
+            //     [currentPropertyId]: {
+            //         rating,
+            //         text: reviewText,
+            //     }
+            // }));
 
-            // Update completedData to reflect the review status
-            setCompletedData((prev) =>
-                prev.map((item) =>
-                    item.id === currentPropertyId ? { ...item, review: 'REVIEWED' } : item
-                )
-            );
+            // // Update completedData to reflect the review status
+            // setCompletedData((prev) =>
+            //     prev.map((item) =>
+            //         item.id === currentPropertyId ? { ...item, review: 'REVIEWED' } : item
+            //     )
+            // );
 
-            setReviewSubmitted(true);
+            // setReviewSubmitted(true);
         }
     };
 
@@ -528,9 +531,10 @@ export default function BookingHistory({ profile }) {
                                             {selectedButton === 'COMPLETED' && (
                                                 <td style={getCellStyle(rowIndex, getData().length)}>
                                                     <button
-                                                        onClick={() => openReviewModal(item.id, item.name)}
+                                                        onClick={() => openReviewModal(item)}
                                                         style={{
-                                                            color: item.review === 'REVIEWED' ? 'green' : 'red',
+                                                            // color: item.review === 'REVIEWED' ? 'green' : 'red',
+                                                            color: 'green',
                                                             background: 'none',
                                                             border: 'none',
                                                             cursor: 'pointer',
@@ -540,7 +544,7 @@ export default function BookingHistory({ profile }) {
                                                             fontSize: '0.875rem',
                                                         }}
                                                     >
-                                                        {item.review}
+                                                       Add Review
                                                     </button>
                                                 </td>
                                             )}
