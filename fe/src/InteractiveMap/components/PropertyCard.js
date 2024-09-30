@@ -7,10 +7,14 @@ import {
   Typography,
   Box,
   ButtonBase,
+  useMediaQuery,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const PropertyCard = ({ places = [], onClick }) => {
+  // Determine screen size
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
   // Check if the places array is valid
   if (!Array.isArray(places) || places.length === 0) {
     return (
@@ -28,17 +32,34 @@ const PropertyCard = ({ places = [], onClick }) => {
       onClick={onClick}
       sx={{ display: "block", textAlign: "left", width: "100%" }}
     >
-      <Card sx={{ maxWidth: 250, borderRadius: 3 }}>
+      <Card
+        sx={{
+          maxWidth: isSmallScreen ? "100%" : 250,
+          borderRadius: 3,
+          margin: "0 auto",
+        }}
+      >
         <CardMedia
           component="img"
-          height="150"
+          height={isSmallScreen ? "50" : "100"} // Smaller height for responsiveness
           image={place.image}
           alt={place.name}
-          sx={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+          sx={{
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            width: isSmallScreen ? "100%" : 250,
+          }}
         />
-        <CardContent>
+        <CardContent sx={{ padding: isSmallScreen ? "0.5rem" : "1rem" }}>
           {/* Property Name */}
-          <Typography variant="h6" component="div">
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              fontSize: isSmallScreen ? "1rem" : "1.125rem",
+              fontFamily: "Poppins",
+            }}
+          >
             {place.name}
           </Typography>
 
@@ -47,19 +68,49 @@ const PropertyCard = ({ places = [], onClick }) => {
             <Typography
               variant="body2"
               color="primary"
-              sx={{ fontWeight: "bold" }}
+              sx={{
+                fontWeight: "bold",
+                fontSize: isSmallScreen ? "0.75rem" : "0.875rem",
+                fontFamily: "Poppins",
+              }}
             >
               {place.rating}
             </Typography>
-            <Typography variant="body2" sx={{ ml: 1, color: "#555" }}>
+            <Typography
+              variant="body2"
+              sx={{
+                ml: 1,
+                color: "#555",
+                fontSize: isSmallScreen ? "0.75rem" : "0.875rem",
+                fontFamily: "Poppins",
+              }}
+            >
               {place.reviews} reviews
             </Typography>
           </Box>
 
           {/* Location */}
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <LocationOnIcon fontSize="small" color="action" />
-            <Typography variant="body2" color="textSecondary">
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mb: 1,
+              fontSize: isSmallScreen ? "0.65rem" : "0.75rem",
+            }}
+          >
+            <LocationOnIcon
+              fontSize="small"
+              color="action"
+              sx={{
+                fontSize: isSmallScreen ? "0.75rem" : "1rem",
+                color: "#16B4DD",
+              }}
+            />
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ marginLeft: "0.5rem", fontFamily: "Poppins" }}
+            >
               {place.location}
             </Typography>
           </Box>
@@ -70,22 +121,42 @@ const PropertyCard = ({ places = [], onClick }) => {
               display: "flex",
               alignItems: "baseline",
               justifyContent: "space-between",
+              mb: 1,
             }}
           >
             <Typography
               variant="body2"
-              color="textSecondary"
-              sx={{ textDecoration: "line-through", color: "#a1a1a1" }}
+              sx={{
+                textDecoration: "line-through",
+                color: "#a1a1a1",
+                fontSize: isSmallScreen ? "0.65rem" : "0.75rem",
+                fontFamily: "Poppins",
+              }}
             >
               {place.originalPrice}
             </Typography>
-            <Typography variant="h5" sx={{ color: "red", fontWeight: "bold" }}>
+            <Typography
+              variant="h5"
+              sx={{
+                color: "red",
+                fontWeight: "bold",
+                fontSize: isSmallScreen ? "1rem" : "1.25rem",
+                fontFamily: "Poppins",
+              }}
+            >
               {place.discountedPrice}
             </Typography>
           </Box>
 
           {/* Additional Info */}
-          <Typography variant="caption" color="textSecondary">
+          <Typography
+            variant="caption"
+            color="textSecondary"
+            sx={{
+              fontSize: isSmallScreen ? "0.65rem" : "0.75rem",
+              fontFamily: "Poppins",
+            }}
+          >
             Per night before taxes and fees
             <br />
             (2 adults)
