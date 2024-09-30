@@ -68,7 +68,13 @@ const ViewNearby = () => {
   ];
 
   return (
-    <Card sx={{ maxWidth: 600, margin: "0 auto", position: "relative" }}>
+    <Card
+      sx={{
+        maxWidth: 400,
+        margin: "1rem",
+        position: "relative",
+      }}
+    >
       <TopRated />
       <CardContent>
         <Typography

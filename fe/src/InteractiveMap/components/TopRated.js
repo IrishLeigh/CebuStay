@@ -11,7 +11,7 @@ import { useTheme, useMediaQuery } from "@mui/material";
 
 const TopRated = ({ onClose, onCardClick }) => {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery('(max-width:425px)'); // Check if screen is 425px or less
+  const isSmallScreen = useMediaQuery("(max-width:425px)"); // Check if screen is 425px or less
 
   const hotel = {
     name: "Luxury Beach Resort",
@@ -26,14 +26,14 @@ const TopRated = ({ onClose, onCardClick }) => {
   // Specific colors for each facility
   const facilityColors = {
     "Swimming Pool": "#16B4DD",
-    "Spa": "#ADC939",
-    "Gym": "#F9CC41",
+    Spa: "#ADC939",
+    Gym: "#F9CC41",
   };
 
   // Styles
   const styles = {
     card: {
-      maxWidth: isSmallScreen ? "100%" : 600,
+      maxWidth: isSmallScreen ? "100%" : 400,
       margin: "0 auto",
       boxShadow: 3,
       cursor: "pointer", // Make the card clickable
@@ -136,7 +136,12 @@ const TopRated = ({ onClose, onCardClick }) => {
           Top Reviewed
         </Typography>
       </Box>
-      <Box sx={{ display: "flex", flexDirection: isSmallScreen ? "column" : "row" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isSmallScreen ? "column" : "row",
+        }}
+      >
         <CardMedia
           component="img"
           alt={hotel.name}
@@ -145,10 +150,13 @@ const TopRated = ({ onClose, onCardClick }) => {
           title={hotel.name}
         />
         <CardContent sx={styles.content}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
-            <Typography sx={styles.title}>
-              {hotel.name}
-            </Typography>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={0.5}
+          >
+            <Typography sx={styles.title}>{hotel.name}</Typography>
             <Typography sx={styles.reviewCount}>
               {hotel.reviewCount} reviews
             </Typography>
@@ -156,13 +164,9 @@ const TopRated = ({ onClose, onCardClick }) => {
           {renderStars(hotel.rating)}
           <Box display="flex" alignItems="center" mt={0.5}>
             <LocationOnIcon sx={styles.locationIcon} />
-            <Typography sx={styles.address}>
-              {hotel.address}
-            </Typography>
+            <Typography sx={styles.address}>{hotel.address}</Typography>
           </Box>
-          <Typography sx={styles.description}>
-            This property offers:
-          </Typography>
+          <Typography sx={styles.description}>This property offers:</Typography>
           <Box sx={styles.facilityBox}>
             {hotel.facilities.map((facility, index) => (
               <Box
@@ -172,18 +176,31 @@ const TopRated = ({ onClose, onCardClick }) => {
                   backgroundColor: facilityColors[facility] || "#EEEEEE",
                 }}
               >
-                <Typography sx={{ fontSize: isSmallScreen ? "0.65rem" : "0.75rem", fontFamily: "Poppins" }}>
+                <Typography
+                  sx={{
+                    fontSize: isSmallScreen ? "0.65rem" : "0.75rem",
+                    fontFamily: "Poppins",
+                  }}
+                >
                   {facility}
                 </Typography>
               </Box>
             ))}
           </Box>
-          <Box display="flex" flexDirection="column" alignItems="flex-end" mt={1}>
-            <Typography sx={styles.priceLabel}>
-              Price per night
-            </Typography>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="flex-end"
+            mt={-10}
+          >
+            <Typography sx={styles.priceLabel}>Price per night</Typography>
             <Box sx={styles.priceBox}>
-              <Typography sx={{ fontSize: isSmallScreen ? "0.75rem" : "1rem", fontFamily: "Poppins" }}>
+              <Typography
+                sx={{
+                  fontSize: isSmallScreen ? "0.75rem" : "1rem",
+                  fontFamily: "Poppins",
+                }}
+              >
                 ₱ {hotel.price.toLocaleString()}
               </Typography>
             </Box>
