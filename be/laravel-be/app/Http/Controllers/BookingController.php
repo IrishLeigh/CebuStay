@@ -201,6 +201,7 @@ class BookingController extends CORS
                 return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
             }
         }
+        $oldCheckin = $booking->checkin_date;
 
         // Update the booking details
         $booking->checkin_date = $checkin;
@@ -216,7 +217,7 @@ class BookingController extends CORS
 
         // Check if check-in date minus cancellation days is greater than the current date
         $cancellationDays = $bookingPolicy->cancellationDays;
-        $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($booking->checkin_date . " - $cancellationDays days"));
+        $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($oldCheckin . " - $cancellationDays days"));
         $currentDate = date('Y-m-d');
         $checkoutUrl = '';
 
@@ -383,6 +384,7 @@ class BookingController extends CORS
         <body>
             <div class='container'>
                 <div class='header'>
+                <img src='https://i.imgur.com/uY9H6Dv.png' alt='CebuStay Logo' style='width: 60px; height: auto; margin-right: 10px;'>
                 <h1>CebuStay</h1>
                 </div>
                 <div class='content'>
