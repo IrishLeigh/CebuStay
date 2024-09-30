@@ -75,6 +75,7 @@ export default function BookingHistory({ profile }) {
                 // Filter bookings
                 const upcomingBooking = bookings.filter(booking => booking.checkIn >= today && booking.isCancel !== 'Cancelled');
                 // const completedBooking = resHistory.data.filter(booking => booking.checkOut < today && booking.status !== 'Cancelled');
+                const completedBooking = resHistory.data;
                 const cancelledBooking = bookings.filter(booking => booking.isCancel === 'Cancelled');
 
                 // Set state variables
@@ -241,9 +242,9 @@ export default function BookingHistory({ profile }) {
                 }}
             >
                 <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>
-                    Booking History
+                    My Bookings
                 </h1>
-                <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Lorem ipsum dolor sit amet</p>
+                <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Keep track of your bookings with ease!</p>
             </div>
 
             <div className="full-width mt-4">
@@ -268,7 +269,7 @@ export default function BookingHistory({ profile }) {
                                 transition: 'background-color 0.3s, color 0.3s'
                             }}
                         >
-                            UPCOMING
+                            CURRENT & UPCOMING
                         </button>
                         <button
                             className={`btn ${selectedButton === 'CANCELLED' ? 'active' : ''}`}

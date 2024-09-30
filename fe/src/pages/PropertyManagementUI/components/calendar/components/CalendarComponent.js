@@ -62,7 +62,7 @@ export default function CalendarComponent({ propertyTypes }) {
       }
 
       if (window.innerWidth < 1650) {
-        setMarginLeft('10rem'); // Adjust this value as needed
+        // setMarginLeft('10rem'); 
       } else {
         setMarginLeft('0px');
       }
