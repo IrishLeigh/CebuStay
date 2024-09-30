@@ -128,7 +128,7 @@ const LoginUI = () => {
     setLoginError("");
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login", {
+      const response = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/login", {
         email,
         password,
       });
