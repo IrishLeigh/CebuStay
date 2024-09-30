@@ -7,6 +7,7 @@
     border-radius: 8px;
     box-shadow: #000;
     border-color: #000;
+    height: fit-content;
 }
 
 .text-lg {
