@@ -22,7 +22,7 @@ const generateDummyReviews = (count) => {
   return reviews;
 };
 
-const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
+const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
   const { user } = useUser();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
@@ -65,6 +65,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
 
 
   useEffect(() => {
+    
     const fetchData = async () => {
       try {
         const res = await axios.get(`http://127.0.0.1:8000/api/getallreviewsandratings`, {
@@ -73,6 +74,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId }) => {
           }
         });
         console.log("reviews", res.data);
+        setRatingg(res.data.propertyrating);
         setReviews(res.data.reviews);
       } catch (err) {
         console.log(err);
