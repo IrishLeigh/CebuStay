@@ -6,15 +6,25 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import './NavigationBar.css';
+import { useNavigate } from 'react-router-dom';
 
 const pages = ['Home', 'Accommodation'];
 
 function HeaderNoUser() {
+  const navigate = useNavigate();
   const handlePageClick = (page) => {
-    if (page === 'Accommodation') {
-      window.location.href = 'accommodation'; // Redirect to accommodation page
+    if (page === "Accommodation") {
+      navigate("accommodation"); // Redirect to "accommodation";
+    } else if (page === "List your property") {
+      navigate("list-property"); // Redirect to the list property page
+    }else if (page === "Home") {
+      navigate("/");
+    } else if (page === "Your Bookings") {
+      navigate("/account");
+
     } else {
-      window.location.href = `/${page.toLowerCase().replace(' ', '-')}`; // Redirect to other pages
+      navigate('/');
+      
     }
   };
 
@@ -33,7 +43,7 @@ function HeaderNoUser() {
         <Box sx={{ display: "flex", alignItems: "center" }}>
   <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
     <img
-      src="/Logo2.png"
+      src="/logo2.png"
       alt="Logo"
       className="logo"
       style={{ height: "40px", marginRight: "10px" }}

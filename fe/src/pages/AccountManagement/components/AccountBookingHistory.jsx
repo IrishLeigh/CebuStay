@@ -229,8 +229,9 @@ export default function BookingHistory({ profile }) {
 
 
     return (
-        <div className="full-height bg-light">
-            <HeaderAccountMgnt />
+
+        <div className="full-height bg-light" style={{ width: '100%' }}>
+            <HeaderAccountMgnt  />
             <div
                 style={{
                     background: 'linear-gradient(to right, #16B4DD, #A0F9FF, #4FF3FE)',

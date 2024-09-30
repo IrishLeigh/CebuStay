@@ -76,6 +76,14 @@ const AccountSidebar = ({activeItem, handleItemClick}) => {
                 <img src="logo.png" alt="Logo" />
             </div> */}
             <div style={{display: 'flex', alignItems: 'center'}}>
+            <a
+                href="/"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
+                }}
+              >
                 <img
                   src="/Logo2.png"
                   alt="Logo"
@@ -94,6 +102,7 @@ const AccountSidebar = ({activeItem, handleItemClick}) => {
                 >
                   cebustay
                 </Typography>
+              </a>
             </div>
             
             <div className="main-menu">

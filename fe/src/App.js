@@ -171,6 +171,7 @@ import {
   Route,
   useLocation,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import OTP from "./components/OTP";
 import ForgotPass from "./ForgotPassword_User/ForgotPass";
@@ -201,11 +202,18 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem("auth_token") !== null;
   });
+  const navigate = useNavigate();
+  const token = localStorage.getItem("auth_token");
+
+  
+
 
   useEffect(() => {
     const checkAuth = () => {
       setIsLoggedIn(localStorage.getItem("auth_token") !== null);
     };
+    console.log("isLoggedIn", isLoggedIn);
+    console.log("auth_token", localStorage.getItem("auth_token"));
 
     // Check authentication state every second
     const intervalId = setInterval(checkAuth, 10);
@@ -217,6 +225,7 @@ function App() {
   return (
     <Routes>
       <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
+       
         {/* Public Routes */}
         <Route index element={<LandingPageUI />} />
         <Route path="login" element={<LoginUI />} />
@@ -227,7 +236,7 @@ function App() {
         <Route path="forgot-password" element={<ForgotPass />} />
         <Route path="accommodation" element={<PropertyListUI />} />
         <Route path="property/:propertyid" element={<ViewPropertyUI />} />
-        <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
+        
 
         {/* Private Routes */}
         <Route element={<PrivateRoutes />}>
@@ -245,6 +254,7 @@ function App() {
             path="/paymentVerification"
             element={<PaymentVerification />}
           />
+          <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
 
           {/* Admin Routes */}
           <Route path="admin/overview" element={<Dashboard />} />

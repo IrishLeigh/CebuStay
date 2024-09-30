@@ -45,16 +45,19 @@ export default function HeaderAccountMgnt() {
 
 
   const handlePageClick = (page) => {
-    if (page === "Accommodation") {
-      window.location.href = "accommodation";
-    } else if (page === "Home") {
-      window.location.href = "/";
+    if (page === 'Accommodation') {
+      window.location.href = 'accommodation'; // Redirect to accommodation page
+    } else if (page === 'Home') {
+      navigate('/'); // Client-side navigation
+    } else {
+      navigate(`/${page.toLowerCase().replace(' ', '-')}`); // Client-side navigation
+      
     }
-    else {
-      navigate(`/${page.toLowerCase().replace(" ", "-")}`);
-    }
+      
+    
     handleCloseNavMenu();
   };
+
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
@@ -83,9 +86,9 @@ export default function HeaderAccountMgnt() {
   );
 
   return (
-    <Box>
-      <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
-        <Toolbar>
+    <Box sx={{ width: '100%' }}>
+      <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black', width: '100%' }}>
+        <Toolbar >
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
