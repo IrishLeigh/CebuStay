@@ -105,7 +105,7 @@ const OTPRegistration = () => {
         return;
       }
      
-      const res = await axios.post("http://127.0.0.1:8000/api/verifytoken", {
+      const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/verifytoken", {
         email: em,
         token: verificationToken
       });
@@ -160,7 +160,7 @@ const OTPRegistration = () => {
     const em = localStorage.getItem('email');
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/resendemail', {
+      const response = await axios.post('https://whitesmoke-shark-473197.hostingersite.com/api/resendemail', {
         email: em
       });
       alert(response.data.message);
