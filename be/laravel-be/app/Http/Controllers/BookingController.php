@@ -706,7 +706,7 @@ class BookingController extends CORS
         $bookingHistory->total_price = $booking->total_price;
         $bookingHistory->special_request = $booking->special_request;
         $bookingHistory->arrival_time = $booking->arrival_time;
-        $bookingHistory->status = $booking->status;
+        $bookingHistory->status = "Checked out";
         $bookingHistory->type = $booking->type;
         $bookingHistory->check_type = "Checkout";
         $bookingHistory->booking_date = $booking->booking_date;
