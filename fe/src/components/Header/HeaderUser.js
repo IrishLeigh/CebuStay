@@ -21,7 +21,8 @@ import MenuIcon from "@mui/icons-material/Menu"; // Import the MUI icon
 // import './NavigationBar.css'; // Import the CSS file
 import axios from "axios";
 const pages = ["Home", "Accommodation"];
-const settings = ["Account", "Your Properties", "Your Bookings", "Logout"];
+const settings = ["Account",  "Your Bookings", "Your Properties","Logout"];
+
 
 function HeaderUser() {
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,7 @@ function HeaderUser() {
   const [profileImage, setProfileImage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
+  const [user ,setUser] = useState(null);
 
   const handleImageError = (e) => {
     // Fallback to another image or initials
@@ -65,6 +67,27 @@ function HeaderUser() {
     fetchUserImage();
   }, []);
 
+  useEffect(() => {
+    if (token) {
+      const fetchUser = async () => {
+        try {
+          const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+            token: token,
+          });
+          setUser(res.data.data);
+          console.log("USER:", res.data.data);
+        } catch (error) {
+          alert("Error decoding JWT token:", error);
+        }
+      };
+
+      fetchUser();
+    } else {
+      setUser(null);
+    }
+  }, [token]); 
+
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -88,10 +111,15 @@ function HeaderUser() {
       navigate("list-property"); // Redirect to the list property page
     }else if (page === "Home") {
       navigate("/");
+    } else if (page === "Your Bookings") {
+      navigate("/account");
 
     } else {
       navigate('/');
+      
     }
+      
+    
     handleCloseNavMenu();
   };
 
@@ -102,10 +130,11 @@ function HeaderUser() {
           navigate("/account");
         }
         break;
-      case "Your Properties":
-        navigate("/admin/overview");
-        break;
+      
         case "Your Bookings":
+        navigate("/account");
+        break;
+      case "Your Properties":
         navigate("/admin/overview");
         break;
       case "Logout":
@@ -118,6 +147,13 @@ function HeaderUser() {
   };
 
   const handleLogout = async () => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      console.log("No token found");
+      localStorage.removeItem("auth_token");
+      localStorage.setItem("auth_token", "");
+      setOpenLogoutModal(false);
+    }
     setLoading(true);
     try {
       console.log ("token FROM HEADER", token);
@@ -151,7 +187,7 @@ function HeaderUser() {
   const handleCloseLogoutModal = () => {
     setOpenLogoutModal(false);
   };
-
+console.log ("USER FROM HEADER NI SYA HA", user);
   return (
     <>
       <AppBar
@@ -170,7 +206,7 @@ function HeaderUser() {
                 }}
               >
                 <img
-                  src="/Logo2.png"
+                  src="/logo2.png"
                   alt="Logo"
                   className="logo"
                   style={{ height: "40px", marginRight: "10px" }}
@@ -297,20 +333,18 @@ function HeaderUser() {
 
       {/* Logout confirmation modal */}
       <Dialog
-        open={openLogoutModal}
-        onClose={handleCloseLogoutModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Logout Confirmation"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to logout?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
+           open={openLogoutModal}
+           onClose={handleCloseLogoutModal}
+        >
+    
+       <DialogTitle>Confirm Logout</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to log out?
+            </DialogContentText>
+          </DialogContent>
+
+          <DialogActions>
           <Button
             onClick={handleCloseLogoutModal}
             color="primary"
@@ -325,7 +359,7 @@ function HeaderUser() {
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <CircularProgress size={24} color="secondary" />
             ) : (
               "Logout"
             )}

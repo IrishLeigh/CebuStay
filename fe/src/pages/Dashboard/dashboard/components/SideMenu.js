@@ -21,6 +21,8 @@ import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import OptionsMenu from './OptionsMenu';
 import CardAlert from './CardAlert';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Tooltip } from '@mui/material';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
@@ -35,14 +37,37 @@ const Drawer = styled(MuiDrawer)({
   },
 });
 
-export default function SideMenu() {
+
+export default function SideMenu({onLogout }) {
   const navigate = useNavigate(); // Initialize useNavigate
+  const [ user, setUser ] = React.useState({});
+  const token = localStorage.getItem("auth_token");
+  
+  React.useEffect(() => {
+    if (token) {
+      const fetchUser = async () => {
+        try {
+          const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+            token: token,
+          });
+          setUser(res.data.data);
+          console.log("USER:", res.data.data);
+        } catch (error) {
+          alert("Error decoding JWT token:", error);
+        }
+      };
+
+      fetchUser();
+    } else {
+      setUser(null);
+    }
+  }, []); // Add token as a dependency
 
   const mainListItems = [
     { text: 'Overview', icon: <HomeRoundedIcon />, path: '/admin/overview' },
     { text: 'Calendar', icon: <AnalyticsRoundedIcon />, path: '/admin/calendar' },
-    { text: 'Guests', icon: <PeopleRoundedIcon />, path: '/admin/guests' },
-    { text: 'Listings', icon: <AssignmentRoundedIcon />, path: '/admin/listings' },
+    { text: 'Your Guests', icon: <PeopleRoundedIcon />, path: '/admin/guests' },
+    { text: 'Your Properties', icon: <AssignmentRoundedIcon />, path: '/admin/listings' },
   ];
 
   const secondaryListItems = [
@@ -104,7 +129,7 @@ export default function SideMenu() {
           ))}
         </List>
 
-        <List dense>
+        {/* <List dense>
           {secondaryListItems.map((item, index) => (
             <ListItem key={index} disablePadding sx={{ display: 'block' }}>
               <ListItemButton onClick={() => handleMenuItemClick(item.path)}>
@@ -113,7 +138,7 @@ export default function SideMenu() {
               </ListItemButton>
             </ListItem>
           ))}
-        </List>
+        </List> */}
       </Stack>
 
       <CardAlert />
@@ -127,21 +152,60 @@ export default function SideMenu() {
           borderColor: 'divider',
         }}
       >
-        <Avatar
+        {/* <Avatar
           sizes="small"
           alt="Riley Carter"
           src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36 }}
-        />
-        <Box sx={{ mr: 'auto' }}>
-          <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            Riley Carter
+        /> */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          width: '100%', 
+         
+        }}
+      >
+        {/* User information */}
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            overflow: 'hidden', // Ensures text overflow handling
+            textOverflow: 'ellipsis', 
+            whiteSpace: 'nowrap',
+            mr: 2 // Adds some margin to separate the user info and OptionsMenu
+          }}
+        >
+          <Typography 
+            variant="body2" 
+            sx={{ fontWeight: 500, lineHeight: '16px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+          >
+            {`${user?.firstname} ${user?.lastname}`}
           </Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            riley@email.com
-          </Typography>
+
+          {/* Tooltip to display full email on hover */}
+          <Tooltip title={user?.email}>
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                color: 'text.secondary', 
+                textOverflow: 'ellipsis', 
+                overflow: 'hidden', 
+                whiteSpace: 'nowrap',
+                maxWidth: '150px' // Adjust maxWidth based on available space
+              }}
+            >
+              {user?.email}
+            </Typography>
+          </Tooltip>
         </Box>
-        <OptionsMenu />
+
+        {/* OptionsMenu component */}
+        <OptionsMenu onLogout={onLogout} />
+      </Box>
+
       </Stack>
     </Drawer>
   );

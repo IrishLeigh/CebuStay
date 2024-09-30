@@ -7,8 +7,13 @@ import BasicGrid from './components/Land';
 import InteractiveMap from '../../InteractiveMap/InteractiveMap';
 import LandingCover from './components/LandingCover';
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 const LandingPageUI = () => {
   const mapRef = useRef(null);
+
+  
+  // clearLocalStorage(); // Clear token if expired
+  // navigate("/login");
 
   // Function to scroll to the map
   const scrollToMap = () => {

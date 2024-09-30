@@ -175,21 +175,21 @@ export default function MainGrid() {
 
               {dashboardData.data && Object.keys(dashboardData.data).length > 0 ? (
                 [0, 1, 2].map(index => (
-                  <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+                  <Grid key={index} item xs={12} sm={6} md={4} lg={4}>
                     <StatCard {...getStatData(dashboardData.data[index], ['Total Revenue', 'Total Bookings', 'Total Customer Ratings'][index])} />
                   </Grid>
                 ))
               ) : (
                 ['Total Revenue', 'Total Bookings', 'Total Customer Ratings'].map((title, index) => (
-                  <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+                  <Grid key={index} item xs={12} sm={6} md={4} lg={4}>
                     <StatCard {...getStatData({}, title)} />
                   </Grid>
                 ))
               )}
 
-              <Grid item xs={12} sm={6} md={4} lg={3}>
+              {/* <Grid item xs={12} sm={6} md={4} lg={3}>
                 <HighlightedCard />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Grid
               container
@@ -205,18 +205,18 @@ export default function MainGrid() {
                 <SessionsChart bookingTrends = {dashboardData?.data?.booking_trends || []}/>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={12}>
                 <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
                   Today's Booking Schedule
                 </Typography>
                 <CustomizedDataGrid bookingList = {dashboardData?.data?.booking_list || []}/>
               </Grid>
-              <Grid item xs={12} md={6}>
+              {/* <Grid item xs={12} md={6}>
                 <Stack gap={2} direction="row">
                   <ChartUserByCountry />
                   <ChartUserByCountry />
                 </Stack>
-              </Grid>
+              </Grid> */}
             </Grid>
             {/* <Grid container spacing={2} columns={12}>
             <Grid item xs={12} lg={6}>
