@@ -237,3 +237,5 @@ route::middleware(['token'])->group(function () {
     Route::put('/disableproperty', [PropertyController::class, 'disableProperty']);
     Route::put('/activateproperty', [PropertyController::class, 'activateProperty']);
 });
+
+Route::get('/property/hostimg/{propertyid}', [FileController::class, 'getHostImg']);

@@ -1197,5 +1197,16 @@ class FileController extends CORS
         return response()->json(['status' => 'success', 'message' => 'Files uploaded']);
     }
 
+    public function getHostImg(Request $request, $propertyid)
+    {
+        $find_property = Property::where('propertyid', $propertyid)->first();
+        $userid = $find_property->userid;
+        $find_hostimg = UserFile::where('userid', $userid)->where('isavatar', true)->first();
+        if (!$find_hostimg) {
+            return response()->json(['status' => 'error', 'message' => 'No host image found']);
+        } else {
+            return response()->json(['status' => 'success', 'src' => $find_hostimg->file_url]);
+        }
 
+    }
 }
