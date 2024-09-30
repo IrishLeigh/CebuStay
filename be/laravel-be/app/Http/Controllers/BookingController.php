@@ -555,7 +555,7 @@ class BookingController extends CORS
 
         // Eager load the property, location, and booker relationships
         $bookings = BookingHistory::with(['property.location', 'booker', 'guest'])
-            ->select('bhid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'status', 'check_type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
+            ->select('bhid', 'booking_date', 'propertyid', 'guest_count', 'total_price', 'status', 'check_type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid', 'isreview')
             ->where('userid', $userid)
             ->get();
 
@@ -563,6 +563,7 @@ class BookingController extends CORS
         $formattedBookings = $bookings->map(function ($booking) {
             return [
                 'id' => $booking->bhid,
+                'propertyid' => $booking->propertyid,
                 'date' => $booking->booking_date,
                 'type' => $booking->property->property_type,
                 'name' => $booking->property->property_name,
@@ -577,7 +578,8 @@ class BookingController extends CORS
                 'last_name' => $booking->booker->lastname,
                 'email' => $booking->booker->email,
                 'phone' => $booking->booker->phonenum,
-                'guest' => $booking->guest->guestname
+                'guest' => $booking->guest->guestname,
+                'isreview' => $booking->isreview
             ];
         });
 

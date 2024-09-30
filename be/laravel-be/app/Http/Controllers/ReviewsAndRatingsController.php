@@ -37,15 +37,16 @@ class ReviewsAndRatingsController extends CORS
             ], 404);
         }
 
-
+        $review->bhid = $request->input('bhid');
         $review->rating = $request->input('rating');
         $review->review = $request->input('review');
         if ($request->input('unitname')) {
             $review->unitname = $request->input('unitname');
         }
         $review->save();
-
-
+        $find_booking = BookingHistory::where('bhid', $review->bhid)->first();
+        $find_booking->isreview = true;
+        $find_booking->save();
 
         return response()->json([
             'status' => 'success',

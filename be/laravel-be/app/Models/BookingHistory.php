@@ -29,7 +29,8 @@ class BookingHistory extends Model
         'status',
         'type',
         'check_type',
-        'booking_date'
+        'booking_date',
+        'isreview'
     ];
 
     public function property()
