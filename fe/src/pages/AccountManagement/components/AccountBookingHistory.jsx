@@ -5,12 +5,15 @@ import HeaderAccountMgnt from '../../../components/Header/HeaderAccountMgnt';
 import Modal from 'react-modal';
 import CancellationAndModification from './CancellationAndModification'; // Import the component
 import axios from 'axios';
-import { CircularProgress } from '@mui/material';
-
+import { CircularProgress, Snackbar, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 // Set the app element for accessibility
 Modal.setAppElement('#root');
 
 export default function BookingHistory({ profile }) {
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+
     const [reviewText, setReviewText] = useState('');
     const [error, setError] = useState('');
     const [rating, setRating] = useState(0);
@@ -18,6 +21,9 @@ export default function BookingHistory({ profile }) {
     const [fetched, setFetched] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [currentPropertyId, setCurrentPropertyId] = useState(null);
+    const [currentBID, setCurrentBID] = useState(null);
+    const [currentPropertyName, setCurrentPropertyName] = useState(null);
+    const [currentLocation, setCurrentLocation] = useState(null);
     const [reviews, setReviews] = useState({}); // Store reviews for each property
     const [reviewSubmitted, setReviewSubmitted] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
@@ -34,7 +40,7 @@ export default function BookingHistory({ profile }) {
 
     const [loading, setLoading] = useState(true); // Initialize loading state
 
-    console.log("selectedBooking:", selectedBooking);
+    // console.log("selectedBooking:", selectedBooking);
 
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
@@ -69,13 +75,14 @@ export default function BookingHistory({ profile }) {
 
                 // Get today's date for comparison
                 const today = new Date().toISOString().split('T')[0];
-
-                console.log("bookings:", bookings);
-                console.log("status:", bookings.status);
+                console.log("BookingHistory", resHistory.data);
+                console.log("Current", response.data);
+                // console.log("bookings:", bookings);
+                // console.log("status:", bookings.status);
                 // Filter bookings
                 const upcomingBooking = bookings.filter(booking => booking.checkIn >= today && booking.isCancel !== 'Cancelled');
                 // const completedBooking = resHistory.data.filter(booking => booking.checkOut < today && booking.status !== 'Cancelled');
-                const completedBooking = resHistory.data;
+                // const completedBooking = resHistory.data;
                 const cancelledBooking = bookings.filter(booking => booking.isCancel === 'Cancelled');
 
                 // Set state variables
@@ -109,12 +116,12 @@ export default function BookingHistory({ profile }) {
         { id: '#EJKL89', date: '19/01/2023', name: 'Beachside Inn', location: 'San Diego, CA', guest: 'Chris Evans', type: 'Single Room', amount: '$300', status: 'Completed', review: 'Not yet reviewed' },
     ]);
 
-    useEffect(() => {
-        // Simulate fetching data
-        setTimeout(() => {
-            setLoading(false); // Set loading to false after data is fetched
-        }, 3000);
-    }, []);
+    // useEffect(() => {
+    //     // Simulate fetching data
+    //     setTimeout(() => {
+    //         setLoading(false); // Set loading to false after data is fetched
+    //     }, 3000);
+    // }, []);
 
 
     const getCellStyle = (item) => ({
@@ -139,7 +146,7 @@ export default function BookingHistory({ profile }) {
                 return [];
         }
     };
-    console.log("getData():", getData());
+    // console.log("getData():", getData());
 
     const getRibbonColor = () => {
         switch (selectedButton) {
@@ -154,13 +161,17 @@ export default function BookingHistory({ profile }) {
         }
     };
 
-    const openReviewModal = (propertyId, propertyName) => {
-        setCurrentPropertyId(propertyId);
-        setRating(reviews[propertyId]?.rating || 0);
-        setReviewText(reviews[propertyId]?.text || '');
-        setReviewSubmitted(!!reviews[propertyId]);
-        setSelectedPropertyName(propertyName); // Set the property name
+    const openReviewModal = (item) => {
+        setCurrentPropertyId(item.propertyid);
+        setCurrentBID(item.id);
+        setCurrentPropertyName(item.name);
+        setCurrentLocation(item.location);
+        // setRating(reviews[propertyId]?.rating || 0);
+        // setReviewText(reviews[propertyId]?.text || '');
+        // setReviewSubmitted(!!reviews[propertyId]);
+        // setSelectedPropertyName(propertyName); // Set the property name
         setModalIsOpen(true);
+        console.log("Review",item)
     };
 
     const handleCancelBooking = (bookingId) => {
@@ -186,27 +197,60 @@ export default function BookingHistory({ profile }) {
         setReviewSubmitted(false);
     };
 
-    const handleReview = () => {
+    const handleReview = async () => {
         if (!reviewText.trim()) {
             setError('Please enter a review.');
         } else {
             setError('');
-            setReviews((prev) => ({
-                ...prev,
-                [currentPropertyId]: {
+            console.log('Userid', user.userid);
+            console.log("Review:", reviewText);
+            console.log("Rating:", rating);
+            console.log("PropertyId:", currentPropertyId);
+            console.log("BID:", currentBID);
+            try {
+                const res = await axios.post("http://127.0.0.1:8000/api/reviewsandratings", {
+                    userid: user.userid,
+                    propertyid: currentPropertyId,
                     rating,
-                    text: reviewText,
+                    review: reviewText,
+                    bhid: currentBID
+                })
+                console.log(res);
+                if(res.data){
+                    const resHistory = await axios.get(`http://127.0.0.1:8000/api/user/bookinghistory`, {
+                        params: { userid: user.userid },
+                    });
+                    setCompletedBooking(resHistory.data);
+                    setOpen(true);
+                    const queryParams = new URLSearchParams({
+                        guestCapacity: '', // Default to empty string if null
+                        checkin_date: '', // Default to empty string if null
+                        checkout_date: '', // Default to empty string if null
+                      }).toString();
+                      setTimeout(() => {
+                        navigate(`/property/${currentPropertyId}?${queryParams}`);
+                        closeReviewModal();
+                      }, 2000);
                 }
-            }));
+            } catch (error) {
+                console.log(error)
+            }
+            // setReviews((prev) => ({
+            //     ...prev,
+            //     [currentPropertyId]: {
+            //         rating,
+            //         text: reviewText,
+            //     }
+            // }));
 
-            // Update completedData to reflect the review status
-            setCompletedData((prev) =>
-                prev.map((item) =>
-                    item.id === currentPropertyId ? { ...item, review: 'REVIEWED' } : item
-                )
-            );
+            // // Update completedData to reflect the review status
+            // setCompletedData((prev) =>
+            //     prev.map((item) =>
+            //         item.id === currentPropertyId ? { ...item, review: 'REVIEWED' } : item
+            //     )
+            // );
 
-            setReviewSubmitted(true);
+            // setReviewSubmitted(true);
         }
     };
 
@@ -306,7 +350,7 @@ export default function BookingHistory({ profile }) {
 
                     {/* Search Input and Dropdown */}
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem', position: 'relative' }}>
-                        <div style={{ position: 'relative', width: '300px' }}>
+                        {/* <div style={{ position: 'relative', width: '300px' }}>
                             <MdSearch style={{ position: 'absolute', left: '0.5rem', color: 'grey', fontSize: '1.6rem', marginTop: '0.5rem' }} />
                             <input
                                 type="text"
@@ -321,9 +365,9 @@ export default function BookingHistory({ profile }) {
                                     border: '1px solid #ddd', // Border color for input
                                 }}
                             />
-                        </div>
+                        </div> */}
 
-                        <button
+                        {/* <button
                             onClick={() => setShowDropdown(!showDropdown)}
                             style={{
                                 padding: '0.5rem 1rem',
@@ -340,7 +384,7 @@ export default function BookingHistory({ profile }) {
                             }}
                         >
                             <MdMenuOpen style={{ height: '1.5rem' }} />
-                        </button>
+                        </button> */}
 
                         {/* Dropdown Menu */}
                         {showDropdown && (
@@ -527,21 +571,24 @@ export default function BookingHistory({ profile }) {
                                                 </td>
                                             ))}
                                             {selectedButton === 'COMPLETED' && (
-                                                <td style={getCellStyle(rowIndex, getData().length)}>
+                                                <td style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                                                     <button
-                                                        onClick={() => openReviewModal(item.id, item.name)}
+                                                        onClick={() => openReviewModal(item)}
+                                                        disabled={item.isreview === 1}
                                                         style={{
-                                                            color: item.review === 'REVIEWED' ? 'green' : 'red',
+                                                            color: item.isreview === 1 ? 'gray' : 'green',
+                                                            // color: 'green',
+                                                            cursor: item.isreview === 1 ? 'not-allowed' : 'pointer',
                                                             background: 'none',
                                                             border: 'none',
-                                                            cursor: 'pointer',
-                                                            padding: '0.25rem 0.5rem',
+                                                            // cursor: 'pointer',
+                                                            // padding: '0.5rem 0.5rem',
                                                             fontFamily: 'Poppins',
                                                             outline: 'none',
                                                             fontSize: '0.875rem',
                                                         }}
                                                     >
-                                                        {item.review}
+                                                       {item.isreview === 1 ? 'Reviewed' : 'Add A Review'}
                                                     </button>
                                                 </td>
                                             )}
@@ -573,7 +620,20 @@ export default function BookingHistory({ profile }) {
 
                 </div>
             </div>
-
+            <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={() => setOpen(false)}
+                >
+                     <Alert
+                        onClose={() => setOpen(false)}
+                        severity="success"
+                        variant="filled"
+                        sx={{ width: '100%' }}
+                    >
+                    Review Added
+                    </Alert>
+                    </Snackbar>
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeReviewModal}
@@ -605,17 +665,23 @@ export default function BookingHistory({ profile }) {
                         objectFit: 'cover',
                         borderRadius: '8px',
                         marginRight: '1rem' // Spacing between image and text
-                    }}
+                    }}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                 /> */}
 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
 
 
-                    <h2 style={{ margin: '0', fontSize: '1.5rem', fontWeight: '600', color: '#333' }}>
+                    {/* <h2 style={{ margin: '0', fontSize: '1.5rem', fontWeight: '600', color: '#333' }}>
                         {selectedPropertyName}
-                    </h2>
-                    <small style={{ color: '#666', fontSize: '0.875rem' }}>
-                        Booking ID: {currentPropertyId}
+                    </h2> */}
+                    <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
+                        {currentPropertyName}
+                    </small>
+                    <small style={{ color: '#666', fontSize: '1rem' }}>
+                        {currentLocation}
+                    </small>
+                    <small style={{ color: '#666', fontSize: '1rem' }}>
+                        Property ID # {currentPropertyId} | Booking ID # {currentBID}
                     </small>
                 </div>
 
