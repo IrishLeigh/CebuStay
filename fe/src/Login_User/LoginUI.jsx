@@ -74,7 +74,7 @@ const LoginUI = () => {
     if (token) {
 
       const res =axios
-        .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
+        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
         .then((res) => {
    
           loginUser(res.data.data);
@@ -128,7 +128,7 @@ const LoginUI = () => {
     setLoginError("");
 
     try {
-      const response = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/login", {
+      const response = await axios.post("http://127.0.0.1:8000/api/login", {
         email,
         password,
       });
