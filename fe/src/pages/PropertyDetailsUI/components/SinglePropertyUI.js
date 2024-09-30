@@ -20,6 +20,7 @@ export default function SinglePropertyUI({ propertyid }) {
   const [guestCount, setGuestCount] = useState(2);
   const navigate = useNavigate();
   const location = useLocation(); // Get the location object
+  const [rating, setRating] = useState(0);
   // Extract query parameters
   const searchParams = new URLSearchParams(location.search);
 
@@ -150,7 +151,7 @@ export default function SinglePropertyUI({ propertyid }) {
         <Grid container>
           <Grid item xs={12} sm={8}>
             <div style={{ margin: "1rem 1rem 0 0" }}>
-              <PropertyOverView propertyinfo={propertyInfo} />
+              <PropertyOverView propertyinfo={propertyInfo} rating={rating} />
             </div>
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -178,7 +179,10 @@ export default function SinglePropertyUI({ propertyid }) {
           />
         </div>
         <div style={{ margin: "1rem 0" }}>
-          <ReviewsAndRatingsSingleUnit propertyId={propertyid} />
+          <ReviewsAndRatingsSingleUnit
+            propertyId={propertyid}
+            setRatingg={setRating}
+          />
         </div>
       </div>
     </div>
