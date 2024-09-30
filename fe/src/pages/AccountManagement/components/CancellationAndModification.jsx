@@ -23,6 +23,7 @@ const CancellationAndModification = ({
   const { basePrice, extraGuestCost, bookingCharge, bookingAmount, payableAtCheckIn } = invoiceDetails;
 
   const [loading, setLoading] = useState(true);
+  const [modifLoading, setModifLoading] = useState(false);
   const [error, setError] = useState('');
   const [bookings, setBookings] = useState({});
   const [properties, setProperties] = useState({});
@@ -139,53 +140,46 @@ const CancellationAndModification = ({
   };
 
   const handleUpdateDetails = async () => {
-    console.log("bookingDetails:", bookingDetails);
-    console.log("selectedBooking:", selectedBooking.id);
-    console.log("new date:", bookingDetails.checkIn.toISOString().split('T')[0]);
-    console.log("check out:",  bookingDetails.checkOut.toISOString().split('T')[0]);
-    console.log("guests:", bookingDetails.guests);
+    setModifLoading(true);
     const checkInDate = new Date(bookingDetails.checkIn);
     const checkOutDate = new Date(bookingDetails.checkOut);
-    console.log("checkOutDate", checkOutDate.toISOString().split('T')[0]);
     
-    if(properties.property_bookingpolicy.isModificationPolicy === 1){
+    console.log("checkOutDate", checkOutDate.toISOString().split('T')[0]);
+  
+    if (properties.property_bookingpolicy.isModificationPolicy === 1) {
       try {
         const response = await axios.put(`http://127.0.0.1:8000/api/updatebooking`, {
-          // checkin_date:  bookingDetails.checkIn.toISOString().split('T')[0],
           bookingid: selectedBooking.id,
-          checkin_date:  bookingDetails.checkIn.toISOString().split('T')[0],
-          // checkout_date:  bookingDetails.checkOut.toISOString().split('T')[0],
-          checkout_date:  bookingDetails.checkOut.toISOString().split('T')[0],
+          checkin_date: bookingDetails.checkIn.toISOString().split('T')[0],
+          checkout_date: bookingDetails.checkOut.toISOString().split('T')[0],
           guest_count: bookingDetails.guests,
         });
+        
         if (response.data.status === 'success') {
           setSnackbarMessage("Booking modification successfully updated.");
           setSnackbarSeverity("success");
           const checkoutUrl = response.data.checkout_url;
-            console.log("Checkout URL:", response.data);
-            if(checkoutUrl){
-              window.location.href = checkoutUrl;
-            }else{
-              window.location.reload();
-            }
+          console.log("Checkout URL:", response.data);
+  
+          if (checkoutUrl) {
+            window.location.href = checkoutUrl;
+          } else {
+            window.location.reload();
+          }
         } else {
           setSnackbarMessage("Failed to update Booking. Booking dates are not available.");
           setSnackbarSeverity("error");
         }
-  
-
-        // Reload the page after both operations are successful
-        // window.location.reload();
-  
+        
       } catch (error) {
         console.error("Error updating booking:", error);
-  setSnackbarMessage("An error occurred while updating the booking.");
-  setSnackbarSeverity("error");
+        setSnackbarMessage("An error occurred while updating the booking.");
+        setSnackbarSeverity("error");
       } finally {
+        setModifLoading(false);
         setSnackbarOpen(true);
       }
     }
-    
   };
 
   // Helper function to check for changes
@@ -215,9 +209,9 @@ const CancellationAndModification = ({
     let dayResult = 0;
     if (currentDate <= checkinDate) {
       dayResult = 1;
-  } else {
+    } else {
       console.log("Current date is less than or equal to the check-in date minus prior days.");
-  }
+    }
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/refund-payment', {
@@ -311,7 +305,7 @@ const CancellationAndModification = ({
                           properties.property_bookingpolicy.isModificationPolicy === 0}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
-                        // excludeDates={excludedDates}
+                        excludeDates={excludedDates}
                         minDate={new Date()}
                       />
                     </td>
@@ -324,7 +318,7 @@ const CancellationAndModification = ({
                           properties.property_bookingpolicy.isModificationPolicy === 0}
                         dateFormat="MMM d, yyyy"
                         className="table-input"
-                        // excludeDates={excludedDates}
+                        excludeDates={excludedDates}
                         minDate={new Date()}
                       />
                     </td>
@@ -376,7 +370,7 @@ const CancellationAndModification = ({
                     properties.property_bookingpolicy.isModificationPolicy === 0 ? "No Modifications Allowed" : ""}
                   className="update-details-btn"
                   onClick={handleUpdateDetails}
-                  disabled={!hasChanges()} // Disable if there are no changes
+                  disabled={!hasChanges() || modifLoading} // Disable if there are no changes
                   alt="Update Details"
                   style={{
                     backgroundColor: hasChanges() ? '#f8f9fa' : '#e9ecef', // Greyed out if no changes
@@ -615,19 +609,19 @@ const CancellationAndModification = ({
         </div>
 
       )}
-              <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={3000}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
           onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
         >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity={snackbarSeverity}
-            sx={{ width: "100%" }}
-          >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

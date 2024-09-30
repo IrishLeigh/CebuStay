@@ -235,7 +235,8 @@ const LoginUI = () => {
           localStorage.removeItem("remembered_email");
         }
 
-        navigate("landing"); // Correct usage of navigate function
+        const from = location.state?.from || "/";
+        navigate(from, { replace: true }); // Correct usage of navigate function
       } else {
         setLoginError("Invalid credentials"); // Update error message for invalid credentials
         console.log(response.data["message"]);

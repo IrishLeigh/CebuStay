@@ -113,7 +113,7 @@ const AccountSidebar = ({activeItem, handleItemClick}) => {
                     onClick={() => handleItemClick('bookings')}
                 >
                     <FaCalendarCheck />
-                    <span>Bookings</span>
+                    <span>My Bookings</span>
                 </li>
 {/* 
                 <li

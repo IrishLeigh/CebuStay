@@ -94,7 +94,7 @@ const CalendarLayout = () => {
         <Grid item xs={12}>
         <div style={{ background: 'linear-gradient(to right,  #16B4DD, #A0F9FF, #4FF3FE)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%',}}>
                 <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Calendar</h1>
-                <p style={{ fontSize: '0.875rem', textAlign: 'left' }}><br/></p>
+                <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>An effortless overview of your property bookings!</p>
             </div>
 
           <Paper style={{ paddingTop: "2rem", paddingBottom: "2rem", margin: "2rem" }}>

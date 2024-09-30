@@ -82,28 +82,33 @@ const PaymentVerification = () => {
     return (
         <div className="card" style={{ margin: '0 auto', marginTop: '5rem' }}>
             {loading ? (
-                <CircularProgress />
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress /></div>
+                
             ) : (
                 <>
-                    <button type="button" className="dismiss">×</button>
+                    {/* <button type="button" className="dismiss">×</button> */}
+                    
                     <div className="header">
+                    {/* <img src="/Logo2.png" alt="Logo" style = {{ width: '10%'}}/> */}
                         <div className="image">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <g stroke-width="0" id="SVGRepo_bgCarrier"></g>
                         <g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g>
                         <g id="SVGRepo_iconCarrier"> <path stroke-linejoin="round" stroke-linecap="round" 
                         stroke-width="1.5" stroke="#000000" d="M20 7L9.00004 18L3.99994 13"></path> </g></svg>
+                        
                         </div>
+                        
                         <div className="content">
-                            <span className="title">Payment Success!</span>
-                            <p className="message">Thank you for your booking! Your payment has been successfully processed. We look forward to welcoming you.</p>
+                            <span className="message" style ={{ color: '#007bff', fontSize: '1.5rem' }}>Payment Success!</span>
+                            <p className="message">Thank you for booking! Your payment has been successfully processed. <br /><br />An email with the invoice has been sent to your email.</p>
                         </div>
                         <div className="actions">
-                            <button type="button" className="history" onClick={() => window.location.href = "/Book"}>Home</button>
-                            <button type="button" className="track" onClick={toggleModal}>Invoice</button>
+                            <button type="button" className="history" onClick={() => window.location.href = "/"}>Home</button>
+                            {/* <button type="button" className="track" onClick={toggleModal}>Invoice</button> */}
                         </div>
                     </div>
-                    <Modal open={showModal} onClose={toggleModal}>
+                    {/* <Modal open={showModal} onClose={toggleModal}>
                         <div className="modal-overlay">
                             <div ref={modalRef}>
                                 <div className="modal-content" style={{ paddingLeft: '1rem', paddingRight: '1rem' }}>
@@ -126,7 +131,7 @@ const PaymentVerification = () => {
                                 </div>
                             </div>
                         </div>
-                    </Modal>
+                    </Modal> */}
                 </>
             )}
         </div>
