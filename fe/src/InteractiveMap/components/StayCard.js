@@ -77,3 +77,4 @@ export default function StayCard({ stay, onClose }) {
     </div>
   );
 }
+
