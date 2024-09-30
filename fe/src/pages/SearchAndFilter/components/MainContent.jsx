@@ -75,7 +75,7 @@ const MainContent = ({
   console.log("SEARCH UPDATE FROM MAIN",searchUpdate );
   return (
     <div className="all-container">
-      <div className="content-container" style={{ marginBottom: '76rem' }}>
+      <div className="content-container">
         <div className="main-content" style={{ marginLeft: '2.3rem', display: 'flex', flexWrap: 'wrap' }}>
           {loading ? (
             Array(9).fill().map((_, index) => <Loader key={index} />) // Display 10 loader components
