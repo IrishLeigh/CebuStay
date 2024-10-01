@@ -956,74 +956,95 @@ class PropertyController extends CORS
     public function getAllPropertiesCoord(Request $request)
     {
         $this->enableCors($request);
-
+    
         // Retrieve all house rules and booking policies
         $property_hr = DB::table('house_rules')->get();
         $property_bp = DB::table('booking_policy')->get();
-
+    
         // Retrieve properties
         $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')
             ->where('isActive', 1)
             ->get();
-
+    
+        $propertyIds = $properties->pluck('propertyid');
+    
         // Retrieve unit details
         $unitDetails = UnitDetails::select('unitid', 'guest_capacity', 'propertyid')->get();
-
+    
         // Retrieve unit rooms
         $unitRooms = UnitRooms::select('unitid', 'unitroomid', 'roomname', 'quantity')->get();
-
+    
         // Retrieve bedroom types
         $bedroomTypes = BedroomType::select('unitroomid', 'singlebed', 'bunkbed', 'largebed', 'superlargebed')->get();
-
+    
         // Retrieve property locations (addresses)
         $locations = Location::select('propertyid', 'address', 'zipcode', 'latitude', 'longitude')->get();
-
+    
+        // Retrieve amenities based on property ID
+        $unitAmenities = DB::table('amenity')
+            ->select('propertyid', 'amenityid', 'amenity_name')
+            ->whereIn('propertyid', $propertyIds)
+            ->get();
+    
+        // Retrieve property files and store them by property ID
+        $propertyFilesByPropertyId = [];
+        $propertyFiles = File::select('propertyid', 'unitid', 'file_url as src', 'caption')
+            ->whereIn('propertyid', $propertyIds) // Use property IDs to filter files
+            ->get();
+    
+        foreach ($propertyFiles as $file) {
+            $propertyFilesByPropertyId[$file->propertyid][] = $file;
+        }
+    
         // Create associative arrays for unit details and unit rooms
         $unitDetailsByPropertyId = [];
         foreach ($unitDetails as $unitDetail) {
             $unitDetailsByPropertyId[$unitDetail->propertyid][] = $unitDetail;
         }
-
+    
         $unitRoomsByUnitId = [];
         foreach ($unitRooms as $unitRoom) {
             $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
         }
-
+    
+        // Create associative arrays for amenities based on property ID
+        $amenitiesByPropertyId = [];
+        foreach ($unitAmenities as $amenity) {
+            $amenitiesByPropertyId[$amenity->propertyid][] = $amenity->amenity_name;
+        }
+    
         // Create associative arrays for house rules and booking policies
         $houseRulesByPropertyId = [];
         foreach ($property_hr as $rule) {
             $houseRulesByPropertyId[$rule->propertyid][] = $rule;
         }
-
+    
         $bookingPoliciesByPropertyId = [];
         foreach ($property_bp as $policy) {
             $bookingPoliciesByPropertyId[$policy->propertyid][] = $policy;
         }
-
+    
         // Create associative array for locations
         $locationsByPropertyId = [];
         foreach ($locations as $location) {
             $locationsByPropertyId[$location->propertyid] = $location;
         }
-
+    
         // Prepare final properties array
         $finalProperties = [];
         foreach ($properties as $property) {
             $propertyId = $property->propertyid;
-
+    
             // Create a new property structure
             $newProperty = [
                 'name' => $property->property_name,
                 'coordinates' => [
-                    $locationsByPropertyId[$propertyId]->latitude ?? null,
-                    $locationsByPropertyId[$propertyId]->longitude ?? null,
+                    isset($locationsByPropertyId[$propertyId]) ? round(floatval($locationsByPropertyId[$propertyId]->latitude), 3) : null,
+                    isset($locationsByPropertyId[$propertyId]) ? round(floatval($locationsByPropertyId[$propertyId]->longitude), 3) : null,
                 ],
+                'propertyid' => $propertyId,
                 'category' => 'Property',  // or use the property type
-                'iconUrl' => './property-icon.png',  // Update with actual icon URL if needed
-                'imageUrl' => './property-image.jpg',  // Update with actual image URL if needed
                 'description' => $property->property_desc,
-                'description2' => '',  // Add additional description if needed
-                'cityName' => 'Cebu',  // Update with actual city name if available
                 'propertyType' => $property->property_type,
                 'unitType' => $property->unit_type,
                 'guestCapacity' => $unitDetailsByPropertyId[$propertyId][0]->guest_capacity ?? null,
@@ -1034,10 +1055,12 @@ class PropertyController extends CORS
                 'address' => $locationsByPropertyId[$propertyId]->address ?? null,
                 'zipCode' => $locationsByPropertyId[$propertyId]->zipcode ?? null,
                 'bedCount' => 0,
+                'amenities' => $amenitiesByPropertyId[$propertyId] ?? [], // Get amenities based on property ID
+                'propertyFiles' => $propertyFilesByPropertyId[$propertyId] ?? [], // Get property files based on property ID
                 'createdAt' => now(),  // or set the actual created timestamp
                 'updatedAt' => now()   // or set the actual updated timestamp
             ];
-
+    
             // Calculate bedroom and bathroom counts
             if (isset($unitDetailsByPropertyId[$propertyId])) {
                 foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
@@ -1052,7 +1075,7 @@ class PropertyController extends CORS
                     }
                 }
             }
-
+    
             // Calculate bed count
             if (isset($unitDetailsByPropertyId[$propertyId])) {
                 foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
@@ -1069,10 +1092,12 @@ class PropertyController extends CORS
                     }
                 }
             }
-
+    
             $finalProperties[] = $newProperty;
         }
-
+    
         return response()->json($finalProperties);
     }
+    
+    
 }
