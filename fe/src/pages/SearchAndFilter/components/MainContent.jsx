@@ -91,7 +91,7 @@ const MainContent = ({
                     {/* Star rating (dummy) */}
                     <div className="" style={{fontSize: '0.9rem'}}>
                       <span className="">★</span>
-                      <span className="">4.5</span>
+                      <span className="">{accommodation.rating}</span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', margin: '0px' }}>

@@ -155,10 +155,11 @@ export default function PropertyManagementListing() {
                     setData(propertyres.data.userproperties);
                   } catch (error) {
                     console.error(error);
-                  } finally {
-                    setLoading(false);
                   }
+            } else if(res.data.status === "error"){
+                alert(res.data.message);
             }
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -217,7 +218,7 @@ export default function PropertyManagementListing() {
                 <div className="full-height" style={{position: 'relative'}}>
                     <div style={{ background: 'linear-gradient(to right, #F8A640, #F89E2D, #FCCD6E)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%' }}>
                         <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Property Management Listing</h1>
-                        <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Lorem ipsum dolor sit amet</p>
+                        <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Your Properties Listed</p>
                     </div>
                     {loading && (
                     <div style={{

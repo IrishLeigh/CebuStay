@@ -96,7 +96,19 @@ export default function PropertyOverView({ rating, propertyinfo }) {
               className="overview-title"
               sx={{ marginLeft: "0.5rem", fontWeight: "bold" }}
             >
-              Excellent
+              {Math.round(rating) === 0
+                ? "Not Rated Yet"
+                : Math.round(rating) === 1
+                ? "Basic"
+                : Math.round(rating) === 2
+                ? "Fair"
+                : Math.round(rating) === 3
+                ? "Average"
+                : Math.round(rating) === 4
+                ? "Good"
+                : Math.round(rating) === 5
+                ? "Excellent"
+                : rating.toFixed(1)}{" "}
             </Typography>
           </div>
 
