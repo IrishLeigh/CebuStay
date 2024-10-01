@@ -2,8 +2,8 @@
 .all-container {
   max-width: 1200px; /* Adjust as needed */
   margin: 0 auto;
-  align-items: center;
-  align-content: center;
+  /* align-items: center; */
+  /* align-content: center; */
   flex-grow: 1; /* Allow content to grow to fill available space */
   overflow-y: auto; /* Enable vertical scrolling if content exceeds container height */
 
