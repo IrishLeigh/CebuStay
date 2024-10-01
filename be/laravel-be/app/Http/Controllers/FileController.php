@@ -394,9 +394,6 @@ class FileController extends CORS
             return response()->json(['message' => 'The maximum number of files is 15', 'status' => 'error']);
         }
         foreach ($files as $file) {
-            if ($file->getSize() > 2 * 1024 * 1024) { // 2MB in bytes
-                return response()->json(['message' => 'A file size exceeds the maximum limit of 15MB', 'status' => 'error']);
-            }
             if (!in_array($file->getClientOriginalExtension(), ['jpg', 'jpeg', 'png', 'gif'])) {
                 $hasNonImage = true;
                 break;
