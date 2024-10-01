@@ -37,8 +37,8 @@
     background: -webkit-linear-gradient(-45deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
     background: linear-gradient(135deg, #45B2C0 0%, #8658ED 50%, #D621FF 100%);
     transition: 0.5s;
-    -webkit-box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38); 
-    box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38);
+    -webkit-box-shadow: -1px 9px 15px 3px rgba(0,0,0,0.54); 
+    box-shadow: -1px 9px 15px 3px rgba(0,0,0,0.54);
   }
   .landing-cover-button:not(){
     transition: 0.5s;
@@ -52,8 +52,8 @@
     margin-left: 8px;
   }
   .landing-cover-button2:hover {
-    -webkit-box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38); 
-    box-shadow: 0px 12px 15px 3px rgba(0,0,0,0.38);
+    -webkit-box-shadow: -1px 9px 15px 3px rgba(0,0,0,0.54); 
+    box-shadow: -1px 9px 15px 3px rgba(0,0,0,0.54);
     transition: 0.5s;
   }
 
@@ -193,17 +193,21 @@
 .landing-cover-buttonn1{
   width:  275px;
   border-radius: 50px;
-  border: 2px solid #005281;
-  color: #005281;
+  border: 2px solid #16B4DD;
+  color: #16B4DD;
   font-size: 20px;
+  -webkit-box-shadow: 5px 5px 15px 1px rgba(0,0,0,0.41); 
+box-shadow: 5px 5px 15px 1px rgba(0,0,0,0.41);
 }
 .landing-cover-buttonn2{
   width:  275px;
   border-radius: 50px;
-  border: 2px solid #005281;
+  border: 2px solid #16B4DD;
   color: white;
   font-size: 20px;
-  background-color: #005281;
+  background-color: #16B4DD;
+  -webkit-box-shadow: 5px 5px 15px 1px rgba(0,0,0,0.41); 
+box-shadow: 5px 5px 15px 1px rgba(0,0,0,0.41);
 }
 .landing-cover-buttonn1:hover{
   cursor: pointer;
