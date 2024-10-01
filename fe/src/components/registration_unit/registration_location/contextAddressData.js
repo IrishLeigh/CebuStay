@@ -7,6 +7,7 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [addressData, setAddressData] = useState({});
   const [mapVal, setMapVal] = useState('');
+  const [address, setAddress] = useState(null);
   const [bedroomQTY, setBedRoomQty] = useState(0);
 
   
@@ -20,16 +21,21 @@ export const DataProvider = ({ children }) => {
     
   };
 
+  const fullAddress = (fuladdress) => {
+    setAddress(fuladdress)
+  }
+
   const location2 = ( mpVal) => {
     setMapVal(mpVal);
   };
+
 
   const totalQTY = ( bedrooms) => {
     setBedRoomQty(bedrooms);
   };
 
   return (
-    <DataContext.Provider value={{ addressData, mapVal,bedroomQTY, location, location2, totalQTY}}>
+    <DataContext.Provider value={{ addressData, mapVal,bedroomQTY, address, location, location2, totalQTY, fullAddress}}>
       {children}
     </DataContext.Provider>
   );

@@ -162,7 +162,7 @@ export default function AccommodationRegistration() {
   const [unitPricing, setUnitPricing] = useState({});
   const [paymentData, setPaymentData] = useState({});
   const [hostData, setHostData] = useState({});
-  const { addressData, mapVal, location, location2 } = useData();
+  const { addressData, mapVal, address, location, location2 } = useData();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); // State for confirmation modal
   const [isLoading, setIsLoading] = useState(false); // State for loading spinner
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State for success modal
@@ -288,7 +288,7 @@ function formatDate(dateString) {
   };
   // useEffect to update locationDetails whenever addressData or mapVal changes
   useEffect(() => {
-    setLocationDetails({ addressData, mapVal });
+    setLocationDetails({ addressData, mapVal, address });
   }, [addressData, mapVal]);
   const handleSelectedTypeChange = (type) => {
     setSelectedPropertyType(type);
@@ -542,13 +542,14 @@ function formatDate(dateString) {
                   //ari padayun bert
                   const street = locationDetails.addressData.street;
                   const postalCode = locationDetails.addressData.postalCode;
+                  const address  = locationDetails.address;
                   const pinloc = locationDetails.mapVal;
                   console.log("propertyId pinloc:", pinloc);
                   const propertyLoc = await axios.post(
                     "http://127.0.0.1:8000/api/location",
                     {
                       propertyid: resPropertid.data.propertyid,
-                      address: street,
+                      address: address,
                       zipcode: postalCode,
                       latitude: pinloc.lat,
                       longitude: pinloc.lng,

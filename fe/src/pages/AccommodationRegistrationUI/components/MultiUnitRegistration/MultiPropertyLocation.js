@@ -13,7 +13,7 @@ import CebuGeoJson from "../../../../InteractiveMap/data/Cebu.MuniCities.json";
 import * as turf from "@turf/turf";
 
 const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
-  const { location } = useData();
+  const { location, fullAddress } = useData();
   const [addressData, setAddressData] = useState({});
   const [street, setStreet] = useState(localStorage.getItem("street") || "");
   const [address, setAddress] = useState("");
@@ -77,7 +77,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   }, [street, postalCode]);
 
   const validateAndProceed = () => {
-    if (street && postalCode && addPin) {
+    if (street && postalCode && addPin && address) {
       saveLocation();
       handleNext();
     } else if (mapVal === null) {
@@ -125,6 +125,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
         // setMapVal(`${lat}, ${lng}`);
         setMapPos({ lat, lng });
         location({ street, postalCode });
+        fullAddress(address);
       } else {
         console.error("No results found in the geocoding response.");
       }
