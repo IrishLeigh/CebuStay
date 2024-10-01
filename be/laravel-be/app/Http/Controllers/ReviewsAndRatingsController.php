@@ -58,27 +58,50 @@ class ReviewsAndRatingsController extends CORS
     public function getReviewsAndRatingByReviewId(Request $request)
     {
         $this->enableCors($request);
+        $reviews = null;
 
-        $rid = $request->input('rid');
+        // Check if 'rid' is present in the request
+        if ($request->input('rid')) {
+            $rid = $request->input('rid');
 
-        $reviews = DB::table('reviewsandratings')
-            ->join('users', 'reviewsandratings.userid', '=', 'users.userid')
-            ->where('reviewsandratings.rid', $rid)
-            ->select(
-                'reviewsandratings.rid',
-                'reviewsandratings.userid',
-                'reviewsandratings.rating',
-                'reviewsandratings.review',
-                'reviewsandratings.unitname',
-                'users.firstname',
-                'users.lastname'
-            )
-            ->get();
+            $reviews = DB::table('reviewsandratings')
+                ->join('users', 'reviewsandratings.userid', '=', 'users.userid')
+                ->where('reviewsandratings.rid', $rid)
+                ->select(
+                    'reviewsandratings.rid',
+                    'reviewsandratings.userid',
+                    'reviewsandratings.rating',
+                    'reviewsandratings.review',
+                    'reviewsandratings.unitname',
+                    'reviewsandratings.created_at',
+                    'users.firstname',
+                    'users.lastname'
+                )
+                ->get();
+        } else if ($request->input('bhid')) {
+            $bhid = $request->input('bhid');
 
-        if ($reviews->isEmpty()) {
+            $reviews = DB::table('reviewsandratings')
+                ->join('users', 'reviewsandratings.userid', '=', 'users.userid')
+                ->where('reviewsandratings.bhid', $bhid)
+                ->select(
+                    'reviewsandratings.rid',
+                    'reviewsandratings.userid',
+                    'reviewsandratings.rating',
+                    'reviewsandratings.review',
+                    'reviewsandratings.unitname',
+                    'reviewsandratings.created_at',
+                    'users.firstname',
+                    'users.lastname'
+                )
+                ->get();
+        }
+
+        // Check if $reviews is null or empty
+        if (is_null($reviews) || $reviews->isEmpty()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'No reviews found for this review ID.',
+                'message' => 'No reviews found for the given ID.',
             ], 404);
         }
 
@@ -87,6 +110,7 @@ class ReviewsAndRatingsController extends CORS
             'reviews' => $reviews,
         ]);
     }
+
 
     public function getAllReviewsAndRatings(Request $request)
     {
