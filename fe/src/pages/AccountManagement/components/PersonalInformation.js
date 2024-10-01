@@ -15,10 +15,10 @@ import CalendarToday from "@mui/icons-material/CalendarToday";
 import Public from "@mui/icons-material/Public";
 import Phone from "@mui/icons-material/Phone";
 import axios from "axios";
-import dayjs from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const countries = [
   { value: "USA", label: "USA", code: "+1" },
@@ -66,8 +66,8 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     if (profile) {
       setIsChanged(
         (profile.birthday ? formatDate(profile.birthday) : "") !== birthday ||
-        country !== profile.country ||
-        phone !== profile.cellnumber
+          country !== profile.country ||
+          phone !== profile.cellnumber
       );
       setEditedProfile({
         ...profile,
@@ -88,7 +88,12 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   };
 
   const handlePhoneChange = (e) => {
-    setPhone(e.target.value);
+    const value = e.target.value;
+
+    // Allow only digits and limit input to 11 digits
+    if (/^\d*$/.test(value) && value.length <= 11) {
+      setPhone(value);
+    }
   };
 
   const handleSaveInfo = async (e) => {
@@ -197,7 +202,9 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           <DatePicker
             label="Birthday"
             value={birthday ? dayjs(birthday) : null}
-            onChange={(date) => setBirthday(date ? date.format('YYYY-MM-DD') : '')}
+            onChange={(date) =>
+              setBirthday(date ? date.format("YYYY-MM-DD") : "")
+            }
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -212,14 +219,17 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
-                    <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                    <InputAdornment
+                      position="start"
+                      sx={{ marginRight: "1rem" }}
+                    >
                       <CalendarToday />
                     </InputAdornment>
                   ),
                 }}
               />
             )}
-            maxDate={dayjs().subtract(18, 'year')}
+            maxDate={dayjs().subtract(18, "year")}
           />
         </LocalizationProvider>
 
@@ -264,29 +274,35 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <Phone />
-              </InputAdornment>
-            ),
-            startAdornment: (
-              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                {phoneNumberPrefix}
+                <Phone sx={{ marginRight: "0.5rem" }} />
+                {phoneNumberPrefix}{" "}
+                {/* Displays the country code (+63) next to the icon */}
               </InputAdornment>
             ),
           }}
+          inputProps={{
+            maxLength: 11, // Limit input to 11 digits (excluding the prefix)
+          }}
+          helperText={
+            phone && phone.length !== 11 ? "Phone number must be 11 digits" : ""
+          }
+          error={phone && phone.length > 0 && phone.length !== 11}
         />
 
         <div className="account-btn-cntr">
           <button
-            className={`save-btn ${isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
-              }`}
+            className={`save-btn ${
+              isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+            }`}
             onClick={handleSaveInfo}
             disabled={!isChanged}
           >
             Save
           </button>
           <button
-            className={`cancel-btn ${isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
-              }`}
+            className={`cancel-btn ${
+              isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+            }`}
             onClick={handleCancel}
             disabled={!isChanged}
           >
