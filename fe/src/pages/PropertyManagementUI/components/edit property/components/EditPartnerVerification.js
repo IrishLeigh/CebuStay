@@ -4,27 +4,34 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
 import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button } from '@mui/material';
-import IndividualHost from './individualHost';
-import CompanyHost from './companyHost';
+
 import { Crop } from '@mui/icons-material';
 import { Last } from 'react-bootstrap/esm/PageItem';
 import TemplateFrameEdit from './TemplateFrame';
+import IndividualHost from './EditIndividualHost';
+import CompanyHost from './EditCompanyHost';
 
-export default function EditPartnerVerification({ parentPartnerData}) {
+export default function EditPartnerVerification({ parentPartnerData, onSaveStatusChange}) {
   const [hostType, setHostType] = useState('');
-  const [individualData, setIndividualData] = useState({});
-  const [companyData, setCompanyData] = useState({});
+  const [individualData, setIndividualData] = useState();
+  const [companyData, setCompanyData] = useState();
   const [ isEditing, setIsEditing ] = useState(false);
   const [ hasChanges, setHasChanges ] = useState(false);
   const [ isSaved, setIsSaved] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [ originalIndividualData, setOriginalIndividualData ] = useState({});
+  const [ originalCompanyData, setOriginalCompanyData ] = useState({});
 
   useEffect(() => {
     if (parentPartnerData) {
       setHostType(parentPartnerData.property_ownership.ownershiptype || '');
       if (parentPartnerData.hostType === 'Individual') {
         setIndividualData(parentPartnerData);
+       
       } else if (parentPartnerData.hostType === 'Company') {
         setCompanyData(parentPartnerData);
+       
       }
     }
   }, [parentPartnerData]);
@@ -33,6 +40,9 @@ export default function EditPartnerVerification({ parentPartnerData}) {
     setHostType(event.target.value);
   };
 
+  const handleHasChangesChange = (hasChanges) => {
+    setHasChanges(hasChanges);
+  }
   const handleIndividualDataChange = (data) => {
     setIndividualData(data);
   };
@@ -50,11 +60,11 @@ export default function EditPartnerVerification({ parentPartnerData}) {
     if (editing === true) {
       setIsEditing(editing);
     }else if (editing === false) {
-      // handleCancel();
+      handleCancel();
       
     }
    
-    
+    console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
   console.log("Parent partner data in edit partner veriofication", parentPartnerData);
 
@@ -128,17 +138,57 @@ export default function EditPartnerVerification({ parentPartnerData}) {
     // openModal();
     alert("Successfully submitted!");
   };
+  //handle Save for Edit
+  const handleSave = async () => {
+    setIsLoading(true);
+    setIsEditing(false);
+    // Gather the data to be sent to the API
+    const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+   
+    try {
+      console.log("Saving data:", dataToSend);
+      //After saving data, set isSaved to true
+      setIsSaved(true);
+      setIsEditing(false);
+      setOpenSnackbar(true);
+      onSaveStatusChange('Saved');
+      setIsLoading(false);
+        
+      
+    } catch (error) {
+      console.log("Error saving data:", error);
+    }
   
+
+  };
+  const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (confirmDiscard) {
+        // Reset the form data to the initial state
+        if (hostType === 'Individual') {
+          setIndividualData(parentPartnerData);
+        } else if (hostType === 'Company') {
+          setCompanyData(parentPartnerData);
+        }
+        setHasChanges(false);
+        setIsEditing(false);  // Exit edit mode
+      }
+    } else {
+      // No changes, just exit edit mode
+      setIsEditing(false);
+    }
+  };
   console.log ("hostType", hostType);
-  console.log ("individualData", parentPartnerData);
-  console.log ("companyData", parentPartnerData);
+  console.log ("individualData", individualData);
+  console.log ("companyData", companyData);
 
 
   return (
-  <>
-  {/* <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/> */}
+    <>
+    <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
      
-<Paper
+      <Paper
         style={{
           width: "auto",
           padding: "4rem",
@@ -172,39 +222,41 @@ export default function EditPartnerVerification({ parentPartnerData}) {
           }}
         >
           
-                To ensure compliance with legal and regulatory standards, we require some information about you and your property.
-              </Typography>
+          To ensure compliance with legal and regulatory standards, we require some information about you and your property.
+        </Typography>
 
-              <RadioGroup
-                aria-labelledby="Host"
-                name="host"
-                value={hostType}
-                onChange={handleChange}
-              >
-                <FormControlLabel
-                  value="Individual"
-                  control={<Radio />}
-                  label={
-                    <Typography sx={{ fontFamily: "Poppins, sans-serif", }}>
-                      I am the host representing myself.
-                    </Typography>
-                  }
-                />
-                <FormControlLabel
-                  value="Company"
-                  control={<Radio />}
-                  label={
-                    <Typography sx={{ fontFamily: "Poppins, sans-serif", }}>
-                      I represent a company.
-                    </Typography>
-                  }
-                />
-              </RadioGroup>
-              <Divider sx={{ my: 2 }} />
-              {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData}/>}
-              {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData} />}
+        <RadioGroup
+          aria-labelledby="Host"
+          name="host"
+          value={hostType}
+          onChange={handleChange}
           
-          </Paper>
+        >
+          <FormControlLabel
+            value="Individual"
+            control={<Radio />}
+            label={
+              <Typography sx={{ fontFamily: "Poppins, sans-serif", }}>
+                I am the host representing myself.
+              </Typography>
+            }
+            disabled = {!isEditing}
+          />
+          <FormControlLabel
+            value="Company"
+            control={<Radio />}
+            label={
+              <Typography sx={{ fontFamily: "Poppins, sans-serif", }}>
+                I represent a company.
+              </Typography>
+            }
+            disabled = {!isEditing}
+          />
+        </RadioGroup>
+        <Divider sx={{ my: 2 }} />
+        {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData} isEditing={isEditing}  />}
+        {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData} />}
+      </Paper>
 
     </>
   );

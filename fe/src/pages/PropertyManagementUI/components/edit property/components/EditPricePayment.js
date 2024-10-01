@@ -115,6 +115,7 @@ export default function PricePayment({
     setBasePrice(originalData.basePrice);
     setPaymentData(originalData.paymentData);
   };
+  
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);

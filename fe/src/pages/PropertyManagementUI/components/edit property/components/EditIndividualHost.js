@@ -1,400 +1,417 @@
-import React, { useState, useEffect, useCallback } from "react";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import React, { useState, useEffect, useCallback } from 'react';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { styled } from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
-import { Dialog, Slider } from "@mui/material";
-import Cropper from "react-easy-crop";
+import Button from '@mui/material/Button';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
+import { Grid, InputAdornment, MenuItem, Select } from '@mui/material';
+import Cropper from 'react-easy-crop';
+import Slider from '@mui/material/Slider';
+import { getCroppedImg } from './cropImageHelper';
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
   height: 1,
-  overflow: "hidden",
-  position: "absolute",
+  overflow: 'hidden',
+  position: 'absolute',
   bottom: 0,
   left: 0,
-  whiteSpace: "nowrap",
-  width: "100%",
+  whiteSpace: 'nowrap',
+  width: '100%'
 });
 
-export default function IndividualHost({
-  onDataChange,
-  isEditing,
-  parentIndividualData,
-}) {
-  const [data, setData] = useState({});
-  const [uploadedImage, setUploadedImage] = useState(null);
-  const [imageSrc, setImageSrc] = useState(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedArea, setCroppedArea] = useState(null);
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    console.log("parentPartnerData");
-    console.log(parentIndividualData);
-    setData(parentIndividualData);
-  }, []);
-  useEffect(() => {
-    onDataChange(data); // Callback to parent component when data changes
-  }, [data, onDataChange]);
+const styles = {
+  container: {
+    fontFamily: 'Poppins, sans-serif',
+  },
+  sectionTitle: {
+    fontWeight: 'bold',
+    marginBottom: '1rem',
+    fontFamily: 'Poppins, sans-serif',
+    marginTop: '1rem',
+  },
+  sectionDescription: {
+    marginBottom: '1.5rem',
+    color: '#666',
+    fontFamily: 'Poppins, sans-serif',
+    textAlign: 'justify',
+  },
+  formField: {
+    marginBottom: '1rem',
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc', // Border color
+      },
+      '&:hover fieldset': {
+        borderColor: '#16B4DD', // Hovered border color
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#16B4DD', // Focused border color
+      },
+    },
+  },
+  imageUpload: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    padding: '1rem',
+  },
+  cropperContainer: {
+    position: 'relative',
+    width: 300,
+    height: 300,
+    backgroundColor: '#333',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    marginBottom: '16px',
+  },
+  zoomSlider: {
+    marginBottom: '16px',
+  },
+  imageActions: {
+    display: 'flex',
+    gap: '16px',
+  },
+  button: {
+    backgroundColor: '#16B4DD',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#15A1C6', // Darker shade of #16BDFF
+      color: 'white',
+    },
+  },
+  deleteButton: {
+    backgroundColor: '#ff4d4d',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#e60000',
+    },
+  },
+};
+const countryCodes = [
+  { code: '+1', label: 'United States' },
+  { code: '+44', label: 'United Kingdom' },
+  { code: '+63', label: 'Philippines' },
+  // Add more country codes as needed
+];
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    setData((prevData) => ({
-      ...prevData,
-      UploadedImage: file,
-    }));
-    setUploadedImage(file);
+export default function IndividualHost({ onDataChange, parentData, isEditing }) {
+  const [data, setData] = useState({
+    FirstName: '',
+    LastName: '',
+    DateOfBirth: '',
+    DisplayName: '',
+    countryCode: '+63',
+    PhoneNumber: '',
+    Email: '',
+    City: '',
+    ZipCode: '',
+    Street: '',
+    Barangay: '',
+    Describe: '',
+  });
+  const [errors, setErrors] = useState({});
+  const [originalData, setOriginalData] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+  const validateData = () => {
+    // Initialize newErrors with empty messages
+    const newErrors = { PhoneNumber: '', Email: '', DateOfBirth: '' };
+
+    // Validate phone number based on country code
+    const phoneWithCountryCode = `${data.countryCode}${data.PhoneNumber}`;
+    
+    // Define phone number patterns based on country code
+    const phonePatterns = {
+      '+1': /^\+1\d{10}$/, // USA/Canada
+      '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
+      '+44': /^\+44\d{10}$/, // UK
+      // Add more country codes and patterns as needed
+    };
+    
+    // Validate phone number
+    const pattern = phonePatterns[data.countryCode] || /^\+[1-9]\d{1,14}$/;  // Default for other countries
+    if (!pattern.test(phoneWithCountryCode)) {
+      newErrors.PhoneNumber = 'Invalid phone number';
+    }
+
+    // Validate email
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
+    if (!emailPattern.test(data.Email)) {
+      newErrors.Email = 'Invalid email address';
+    }
+
+    // Set errors to state
+    setErrors(newErrors);
+
+    // Return true if no errors (all error fields are empty)
+    return Object.values(newErrors).every(error => error === '');
   };
+
+  onDataChange(data);
+
+}, [data]);  // Re-run validation whenever `data` changes
+
+useEffect(() => {
+ if (parentData) {
+    // setData(
+    //   {
+    //     id : parentData.property_ownership.propertyownershipid || null,
+    //     FirstName : parentData.property_owner.firstname || '',
+    //     LastName : parentData.property_owner.lastname || '',
+    //     DateOfBirth : parentData.property_owner.dateofbirth || '',
+    //     DisplayName : parentData.property_owner.displayname || '',
+    //     countryCode : parentData.property_owner.countrycode || '+63',
+    //     PhoneNumber : parentData.property_owner.contactnumber || '',
+    //     Email : parentData.property_owner.email || '',
+    //     City : parentData.property_owner.city || '',
+    //     ZipCode : parentData.property_owner.zipcode || '',
+    //     Street : parentData.property_owner.street || '',
+    //     Barangay : parentData.property_owner.barangay || '',
+    //     Describe : parentData.property_owner.describe || '',
+    //   } 
+    // );
+    // setOriginalData(parentData);
+
+ }else{
+   
+    setOriginalData(null);
+
+ }
+}, [parentData]);
+  
+
+
+ // Handle image file upload
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onloadend = () => {
+      setData((prevData) => ({
+          ...prevData,
+          imageSrc: reader.result, // Store imageSrc correctly
+      }));
+  };
+  if (file) {
+      reader.readAsDataURL(file);
+  }
+};
+
+// Handle image cropping
+const handleSaveImage = async () => {
+  try {
+      const croppedImage = await getCroppedImg(data.imageSrc, data.croppedAreaPixels); // Use imageSrc
+      setData((prevData) => ({ ...prevData, imageSrc: URL.createObjectURL(croppedImage) }));
+  } catch (e) {
+      console.error(e);
+  }
+};
+
+// Ensure the crop area is being stored correctly
+const handleCropComplete = useCallback((_, croppedAreaPixels) => {
+  setData((prevData) => ({ ...prevData, croppedAreaPixels })); // Save crop data
+}, []);
 
   const handleDeleteImage = () => {
-    setUploadedImage(null);
-    setData((prevData) => ({
-      ...prevData,
-      UploadedImage: null,
-    }));
+    setData((prevData) => ({ ...prevData, imageSrc: null }));
   };
 
-  // Function to handle changes in text fields
+  // Handle changes in text fields
   const handleChange = (event) => {
     const { id, value } = event.target;
     setData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
+    hasChanges(true);
+
+  };
+  const handleCountryCodeChange = (event) => {
+    setData((prevData) => ({
+      ...prevData,
+      countryCode: event.target.value,
+    }));
+    hasChanges(true);
   };
 
-  // Function to handle changes in the date picker
+  // Handle changes in the date picker
   const handleChangeDate = (date) => {
     setData((prevData) => ({
       ...prevData,
-      DateOfBirth: date.isValid ? date.format("YYYY-MM-DD") : "", // Update DateOfBirth field with formatted date
+      DateOfBirth: date.isValid ? date.format('YYYY-MM-DD') : '',
     }));
+    hasChanges(true);
   };
-
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const imageDataUrl = await readFile(file);
-      setImageSrc(imageDataUrl);
-      setOpen(true);
-    }
-  };
-
-  const readFile = (file) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.addEventListener("load", () => resolve(reader.result));
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    setCroppedArea(croppedAreaPixels);
-  }, []);
-
-  const handleSave = () => {
-    // Here you can convert the cropped area into an image file and save it
-    setOpen(false);
-  };
+  console.log("Parent Data SA CHILD INDIVIDUAL DATA : ", parentData);
 
   return (
-    <div>
-      <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">
+    <div style={styles.container}>
+      <Typography variant="h5" style={styles.sectionTitle}>
         Host Details
       </Typography>
-      {/* Upload Image */}
-      <div
-        style={{
-          border: "2px dashed #ccc",
-          padding: "1rem",
-          borderRadius: "0.8rem",
-          marginBottom: "1rem",
-        }}
-      >
-        <Typography sx={{ fontSize: "1.125rem" }}>
-          Upload your profile photo
-        </Typography>
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-          sx={{ width: "100%" }}
-        >
-          Upload file
-          <VisuallyHiddenInput type="file" onChange={handleFileChange} />
-        </Button>
-        {uploadedImage && (
-          <div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Typography sx={{ fontSize: "1rem" }}>
-                {uploadedImage.name}
-              </Typography>
-              <Button onClick={handleDeleteImage}>
-                <DeleteIcon />
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-      {/* Profile */}
-      <div
-        style={{
-          border: "2px dashed #cacaca",
-          padding: "1rem",
-          borderRadius: "10px",
-          marginTop: "1rem",
-        }}
-      >
-        <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
-          Profile
-        </Typography>
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": { m: 1, width: "25ch" },
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <div>
+        {/* Profile */}
+        <Typography style={styles.sectionTitle}>Profile</Typography>
+        
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
-              id="firstname"
+              id="FirstName"
               label="First Name"
-              value={data.firstname || ""} // Ensure it's never undefined or null
+              value={data.FirstName}
               onChange={handleChange}
-              InputLabelProps={{
-                shrink: Boolean(data.firstname), // Float the label if there's a value
-              }}
+              fullWidth
+              required
+              disabled={!isEditing}
+    
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+                id="LastName"
+                label="Last Name"
+                value={data.LastName}
+                onChange={handleChange}
+                fullWidth
+                required
+                disabled={!isEditing}
+              />
+          </Grid>
+
+        </Grid>
+            <TextField
+              id="DisplayName"
+              label="Display Name"
+              value={data.DisplayName}
+              onChange={handleChange}
+              helperText="This is the name that will be shown on CebuStay website and app."
+              fullWidth
+              required
+              disabled={!isEditing}
+              sx = {{ marginTop: "1rem" }}
             />
 
-            <TextField
-              id="lastName"
-              label="Last Name"
-              value={data.lastname || ""}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: Boolean(data.lastname),
-              }}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Date of Birth"
+              value={data.DateOfBirth ? dayjs(data.DateOfBirth) : null}
+              onChange={handleChangeDate}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+              maxDate={dayjs().subtract(18, 'year')}
+              sx = {{ marginTop: "1rem" }}
+              required
+              disabled={!isEditing}
             />
-          </div>
-          <div>
-            <Typography sx={{ fontSize: "1rem", ml: 1, mt: 2 }}>
-              This is the name that will be shown on CebuStay website and app.
-            </Typography>
-            <TextField
-              id="displayname"
-              label="Display Name"
-              value={data.displayname || ""}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: Boolean(data.displayname),
-              }}
-            />
-          </div>
-          <div>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={["DatePicker"]}>
-                <DatePicker
-                  id="dateofbirth"
-                  label="Date of Birth"
-                  value={data.dateofbirth ? dayjs(data.dateofbirth) : null}
-                  onChange={handleChangeDate}
-                />
-              </DemoContainer>
-            </LocalizationProvider>
-          </div>
-        </Box>
-      </div>
+          </LocalizationProvider>
       {/* Contact Details */}
-      <div
-        style={{
-          border: "2px dashed #cacaca",
-          padding: "1rem",
-          borderRadius: "10px",
-          marginTop: "1rem",
-        }}
-      >
-        <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
+      <Typography style= {styles.sectionTitle}  mt={1} fontWeight="bold">
           Contact Details
         </Typography>
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": { m: 1, width: "25ch" },
-          }}
-          noValidate
-          autoComplete="off"
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={6}>
+        <Select
+          value={data.countryCode}
+          onChange={handleCountryCodeChange}
+          fullWidth
+          style={styles.countryCodeSelect}
+          label = "Country Code"
+          required
+          disabled={!isEditing}
         >
-          <div>
+          {countryCodes.map((country) => (
+            <MenuItem key={country.code} value={country.code}>
+              {country.label}
+            </MenuItem>
+          ))}
+        </Select>
+
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            id="PhoneNumber"
+            label="Phone Number"
+            value={data.PhoneNumber}
+            onChange={handleChange}
+            fullWidth
+            disabled={!isEditing}
+            required
+            style={styles.formField}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  {data.countryCode}
+                </InputAdornment>
+              ),
+            }}
+            helperText={errors.PhoneNumber}
+            error={!!errors.PhoneNumber}
+          />
+        </Grid>
+      </Grid>
             <TextField
-              id="contactnumber"
-              label="Phone Number"
-              sx={{ width: "30%" }}
-              value={data.contactnumber}
-              onChange={handleChange}
-            />
-            <TextField
-              id="email"
+              id="Email"
               label="Email"
-              sx={{ width: "50%" }}
-              value={data.email}
+              required
+              value={data.Email}
               onChange={handleChange}
+              style= {styles.formField}
+              fullWidth
+              helperText={errors.Email}
+              error={!!errors.Email}
+              disabled={!isEditing}
             />
-          </div>
-        </Box>
-      </div>
+      
       {/* Location Details */}
-      <div
-        style={{
-          border: "2px dashed #cacaca",
-          padding: "1rem",
-          borderRadius: "10px",
-          marginTop: "1rem",
-        }}
-      >
-        <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
+    
+        <Typography sx={{ fontSize: "1.125rem" , fontFamily: "Poppins"}}  ml={1} fontWeight="bold">
           Location Details
         </Typography>
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": { m: 1 },
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <div>
-            <TextField
-              id="city"
-              label="City"
-              value={data.city}
-              onChange={handleChange}
-              fullWidth
-            />
-            <TextField
-              id="province"
-              label="Province"
-              value={data.province}
-              onChange={handleChange}
-              fullWidth
-            />
-          </div>
-          <div>
-            <TextField
-              id="zipcode"
-              label="Zip Code"
-              value={data.zipcode}
-              onChange={handleChange}
-              fullWidth
-            />
-            <TextField
-              id="primary_address"
-              label="Primary Address"
-              value={data.primary_address}
-              onChange={handleChange}
-              fullWidth
-            />
-          </div>
-        </Box>
-      </div>
-      {/* Description */}
-      <div
-        style={{
-          border: "2px dashed #cacaca",
-          padding: "1rem",
-          borderRadius: "10px",
-          marginTop: "1rem",
-        }}
-      >
-        <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
-          Description
-        </Typography>
-        <TextField
-          id="describe"
-          label="Describe Your Accommodation"
-          multiline
-          rows={4}
-          value={data.describe}
-          onChange={handleChange}
-          fullWidth
-        />
-      </div>
-      {/* Calendar */}
-      <div
-        style={{
-          border: "2px dashed #cacaca",
-          padding: "1rem",
-          borderRadius: "10px",
-          marginTop: "1rem",
-        }}
-      >
-        <Typography sx={{ fontSize: "1.125rem" }} ml={1} fontWeight="bold">
-          Calendar
-        </Typography>
-        <TextField
-          id="calendar"
-          label="Calendar Link"
-          value={data.calendar}
-          onChange={handleChange}
-          fullWidth
-        />
-      </div>
-      {/* Image Cropping Dialog */}
-      {/* Crop Dialog */}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            position: "relative",
-            width: 400,
-            height: 400,
-            backgroundColor: "#333",
-          }}
-        >
-          <Cropper
-            image={imageSrc}
-            crop={crop}
-            zoom={zoom}
-            aspect={1}
-            cropShape="round"
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-          />
-        </Box>
-        <Box sx={{ mt: 2, px: 2 }}>
-          <Slider
-            value={zoom}
-            min={1}
-            max={3}
-            step={0.1}
-            aria-labelledby="Zoom"
-            onChange={(e, zoom) => setZoom(zoom)}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            fullWidth
-          >
-            Save
-          </Button>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-        </Box>
-      </Dialog>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md = {6}>
+            <TextField id="Street" label="Street" value={data.Street} onChange={handleChange} fullWidth style={styles.formField} required  disabled={!isEditing}/>
+          </Grid>
+          <Grid item xs={12} md = {6}>
+            <TextField id="Barangay" label="Barangay" value={data.Barangay} onChange={handleChange} fullWidth style={styles.formField}  required  disabled={!isEditing}/>
+          </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+        <Grid item xs={12} md = {6}>
+            <TextField id="City" label="Municipality / City" value={data.City} onChange={handleChange} fullWidth style={styles.formField} required  disabled={!isEditing}/>
+          </Grid>
+          <Grid item xs={12} md = {6}>
+            <TextField type ="number" id="ZipCode" label="Zip Code" value={data.ZipCode} onChange={handleChange} fullWidth style={styles.formField} required  disabled={!isEditing} />
+          </Grid>
+        </Grid>
+       
+      {/* Describe YourSelf */}
+      
+       <Typography style={styles.sectionTitle}>Describe YourSelf As a Host</Typography>
+      <TextField
+        id="Describe"
+        label="Description"
+        value={data.Describe}
+        onChange={handleChange}
+        multiline
+        rows={4}
+        fullWidth
+        style={styles.formField}
+        required
+        disabled={!isEditing}
+      />
     </div>
   );
 }

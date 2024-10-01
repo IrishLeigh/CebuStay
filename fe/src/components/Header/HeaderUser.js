@@ -135,7 +135,7 @@ function HeaderUser() {
         navigate("/account");
         break;
       case "Your Properties":
-        navigate("/admin/overview");
+        navigate("/admin/listings");
         break;
       case "Logout":
         setOpenLogoutModal(true);
