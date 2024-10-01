@@ -14,7 +14,7 @@
   import MyLocationIcon from '@mui/icons-material/MyLocation'; // Icon for nearby locations
   import RefreshIcon from '@mui/icons-material/Refresh'; // Icon for reset
   import HelpIcon from '@mui/icons-material/Help'; // Icon for instructions
-
+  import StayCard from "./components/StayCard";
 
   export default function InteractiveMap() {
     const [selectedCity, setSelectedCity] = useState(null);
@@ -123,21 +123,28 @@
       if (!filteredLocations.length) return; // No filtered locations
       const userPoint = turf.point(userLocation);
       console.log("User's filteredLocations:", filteredLocations);
+      
       // Calculate distances and filter locations within 5 km
       const nearby = filteredLocations
-        .map((loc) => {
-          const locPoint = turf.point(loc.coordinates);
-          console.log("locPoint:", locPoint);
-          const distance = turf.distance(userPoint, locPoint, { units: 'kilometers' });
-          return { ...loc, distance };
-        })
-        .filter((loc) => loc.distance <= 20) // Only include locations within 5 km
-        .sort((a, b) => a.distance - b.distance) // Sort by distance
-        .slice(0, 5); // Take the nearest 5 locations
+          .map((loc) => {
+              // Check if coordinates are valid (not null)
+              const { coordinates } = loc;
+              if (!coordinates || coordinates[0] === null || coordinates[1] === null) {
+                  return null; // Skip this location
+              }
+  
+              const locPoint = turf.point(coordinates);
+              console.log("locPoint:", locPoint);
+              const distance = turf.distance(userPoint, locPoint, { units: 'kilometers' });
+              return { ...loc, distance };
+          })
+          .filter(loc => loc !== null && loc.distance <= 20) // Only include valid locations within 20 km
+          .sort((a, b) => a.distance - b.distance) // Sort by distance
+          .slice(0, 5); // Take the nearest 5 locations
+      
       setSelectedCategory(null);
       setNearbyLocations(nearby);
-    };
-
+  };
     const handleClickOutside = (event) => {
       if (
         mapContainerRef.current &&
@@ -146,6 +153,7 @@
         setSelectedCity(null);
         setSelectedCulture(null);
         setSelectedSeeAndDo(null);
+        setSelectedProperty(null);
       }
     };
 
@@ -547,6 +555,14 @@
             ) : (
               <p>Loading map data...</p>
             )}
+            {selectedProperty && selectedCategory === "Where to stay" && (
+            <div>
+              <StayCard
+                stay={selectedProperty}
+                onClose={() => setSelectedProperty(null)}
+              />
+            </div>
+          )}
             {selectedSeeAndDo && selectedCategory === "See And Do" && (
               <div>
                 <SeeAndDoCard
