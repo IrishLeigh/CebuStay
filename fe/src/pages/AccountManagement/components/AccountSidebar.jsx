@@ -85,7 +85,7 @@ const AccountSidebar = ({activeItem, handleItemClick}) => {
                 }}
               >
                 <img
-                  src="/Logo2.png"
+                  src="/logo2.png"
                   alt="Logo"
                   className="logo"
                   style={{ height: "40px", marginRight: "10px" }}
