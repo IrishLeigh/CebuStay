@@ -53,10 +53,13 @@ export default function UserProfile({ profile }) {
         });
         if (res.data) {
           setProfileImage(res.data.src);
+          console.log("profile:", profile);
+          console.log("Current Profile:", currentProfile);
+
           // Only update currentProfile if it's different
-          if (profile !== currentProfile) {
-            setCurrentProfile(profile);
-          }
+          // if (profile !== currentProfile) {
+          //   setCurrentProfile(profile);
+          // }
         }
         if (res.data.status === "error") {
           setProfileImage(
@@ -70,6 +73,10 @@ export default function UserProfile({ profile }) {
 
     fetchUserImage();
   }, [profile, currentProfile]);
+
+  useEffect(() => {
+    setCurrentProfile(profile);
+  }, [profile]);
 
   const handleProfileUpdate = (updatedProfile) => {
     setCurrentProfile(updatedProfile);

@@ -49,7 +49,7 @@ const fieldStyle = {
 
 export default function CalendarComponent({ propertyTypes }) {
   const [open, setOpen] = useState(false);
-  const [eventInfo, setEventInfo] = useState({ title: '', description: '', start: '', end: '' });
+  const [eventInfo, setEventInfo] = useState({ title: '', bookingid: 0, description: '', start: '', end: '' });
   const [calendarHeight, setCalendarHeight] = useState('auto');
   const [marginLeft, setMarginLeft] = useState('auto');
 
@@ -74,7 +74,7 @@ export default function CalendarComponent({ propertyTypes }) {
 
   const handleOpen = (info) => {
     setEventInfo(info.event);
-    const propertyDetails = propertyTypes.find(property => property.bookingid == info.event.title);
+    const propertyDetails = propertyTypes.find(property => property.bookingid == info.event.extendedProps.bookingid);
     setEventInfo(propertyDetails);
     setOpen(true);
   };
@@ -90,13 +90,20 @@ export default function CalendarComponent({ propertyTypes }) {
     date.setDate(date.getDate() + 1);
     return date.toISOString().split('T')[0];
   };
-
+console.log( 'propertytypes',propertyTypes);
   const events = propertyTypes.length > 0 ? propertyTypes.map(data => ({
-    title: data.bookingid,
+    title: data.guestname,
+    bookingid: data.bookingid,
     description: `Price: ${formatEventDate(data.total_price)}`,
     start: data.checkin_date,
     end: addOneDay(data.checkout_date)
   })) : [];
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A'; // Handle cases where date is not available
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateStr).toLocaleDateString('en-US', options);
+  };
 
   return (
     <div style={{ height: '70vh', width: 'auto', marginLeft, paddingLeft: '2rem', paddingRight: '2rem' }}>
@@ -144,11 +151,11 @@ export default function CalendarComponent({ propertyTypes }) {
             </Box>
             <Box sx={fieldStyle}>
               <Typography variant="body1"><strong>Check-in Date:</strong></Typography>
-              <Typography variant="body1">{eventInfo.checkin_date}</Typography>
+              <Typography variant="body1">{formatDate(eventInfo.checkin_date)}</Typography>
             </Box>
             <Box sx={fieldStyle}>
               <Typography variant="body1"><strong>Check-out Date:</strong></Typography>
-              <Typography variant="body1">{eventInfo.checkout_date}</Typography>
+              <Typography variant="body1">{formatDate(eventInfo.checkout_date)}</Typography>
             </Box>
             <Box sx={fieldStyle}>
               <Typography variant="body1"><strong>Guest Count:</strong></Typography>
