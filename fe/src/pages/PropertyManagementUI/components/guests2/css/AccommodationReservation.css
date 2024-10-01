@@ -1,5 +1,7 @@
 /* AccommodationReservation.css */
 
+/* Existing styles... */
+
 .header .title {
   /* background-image: url("C:\Kaye\capstone1\CebuStayNew\CebuStay\fe\public\ReservationBanner.png"); */ /*kani nga path kay sa ako rani*/
   /* background-image: url("ReservationBanner.png"); ako lang sa comment kay mo error diri sa ako */
@@ -23,6 +25,42 @@
 
 .header p {
   font-size: 1rem;
+}
+
+.table-header {
+  background-color: #f0f0f0;
+}
+
+.table-header th {
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header-container {
+  background: linear-gradient(to right, #990099, #990099, #cc00cc);
+  padding: 1.5rem;
+  color: #ffffff;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  width: 100%;
+  text-align: center; /* Center align header title and description */
+}
+
+.header-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: white;
+  font-family: "Poppins", sans-serif; /* Ensure to import the font if not already */
+  text-align: left;
+}
+
+.header-description {
+  font-size: 0.875rem;
+  text-align: left;
 }
 
 /* Buttons */
@@ -53,6 +91,16 @@
   text-decoration: none;
 }
 
+.btn.underline-purple::after {
+  content: "";
+  position: absolute;
+  bottom: -0.2rem;
+  left: 0;
+  right: 0;
+  height: 0.2rem;
+  background-color: #a334cf;
+}
+
 /* Dropdown */
 .dropdown {
   position: relative;
@@ -69,7 +117,6 @@
   padding: 0.5rem;
   z-index: 10;
   width: 10rem;
-  /* top: 3rem; */
   left: 50%;
   transform: translateX(-50%);
 }
@@ -242,13 +289,74 @@
   align-items: center;
 }
 
-/* Other classes and styles as per your requirement */
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+/* Media Queries for Small Screens */
+@media (max-width: 400px) {
+  .header .title {
+    font-size: 1rem; /* Adjust font size for smaller screens */
+    height: auto; /* Allow height to adjust automatically */
   }
-  100% {
-    transform: rotate(360deg);
+
+  .header-container {
+    padding: 0.5rem; /* Reduce padding */
+  }
+
+  .header-title {
+    font-size: 1rem; /* Adjust header title size */
+  }
+
+  .buttons {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons */
+  }
+
+  .buttons .btn {
+    padding: 0.5rem; /* Adjust button padding */
+    font-size: 0.6rem; /* Reduce button font size */
+    width: 100%; /* Full width */
+    margin-bottom: 0.5rem; /* Space between buttons */
+  }
+
+  .search-container input {
+    height: 2.5rem; /* Adjust input height */
+  }
+
+  .menu-button {
+    height: 2.5rem; /* Adjust button height */
+  }
+
+  .modal-content h2 {
+    font-size: 1.25rem; /* Adjust modal title size */
+  }
+
+  .modal-content p {
+    font-size: 0.9rem; /* Adjust modal text size */
+  }
+
+  .table-header th {
+    font-size: 0.7rem; /* Adjust table header font size */
+  }
+
+  .table-container td {
+    font-size: 0.7rem; /* Adjust table cell font size */
+    padding: 0.5rem; /* Adjust padding */
+  }
+}
+
+@media (max-width: 400px) {
+  .header-title {
+    font-size: 1rem; /* Further reduce font size for extra small screens */
+  }
+
+  .buttons .btn {
+    font-size: 0.5rem; /* Reduce button font size */
+  }
+
+  .search-container input {
+    padding: 0.3rem; /* Adjust input padding */
+  }
+
+  .table-header th,
+  .table-container td {
+    font-size: 0.45rem; /* Further reduce table font sizes */
   }
 }
