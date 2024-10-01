@@ -367,7 +367,7 @@ export default function BasicInfo({
           />
         </Grid>
       </Grid>
-      {isEditing && (
+      {/* {isEditing && (
         <div style={{ marginTop: "1rem", textAlign: "right" }}>
           <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
             Revert Changes
@@ -380,7 +380,7 @@ export default function BasicInfo({
             Save Changes
           </Button>
         </div>
-      )}
+      )} */}
         <Snackbar
           open={openSnackbar}
           autoHideDuration={6000}

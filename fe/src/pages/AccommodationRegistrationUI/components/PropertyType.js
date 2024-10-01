@@ -14,8 +14,8 @@ const propertyTypes = [
     description: "Private residential property offering multiple rooms, including bedrooms, bathrooms, a kitchen, and living spaces.",
   },
   {
-    name: "Hotel",
-    description: "Commercial establishment offering various types of accommodations and amenities such as room service and housekeeping.",
+    name: "Condominium",
+    description: "A residential property with private units and shared amenities like pools and fitness centers.",
   },
   {
     name: "Others", // This will act as a flag only
@@ -25,15 +25,15 @@ const propertyTypes = [
 
 // Replace these image paths with your own image URLs or imports
 const buttonsData = [
-  { label: "Hostel", icon: "/hostel.png" },
+  // { label: "Hostel", icon: "/hostel.png" },
   { label: "Villa", icon: "/villa.png" },
   { label: "Cabin", icon: "/cabin.png" },
-  { label: "Bed & Breakfast", icon: "/bnb.png" },
-  { label: "Resort", icon: "/resorts.png" },
-  { label: "Condominium", icon: "/condominium.png" },
+  // { label: "Bed & Breakfast", icon: "/bnb.png" },
+  // { label: "Resort", icon: "/resorts.png" },
+  { label: "Cottage", icon: "/resorts.png" },
   { label: "Luxury Home", icon: "/luxuryhome.png" },
-  { label: "Homestay", icon: "/homestay.png" },
-  { label: "Motel", icon: "/motel.png" },
+  { label: "Bungalow", icon: "/homestay.png" },
+  { label: "Studio", icon: "/motel.png" },
 ];
 
 export default function PropertyType({ onSelectedTypeChange, parentSelectedData, handleNext }) {

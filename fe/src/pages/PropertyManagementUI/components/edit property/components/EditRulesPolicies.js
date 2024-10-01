@@ -539,7 +539,7 @@ export default function EditRulesPolicies({
                 />
               </Box>
             </div>
-            {isEditing && (
+            {/* {isEditing && (
               <div style={{ marginTop: "1rem", textAlign: "right" }}>
                 <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
                   Revert Changes
@@ -552,7 +552,7 @@ export default function EditRulesPolicies({
                   Save All Changes
                 </Button>
               </div>
-            )}
+            )} */}
           </Grid>
         </Grid>
         <Snackbar

@@ -19,7 +19,7 @@ const TopRated = ({ onClose, onCardClick }) => {
     rating: 4.5,
     reviewCount: 651,
     address: "123 Ocean Drive, Paradise City, Island Nation",
-    price: 8000,
+    price: 8000.00,
     facilities: ["Swimming Pool", "Spa", "Gym"],
   };
 
@@ -52,7 +52,7 @@ const TopRated = ({ onClose, onCardClick }) => {
     },
     media: {
       width: isSmallScreen ? "100%" : 250,
-      height: isSmallScreen ? "150px" : "250px", // Adjust height for small screens
+      height: isSmallScreen ? "150px" : "280px", // Adjust height for small screens
     },
     content: {
       flex: 1,
@@ -88,15 +88,18 @@ const TopRated = ({ onClose, onCardClick }) => {
       textAlign: "center",
     },
     priceBox: {
-      marginLeft: "auto",
+      // marginLeft: "auto",
       backgroundColor: "#EE414B",
       color: "white",
       padding: "0.5rem 1rem",
       borderRadius: "0.5rem",
+
     },
     priceLabel: {
       fontSize: isSmallScreen ? "0.65rem" : "0.75rem",
       fontFamily: "Poppins",
+      fontWeight: "bold",
+      margin: "0.5rem 0.5rem 0 0.5rem",
     },
     starIcon: {
       color: "#FFD700",
@@ -166,7 +169,7 @@ const TopRated = ({ onClose, onCardClick }) => {
             <LocationOnIcon sx={styles.locationIcon} />
             <Typography sx={styles.address}>{hotel.address}</Typography>
           </Box>
-          <Typography sx={styles.description}>This property offers:</Typography>
+          {/* <Typography sx={styles.description}>This property offers:</Typography>
           <Box sx={styles.facilityBox}>
             {hotel.facilities.map((facility, index) => (
               <Box
@@ -186,12 +189,13 @@ const TopRated = ({ onClose, onCardClick }) => {
                 </Typography>
               </Box>
             ))}
-          </Box>
+          </Box> */}
           <Box
             display="flex"
             flexDirection="column"
-            alignItems="flex-end"
-            mt={-10}
+            alignItems="left"
+            margin={"0.5rem 0"}
+          
           >
             <Typography sx={styles.priceLabel}>Price per night</Typography>
             <Box sx={styles.priceBox}>

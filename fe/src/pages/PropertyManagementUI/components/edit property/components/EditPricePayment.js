@@ -422,7 +422,7 @@ export default function PricePayment({
                 </Typography>
               </RadioGroup>
             </Box>
-            {isEditing && (
+            {/* {isEditing && (
               <div style={{ marginTop: "1rem", textAlign: "right" }}>
                 <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
                   Revert Changes
@@ -435,7 +435,7 @@ export default function PricePayment({
                   Save All Changes
                 </Button>
               </div>
-            )}
+            )} */}
           </Grid>
         </Grid>
           <Snackbar

@@ -32,9 +32,22 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
 
   useEffect(() => {
-    // Update local state when parentPoliciesData changes
-    setPoliciesData(parentPoliciesData || initialPoliciesData);
-  }, [parentPoliciesData]);
+    if (parentPoliciesData) {
+        // Update local state with values from parentPoliciesData
+        setPoliciesData({// spread the incoming data
+            isCancellationPolicy: true,  // true for standard
+            isModification: true,  // true for modification
+            cancellationDays: parentPoliciesData.cancellationDays || '',  // default empty
+            cancellationCharge: parentPoliciesData.cancellationCharge || '',  // default empty
+            modificationDays: parentPoliciesData.modificationDays || '',  // default empty
+            modificationCharge:parentPoliciesData.modificationCharge || ''  // default empty
+        });
+    } else {
+        // Set initial values if parentPoliciesData is not provided
+        setPoliciesData(initialPoliciesData);
+    }
+}, [parentPoliciesData]);
+
 
   const handleDaysChange = (e, key) => {
     let value = Number(e.target.value);
@@ -91,7 +104,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
 
   const validateAndProceed = () => {
    
-  if (policiesData.isCancellationPolicy) {
+  if (policiesData.isCancellationPolicy && (!policiesData.cancellationDays || !policiesData.cancellationCharge)) {
     if (!policiesData.cancellationDays) {
       alert("Please specify the number of days for cancellation policy.");
       return;
@@ -170,10 +183,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                 <Grid item xs={12} md={12}>
                   <Divider sx={{ mt: 1, mb: 1, borderColor: '#6A6A6A', width: '100%' }} />
                   <RadioGroup
-                    name="isCancellationPolicy"  // This updates the true/false value for cancellation policy
+                    name="isCancellationPolicy"
                     value={policiesData.isCancellationPolicy ? 'standard' : 'non-refundable'}
                     onChange={handleRadioCancellationChange}
-                  >
+                >
                     <FormControlLabel
                       value="standard"
                       control={<Radio color="secondary" />}
@@ -343,10 +356,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
               {/* Validation Error Message */}
               {error && <Typography color="red">{error}</Typography>}
               {/* Action Buttons */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-                <Button variant="outlined" onClick={handleBack}>Back</Button>
-                <Button variant="contained" onClick={validateAndProceed}>Next</Button>
-              </Box>
             </form>
             <Box
               sx={{
@@ -366,7 +375,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                 </div>
               </Box>
               
-            
                 <form>
                   <Box>
                     <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: 18, m: 2 }}>Standard Rules</Typography>

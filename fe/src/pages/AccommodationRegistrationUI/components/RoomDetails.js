@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 import { Box, Paper, Typography, IconButton, TextField, Button, Container, Grid } from "@mui/material";
 import { AddCircle as AddCircleIcon, Add as AddIcon, Remove as RemoveIcon, Cancel as CancelIcon } from "@mui/icons-material";
 import { useData } from "../../../components/registration_unit/registration_location/contextAddressData";
@@ -20,9 +20,17 @@ export default function RoomDetails({
     ],
     guestCapacity: "",
   });
+  const containerRef = useRef(null); // Create a ref for the container
 
   useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0; // Scroll to the top of the container
+    }
     window.scrollTo(0, 0);
+  }, []);
+  
+  useEffect(() => {
+  
     if (parentUnitDetailsData) {
       setUnitDetailsData(parentUnitDetailsData);
     }

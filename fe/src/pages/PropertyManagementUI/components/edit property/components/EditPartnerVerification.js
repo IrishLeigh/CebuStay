@@ -10,8 +10,9 @@ import { Last } from 'react-bootstrap/esm/PageItem';
 import TemplateFrameEdit from './TemplateFrame';
 import IndividualHost from './EditIndividualHost';
 import CompanyHost from './EditCompanyHost';
+import axios from 'axios';
 
-export default function EditPartnerVerification({ parentPartnerData, onSaveStatusChange}) {
+export default function EditPartnerVerification({ parentPartnerData, onSaveStatusChange, propertyid}) {
   const [hostType, setHostType] = useState('');
   const [individualData, setIndividualData] = useState();
   const [companyData, setCompanyData] = useState();
@@ -20,8 +21,8 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   const [ isSaved, setIsSaved] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [ originalIndividualData, setOriginalIndividualData ] = useState({});
-  const [ originalCompanyData, setOriginalCompanyData ] = useState({});
+
+  const [isCancelled, setIsCancelled] = useState(false);
 
   useEffect(() => {
     if (parentPartnerData) {
@@ -38,6 +39,8 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
 
   const handleChange = (event) => {
     setHostType(event.target.value);
+    setHasChanges(true);
+    console.log ("haschnage sin handleCHange", hasChanges)
   };
 
   const handleHasChangesChange = (hasChanges) => {
@@ -45,10 +48,13 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   }
   const handleIndividualDataChange = (data) => {
     setIndividualData(data);
+    setHasChanges(true);
+    console.log ("haschnage sin handleIdntialDataChange", hasChanges)
   };
 
   const handleCompanyDataChange = (data) => {
     setCompanyData(data);
+    setHasChanges(true);
   };
 
   // useEffect(() => {
@@ -59,14 +65,17 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
+      setIsCancelled(false);
+      setHasChanges(false);
     }else if (editing === false) {
       handleCancel();
+      setIsCancelled(true);
       
     }
    
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
-  console.log("Parent partner data in edit partner veriofication", parentPartnerData);
+
 
   const validateAndProceed = () => {
     // Mapping of field keys to user-friendly names
@@ -139,28 +148,149 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
     alert("Successfully submitted!");
   };
   //handle Save for Edit
-  const handleSave = async () => {
+  const onSubmitIndividual = async () => {
+    if (!validateAndProceed()) {
+      return;
+    }
     setIsLoading(true);
     setIsEditing(false);
     // Gather the data to be sent to the API
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+   //propertyowner
+   console.log("WHAT TO SEND?",dataToSend);
    
     try {
-      console.log("Saving data:", dataToSend);
-      //After saving data, set isSaved to true
-      setIsSaved(true);
-      setIsEditing(false);
-      setOpenSnackbar(true);
-      onSaveStatusChange('Saved');
-      setIsLoading(false);
-        
-      
-    } catch (error) {
-      console.log("Error saving data:", error);
-    }
-  
+      const propertyownerid = dataToSend.id;
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/property-owners/${propertyownerid},`,
+        {
 
+          propertyownershipid: dataToSend.propertyownershipid,
+          firstname: dataToSend.FirstName,
+          lastname: dataToSend.LastName,
+          displayname: dataToSend.DisplayName,
+          dateofbirth: dataToSend.DateOfBirth,
+          email: dataToSend.Email,
+          contactnumber: dataToSend.PhoneNumber,
+          street: dataToSend.Street,
+          barangay: dataToSend.Barangay,
+          city : dataToSend.City,
+          zipcode : dataToSend.Zipcode,
+          describe : dataToSend.Describe,
+          calendar: "",
+          primary_address:"address",
+        }
+      );
+      if (res.data.status === "success") {
+        console.log(res.data);
+
+        setIsSaved(true);
+        onSaveStatusChange('Saved');
+        setHasChanges(false); 
+        setIsEditing(false);
+        setIsCancelled(false);
+        setIsLoading(false);
+        setOpenSnackbar(true);
+        console.log("success");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+   
   };
+  const onSubmitCompany = async () => {
+    setIsLoading(true);
+    setIsEditing(false);
+  
+    // Gather the data to be sent to the API
+    const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+  
+    console.log("WHAT TO SEND SA COMPANY?", dataToSend);
+  
+    try {
+      const companyid = dataToSend.companyid;
+      console.log("companyid", companyid);
+  
+      // Send the company data
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/property-companies/${companyid}`,
+        {
+          propertyownershipid: dataToSend.propertyownershipid,
+          legal_business_name: dataToSend.LegalBusinessName,
+          company_description: dataToSend.describe,
+          street: dataToSend.Street,
+          email: dataToSend.Email,
+          barangay: dataToSend.Barangay,
+          city: dataToSend.City,
+          zipcode: dataToSend.Zipcode,
+        }
+      );
+  
+      if (res.data) {
+        console.log("SUCCESS:", res.data);
+      } else {
+        console.error('Error saving company:', res.data);
+      }
+  
+      // Send the legal representatives data
+    const legalRepresentatives = dataToSend.legalrepresentatives || []; // Ensure it's an array
+      console.log("legalRepresentatives  SA COMPANY?", legalRepresentatives);
+    // Using Promise.all to handle all legal representatives requests
+    const legalPromises = legalRepresentatives.map(async (representative) => {
+      try {
+        const res2 = await axios.post(
+          `http://127.0.0.1:8000/api/legal-representative/${representative.id}`,
+          {
+            propertycompanyid: companyid,
+            firstname: representative.firstname,
+            lastname: representative.lastname,
+            phone_number: representative.phone,
+            email: representative.email,
+            position: representative.position,
+          }
+        );
+
+        if (res2.data) {
+          console.log('Legal representative saved successfully:', res2.data);
+        } else {
+          console.error('Error saving legal representative:', res2.data);
+        }
+      } catch (error) {
+        console.error('Error saving legal representative:', error);
+      }
+    });
+
+    // Wait for all legal representatives to be processed
+    await Promise.all(legalPromises);
+  
+      // Set the status to saved after all operations
+      setIsSaved(true);
+      onSaveStatusChange('Saved');
+      setHasChanges(false);
+      setIsEditing(false);
+      setIsCancelled(false);
+      setOpenSnackbar(true);
+      console.log("All operations completed successfully.");
+  
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false); // Ensure loading state is reset
+    }
+  };
+  
+  const handleSave = () => {
+     // Gather the data to be sent to the API
+     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+     if (hostType === 'Individual') {
+       onSubmitIndividual();
+       
+     }else if (hostType === 'Company') {
+       onSubmitCompany();
+     }
+  }
+
+  
   const handleCancel = () => {
     if (hasChanges) {
       const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
@@ -171,8 +301,10 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
         } else if (hostType === 'Company') {
           setCompanyData(parentPartnerData);
         }
+      
         setHasChanges(false);
         setIsEditing(false);  // Exit edit mode
+
       }
     } else {
       // No changes, just exit edit mode
@@ -182,6 +314,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   console.log ("hostType", hostType);
   console.log ("individualData", individualData);
   console.log ("companyData", companyData);
+  console.log ("hasCHnages", hasChanges);
 
 
   return (
@@ -225,7 +358,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
           To ensure compliance with legal and regulatory standards, we require some information about you and your property.
         </Typography>
 
-        <RadioGroup
+        {/* <RadioGroup
           aria-labelledby="Host"
           name="host"
           value={hostType}
@@ -252,10 +385,10 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
             }
             disabled = {!isEditing}
           />
-        </RadioGroup>
+        </RadioGroup> */}
         <Divider sx={{ my: 2 }} />
-        {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData} isEditing={isEditing}  />}
-        {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData} />}
+        {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData} isEditing={isEditing}  isCancelled={isCancelled}/>}
+        {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData}  isEditing={isEditing}  isCancelled={isCancelled}/>}
       </Paper>
 
     </>

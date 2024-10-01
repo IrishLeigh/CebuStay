@@ -810,11 +810,8 @@ console.log("New Unit Beds:", newBedType);
             )}
 
             </div>
-            {isEditing && (
+            {/* {isEditing && (
               <div style={{ marginTop: "1rem", textAlign: "right" }}>
-                {/* <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-                  Revert Changes
-                </Button> */}
                 <Button
                   variant="contained"
                   disabled={!hasChanges}
@@ -828,7 +825,8 @@ console.log("New Unit Beds:", newBedType);
                   Save All Changes
                 </Button>
               </div>
-            )}
+            )} */}
+            
           </Grid>
         </Grid>
         {/* Dialogue For New BedRoom */}

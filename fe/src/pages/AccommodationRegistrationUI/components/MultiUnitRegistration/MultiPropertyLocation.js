@@ -28,6 +28,11 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   const [position, setPosition] = useState(addPin);
   const [mapPos, setMapPos] = useState(addPin);
 
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top when the component mounts
+  }, []);
+
   useEffect(() => {
     // When location prop changes, update the position
     setPosition(addPin);
@@ -221,7 +226,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                     helperText="Enter your postal or ZIP code"
                     fullWidth
                   />
-                  <TextField
+                  {/* <TextField
                   label="Full Address"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
@@ -230,7 +235,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                   sx={{ mb: 2 }}
                   disabled
                   
-                />
+                /> */}
                   <Box mt={2}>
                     <Button
                       variant="contained"

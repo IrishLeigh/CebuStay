@@ -86,6 +86,7 @@ export default function PropertyInformation({
                     fullWidth
                     value={propertyData.propertyName}
                     onChange={(e) => handleChange(e.target.value, "propertyName")}
+                    required
                   />
                   <TextField
                     id="property-description"
@@ -93,6 +94,7 @@ export default function PropertyInformation({
                     multiline
                     rows={6}
                     fullWidth
+                    required
                     error={!propertyData.propertyDescription}
                     helperText={!propertyData.propertyDescription && "Property Description is required"}
                     placeholder="Say something about your listing here.."
@@ -108,6 +110,7 @@ export default function PropertyInformation({
                     fullWidth
                     value={propertyData.numberOfUnits}
                     onChange={(e) => handleChange(e.target.value, "numberOfUnits")}
+                    required
                   />
                   <TextField
                     id="getting-to-property"
@@ -118,8 +121,9 @@ export default function PropertyInformation({
                     error={!propertyData.gettingToProperty}
                     helperText={!propertyData.gettingToProperty && "Getting to Your Property is required"}
                     placeholder="Please let guests know the best ways to reach your property"
-                    value={propertyData.gettingToProperty}
+                    value={propertyData.gettingToProperty }
                     onChange={(e) => handleChange(e.target.value, "gettingToProperty")}
+                    required
                   />
                 </Box>
               </Paper>

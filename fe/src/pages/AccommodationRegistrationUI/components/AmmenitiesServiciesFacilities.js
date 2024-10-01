@@ -134,7 +134,10 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
     basicServices: parentAmenities.basicServices || [],
     facilities: parentAmenities.facilities || [],
   });
-
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top when the component mounts
+  }, []);
   const handleItemsChange = useCallback((category, items) => {
     setSelectedAmenities((prev) => ({
       ...prev,
