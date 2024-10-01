@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 // import Sidebar from "../../components/Sidebar";
 // import Sidebar from "../../../sidebar";
 import EditReservationModal from "../../../modals/EditReservationModal";
 import axios from "axios";
 // import Grid from "@mui/material/Grid";
-import { MdMenuOpen, MdSearch, MdEdit, MdDelete } from "react-icons/md";
+import { MdMenuOpen, MdSearch, MdEdit, MdWarning } from "react-icons/md";
 import "../css/AccommodationReservation.css";
 import { Box, CircularProgress } from "@mui/material";
 
 export default function AccommodationReservation() {
   const [selectedButton, setSelectedButton] = useState("all");
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState("Booking ID");
+  const [searchTerm, setSearchTerm] = useState("");
   const [propertyData, setPropertyData] = useState([]);
   const [checkIns, setCheckIns] = useState([]);
   const [checkOut, setCheckOut] = useState([]);
@@ -23,6 +24,18 @@ export default function AccommodationReservation() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
+
+  // Function to add a new reservation
+  const addReservation = (newReservation) => {
+    // Prepend the new reservation to the existing state
+    setFilteredData((prevData) => [newReservation, ...prevData]);
+  };
+
+  const handleClose = () => {
+    setEditModalOpen(false);
+    setSelectedReservation(null); // Optional: clear selected reservation
+  };
 
   // kato ning old Token
   useEffect(() => {
@@ -42,19 +55,6 @@ export default function AccommodationReservation() {
     }
   }, []);
 
-  // kani kay na tang2 rang alert
-  // useEffect(() => {
-  //   const token = localStorage.getItem("auth_token");
-  //   if (token) {
-  //     axios
-  //       .post("http://127.0.0.1:8000/api/decodetoken", { token })
-  //       .then((response) => {
-  //         setUser(response.data["data"]);
-  //       })
-  //       .catch(() => setUser(null));
-  //   }
-  // }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
@@ -67,6 +67,8 @@ export default function AccommodationReservation() {
             },
           }
         );
+
+        console.log(propertyRes.data);
         setPropertyData(propertyRes.data);
         setCheckIns(propertyRes.data); // Assuming checkIns are the same as propertyRes.data initially
       } catch (error) {
@@ -112,6 +114,7 @@ export default function AccommodationReservation() {
     );
     setPropertyData(newData);
     setEditModalOpen(false);
+    handleClose();
   };
 
   const handleCancelEdit = () => {
@@ -191,70 +194,104 @@ export default function AccommodationReservation() {
     setDeleteItemId(null);
   };
 
-  const getData = () => {
+  const getDataToDisplay = () => {
+    let data = [];
     switch (selectedButton) {
-      case "ALL":
-        return data;
-      case "ACTIVE":
-        return data.filter((item) => item.status === "Active");
-      case "INACTIVE":
-        return data.filter((item) => item.status === "Inactive");
+      case "all":
+        data = filteredPropertyData;
+        break;
+      case "in":
+        data = checkIns;
+        break;
+      case "out":
+        data = checkOut;
+        break;
       default:
-        return [];
+        data = [];
     }
+    return data;
   };
 
   const handleRowClick = (id) => {
     setSelectedId(id);
   };
 
-  const filteredPropertyData =
-    selectedButton === "all"
-      ? [...checkIns, ...checkOut]
-      : selectedButton === "in"
-      ? checkIns
-      : selectedButton === "out"
-      ? checkOut
-      : selectedButton === "cancelled"
-      ? propertyData.filter((item) => item.status.toLowerCase() === "cancelled")
-      : selectedButton === "upcoming"
-      ? propertyData.filter((item) => item.status.toLowerCase() === "upcoming")
-      : [];
+  const filteredPropertyData = useMemo(() => {
+    let data =
+      selectedButton === "all"
+        ? [...checkIns, ...checkOut]
+        : selectedButton === "in"
+        ? checkIns
+        : selectedButton === "out"
+        ? checkOut
+        : selectedButton === "cancelled"
+        ? propertyData.filter(
+            (item) => item.status.toLowerCase() === "cancelled"
+          )
+        : selectedButton === "upcoming"
+        ? propertyData.filter(
+            (item) => item.status.toLowerCase() === "upcoming"
+          )
+        : [];
+
+    // Sort the data by checkin_date (or another date field you prefer)
+    return data.sort(
+      (a, b) => new Date(b.checkin_date) - new Date(a.checkin_date)
+    ); // Latest first
+  }, [selectedButton, checkIns, checkOut, propertyData]);
+
+  useEffect(() => {
+    setFilteredData(filteredPropertyData);
+  }, [filteredPropertyData]);
+
+  const handleSearch = () => {
+    // Implement the search logic here
+    console.log("Searching for:", searchTerm, "by", selectedOption);
+  };
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredData(propertyData);
+    } else {
+      const filtered = propertyData.filter((item) => {
+        switch (selectedOption) {
+          case "Booking ID":
+            return String(item.bookingid)
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+          case "Property Name":
+            return (
+              item.property_name &&
+              item.property_name
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase())
+            );
+          case "Type":
+            return (
+              item.property_type &&
+              item.property_type
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase())
+            );
+          default:
+            return true;
+        }
+      });
+      setFilteredData(filtered);
+    }
+  }, [searchTerm, selectedOption, propertyData]);
 
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-      {/* <Grid container>
-        {/* <Grid item xs={2}>
-          <Sidebar />
-        </Grid> */}
-      {/* <Grid item xs={12}> */}
-      {/* <div className="full-height bg-light"> */}
       <div className="full-height">
-        <div
-          style={{
-            background: "linear-gradient(to right, #990099, #990099,#cc00cc)",
-            padding: "1.5rem",
-            color: "#ffffff",
-            borderBottomLeftRadius: "0.5rem",
-            borderBottomRightRadius: "0.5rem",
-            width: "100%",
-          }}
-        >
-          <h1
-            className="title"
-            style={{
-              fontSize: "1.875rem",
-              fontWeight: "700",
-              marginBottom: "0.5rem",
-              color: "white",
-              font: "poppins",
-              textAlign: "left",
-            }}
-          >
-            Accommodation Reservation
-          </h1>
-          <p style={{ fontSize: "0.875rem", textAlign: "left" }}>
-            Lorem ipsum dolor sit amet
+        <div className="header-container">
+          <h1 className="header-title">Your Guests</h1>
+          <p className="header-description">
+            Manage and oversee all accommodation reservations, including booking
+            details, guest information, and property availability, to ensure a
+            seamless experience for guests. The admin interface allows for
+            real-time updates and modifications, providing flexibility in
+            responding to guest needs and preferences.
           </p>
         </div>
 
@@ -269,7 +306,7 @@ export default function AccommodationReservation() {
                   key={button}
                   className={`btn ${
                     selectedButton.toLowerCase() === button.toLowerCase()
-                      ? "underline"
+                      ? "underline-purple"
                       : ""
                   }`}
                   onClick={() => setSelectedButton(button.toLowerCase())}
@@ -289,16 +326,25 @@ export default function AccommodationReservation() {
             >
               <div>
                 <MdSearch
+                  onClick={handleSearch}
                   style={{
                     position: "absolute",
                     left: "0.5rem",
                     fontSize: "1.8rem",
                     marginTop: "0.7rem",
+                    cursor: "pointer",
                   }}
                 />
                 <input
                   type="text"
                   placeholder="Search here"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
                   style={{
                     padding: "0.5rem 1rem 0.5rem 2.5rem",
                     borderWidth: "1px",
@@ -312,7 +358,6 @@ export default function AccommodationReservation() {
                   }}
                 />
               </div>
-
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
                 style={{
@@ -366,29 +411,32 @@ export default function AccommodationReservation() {
                       gap: "0.5rem",
                     }}
                   >
-                    {["Property ID", "Property Name", "Type"].map((option) => (
-                      <button
-                        key={option}
-                        onClick={() => {
-                          setSelectedOption(option);
-                          setShowDropdown(false);
-                        }}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          textAlign: "left",
-                          backgroundColor:
-                            selectedOption === option ? "#FCCD6E" : "white",
-                          color: selectedOption === option ? "white" : "black",
-                          borderRadius: "0.25rem",
-                          cursor: "pointer",
-                          fontFamily: "Poppins",
-                          border: "none",
-                          outline: "none",
-                        }}
-                      >
-                        {option}
-                      </button>
-                    ))}
+                    {["Booking ID", "Firstname", "Property Name", "Type"].map(
+                      (option) => (
+                        <button
+                          key={option}
+                          onClick={() => {
+                            setSelectedOption(option);
+                            setShowDropdown(false);
+                          }}
+                          style={{
+                            padding: "0.5rem 1rem",
+                            textAlign: "left",
+                            backgroundColor:
+                              selectedOption === option ? "#a334cf" : "white",
+                            color:
+                              selectedOption === option ? "white" : "black",
+                            borderRadius: "0.25rem",
+                            cursor: "pointer",
+                            fontFamily: "Poppins",
+                            border: "none",
+                            outline: "none",
+                          }}
+                        >
+                          {option}
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
               )}
@@ -407,104 +455,27 @@ export default function AccommodationReservation() {
             }}
           >
             <table style={{ width: "100%", textAlign: "center" }}>
-              <thead style={{ backgroundColor: "#f0f0f0" }}>
+              <thead className="table-header">
                 <tr>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Select
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Property ID
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Property Name
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Type
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Address
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Price
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Status
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Actions
-                  </th>
+                  <th>Select</th>
+                  <th>Booking ID</th>
+                  <th>Firstname</th>
+                  <th>Lastname</th>
+                  <th>Email</th>
+                  <th>Property Name</th>
+                  <th>Type</th>
+                  <th>Address</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
                     <td
-                      colSpan="8"
-                      style={{ textAlign: "center", padding: "1rem" }}
+                      colSpan="11"
+                      style={{ padding: "1rem 0", textAlign: "center" }}
                     >
                       <div
                         className="loading-container"
@@ -516,8 +487,21 @@ export default function AccommodationReservation() {
                         }}
                       >
                         <CircularProgress />
-                        <p>Retrieving data...</p>
+                        <p>Retrieving Data...</p>
                       </div>
+                    </td>
+                  </tr>
+                ) : filteredPropertyData.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="11"
+                      style={{
+                        padding: "1rem 0",
+                        color: "gray",
+                        textAlign: "center",
+                      }}
+                    >
+                      No data available
                     </td>
                   </tr>
                 ) : (
@@ -526,12 +510,26 @@ export default function AccommodationReservation() {
                       filteredPropertyData.map((item) => (
                         <tr
                           key={item.id}
-                          style={{ borderBottom: "1px solid #e0e0e0" }}
+                          style={{
+                            borderBottom: "1px solid #e0e0e0",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            handleEdit(item); // Replace this with the modal opening logic
+                          }}
                         >
                           <td className="px-4 py-2">
-                            <input type="checkbox" />
+                            <input
+                              type="checkbox"
+                              onClick={(e) => e.stopPropagation()}
+                            />
                           </td>
-                          <td className="px-4 py-2">{item.propertyid}</td>
+                          <td className="px-4 py-2">
+                            {item.bookingid ? item.bookingid : item.bhid}
+                          </td>
+                          <td className="px-4 py-2">{item.booker.firstname}</td>
+                          <td className="px-4 py-2">{item.booker.lastname}</td>
+                          <td className="px-4 py-2">{item.booker.email}</td>
                           <td className="px-4 py-2">{item.property_name}</td>
                           <td className="px-4 py-2">{item.property_type}</td>
                           <td className="px-4 py-2">{item.property_address}</td>
@@ -546,18 +544,23 @@ export default function AccommodationReservation() {
                           </td>
                           <td className="px-4 py-2">
                             <MdEdit
-                              onClick={() => handleEdit(item)}
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row click event
+                                handleEdit(item.id); // Replace with your edit handling function
+                              }}
                               style={{
                                 cursor: "pointer",
-                                marginRight: "0.5rem",
-                                color: "blue",
+                                marginRight: "0.5rem", // Space between icons
+                                color: "blue", // You can change the color as needed
                               }}
                             />
-                            <MdDelete
-                              onClick={() => handleDelete(item.id)}
+                            <MdWarning
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row click event
+                                handleDelete(item.id);
+                              }}
                               style={{
                                 cursor: "pointer",
-                                marginRight: "0.5rem",
                                 color: "red",
                               }}
                             />
@@ -568,12 +571,26 @@ export default function AccommodationReservation() {
                       checkIns.map((item) => (
                         <tr
                           key={item.id}
-                          style={{ borderBottom: "1px solid #e0e0e0" }}
+                          style={{
+                            borderBottom: "1px solid #e0e0e0",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            handleEdit(item); // Replace this with the modal opening logic
+                          }}
                         >
                           <td className="px-4 py-2">
-                            <input type="checkbox" />
+                            <input
+                              type="checkbox"
+                              onClick={(e) => e.stopPropagation()}
+                            />
                           </td>
-                          <td className="px-4 py-2">{item.propertyid}</td>
+                          <td className="px-4 py-2">
+                            {item.bookingid ? item.bookingid : item.bhid}
+                          </td>
+                          <td className="px-4 py-2">{item.booker.firstname}</td>
+                          <td className="px-4 py-2">{item.booker.lastname}</td>
+                          <td className="px-4 py-2">{item.booker.email}</td>
                           <td className="px-4 py-2">{item.property_name}</td>
                           <td className="px-4 py-2">{item.property_type}</td>
                           <td className="px-4 py-2">{item.property_address}</td>
@@ -588,17 +605,24 @@ export default function AccommodationReservation() {
                           </td>
                           <td className="px-4 py-2">
                             <MdEdit
-                              onClick={() => handleEdit(item)}
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row click event
+                                handleEdit(item.id); // Replace with your edit handling function
+                              }}
                               style={{
                                 cursor: "pointer",
-                                marginRight: "0.5rem",
+                                marginRight: "0.5rem", // Space between icons
+                                color: "blue", // You can change the color as needed
                               }}
                             />
-                            <MdDelete
-                              onClick={() => handleDelete(item.id)}
+                            <MdWarning
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row click event
+                                handleDelete(item.id);
+                              }}
                               style={{
                                 cursor: "pointer",
-                                marginRight: "0.5rem",
+                                color: "red",
                               }}
                             />
                           </td>
@@ -608,12 +632,26 @@ export default function AccommodationReservation() {
                       checkOut.map((item) => (
                         <tr
                           key={item.id}
-                          style={{ borderBottom: "1px solid #e0e0e0" }}
+                          style={{
+                            borderBottom: "1px solid #e0e0e0",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            handleEdit(item); // Replace this with the modal opening logic
+                          }}
                         >
                           <td className="px-4 py-2">
-                            <input type="checkbox" />
+                            <input
+                              type="checkbox"
+                              onClick={(e) => e.stopPropagation()}
+                            />
                           </td>
-                          <td className="px-4 py-2">{item.propertyid}</td>
+                          <td className="px-4 py-2">
+                            {item.bookingid ? item.bookingid : item.bhid}
+                          </td>
+                          <td className="px-4 py-2">{item.booker.firstname}</td>
+                          <td className="px-4 py-2">{item.booker.lastname}</td>
+                          <td className="px-4 py-2">{item.booker.email}</td>
                           <td className="px-4 py-2">{item.property_name}</td>
                           <td className="px-4 py-2">{item.property_type}</td>
                           <td className="px-4 py-2">{item.property_address}</td>
@@ -628,17 +666,24 @@ export default function AccommodationReservation() {
                           </td>
                           <td className="px-4 py-2">
                             <MdEdit
-                              onClick={() => handleEdit(item)}
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row click event
+                                handleEdit(item.id); // Replace with your edit handling function
+                              }}
                               style={{
                                 cursor: "pointer",
-                                marginRight: "0.5rem",
+                                marginRight: "0.5rem", // Space between icons
+                                color: "blue", // You can change the color as needed
                               }}
                             />
-                            <MdDelete
-                              onClick={() => handleDelete(item.id)}
+                            <MdWarning
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent row click event
+                                handleDelete(item.id);
+                              }}
                               style={{
                                 cursor: "pointer",
-                                marginRight: "0.5rem",
+                                color: "red",
                               }}
                             />
                           </td>
@@ -658,6 +703,7 @@ export default function AccommodationReservation() {
         reservation={selectedReservation}
         onSave={handleSave}
         onCancel={handleCancelEdit}
+        onClose={handleClose} // Pass handleClose to the modal
       />
       {modalOpen && (
         <div
