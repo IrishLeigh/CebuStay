@@ -19,6 +19,7 @@ use App\Models\Location;
 use App\Models\PropertyPaymentMethods;
 use App\Models\File;
 use App\Models\HouseRule;
+use App\Models\ReviewsAndRating;
 
 class PropertyController extends CORS
 {
@@ -334,6 +335,7 @@ class PropertyController extends CORS
     {
         $this->enableCors($request);
         $singleunittype = ["Home", "Apartment", "Condominium", "Cabin", "Luxury Home", "Bungalow"];
+
         // Retrieve all house rules and booking policies
         $property_hr = DB::table('house_rules')->get();
         $property_bp = DB::table('booking_policy')->get();
@@ -356,7 +358,13 @@ class PropertyController extends CORS
         // Retrieve property locations (addresses)
         $locations = Location::select('propertyid', 'address', 'zipcode', 'latitude', 'longitude')->get();
 
-        // Create associative arrays for unit details and unit rooms
+        // Retrieve ratings
+        $ratings = ReviewsAndRating::select('propertyid', DB::raw('AVG(rating) as average_rating'))
+            ->groupBy('propertyid')
+            ->get()
+            ->keyBy('propertyid'); // Group by property ID for easy lookup
+
+        // Create associative arrays for unit details, unit rooms, house rules, booking policies, and locations
         $unitDetailsByPropertyId = [];
         foreach ($unitDetails as $unitDetail) {
             $unitDetailsByPropertyId[$unitDetail->propertyid][] = $unitDetail;
@@ -367,7 +375,6 @@ class PropertyController extends CORS
             $unitRoomsByUnitId[$unitRoom->unitid][] = $unitRoom;
         }
 
-        // Create associative arrays for house rules and booking policies
         $houseRulesByPropertyId = [];
         foreach ($property_hr as $rule) {
             $houseRulesByPropertyId[$rule->propertyid][] = $rule;
@@ -378,13 +385,12 @@ class PropertyController extends CORS
             $bookingPoliciesByPropertyId[$policy->propertyid][] = $policy;
         }
 
-        // Create associative array for locations
         $locationsByPropertyId = [];
         foreach ($locations as $location) {
             $locationsByPropertyId[$location->propertyid] = $location;
         }
 
-        // Add guest_capacity, bedroomcount, bathroomcount, bedcount, house rules, booking policies, and address to properties list
+        // Add guest_capacity, bedroomcount, bathroomcount, bedcount, house rules, booking policies, address, and rating to properties list
         foreach ($properties as $property) {
             $propertyId = $property->propertyid;
 
@@ -392,9 +398,8 @@ class PropertyController extends CORS
             $unitDetail = $unitDetailsByPropertyId[$propertyId][0] ?? null; // Assuming one unit detail per property
             $property->guest_capacity = $unitDetail->guest_capacity ?? null;
 
-            // Bedroom Count
+            // Bedroom and Bathroom Count
             $bedroomCount = 0;
-            // Bathroom Count
             $bathroomCount = 0;
 
             if (isset($unitDetailsByPropertyId[$propertyId])) {
@@ -423,14 +428,8 @@ class PropertyController extends CORS
             // Address Information
             if (isset($locationsByPropertyId[$propertyId])) {
                 $property->address = $locationsByPropertyId[$propertyId]->address;
-                // $property->zipcode = $locationsByPropertyId[$propertyId]->zipcode;
-                // $property->latitude = $locationsByPropertyId[$propertyId]->latitude;
-                // $property->longitude = $locationsByPropertyId[$propertyId]->longitude;
             } else {
                 $property->address = null;
-                // $property->zipcode = null;
-                // $property->latitude = null;
-                // $property->longitude = null;
             }
 
             // Bed Count Calculation
@@ -451,10 +450,15 @@ class PropertyController extends CORS
                 }
             }
             $property->bedcount = $bedCount;
+
+            // Add Average Rating (formatted to 1 decimal place)
+            $property->rating = isset($ratings[$propertyId]) ? number_format($ratings[$propertyId]->average_rating, 1) : 0.0;
         }
 
         return response()->json($properties);
     }
+
+
 
     public function getAllPropertiesByUser(Request $request)
     {
