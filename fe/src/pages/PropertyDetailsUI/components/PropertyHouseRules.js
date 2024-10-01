@@ -126,7 +126,7 @@ const HouseRules = ({ houserules = {} }) => {
                   sx={{
                     padding: "16px",
                     borderRadius: "8px",
-                    height: 150,
+                    height: "200px",
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark" ? "#1A2027" : "#fff",
                     border: "1px solid #DDDDDD",
