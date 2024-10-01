@@ -97,13 +97,13 @@ const CalendarLayout = () => {
                 <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>An effortless overview of your property bookings!</p>
             </div>
 
-          <Paper style={{ paddingTop: "2rem", paddingBottom: "2rem", margin: "2rem" }}>
+          <Paper style={{ paddingTop: "2rem", paddingBottom: "2rem", }}>
 
             <Paper
               style={{
                 padding: ".5rem",
                 width: !home ? "18rem" : "12rem",
-                margin: "1.5rem",
+                margin: "0 1rem 1rem 1rem"
               }}
             >
               <div style={{ display: "flex", alignContent: "center" }}>
@@ -114,7 +114,7 @@ const CalendarLayout = () => {
                   <Select
                     value={selectedProperty}
                     onChange={handlePropertyChange}
-                    style={{ minWidth: "10rem" }}
+                    style={{ minWidth: "15rem" }}
                   // disabled = {!propertyData ? false : true}
                   >
                     {propertyData

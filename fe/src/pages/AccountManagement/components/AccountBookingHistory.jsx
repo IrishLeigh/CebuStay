@@ -41,6 +41,11 @@ export default function BookingHistory({ profile }) {
     const [loading, setLoading] = useState(true); // Initialize loading state
 
     // console.log("selectedBooking:", selectedBooking);
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'N/A'; // Handle cases where date is not available
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateStr).toLocaleDateString('en-US', options);
+      };
 
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
@@ -567,7 +572,7 @@ export default function BookingHistory({ profile }) {
                                                     }}
                                                 >
                                                     {/* {item[key]} */}
-                                                    {key === 'status' && selectedButton === 'CANCELLED' ? item.isCancel : item[key]}
+                                                    {key === 'status' && selectedButton === 'CANCELLED' ? item.isCancel : (key === 'checkIn' ? formatDate(item[key]) : item[key])}
                                                 </td>
                                             ))}
                                             {selectedButton === 'COMPLETED' && (
@@ -665,7 +670,7 @@ export default function BookingHistory({ profile }) {
                         objectFit: 'cover',
                         borderRadius: '8px',
                         marginRight: '1rem' // Spacing between image and text
-                    }}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                    }}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
                 /> */}
 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
