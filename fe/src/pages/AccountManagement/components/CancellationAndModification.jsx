@@ -200,8 +200,6 @@ const CancellationAndModification = ({
 
   const confirmCancelBooking = async () => {
     setCancelLoading(true);
-    console.log("Booking Cancelled: ", selectedBooking.id);
-    console.log("Cancellation: ", properties.property_bookingpolicy.CancellationCharge);
     const priorDays = properties.property_bookingpolicy.cancellationDays;
     const checkinDate = new Date(selectedBooking.checkIn);
     const currentDate = new Date();
@@ -221,22 +219,33 @@ const CancellationAndModification = ({
         dayResult: dayResult,
         isCancel: properties.property_bookingpolicy.isCancellationPolicy || 0,
       });
+      console.log("Response:", response.data);
 
-      console.log("Booking Cancelled: ", selectedBooking.id);
+      if (response.data.status === 'success') {
+        setSnackbarMessage("Successfully cancelled the booking.");
+        setSnackbarSeverity("success");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        setSnackbarMessage("Failed to cancel the booking.");
+        setSnackbarSeverity("error");
+      }
+
       setShowModal(false); // Hide modal after confirmation
-
-      // Now handle the set cancel request
-      // await axios.post("http://127.0.0.1:8000/api/setcancel", {
-      //   bookingid: selectedBooking.id
-      // });
 
       // Reload the page after both operations are successful
       setCancelLoading(false);
-      window.location.reload();
+      // window.location.reload();
 
     } catch (error) {
       console.error("Error occurred during cancellation:", error);
+      setSnackbarMessage("An error occurred while cancelling the booking.");
+      setSnackbarSeverity("error");
       setCancelLoading(false);
+    }finally {
+      setCancelLoading(false);
+      setSnackbarOpen(true);
     }
   };
 
@@ -413,7 +422,7 @@ const CancellationAndModification = ({
                     {/* Modification Policy */}
                     {properties.property_bookingpolicy.isModificationPolicy === 1 ? (
                       <p style={{ fontSize: 'small' }}>
-                        <strong>Flexible Modification Rate Policy:</strong> If you need to modify your booking, changes can be made {properties.property_bookingpolicy.modificationDays} days before check-in. After this point, no modifications are permitted.
+                        <strong>Flexible Modification Rate Policy:</strong> If you need to modify your booking, changes can be made free of charge {properties.property_bookingpolicy.modificationDays} days before check-in. After this point, changes will be charged {properties.property_bookingpolicy.modificationCharge}%.
                       </p>
                     ) : (
                       <p style={{ fontSize: 'small' }}>
