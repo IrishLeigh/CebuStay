@@ -62,7 +62,10 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   
     const email = individualData.Email || companyData.legalRepresentatives[0].email;
     const phoneNumber = individualData.PhoneNumber || companyData.legalRepresentatives[0].phone;
-    const countryCode = individualData.countryCode || companyData.countryCode;
+    const countryCode = individualData.countryCode || (companyData.legalRepresentatives.length > 0 ? companyData.legalRepresentatives[0].countryCode : null);
+
+    console.log(countryCode); // This will log the country code or `null` if none are available.
+    
   
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
   
@@ -100,7 +103,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
     const pattern = phonePatterns[countryCode] || /^\+[1-9]\d{1,14}$/;  // Default pattern
   
     if (!pattern.test(phoneWithCountryCode)) {
-      alert('Invalid phone number. Please enter a valid phone number.');
+      alert(`Invalid phone number for country code ${countryCode}. Please enter a valid phone number.`);
       return;
     }
   

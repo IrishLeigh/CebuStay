@@ -1,8 +1,7 @@
-// InfoModal.js
 import React from 'react';
 import { Modal, Box, Button, Typography, Divider, Icon } from '@mui/material';
 import { styled } from '@mui/system';
-import InfoIcon from '@mui/icons-material/Info'; // Import the icon you want to use
+import InfoIcon from '@mui/icons-material/Info';
 
 const ModalContent = styled(Box)(({ theme }) => ({
   width: '600px', // Wider modal
@@ -39,7 +38,7 @@ const ComplianceModal = ({ open, onClose }) => {
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={() => {}} // Prevent closing when clicking outside
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >

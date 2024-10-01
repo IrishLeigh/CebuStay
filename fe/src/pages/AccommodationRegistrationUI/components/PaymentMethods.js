@@ -38,6 +38,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
 
   useEffect(() => {
     onPaymentDataChange(paymentData);
+    window.scrollTo(0, 0);
   }, []);
 
   const validateAndProceed = () => {

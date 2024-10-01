@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
 import { AuthProvider } from "./components/AuthProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import TopRated from "./InteractiveMap/components/TopRated";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,7 +17,7 @@ root.render(
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
             <AuthProvider>
-              <App />
+              <TopRated />
             </AuthProvider>
           </GoogleOAuthProvider>
         </UserProvider>

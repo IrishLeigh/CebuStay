@@ -394,7 +394,7 @@ export default function EditAmenities({
                 ))}
               </Grid>
             </div>
-            {isEditing && (
+            {/* {isEditing && (
               <div style={{ marginTop: "1rem", textAlign: "right" }}>
                 <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
                   Revert Changes
@@ -407,7 +407,7 @@ export default function EditAmenities({
                   Save All Changes
                 </Button>
               </div>
-            )}
+            )} */}
           </Grid>
         </Grid>
         <Snackbar

@@ -44,7 +44,7 @@ CustomTabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function EditPropertyUI({ apiData, onClose, onSave }) {
+export default function EditPropertyUI() {
   const [coverImg, setCoverImg] = useState([]);
   const [galleryImg, setGalleryImg] = useState([]);
   const [value, setValue] = useState(0);
@@ -290,7 +290,8 @@ export default function EditPropertyUI({ apiData, onClose, onSave }) {
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={6}>
-          <EditPartnerVerification parentPartnerData={partnerData} />
+          <EditPartnerVerification parentPartnerData={partnerData} onSaveStatusChange={handleSaveStatusChange}
+          propertyid = {id} />
         </CustomTabPanel>
       </Box>
     </div>

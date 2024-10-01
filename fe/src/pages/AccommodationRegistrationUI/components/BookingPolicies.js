@@ -20,7 +20,10 @@ export default function Policies({ onPoliciesDataChange, parentPoliciesData, han
 
   const [policiesData, setPoliciesData] = useState(initialPoliciesData);
   const [error, setError] = useState("");
-
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top when the component mounts
+  }, []);
   useEffect(() => {
     // Update local state when parentPoliciesData change
     if (parentPoliciesData) {

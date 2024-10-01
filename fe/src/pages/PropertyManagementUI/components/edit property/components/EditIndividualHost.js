@@ -18,6 +18,15 @@ import Cropper from 'react-easy-crop';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from './cropImageHelper';
 
+const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(null, args);
+    }, delay);
+  };
+};
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -109,8 +118,10 @@ const countryCodes = [
   // Add more country codes as needed
 ];
 
-export default function IndividualHost({ onDataChange, parentData, isEditing }) {
+export default function IndividualHost({ onDataChange, parentData, isEditing, isCancelled }) {
   const [data, setData] = useState({
+    id: null,
+    propertyownershipid: null,
     FirstName: '',
     LastName: '',
     DateOfBirth: '',
@@ -126,78 +137,59 @@ export default function IndividualHost({ onDataChange, parentData, isEditing }) 
   });
   const [errors, setErrors] = useState({});
   const [originalData, setOriginalData] = useState(null);
-  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
-  const validateData = () => {
-    // Initialize newErrors with empty messages
-    const newErrors = { PhoneNumber: '', Email: '', DateOfBirth: '' };
+    // Check if parentData and parentData.property_owner exist before trying to access their properties
+    if (parentData && parentData.property_owner) {
+      const propertyOwner = parentData.property_owner;
 
-    // Validate phone number based on country code
-    const phoneWithCountryCode = `${data.countryCode}${data.PhoneNumber}`;
-    
-    // Define phone number patterns based on country code
-    const phonePatterns = {
-      '+1': /^\+1\d{10}$/, // USA/Canada
-      '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
-      '+44': /^\+44\d{10}$/, // UK
-      // Add more country codes and patterns as needed
-    };
-    
-    // Validate phone number
-    const pattern = phonePatterns[data.countryCode] || /^\+[1-9]\d{1,14}$/;  // Default for other countries
-    if (!pattern.test(phoneWithCountryCode)) {
-      newErrors.PhoneNumber = 'Invalid phone number';
+      setOriginalData({
+        id: propertyOwner.propertyownerid || null,
+        propertyownershipid: parentData.property_ownership?.propertyownershipid || null,
+        FirstName: propertyOwner.firstname || '',
+        LastName: propertyOwner.lastname || '',
+        DateOfBirth: propertyOwner.dateofbirth || '',
+        DisplayName: propertyOwner.displayname || '',
+        countryCode: propertyOwner.countrycode || '+63',
+        PhoneNumber: propertyOwner.contactnumber || '',
+        Email: propertyOwner.email || '',
+        City: propertyOwner.city || '',
+        ZipCode: propertyOwner.zipcode || '',
+        Street: propertyOwner.street || '',
+        Barangay: propertyOwner.barangay || '',
+        Describe: propertyOwner.describe || '',
+      });
+
+      // Set data to the initial values from parentData
+      setData({
+        id: propertyOwner.propertyownerid || null,
+        propertyownershipid: parentData.property_ownership?.propertyownershipid || null,
+        FirstName: propertyOwner.firstname || '',
+        LastName: propertyOwner.lastname || '',
+        DateOfBirth: propertyOwner.dateofbirth || '',
+        DisplayName: propertyOwner.displayname || '',
+        countryCode: propertyOwner.countrycode || '+63',
+        PhoneNumber: propertyOwner.contactnumber || '',
+        Email: propertyOwner.email || '',
+        City: propertyOwner.city || '',
+        ZipCode: propertyOwner.zipcode || '',
+        Street: propertyOwner.street || '',
+        Barangay: propertyOwner.barangay || '',
+        Describe: propertyOwner.describe || '',
+      });
+    } else {
+      console.warn('parentData or parentData.property_owner is undefined or null');
     }
+  }, [parentData]);
 
-    // Validate email
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
-    if (!emailPattern.test(data.Email)) {
-      newErrors.Email = 'Invalid email address';
+  useEffect(() => {
+    // If isCancelled is true and originalData exists, reset data to originalData
+    if (isCancelled && originalData) {
+      setData(originalData);
     }
-
-    // Set errors to state
-    setErrors(newErrors);
-
-    // Return true if no errors (all error fields are empty)
-    return Object.values(newErrors).every(error => error === '');
-  };
-
-  onDataChange(data);
-
-}, [data]);  // Re-run validation whenever `data` changes
-
-useEffect(() => {
- if (parentData) {
-    // setData(
-    //   {
-    //     id : parentData.property_ownership.propertyownershipid || null,
-    //     FirstName : parentData.property_owner.firstname || '',
-    //     LastName : parentData.property_owner.lastname || '',
-    //     DateOfBirth : parentData.property_owner.dateofbirth || '',
-    //     DisplayName : parentData.property_owner.displayname || '',
-    //     countryCode : parentData.property_owner.countrycode || '+63',
-    //     PhoneNumber : parentData.property_owner.contactnumber || '',
-    //     Email : parentData.property_owner.email || '',
-    //     City : parentData.property_owner.city || '',
-    //     ZipCode : parentData.property_owner.zipcode || '',
-    //     Street : parentData.property_owner.street || '',
-    //     Barangay : parentData.property_owner.barangay || '',
-    //     Describe : parentData.property_owner.describe || '',
-    //   } 
-    // );
-    // setOriginalData(parentData);
-
- }else{
-   
-    setOriginalData(null);
-
- }
-}, [parentData]);
+  }, [isCancelled, originalData]);
   
-
-
- // Handle image file upload
+// Handle image file upload
 const handleImageUpload = (event) => {
   const file = event.target.files[0];
   const reader = new FileReader();
@@ -230,7 +222,6 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
   const handleDeleteImage = () => {
     setData((prevData) => ({ ...prevData, imageSrc: null }));
   };
-
   // Handle changes in text fields
   const handleChange = (event) => {
     const { id, value } = event.target;
@@ -238,7 +229,6 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
       ...prevData,
       [id]: value,
     }));
-    hasChanges(true);
 
   };
   const handleCountryCodeChange = (event) => {
@@ -246,7 +236,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
       ...prevData,
       countryCode: event.target.value,
     }));
-    hasChanges(true);
+
   };
 
   // Handle changes in the date picker
@@ -255,9 +245,24 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
       ...prevData,
       DateOfBirth: date.isValid ? date.format('YYYY-MM-DD') : '',
     }));
-    hasChanges(true);
+ 
   };
   console.log("Parent Data SA CHILD INDIVIDUAL DATA : ", parentData);
+  const debouncedOnDataChange = useCallback(
+    debounce((data) => {
+      if (onDataChange) {
+        onDataChange(data); // Call the original callback with the updated data
+      }
+    }, 300), // Adjust the delay as needed (300ms is a common choice)
+    [onDataChange]
+  );
+
+  // Handle data changes and notify parent with delay
+  useEffect(() => {
+    debouncedOnDataChange(data); // Call the debounced function
+  }, [data, debouncedOnDataChange]);
+
+  console.log("Data: ", parentData);
 
   return (
     <div style={styles.container}>

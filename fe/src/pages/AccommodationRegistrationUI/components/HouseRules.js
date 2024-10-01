@@ -14,7 +14,9 @@ export default function HouseRules({ onHouseRulesDataChange, parentHouseRules, h
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
   const [error, setError] = useState(""); // State for error message
 
- 
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top when the component mounts
+  }, []);
 
   // Validation function
   const validateAndProceed = () => {

@@ -47,11 +47,16 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
     setPriceUnit({ basePrice, profit: profitValue });
   }, [basePrice]);
 
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const validateAndProceed = () => {
-    if (basePrice) {
-      onUnitPricingChange(priceUnit)
+    const minPrice = 566; // Minimum price limit
+    if (basePrice < minPrice) {
+      alert(`Please enter a price of at least ${pesoSign}${minPrice} to sustain the platform's operational integrity.`);
+    } else if (basePrice) {
+      onUnitPricingChange(priceUnit);
       handleNext();
     } else {
       alert("Please enter a valid price.");
@@ -60,9 +65,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
 
   return (
     <Container maxWidth="lg">
-      <Box
-        className="centered-container"
-      >
+      <Box className="centered-container">
         <Paper
           elevation={3}
           sx={{
@@ -75,7 +78,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
         >
           <Box
             component="form"
-            noValidate
+            
             autoComplete="off"
             sx={{
               width: "auto",
@@ -106,6 +109,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
                 type="text"
                 value={basePrice}
                 onChange={handleChange}
+                required
                 style={{
                   border: "none",
                   outline: "none",
@@ -121,49 +125,26 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
                 <Divider>Pricing Details</Divider>
                 <div style={{ justifyContent: "center", alignItems: "center" }}>
                   <Root>
-                    <p style={{textAlign : "center"}}>Commission and charges from CebuStay totaling 18.00% <br/>This amount also covers all taxes and fees. Please set your price to maximize your profit!</p>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
+                    <p style={{ textAlign: "center" }}>
+                      Commission and charges from CebuStay totaling 18.00% <br />
+                      This amount also covers all taxes and fees. Please set your price to maximize your profit!
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <CheckIcon />
                       <p>
-                        Enjoy instant booking confirmations for added
-                        convenience.
+                        Enjoy instant booking confirmations for added convenience.
                       </p>
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <CheckIcon />
                       <p>
-                        Let us handle guest payments, saving you time and
-                        effort.
+                        Let us handle guest payments, saving you time and effort.
                       </p>
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <h6>Your total earnings would be (including taxes)</h6>
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <div style={{ fontWeight: "bold", fontSize: "24px" }}>
                         {pesoSign}
                         {priceUnit.profit}

@@ -34,6 +34,10 @@ export default function PropertyType2({
     onSelectedPropertyTypeChange(selectedPropertyType);
   }, [selectedPropertyType, onSelectedPropertyTypeChange]);
 
+  //Make the screen at the top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  })
   const handleClick = (button) => {
     setSelectedPropertyType(button);
   };

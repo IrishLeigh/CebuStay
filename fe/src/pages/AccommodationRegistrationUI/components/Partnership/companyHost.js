@@ -224,6 +224,13 @@ const handleCountryCodeChange = (id, newCountryCode) => {
   useEffect(() => {
     const validateData = () => {
       const newErrors = { phone: '', email: '', dateOfBirth: '' };
+       const phonePatterns = {
+      '+1': /^\+1\d{10}$/, // USA/Canada
+      '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
+      '+44': /^\+44\d{10}$/, // UK
+      // Add more country codes and patterns as needed
+    };
+  
   
       data.legalRepresentatives.forEach((rep) => {
         if (!rep.phone || rep.phone.length < 10) {

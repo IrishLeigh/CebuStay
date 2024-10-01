@@ -27,6 +27,10 @@ export default function PropertyTypeDescription({ onSelectedPropertyTypeChange, 
     onSelectedPropertyTypeChange(newSelectedPropertyType);
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);  
+
 
   console.log("Property Type", selectedPropertyType);
   return (

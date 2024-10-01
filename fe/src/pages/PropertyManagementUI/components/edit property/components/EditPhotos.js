@@ -882,7 +882,7 @@ export default function EditPhotos({
         </DialogActions>
       </Dialog>
 
-        {isEditing && (
+        {/* {isEditing && (
           <div style={{ marginTop: "1rem" }}>
             <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
               Revert Changes
@@ -897,7 +897,7 @@ export default function EditPhotos({
               Save Changes
             </Button>
           </div>
-        )}
+        )} */}
       </Paper>
       <Snackbar
           open={openSnackbar}
