@@ -5,8 +5,8 @@ import HeaderAccountMgnt from '../../../components/Header/HeaderAccountMgnt';
 import Modal from 'react-modal';
 import CancellationAndModification from './CancellationAndModification'; // Import the component
 import axios from 'axios';
-import { CircularProgress, Snackbar, Alert } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { CircularProgress, Snackbar, Alert,  } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
 // Set the app element for accessibility
 Modal.setAppElement('#root');
 
@@ -40,6 +40,9 @@ export default function BookingHistory({ profile }) {
 
     const [loading, setLoading] = useState(true); // Initialize loading state
 
+
+    const [viewReviewisOpen, setViewReviewisOpen] = useState(false);
+    const [review, setReview] = useState(null);
     // console.log("selectedBooking:", selectedBooking);
     const formatDate = (dateStr) => {
         if (!dateStr) return 'N/A'; // Handle cases where date is not available
@@ -178,6 +181,25 @@ export default function BookingHistory({ profile }) {
         setModalIsOpen(true);
         console.log("Review",item)
     };
+    const openViewReviewModal = async (item) => {
+        setCurrentPropertyName(item.name);
+        setCurrentBID(item.id);
+        setCurrentPropertyId(item.propertyid);
+        console.log(item.id);
+        const bhid = item.id;
+        setViewReviewisOpen(true);
+    
+        try {
+            const res = await axios.get("http://127.0.0.1:8000/api/getreviewsandratings", {
+                params: { bhid: bhid }
+            });
+            console.log("res: ", res.data);
+            setReview(res.data.reviews[0]);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    
 
     const handleCancelBooking = (bookingId) => {
         // Remove the booking from upcomingData
@@ -193,7 +215,10 @@ export default function BookingHistory({ profile }) {
         }
     };
 
-
+    const closeViewReviewModal = () => {
+        setViewReviewisOpen(false);
+        
+    };
 
     const closeReviewModal = () => {
         setModalIsOpen(false);
@@ -275,7 +300,9 @@ export default function BookingHistory({ profile }) {
     const handleBackToHistory = () => {
         setSelectedBooking(null);
     };
-
+    const handleViewReview = async () => {
+        
+    }
 
     return (
 
@@ -577,24 +604,22 @@ export default function BookingHistory({ profile }) {
                                             ))}
                                             {selectedButton === 'COMPLETED' && (
                                                 <td style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                                    <button
-                                                        onClick={() => openReviewModal(item)}
-                                                        disabled={item.isreview === 1}
+                                                   <button
+                                                        onClick={() => item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item)}
+                                                        disabled={false}  // Remove disabling as you want different actions in both cases
                                                         style={{
                                                             color: item.isreview === 1 ? 'gray' : 'green',
-                                                            // color: 'green',
-                                                            cursor: item.isreview === 1 ? 'not-allowed' : 'pointer',
+                                                            cursor: item.isreview === 1 ? 'pointer' : 'pointer',  // Both should be pointer now
                                                             background: 'none',
                                                             border: 'none',
-                                                            // cursor: 'pointer',
-                                                            // padding: '0.5rem 0.5rem',
                                                             fontFamily: 'Poppins',
                                                             outline: 'none',
                                                             fontSize: '0.875rem',
                                                         }}
                                                     >
-                                                       {item.isreview === 1 ? 'Reviewed' : 'Add A Review'}
+                                                        {item.isreview === 1 ? 'View Review' : 'Add A Review'}
                                                     </button>
+
                                                 </td>
                                             )}
 
@@ -713,6 +738,7 @@ export default function BookingHistory({ profile }) {
                     </div>
                 </div>
 
+
                 <div style={{ marginBottom: '1rem' }}>
                     <label htmlFor="review-text" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>Review:</label>
                     <textarea
@@ -781,6 +807,167 @@ export default function BookingHistory({ profile }) {
                 </div>
             </Modal>
 
+                        {/* //VIEW REVIEW */}
+        {review && (
+            <Modal
+                isOpen={viewReviewisOpen}
+                onRequestClose={closeViewReviewModal}
+                style={{
+                    overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        transform: 'translate(-50%, -50%)',
+                        padding: '2rem',
+                        borderRadius: '0.5rem',
+                        width: '90%',
+                        maxWidth: '500px',
+                        backgroundColor: '#fff',
+                        border: 'none',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                    }
+                }}
+            >
+
+                {/* <img
+                    src={'https://pix10.agoda.net/hotelImages/8010358/-1/01b86d2f135994b4c262ab86b1d80a05.jpg?ca=6&ce=1&s=1024x'}
+                    alt="Property"
+                    style={{
+                        width: '100px', // Adjust size as needed
+                        height: '100px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        marginRight: '1rem' // Spacing between image and text
+                    }}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                /> */}
+            
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
+
+
+                    {/* <h2 style={{ margin: '0', fontSize: '1.5rem', fontWeight: '600', color: '#333' }}>
+                        {selectedPropertyName}
+                    </h2> */}
+                    <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
+                        {currentPropertyName}
+                    </small>
+                    <small style={{ color: '#666', fontSize: '1rem' }}>
+                        {currentLocation}
+                    </small>
+                    <small style={{ color: '#666', fontSize: '1rem' }}>
+                        Property ID # {currentPropertyId} | Booking ID # {currentBID}
+                    </small>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                    <label htmlFor="review-rating" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>Rating:</label>
+                    <div style={{ display: 'flex', fontSize: '1rem', }}>
+                        {[1, 2, 3, 4, 5].map(star => (
+                            <svg
+                                key={star}
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill={review.rating >= star ? '#FBBF24' : '#D1D5DB'}
+                                viewBox="0 0 24 24"
+                                style={{
+                                    margin: '0 0.1rem',
+                                    width: '3.5rem',
+                                    height: '3.5rem',
+                                    // cursor: reviewSubmitted ? 'default' : 'pointer' // Change cursor based on submission
+                                }}
+                                // onClick={!reviewSubmitted ? () => setRating(star) : undefined} // Disable click after submission
+                            >
+                                <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-8.28-.72L12 2 10.28 8.52 2 9.24l5.46 4.73L5.82 21z" />
+                            </svg>
+                        ))}
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                    <label htmlFor="review-text" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>Review:</label>
+                    {/* <textarea
+                        id="review-text"
+                        name="review"
+                        rows="4"
+                        style={{
+                            padding: '0.5rem',
+                            borderRadius: '0.25rem',
+                            border: '1px solid #ddd',
+                            width: '100%',
+                            fontSize: '1rem',
+                            color: '#333',
+                            resize: 'vertical',
+                            backgroundColor: reviewSubmitted ? '#f9f9f9' : '#fff',
+                            pointerEvents: reviewSubmitted ? 'none' : 'auto',
+                        }}
+                        value={reviewText}
+                        onChange={(e) => setReviewText(e.target.value)}
+                    ></textarea>
+                    {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>} */}
+                    <p style={{marginBottom:'0px', fontSize: '1rem', color: 'gray', fontStyle: 'italic', backgroundColor: '#f9f9f9', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid #ddd', width: '100%' }}>"{review.review}"</p>
+                    <p style={{ fontSize: '0.675rem', color: 'gray', fontStyle: 'italic', marginLeft: '0.5rem' }}>
+                    {new Date(review.created_at).toLocaleString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true, // Set to true for 12-hour format (AM/PM)
+                    })}
+                    </p>
+                </div>
+
+                <div style={{ display: reviewSubmitted ? 'block' : 'none', marginBottom: '1rem' }}>
+                    <h3 style={{ margin: '0.5rem 0', fontSize: '1.25rem', color: '#333' }}>Your Review:</h3>
+                    <p style={{ fontSize: '1rem', color: '#333' }}>{reviewText}</p>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2.5rem' }}>
+                    <button  
+                        onClick={() =>{
+                            const queryParams = new URLSearchParams({
+                                guestCapacity: '', // Default to empty string if null
+                                checkin_date: '', // Default to empty string if null
+                                checkout_date: '', // Default to empty string if null
+                              }).toString();
+                              setTimeout(() => {
+                                navigate(`/property/${currentPropertyId}?${queryParams}`);
+                                closeReviewModal();
+                              }, 2000);
+                        }}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            backgroundColor: '#f0f0f0',
+                            color: '#000099',
+                            border: 'none',
+                            borderRadius: '0.25rem',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            transition: 'background-color 0.3s',
+                            background: 'none',
+                        }}>
+                        View Property
+                    </button>
+                    <button
+                        onClick={closeViewReviewModal}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            backgroundColor: '#f0f0f0',
+                            color: '#000',
+                            border: 'none',
+                            borderRadius: '0.25rem',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            transition: 'background-color 0.3s'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+                    >
+                        Close
+                    </button>
+                </div>
+            </Modal>
+        )}
 
 
 
