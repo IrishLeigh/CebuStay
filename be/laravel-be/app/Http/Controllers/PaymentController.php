@@ -211,6 +211,7 @@ class PaymentController extends CORS
                 // Return the refund data
                 return response()->json([
                     'message' => 'Refund successful',
+                    'status' => 'success',
                     'refund' => $refundData,
                     'payment' => $amountToRefund
                 ], 200);

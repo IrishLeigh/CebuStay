@@ -216,8 +216,8 @@ class BookingController extends CORS
         $payment = Payment::where('bookingid', $booking->bookingid)->first();
 
         // Check if check-in date minus cancellation days is greater than the current date
-        $cancellationDays = $bookingPolicy->cancellationDays;
-        $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($oldCheckin . " - $cancellationDays days"));
+        $modificationDays = $bookingPolicy->modificationDays;
+        $checkinDateMinusCancellationDays = date('Y-m-d', strtotime($oldCheckin . " - $modificationDays days"));
         $currentDate = date('Y-m-d');
         $checkoutUrl = '';
 
