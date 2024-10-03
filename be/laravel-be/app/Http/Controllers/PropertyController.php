@@ -972,8 +972,33 @@ class PropertyController extends CORS
 
         $propertyIds = $properties->pluck('propertyid');
 
+        $reviews = DB::table('reviewsandratings')->get();
+
+        //calculate the average of column rating in $reviews and put it in $propertyrating
+        $averageRatingsByPropertyId = [];
+        $totalReviewsByPropertyId = [];
+        foreach ($reviews as $review) {
+            if (!isset($averageRatingsByPropertyId[$review->propertyid])) {
+                $averageRatingsByPropertyId[$review->propertyid] = [
+                    'totalRating' => 0,
+                    'count' => 0,
+                ];
+            }
+            $averageRatingsByPropertyId[$review->propertyid]['totalRating'] += $review->rating;
+            $averageRatingsByPropertyId[$review->propertyid]['count']++;
+            if (!isset($totalReviewsByPropertyId[$review->propertyid])) {
+                $totalReviewsByPropertyId[$review->propertyid] = 0;
+            }
+            $totalReviewsByPropertyId[$review->propertyid]++;
+        }
+
+        // Calculate average rating and store it
+        foreach ($averageRatingsByPropertyId as $propertyId => $data) {
+            $averageRatingsByPropertyId[$propertyId] = $data['totalRating'] / $data['count'];
+        }
+
         // Retrieve unit details
-        $unitDetails = UnitDetails::select('unitid', 'guest_capacity', 'propertyid')->get();
+        $unitDetails = UnitDetails::select('unitid', 'guest_capacity', 'propertyid', 'proppricingid', 'guest_capacity')->get();
 
         // Retrieve unit rooms
         $unitRooms = UnitRooms::select('unitid', 'unitroomid', 'roomname', 'quantity')->get();
@@ -1049,6 +1074,8 @@ class PropertyController extends CORS
                 'propertyid' => $propertyId,
                 'category' => 'Property',  // or use the property type
                 'description' => $property->property_desc,
+                'rating' => $averageRatingsByPropertyId[$propertyId] ?? null,
+                'totalReviews' => $totalReviewsByPropertyId[$propertyId] ?? 0,
                 'propertyType' => $property->property_type,
                 'unitType' => $property->unit_type,
                 'guestCapacity' => $unitDetailsByPropertyId[$propertyId][0]->guest_capacity ?? null,
@@ -1061,6 +1088,7 @@ class PropertyController extends CORS
                 'bedCount' => 0,
                 'amenities' => $amenitiesByPropertyId[$propertyId] ?? [], // Get amenities based on property ID
                 'propertyFiles' => $propertyFilesByPropertyId[$propertyId] ?? [], // Get property files based on property ID
+                'pricing' => [],
                 'createdAt' => now(),  // or set the actual created timestamp
                 'updatedAt' => now()   // or set the actual updated timestamp
             ];
@@ -1078,6 +1106,30 @@ class PropertyController extends CORS
                         }
                     }
                 }
+            }
+
+            // Fetch and assign pricing based on unit details
+            if (isset($unitDetailsByPropertyId[$propertyId])) {
+                foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
+                    $proppricingId = $unitDetail->proppricingid; // Get the proppricingid
+                    if ($proppricingId) {
+                        // Fetch pricing based on proppricingid
+                        $pricing = DB::table('property_pricing')
+                            ->where('proppricingid', $proppricingId) // Use the proppricingid for the query
+                            ->first(); // Get the first matching record
+
+                            if ($pricing) {
+                                $newProperty['pricing'] = [ // Add to array if multiple
+                                    'proppricingid' => $pricing->proppricingid,
+                                    'max_price' => $pricing->max_price,
+                                    'min_price' => $pricing->min_price,
+                                    'profit' => $pricing->profit,
+                                    'created_at' => $pricing->created_at,
+                                ];
+                            }
+                    }
+                }
+                $finalProperties[] = $newProperty;
             }
 
             // Calculate bed count

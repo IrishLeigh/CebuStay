@@ -287,30 +287,30 @@ class PaymentController extends CORS
         }
     }
 
-    public function getRefund(Request $request)
-    {
-        $this->enableCors($request);
-        $bookingid = $request->input('bookingid');
+    // public function getRefund(Request $request)
+    // {
+    //     $this->enableCors($request);
+    //     $bookingid = $request->input('bookingid');
 
-        $payment = Payment::where('bookingid', $bookingid)->first();;
+    //     $payment = Payment::where('bookingid', $bookingid)->first();;
 
-        // Get refund ID from request
-        $refundId = $request->input('refund_id');
+    //     // Get refund ID from request
+    //     $refundId = $request->input('refund_id');
 
-        if (!$refundId) {
-            return response()->json(['error' => 'Refund ID is required'], 400);
-        }
+    //     if (!$refundId) {
+    //         return response()->json(['error' => 'Refund ID is required'], 400);
+    //     }
 
-        // Use the PayMongo service to retrieve the refund data
-        $refundData = $this->payMongoService->getRefundService($payment.$linkid);
+    //     // Use the PayMongo service to retrieve the refund data
+    //     $refundData = $this->payMongoService->getRefundService($payment.$linkid);
 
-        if (isset($refundData['error'])) {
-            return response()->json(['error' => $refundData['error']], 500);
-        }
+    //     if (isset($refundData['error'])) {
+    //         return response()->json(['error' => $refundData['error']], 500);
+    //     }
 
-        // Return the refund details
-        return response()->json($refundData, 200);
-    }
+    //     // Return the refund details
+    //     return response()->json($refundData, 200);
+    // }
 
 
 
