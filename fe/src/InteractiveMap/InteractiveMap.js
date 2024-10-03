@@ -581,6 +581,7 @@
               <div>
                 <SeeAndDoCard
                   spot={selectedSeeAndDo}
+                  allProperties={allProperties}
                   onClose={() => setSelectedSeeAndDo(null)}
                 />
               </div>
