@@ -11,12 +11,12 @@ import {
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-const PropertyCard = ({ places = [], onClick }) => {
+const PropertyCard = ({ nearbyLocation, onClick }) => {
   // Determine screen size
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   // Check if the places array is valid
-  if (!Array.isArray(places) || places.length === 0) {
+  if (!Array.isArray(nearbyLocation) || nearbyLocation.length === 0) {
     return (
       <Typography variant="body2" color="textSecondary">
         No places available
@@ -25,7 +25,30 @@ const PropertyCard = ({ places = [], onClick }) => {
   }
 
   // Display the first place if available
-  const place = places[0];
+  const place = nearbyLocation[0];
+
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating); // Full stars
+    const hasHalfStar = rating % 1 >= 0.5; // Check for half star
+
+    // Create full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<span key={`full-${i}`} className="">★</span>);
+    }
+
+    // Add half star if applicable
+    if (hasHalfStar) {
+      stars.push(<span key="half" className="">☆</span>);
+    }
+
+    // Fill remaining with empty stars up to 5
+    for (let i = stars.length; i < 5; i++) {
+      stars.push(<span key={`empty-${i}`} className="">☆</span>);
+    }
+
+    return stars;
+  };
 
   return (
     <ButtonBase
@@ -42,7 +65,7 @@ const PropertyCard = ({ places = [], onClick }) => {
         <CardMedia
           component="img"
           height={isSmallScreen ? "50" : "100"} // Smaller height for responsiveness
-          image={place.image}
+          image={place.propertyFiles?.[0]?.src || "/propertyplaceholder.jpg"}
           alt={place.name}
           sx={{
             borderTopLeftRadius: 16,
@@ -60,7 +83,7 @@ const PropertyCard = ({ places = [], onClick }) => {
               fontFamily: "Poppins",
             }}
           >
-            {place.name}
+            {place.name}Name
           </Typography>
 
           {/* Rating */}
@@ -74,9 +97,16 @@ const PropertyCard = ({ places = [], onClick }) => {
                 fontFamily: "Poppins",
               }}
             >
-              {place.rating}
+              {place.rating ? (
+                <>
+                  {renderStars(place.rating)}
+
+                </>
+              ) : (
+                "No rating yet"
+              )}
             </Typography>
-            <Typography
+            {/* <Typography
               variant="body2"
               sx={{
                 ml: 1,
@@ -85,8 +115,8 @@ const PropertyCard = ({ places = [], onClick }) => {
                 fontFamily: "Poppins",
               }}
             >
-              {place.reviews} reviews
-            </Typography>
+              {place.reviews} reviews 
+            </Typography> */}
           </Box>
 
           {/* Location */}
@@ -109,9 +139,9 @@ const PropertyCard = ({ places = [], onClick }) => {
             <Typography
               variant="body2"
               color="textSecondary"
-              sx={{ marginLeft: "0.5rem", fontFamily: "Poppins" }}
+              sx={{ marginLeft: "0.5rem", fontFamily: "Poppins", textOverflow: 'ellipsis', whiteSpace: 'wrap', overflow: 'auto',  }}
             >
-              {place.location}
+              {place.address}
             </Typography>
           </Box>
 
@@ -133,7 +163,7 @@ const PropertyCard = ({ places = [], onClick }) => {
                 fontFamily: "Poppins",
               }}
             >
-              {place.originalPrice}
+              
             </Typography>
             <Typography
               variant="h5"
@@ -144,7 +174,7 @@ const PropertyCard = ({ places = [], onClick }) => {
                 fontFamily: "Poppins",
               }}
             >
-              {place.discountedPrice}
+              {place.pricing?.min_price?.toLocaleString()}
             </Typography>
           </Box>
 
@@ -159,7 +189,7 @@ const PropertyCard = ({ places = [], onClick }) => {
           >
             Per night before taxes and fees
             <br />
-            (2 adults)
+            ({place.guestCapacity} Guests)
           </Typography>
         </CardContent>
       </Card>

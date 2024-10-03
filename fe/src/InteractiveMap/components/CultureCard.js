@@ -16,6 +16,8 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
   const [showNearby, setShowNearby] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width:600px)"); // Define breakpoint for small screens
 
+  const [nearbyLocations, setNearbyLocations] = useState([]);
+
   const myLocation = () => {
     const [latitude, longitude] = culture.coordinates; // Extract latitude and longitude from culture.coordinates
     console.log("Using culture's coordinates:", latitude, longitude);
@@ -23,28 +25,38 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
   };
 
   const findNearbyLocations = (userLocation) => {
+    if (!allProperties.length) return; // No filtered locations
     const userPoint = turf.point(userLocation);
-
+    console.log("User's filteredLocations:", allProperties);
+    
+    // Calculate distances and filter locations within 5 km
     const nearby = allProperties
-      .map((loc) => {
-        const locPoint = turf.point(loc.coordinates);
-        const distance = turf.distance(userPoint, locPoint, {
-          units: "kilometers",
-        });
-        return { ...loc, distance };
-      })
-      .filter((loc) => loc.distance <= 5) // Only include locations within 5 km
-      .sort((a, b) => a.distance - b.distance) // Sort by distance
-      .slice(0, 5); // Take the nearest 5 locations
+        .map((loc) => {
+            // Check if coordinates are valid (not null)
+            const { coordinates } = loc;
+            if (!coordinates || coordinates[0] === null || coordinates[1] === null) {
+                return null; // Skip this location
+            }
 
+            const locPoint = turf.point(coordinates);
+            console.log("locPoint:", locPoint);
+            const distance = turf.distance(userPoint, locPoint, { units: 'kilometers' });
+            return { ...loc, distance };
+        })
+        .filter(loc => loc !== null && loc.distance <= 20) // Only include valid locations within 20 km
+        .sort((a, b) => a.distance - b.distance) // Sort by distance
+        .slice(0, 5); // Take the nearest 5 locations
+    
+        setNearbyLocations(nearby);
     console.log("Nearby locations:", nearby);
-  };
+};
 
   const handleViewNearbyButton = (event) => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
+    myLocation();
     setShowNearby(true);
   };
 
@@ -74,7 +86,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
               <CloseIcon sx={{ color: "white" }} />
             </IconButton>
           </Box>
-          <ViewNearby />
+          <ViewNearby nearbyLocations={nearbyLocations}/>
           {/* Pass handleGoBack to ViewNearby */}
         </div>
       ) : (
