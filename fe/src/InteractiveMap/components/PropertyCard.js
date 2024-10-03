@@ -83,7 +83,7 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
               fontFamily: "Poppins",
             }}
           >
-            {place.name}Name
+            {place.name}
           </Typography>
 
           {/* Rating */}
@@ -174,7 +174,7 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
                 fontFamily: "Poppins",
               }}
             >
-              {place.pricing?.min_price?.toLocaleString()}
+              ₱ {place.pricing?.min_price?.toLocaleString()}
             </Typography>
           </Box>
 

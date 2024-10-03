@@ -21,7 +21,7 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
     let maxRatingLocation = null;
 
     // Check if nearbyLocations is structured as an array of arrays
-    nearbyLocations.forEach(locationArray => {
+    nearbyLocations?.forEach(locationArray => {
         locationArray.forEach(location => {
             const rating = location.totalReviews;
 
