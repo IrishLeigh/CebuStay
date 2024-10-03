@@ -183,14 +183,21 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                         className="input-field"
                         id="dateInputTo"
                     />
-                    <input
-                        type="number"
-                        placeholder="Add Guest"
-                        className="input-field"
-                        id="guestInput"
-                        value={guestCapacity}
-                        onChange={e => setGuestCapacity(e.target.value)}
-                    />
+                 <input
+    type="number"
+    placeholder="Add Guest"
+    className="input-field"
+    id="guestInput"
+    value={guestCapacity}
+    onChange={e => {
+        const value = Number(e.target.value); // Convert input to number
+        // Only update the state if the value is a non-negative number
+        if (value >= 0 || e.target.value === '') { // Allow empty string for clearing the input
+            setGuestCapacity(e.target.value);
+        }
+    }}
+/>
+
                     <button className="search-button" id="searchButton" onClick={handleSearch} style={{ height: '3rem' }}>
                         <MdSearch className="search-icon" />
                     </button>
