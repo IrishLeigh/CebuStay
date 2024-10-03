@@ -1,9 +1,10 @@
-.center-container {
+.center-containerr {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 2rem;
-  margin-top: -2rem;
+  /* margin-bottom: 2rem; */
+  /* margin-top: -2rem; */
+  height: calc(100vh - 60px); /* Full viewport height minus navbar height */
 }
 
 .registration-container {
@@ -88,5 +89,25 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media screen and (max-width: 461px) {
+  .center-containerr{
+    height: calc(85vh - 60px);
+    scale: 0.9;
+  }
+}
+@media screen and (max-width: 413px) {
+  .center-containerr{
+    height: calc(80vh - 60px);
+    scale: 0.8;
+  }
+}
+
+@media screen and (max-width: 364px) {
+  .center-containerr{
+    height: calc(75vh - 60px);
+    scale: 0.7;
   }
 }
