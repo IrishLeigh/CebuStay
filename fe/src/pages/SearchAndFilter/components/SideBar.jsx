@@ -25,16 +25,22 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   
 // Perform validation after user finishes typing
   const handleMinPriceBlur = () => {
-    if(filters.minPrice > filters.maxPrice && filters.maxPrice !== '') {
+    const minPrice = Number(filters.minPrice);
+    const maxPrice = Number(filters.maxPrice);
+    if(minPrice > maxPrice && filters.maxPrice !== '') {
       onFilterChange({ maxPrice: filters.minPrice });
     }
   };
 
   const handleMaxPriceBlur = () => {
-    if(filters.maxPrice < filters.minPrice && filters.minPrice !== '') {
-      onFilterChange({ maxPrice: filters.minPrice });
+    const maxPrice = Number(filters.maxPrice);
+    const minPrice = Number(filters.minPrice);
+    if (maxPrice < minPrice && filters.minPrice !== '') {
+      onFilterChange({ maxPrice: minPrice });
     }
-  };
+};
+
+
   
   const handleBedroomsChange = (e) => {
     onFilterChange({ bedrooms: e.target.value });

@@ -258,7 +258,7 @@ const LoginUI = () => {
   console.log('USER NI:', user);
 
   return (
-    <div style={{width:"100%", overflowY: "scroll"}}>
+    <div style={{width:"100%"}}>
     <div className="formContainer">
       <div className="form-container">
         <div style={{ textAlign: "center" }}>
