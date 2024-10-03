@@ -5,21 +5,57 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import * as turf from "@turf/turf";
 import { List, ListItem, ListItemText } from "@mui/material";
 import IconButton from "@mui/material/IconButton"; // Import IconButton
 import CloseIcon from "@mui/icons-material/Close"; // Import Close icon
 import ViewNearby from "./ViewNearby";
 
-const SeeAndDoCard = ({ spot, onClose }) => {
+const SeeAndDoCard = ({ spot,allProperties, onClose }) => {
   const moreInfo = Array.isArray(spot.more_info) ? spot.more_info : [];
   const [showNearby, setShowNearby] = useState(false);
+  const [nearbyLocations, setNearbyLocations] = useState([]);
   const handleViewNearbyButton = (event) => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
+    myLocation();
     setShowNearby(true);
   };
+
+  const myLocation = () => {
+    const [latitude, longitude] = spot.coordinates; // Extract latitude and longitude from culture.coordinates
+    console.log("Using spot's coordinates:", latitude, longitude);
+    findNearbyLocations([latitude, longitude]);
+  };
+
+  const findNearbyLocations = (userLocation) => {
+    if (!allProperties.length) return; // No filtered locations
+    const userPoint = turf.point(userLocation);
+    console.log("User's filteredLocations:", allProperties);
+    
+    // Calculate distances and filter locations within 5 km
+    const nearby = allProperties
+        .map((loc) => {
+            // Check if coordinates are valid (not null)
+            const { coordinates } = loc;
+            if (!coordinates || coordinates[0] === null || coordinates[1] === null) {
+                return null; // Skip this location
+            }
+
+            const locPoint = turf.point(coordinates);
+            console.log("locPoint:", locPoint);
+            const distance = turf.distance(userPoint, locPoint, { units: 'kilometers' });
+            return { ...loc, distance };
+        })
+        .filter(loc => loc !== null && loc.distance <= 20) // Only include valid locations within 20 km
+        .sort((a, b) => a.distance - b.distance) // Sort by distance
+        .slice(0, 5); // Take the nearest 5 locations
+    
+        setNearbyLocations(nearby);
+    console.log("Nearby locations:", nearby);
+};
 
   const handleGoBack = (event) => {
     if (event) {
@@ -47,7 +83,7 @@ const SeeAndDoCard = ({ spot, onClose }) => {
               <CloseIcon sx={{ color: "white" }} />
             </IconButton>
           </Box>
-          <ViewNearby />
+          <ViewNearby nearbyLocations={nearbyLocations}/>
         </div>
       ) : (
         <Card

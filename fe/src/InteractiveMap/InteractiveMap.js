@@ -15,6 +15,7 @@
   import RefreshIcon from '@mui/icons-material/Refresh'; // Icon for reset
   import HelpIcon from '@mui/icons-material/Help'; // Icon for instructions
   import StayCard from "./components/StayCard";
+  import ClickOutsideComponent from "./components/ClickOutsideComponent";
 
   export default function InteractiveMap() {
     const [selectedCity, setSelectedCity] = useState(null);
@@ -187,6 +188,16 @@
         setSelectedSeeAndDo(null); // Deselect see and do
         setSelectedCulture(null); // Deselect culture
         resetLocations();
+      }
+    };
+
+    const handleClickOutsideClose = () => {
+      if (selectedCategory === "Where to stay") {
+        setSelectedProperty(null);
+      } else if (selectedCategory === "See And Do") {
+        setSelectedSeeAndDo(null);
+      } else if (selectedCategory === "Culture & Experiences") {
+        setSelectedCulture(null);
       }
     };
 
@@ -556,22 +567,28 @@
               <p>Loading map data...</p>
             )}
             {selectedProperty && selectedCategory === "Where to stay" && (
+              <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
             <div>
               <StayCard
                 stay={selectedProperty}
                 onClose={() => setSelectedProperty(null)}
               />
             </div>
+            </ClickOutsideComponent>
           )}
             {selectedSeeAndDo && selectedCategory === "See And Do" && (
+              <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
               <div>
                 <SeeAndDoCard
                   spot={selectedSeeAndDo}
+                  allProperties={allProperties}
                   onClose={() => setSelectedSeeAndDo(null)}
                 />
               </div>
+              </ClickOutsideComponent>
             )}
             {selectedCulture && selectedCategory === "Culture & Experiences" && (
+              <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
               <div className="culture-card-container">
                 <CultureCard
                   culture={selectedCulture}
@@ -579,6 +596,7 @@
                   onClose={() => setSelectedCulture(null)}
                 />
               </div>
+              </ClickOutsideComponent>
             )}
           </div>
         </div>

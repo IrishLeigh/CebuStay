@@ -8,10 +8,37 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useTheme, useMediaQuery } from "@mui/material";
+import { useState, useEffect } from "react";
 
-const TopRated = ({ onClose, onCardClick }) => {
+const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery("(max-width:425px)"); // Check if screen is 425px or less
+
+  console.log("Nearby Locations:", nearbyLocations);
+  const [highestRatingLocation, setHighestRatingLocation] = useState({});
+
+  useEffect(() => {
+    let maxRatingLocation = null;
+
+    // Check if nearbyLocations is structured as an array of arrays
+    nearbyLocations?.forEach(locationArray => {
+        locationArray.forEach(location => {
+            const rating = location.totalReviews;
+
+            // Only consider valid ratings (not null)
+            if (rating !== null) {
+                if (maxRatingLocation === null || rating > maxRatingLocation.totalReviews) {
+                    maxRatingLocation = location; // Set the whole location object
+                }
+            }
+        });
+    });
+
+    // Update the state with the location having the highest rating
+    setHighestRatingLocation(maxRatingLocation);
+}, [nearbyLocations]);
+
+  console.log("Highest Rating:", highestRatingLocation);
 
   const hotel = {
     name: "Luxury Beach Resort",
@@ -139,7 +166,8 @@ const TopRated = ({ onClose, onCardClick }) => {
           Top Reviewed
         </Typography>
       </Box>
-      <Box
+      {highestRatingLocation ? (<>
+        <Box
         sx={{
           display: "flex",
           flexDirection: isSmallScreen ? "column" : "row",
@@ -147,10 +175,10 @@ const TopRated = ({ onClose, onCardClick }) => {
       >
         <CardMedia
           component="img"
-          alt={hotel.name}
+          alt={highestRatingLocation?.name || "Property"}
           sx={styles.media}
-          image={hotel.imageUrl}
-          title={hotel.name}
+          image={highestRatingLocation?.propertyFiles?.[0]?.src || "/propertyplaceholder.jpg"}
+          title={highestRatingLocation?.name}
         />
         <CardContent sx={styles.content}>
           <Box
@@ -159,15 +187,22 @@ const TopRated = ({ onClose, onCardClick }) => {
             alignItems="center"
             mb={0.5}
           >
-            <Typography sx={styles.title}>{hotel.name}</Typography>
+            <Typography sx={styles.title}>{highestRatingLocation?.name}</Typography>
             <Typography sx={styles.reviewCount}>
-              {hotel.reviewCount} reviews
+              {highestRatingLocation?.totalReviews} reviews
             </Typography>
           </Box>
-          {renderStars(hotel.rating)}
+          {highestRatingLocation?.rating ? (
+                <>
+                  {renderStars(highestRatingLocation.rating)}
+
+                </>
+              ) : (
+                "No rating yet"
+              )}
           <Box display="flex" alignItems="center" mt={0.5}>
             <LocationOnIcon sx={styles.locationIcon} />
-            <Typography sx={styles.address}>{hotel.address}</Typography>
+            <Typography sx={styles.address}>{highestRatingLocation?.address}</Typography>
           </Box>
           {/* <Typography sx={styles.description}>This property offers:</Typography>
           <Box sx={styles.facilityBox}>
@@ -205,12 +240,15 @@ const TopRated = ({ onClose, onCardClick }) => {
                   fontFamily: "Poppins",
                 }}
               >
-                ₱ {hotel.price.toLocaleString()}
+                ₱ {highestRatingLocation?.pricing?.min_price?.toLocaleString() || "---"}
               </Typography>
             </Box>
           </Box>
         </CardContent>
       </Box>
+      </>):(<>
+      <span>No properties found</span>
+      </>)}
     </Card>
   );
 };

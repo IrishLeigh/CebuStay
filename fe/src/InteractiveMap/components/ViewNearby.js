@@ -4,9 +4,9 @@ import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import PropertyCard from "./PropertyCard"; // Import PropertyCard
 import TopRated from "./TopRated";
 
-const ViewNearby = () => {
+const ViewNearby = ({nearbyLocations}) => {
   const scrollRef = useRef(null);
-
+console.log("Nearby Locations:", nearbyLocations);
   const scrollLeft = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
@@ -75,9 +75,12 @@ const ViewNearby = () => {
         position: "relative",
       }}
     >
-      <TopRated />
+      {nearbyLocations.length > 0 ? (<>
+        <TopRated nearbyLocations={[nearbyLocations]}/>
       <CardContent>
-        <Typography
+        {nearbyLocations.length > 0 ? (
+          <>
+          <Typography
           variant="h5"
           component="div"
           sx={{ fontWeight: "bold", fontSize: "1.2", mb: 2 }}
@@ -124,7 +127,7 @@ const ViewNearby = () => {
               },
             }}
           >
-            {places.map((place, index) => (
+            {nearbyLocations.map((nearbyLocation, index) => (
               <Box
                 key={index}
                 sx={{
@@ -132,7 +135,7 @@ const ViewNearby = () => {
                   width: 250, // Fixed width for cards
                 }}
               >
-                <PropertyCard places={[place]} />
+                <PropertyCard nearbyLocation={[nearbyLocation]} />
               </Box>
             ))}
           </Box>
@@ -156,7 +159,19 @@ const ViewNearby = () => {
             <ArrowRight />
           </IconButton>
         </Box>
+          </>
+        ): (
+          <>
+          <Typography
+            variant="h5">No Nearby Properties Found</Typography>
+          </>
+        )}
       </CardContent>
+      </>):(<>
+      <CardContent>
+        <Typography variant="h5">No Nearby Properties Found</Typography>
+      </CardContent>
+      </>)}
     </Card>
   );
 };
