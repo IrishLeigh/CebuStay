@@ -74,7 +74,7 @@ const MainContent = ({
 
   console.log("SEARCH UPDATE FROM MAIN",searchUpdate );
   return (
-    <div className="all-container">
+    <div>
       <div className="content-container">
         <div className="main-content" style={{ marginLeft: '2.3rem', display: 'flex', flexWrap: 'wrap' }}>
           {loading ? (
