@@ -24,6 +24,15 @@ use App\Http\Controllers\LoginUserController;
 use App\Http\Controllers\PropertyCompanyController;
 use App\Http\Controllers\PropertyOwnerController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PayPalController;
+
+Route::post('/paypal-pay', [PayPalController::class, 'pay']);
+Route::get('/paypal/check-payout/{payoutItemId}', [PayPalController::class, 'checkPayoutStatus']);
+Route::post('/paypal/payout', [PayPalController::class, 'sendPayout']);
+Route::get('/payouts', [PayPalController::class, 'getPayouts']);
+Route::get('/payouts/batch/{batchId}', [PayPalController::class, 'getPayoutBatchDetails']);
+
+
 // Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
