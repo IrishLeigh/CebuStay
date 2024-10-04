@@ -198,16 +198,15 @@ import AccommodationReservationUI from "./pages/PropertyManagementUI/components/
 import UserLayout from "./components/Layout/UserLayout";
 import NoUserLayout from "./components/Layout/NoUserLayout";
 
+import AdminLoginUI from "./pages/Admin/AdminLoginUI";
+import AdminPayments from "./pages/Admin/AdminPayments";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem("auth_token") !== null;
   });
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
-
-  
-
-
+  const admin_token = localStorage.getItem("admin_token");
   useEffect(() => {
     const checkAuth = () => {
       setIsLoggedIn(localStorage.getItem("auth_token") !== null);
@@ -225,7 +224,6 @@ function App() {
   return (
     <Routes>
       <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
-       
         {/* Public Routes */}
         <Route index element={<LandingPageUI />} />
         <Route path="login" element={<LoginUI />} />
@@ -236,7 +234,6 @@ function App() {
         <Route path="forgot-password" element={<ForgotPass />} />
         <Route path="accommodation" element={<PropertyListUI />} />
         <Route path="property/:propertyid" element={<ViewPropertyUI />} />
-        
 
         {/* Private Routes */}
         <Route element={<PrivateRoutes />}>
@@ -267,6 +264,26 @@ function App() {
           <Route path="edit-property/:id" element={<EditPropertyUI />} />
         </Route>
       </Route>
+      <Route
+        path="/superadmin"
+        element={
+          admin_token ? (
+            <Navigate to="/superadmin/payments" replace />
+          ) : (
+            <AdminLoginUI />
+          )
+        }
+      />
+      <Route
+        path="/superadmin/payments"
+        element={
+          admin_token ? (
+            <AdminPayments />
+          ) : (
+            <Navigate to="/superadmin" replace />
+          )
+        }
+      />
     </Routes>
   );
 }
