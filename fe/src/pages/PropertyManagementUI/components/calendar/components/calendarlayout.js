@@ -23,7 +23,8 @@ const CalendarLayout = () => {
   const [unitTypes, setUnitTypes] = useState({});
   const [propertyTypes, setPropertyTypes] = useState({});
   const [home, setHome] = useState(true);
-  const [user, setUser] = useState(null);
+  //TODO: uncomment this if local storage does not work
+ const userid = localStorage.getItem("userid") || null;
 
   const handlePropertyChange = (event) => {
     const propertyDataName = event.target.value;
@@ -44,33 +45,33 @@ const CalendarLayout = () => {
     setSelectedUnitType(event.target.value);
     setUnitTypes(event.target.value);
   };
-  useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((response) => {
-          setUser(response.data["data"]);
-          console.log("RESPONSE DATA: ", response.data["data"]);
-        })
-        .catch((error) => {
-          alert("Error decoding JWT token:", error);
-          setUser(null);
-        });
-    } else {
-      setUser(null);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("auth_token");
+  //   if (token) {
+  //     axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .then((response) => {
+  //         setUser(response.data["data"]);
+  //         console.log("RESPONSE DATA: ", response.data["data"]);
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
+  //         setUser(null);
+  //       });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
+      if (!userid) return;
       try {
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/property/bookings",
           {
             params: {
-              userid: user.userid,
+              userid: userid,
             },
           }
         );
@@ -80,7 +81,7 @@ const CalendarLayout = () => {
       }
     };
     fetchData();
-  }, [user]);
+  }, [userid]);
 
   return (
     <>

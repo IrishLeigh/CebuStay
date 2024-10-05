@@ -40,28 +40,36 @@ const Drawer = styled(MuiDrawer)({
 
 export default function SideMenu({onLogout }) {
   const navigate = useNavigate(); // Initialize useNavigate
-  const [ user, setUser ] = React.useState({});
+  // const [ user, setUser ] = React.useState({
+  //   firstname: '',
+  //   lastname: '',
+  //   email: '',
+  // });
   const token = localStorage.getItem("auth_token");
+  const user = localStorage.getItem("userData");
+  const email =localStorage.getItem("email");
+  const firstname =localStorage.getItem("firstname") || "";
+  const lastname = localStorage.getItem("lastname") || "";
   
-  React.useEffect(() => {
-    if (token) {
-      const fetchUser = async () => {
-        try {
-          const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-            token: token,
-          });
-          setUser(res.data.data);
-          console.log("USER:", res.data.data);
-        } catch (error) {
-          alert("Error decoding JWT token:", error);
-        }
-      };
+  // React.useEffect(() => {
+  //   if (token) {
+  //     const fetchUser = async () => {
+  //       try {
+  //         const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+  //           token: token,
+  //         });
+  //         setUser(res.data.data);
+  //         console.log("USER:", res.data.data);
+  //       } catch (error) {
+  //         alert("Error decoding JWT token:", error);
+  //       }
+  //     };
 
-      fetchUser();
-    } else {
-      setUser(null);
-    }
-  }, []); // Add token as a dependency
+  //     fetchUser();
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []); // Add token as a dependency
 
   const mainListItems = [
     { text: 'Overview', icon: <HomeRoundedIcon />, path: '/admin/overview' },
@@ -80,6 +88,7 @@ export default function SideMenu({onLogout }) {
     navigate(path); // Use navigate to change route
   };
 
+  console.log ("user", user);
   return (
     <Drawer
       variant="permanent"
@@ -141,7 +150,7 @@ export default function SideMenu({onLogout }) {
         </List> */}
       </Stack>
 
-      <CardAlert />
+      {/* <CardAlert /> */}
       <Stack
         direction="row"
         sx={{
@@ -182,7 +191,7 @@ export default function SideMenu({onLogout }) {
             variant="body2" 
             sx={{ fontWeight: 500, lineHeight: '16px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
           >
-            {`${user?.firstname} ${user?.lastname}`}
+            {`${firstname} ${lastname}`}
           </Typography>
 
           {/* Tooltip to display full email on hover */}
@@ -197,7 +206,7 @@ export default function SideMenu({onLogout }) {
                 maxWidth: '150px' // Adjust maxWidth based on available space
               }}
             >
-              {user?.email}
+              {email}
             </Typography>
           </Tooltip>
         </Box>

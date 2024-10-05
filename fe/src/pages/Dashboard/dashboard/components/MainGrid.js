@@ -52,10 +52,13 @@ const data = [
 
 export default function MainGrid() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [property, setProperty] = useState({});
   const [selectedPropertyId, setSelectedPropertyId] = useState('');
   const [dashboardData, setDashboardData] = useState({});
+  //TODO: Uncomment this line if local storage is not working
+  //const [user, setUser] = useState(null);
+  const userid = localStorage.getItem("userid");
+  const firstname = localStorage.getItem("firstname") || "";
 
   const handlePropertyChange = (propertyId) => {
     setSelectedPropertyId(propertyId);
@@ -63,33 +66,33 @@ export default function MainGrid() {
   };
   console.log('selectedPropertyId', selectedPropertyId);
 
-  //User Data
-  useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((response) => {
-          setUser(response.data["data"]);
-        })
-        .catch((error) => {
-          alert("Error decoding JWT token:", error);
-          setUser(null);
-        });
-    } else {
-      setUser(null);
-    }
-  }, []);
+  // //User Data
+  // useEffect(() => {
+  //   const token = localStorage.getItem("auth_token");
+  //   if (token) {
+  //     axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .then((response) => {
+  //         setUser(response.data["data"]);
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
+  //         setUser(null);
+  //       });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
 
   //Property Data
   useEffect(() => {
     const fetchProperty = async () => {
-      if (!user) return; // Exit if user is not set
+      if (!userid) return; // Exit if user is not set
 
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/getUserProperties", {
           params: {
-            userid: user.userid,
+            userid: userid,
           },
         });
         setProperty(response.data);
@@ -102,7 +105,7 @@ export default function MainGrid() {
     };
 
     fetchProperty();
-  }, [user]); // Add user as a dependency here
+  }, [userid]); // Add user as a dependency here
 
   //Dashboard Data
 
@@ -141,7 +144,7 @@ export default function MainGrid() {
 
   console.log ('dashboardData', dashboardData);
   console.log ('property', property);
-  console.log ('user', user);
+  console.log ('userid', userid);
   return (
     <>
       {loading ? (
@@ -152,7 +155,7 @@ export default function MainGrid() {
 
             {/* cards */}
             <Typography component="h2" variant="h6" sx={{ mb: 2, mt: 5 }}>
-              Hello {user?.firstname}, Welcome Back!
+              Hello {firstname}, Welcome Back!
             </Typography>
             <Box
               sx={{

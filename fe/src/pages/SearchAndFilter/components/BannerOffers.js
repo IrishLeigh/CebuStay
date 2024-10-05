@@ -137,21 +137,21 @@ export default function BannerOffers({
               className="offers-icon"
               sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
             />
-            <p>Earn rewards on every night you stay</p>
+            <p>Book accommodations tailored to your vibe</p>
           </Box>
           <Box className="offers">
             <LocalOfferIcon
               className="offers-icon"
               sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
             />
-            <p>Save more with Member Prices</p>
+            <p>Pay with ease with our  options</p>
           </Box>
           <Box className="offers">
             <CalendarMonthIcon
               className="offers-icon"
               sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
             />
-            <p>Free cancellation options if plans change</p>
+            <p>Flexible booking options </p>
           </Box>
         </Box>
       </Box>

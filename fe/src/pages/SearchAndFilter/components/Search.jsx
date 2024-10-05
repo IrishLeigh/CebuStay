@@ -17,23 +17,25 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
     const [showSuggestions, setShowSuggestions] = useState(false);
     const navigate = useNavigate();
     const suggestionsRef = useRef(null);
+    const inputRef = useRef(null); // Reference for the input field
 
     const handleSearch = () => {
         console.log('Start Date:', startDate);
         console.log('End Date:', endDate);
         console.log('Guest Capacity:', guestCapacity);
-        if(endDate === null || guestCapacity === "") {
+        if (endDate === null || guestCapacity === "") {
             alert("Please select end date and enter guest capacity");
             return;
         }
         onSearch({ startDate, endDate, guestCapacity: guestCapacity || null });
     };
+
     useEffect(() => {
         console.log('onSearch:', onSearch);
         console.log('Suggestions:', suggestions);
         console.log('Show Suggestions:', showSuggestions);
     }, [query, suggestions, showSuggestions]);
-    
+
     const fetchSuggestions = async (query) => {
         if (!query) {
             setSuggestions([]);
@@ -51,6 +53,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
             setSuggestions([]);
         }
     };
+
     const today = new Date();
     const handleInputChange = (e) => {
         const inputValue = e.target.value;
@@ -59,7 +62,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
             fetchSuggestions(inputValue);
             setShowSuggestions(true);
         } else {
-            setSuggestions([]); // Clear suggestions when input is empty
+            setSuggestions([]);
             setShowSuggestions(false);
         }
     };
@@ -70,6 +73,8 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
         }
     };
 
+
+
     const debouncedFetchResults = useCallback(debounce(fetchSuggestions, 300), []);
 
     useEffect(() => {
@@ -77,7 +82,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
             debouncedFetchResults(query);
             setShowSuggestions(true);
         } else {
-            setSuggestions([]); // Clear suggestions if the query is empty
+            setSuggestions([]);
             setShowSuggestions(false);
         }
 
@@ -95,8 +100,8 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
 
     const handleSuggestionClick = (suggestion) => {
         setQuery(suggestion.name.address || suggestion.name.property_name);
-        setSuggestions([]); // Clear the suggestions list on selection
-        setShowSuggestions(false); // Hide suggestions
+        setSuggestions([]);
+        setShowSuggestions(false);
         if (suggestion.type === 'Location') {
             const filteredAccommodations = accommodations.filter(acc => acc.address === suggestion.name.address);
             setAccommodationList(filteredAccommodations);
@@ -111,12 +116,24 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
             navigate(`property/${suggestion.name.propertyid}`, { state });
         }
     };
+        // Disable scrolling when suggestions are shown
+        useEffect(() => {
+            if (showSuggestions) {
+                document.body.style.overflow = 'hidden'; // Disable scrolling
+            } else {
+                document.body.style.overflow = ''; // Enable scrolling
+            }
 
+            return () => {
+                document.body.style.overflow = ''; // Cleanup
+            };
+        }, [showSuggestions]);
+        
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div className="m" style={{ width: '100%', marginTop: '2rem' }}>
-                <div className="search-box">
-                    <div style={{ display: 'flex', alignItems: 'column' }}>
+                <div className="search-box" ref={inputRef}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <input
                             type="text"
                             placeholder="Search Destination"
@@ -124,17 +141,27 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                             id="whereInput"
                             value={query}
                             onChange={handleInputChange}
-                            onFocus={() => setShowSuggestions(true)} // Show suggestions on focus
+                            onFocus={() => setShowSuggestions(true)}
                         />
-
-                        {/* Only show the suggestions list when there is a non-empty query and showSuggestions is true */}
-                        {showSuggestions && query.length > 0 && suggestions.length > 0 && (
-                            <ul className="suggestions-list" style={{ top: '11rem' }} ref={suggestionsRef}>
+                        {showSuggestions && query.length > 0 && suggestions.length > 0 && inputRef.current && (
+                            <ul
+                                className="suggestions-list"
+                                style={{
+                                    position: 'absolute',
+                                    top: `${inputRef.current.getBoundingClientRect().bottom + window.scrollY}px`,
+                                    left: `${inputRef.current.getBoundingClientRect().left}px`,
+                                    zIndex: 10,
+                                }}
+                                ref={suggestionsRef}
+                                role="listbox" // Added role for accessibility
+                                aria-labelledby="suggestions" // Link to an aria-labelledby
+                            >
                                 {suggestions.map((suggestion, index) => (
                                     <li
-                                        key={index}
+                                        key={suggestion.name.propertyid || index} // Use a unique id if available
                                         className="suggestion-item"
                                         onClick={() => handleSuggestionClick(suggestion)}
+                                        role="option" // Role for list item
                                     >
                                         {suggestion.type === 'Location' ? (
                                             <LocationOnIcon className="location-icon" />
@@ -155,8 +182,6 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                         selected={startDate}
                         onChange={date => {
                             setStartDate(date);
-
-                            // If the new startDate is after the endDate, set endDate to the day after startDate
                             if (endDate && date >= endDate) {
                                 const adjustedEndDate = new Date(date);
                                 adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
@@ -166,7 +191,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                         selectsStart
                         startDate={startDate}
                         endDate={endDate}
-                        minDate={today} // Set minDate to today
+                        minDate={today}
                         placeholderText="From"
                         className="input-field"
                         id="dateInputFrom"
@@ -178,7 +203,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                         selectsEnd
                         startDate={startDate}
                         endDate={endDate}
-                        minDate={new Date(startDate.getTime() + 24 * 60 * 60 * 1000)} // Set minDate to startDate or today if startDate is null
+                        minDate={new Date(startDate.getTime() + 24 * 60 * 60 * 1000)}
                         placeholderText="To"
                         className="input-field"
                         id="dateInputTo"
