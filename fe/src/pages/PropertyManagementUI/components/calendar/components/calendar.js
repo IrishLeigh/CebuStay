@@ -50,40 +50,42 @@ function Day(props) {
 export default function WeekPicker({ unitTypes }) {
   const unitId = unitTypes.unitid;
   let [bookedDates, setBookedDates] = React.useState([]);
-  const [user, setUser] = React.useState({});
+  //TO DO: Uncomment this if local storage does not work
+  // const [user, setUser] = React.useState({});
+  const userid = localStorage.getItem("userid") || null;
 
-  React.useEffect(() => {
-    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
-    const token = localStorage.getItem("auth_token");
+  // React.useEffect(() => {
+  //   // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+  //   const token = localStorage.getItem("auth_token");
 
-    // console.log("Token:", token);
-    if (token) {
-      const jwtToken = token.split("=")[1];
-      axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((response) => {
-          setUser(response.data["data"]);
-          // loginUser(response.data.data);
-          console.log("RESPONSE DATA: ", response.data["data"]);
-        })
-        .catch((error) => {
-          alert("Error decoding JWT token:", error);
-          setUser(null);
-        });
-    } else {
-      setUser(null);
-    }
-  }, []);
+  //   // console.log("Token:", token);
+  //   if (token) {
+  //     const jwtToken = token.split("=")[1];
+  //     axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .then((response) => {
+  //         setUser(response.data["data"]);
+  //         // loginUser(response.data.data);
+  //         console.log("RESPONSE DATA: ", response.data["data"]);
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
+  //         setUser(null);
+  //       });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
 
   React.useEffect(() => {
     const fetchData = async () => {
-      if (!user) return; 
+      if (!userid) return; 
       try {
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/property/bookings",
           {
             params: {
-              userid: user.userid,
+              userid: userid,
             },
           }
         );
@@ -95,7 +97,7 @@ export default function WeekPicker({ unitTypes }) {
       }
     };
     fetchData();
-  }, [user]);
+  }, [userid]);
 
   // Sort booked dates by checkin_date
   bookedDates.sort((a, b) => dayjs(a.checkin_date).isBefore(dayjs(b.checkin_date)) ? -1 : 1);

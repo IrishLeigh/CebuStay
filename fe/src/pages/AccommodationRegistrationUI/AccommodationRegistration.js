@@ -191,13 +191,16 @@ export default function AccommodationRegistration() {
     selectedPropertyType === "Homestay"  ||
     selectedPropertyType === "ApartmenComplex" ||
     selectedPropertyType === "CondoComplex" ;
-  //For Multi Unit
+  //For Multi Unit Components
   const [multiRoomsAndBeds, setMultiRoomsAndBeds] = useState([]);
   const [multiUnitFacilities, setMultiUnitFacilities] = useState([]);
-  //For Both Single and Multi Unit
+  //For Both Single and Multi Unit Components
   const [step, setStep] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState();
+  //TO DO: Uncomment this line if localstorage does not work
+    //const [user, setUser] = useState();
+  const userid = localStorage.getItem("userid") || "";
+  
   // Define steps for flow A
   const stepsFlowA = [
     "Property",
@@ -251,29 +254,30 @@ function formatDate(dateString) {
     window.scrollTo(0, 0);
   },[step])
   //Get the JWT token from local storage
-  useEffect(() => {
+  // useEffect(() => {
     
-    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
-    const token = localStorage.getItem("auth_token");
+  //   // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+  //   const token = localStorage.getItem("auth_token");
 
-    // console.log("Token:", token);
-    if (token) {
-      const jwtToken = token.split("=")[1];
-      axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((response) => {
-          setUser(response.data["data"]);
-          // loginUser(response.data.data);
-          console.log("RESPONSE DATA: ", response.data["data"]);
-        })
-        .catch((error) => {
-          alert("Error decoding JWT token:", error);
-          setUser(null);
-        });
-    } else {
-      setUser(null);
-    }
-  }, []);
+  //   // console.log("Token:", token);
+  //   if (token) {
+  //     const jwtToken = token.split("=")[1];
+  //     axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .then((response) => {
+  //         setUser(response.data["data"]);
+  //         // loginUser(response.data.data);
+  //         console.log("RESPONSE DATA: ", response.data["data"]);
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
+         
+  //       });
+  //   } else {
+  //     console.log("No token found");
+      
+  //   }
+  // }, []);
   // Modals and Loaders
   const openConfirmationModal = () => {
     setIsConfirmationModalOpen(true); // Open the confirmation modal
@@ -464,7 +468,7 @@ const handleRetry = () => {
         const resPropertid = await axios.post(
           "http://127.0.0.1:8000/api/propertyinfo",
           {
-            userid: user.userid,
+            userid: userid,
             property_name: propertyInfo.propertyName,
             property_type: selectedPropertyType,
             property_desc: propertyInfo.propertyDescription,
@@ -760,7 +764,7 @@ const handleRetry = () => {
                                 const manager = await axios.post(
                                   "http://127.0.0.1:8000/api/becomeManager",
                                   {
-                                    userid: user.userid,
+                                    userid: userid,
                                   }
                                 );
                                 console.log("Manager:", manager.data);
@@ -795,7 +799,7 @@ const handleRetry = () => {
                                 const formData = new FormData();
                                 const file = await fetchBlobAsFile(hostData.imageSrc, "photo.jpg"); 
                                   formData.append("file", file);
-                                  formData.append("userid", user.userid);
+                                  formData.append("userid", userid);
 
                                 const company = await axios.post(
                                   "http://127.0.0.1:8000/api/propertycompany",
@@ -837,7 +841,7 @@ const handleRetry = () => {
                                   const manager = await axios.post(
                                     "http://127.0.0.1:8000/api/becomeManager",
                                     {
-                                      userid: user.userid,
+                                      userid: userid,
                                     }
                                   );
                                   console.log("Manager:", manager.data);
@@ -891,7 +895,7 @@ const handleRetry = () => {
     console.log("Form submitted successfully!");
     closeModal();
     setIsLoading(true); // Show the loading spinner
-    console.log("User", user);
+    console.log("User FROM LOCAL STORAGE", userid);
     console.log("Property Information from parent", propertyInfo);
     console.log("Property Type", selectedPropertyType);
     console.log("Multi beds from parent", multiRoomsAndBeds);
@@ -906,7 +910,7 @@ const handleRetry = () => {
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
         {
-          userid: user.userid,
+          userid: userid,
           property_name: propertyInfo.propertyName,
           property_type: selectedPropertyType,
           property_desc: propertyInfo.propertyDescription,
@@ -1268,7 +1272,7 @@ const handleRetry = () => {
                   const manager = await axios.post(
                     "http://127.0.0.1:8000/api/becomeManager",
                     {
-                      userid: user.userid,
+                      userid: userid,
                     }
                   );
                   console.log("Manager:", manager.data);
@@ -1304,7 +1308,7 @@ const handleRetry = () => {
                   const formData = new FormData();
                   const file = await fetchBlobAsFile(hostData.imageSrc, "photo.jpg"); 
                     formData.append("file", file);
-                    formData.append("userid", user.userid);
+                    formData.append("userid", userid);
 
                   const company = await axios.post(
                     "http://127.0.0.1:8000/api/propertycompany",
@@ -1346,7 +1350,7 @@ const handleRetry = () => {
                     const manager = await axios.post(
                       "http://127.0.0.1:8000/api/becomeManager",
                       {
-                        userid: user.userid,
+                        userid: userid,
                       }
                     );
                     console.log("Manager:", manager.data);
@@ -1381,6 +1385,7 @@ const handleRetry = () => {
   console.log("Multi beds from parent", multiRoomsAndBeds);
   console.log("Policies from parent:", policiesData);
   console.log("House Rules from parent:", houseRulesData);
+  console.log ("USER ID FROM LOCALSTORAGE:", userid );
 
 return (
   <ThemeProvider theme={theme}>

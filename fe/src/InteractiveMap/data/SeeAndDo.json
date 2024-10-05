@@ -165,7 +165,7 @@
     "coordinates": [10.206151053073024, 123.54468668859317],
     "category": "See And Do",
     "iconUrl": "./kayaking.png",
-    "imageUrl": "./Bojor.jpg",
+    "imageUrl": "./Bojo.jpg",
     "description": "Bojo River in Aloguinsan is famous for its eco-tourism river cruise, where you can enjoy the scenic views of mangroves and wildlife while learning about the local ecosystem.",
     "activities": "River cruise, eco-tour, and bird watching.",
     "more_info": [
@@ -192,7 +192,7 @@
     "coordinates": [11.158441, 123.731711],
     "category": "Adventure",
     "iconUrl": "./cave.png",
-    "imageUrl": "./ogtong_cave.jpg",
+    "imageUrl": "./ogtong.jpg",
     "description": "A hidden gem with a natural underground pool where you can swim in cool, fresh water inside a cave.",
     "activities": "Cave swimming, exploring cave formations.",
     "more_info": [

@@ -13,49 +13,45 @@ export default function PropertyManagementListing() {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
     const [data, setData] = useState([]);
-
-    // const [data, setData] = useState([
-    //     { id: '#P123', name: 'Sunset Resort', type: 'Suite', address: '123 Beach St, Miami, FL', created_at: "2024-07-04 12:21pm", status: 'Active' },
-    //     { id: '#P456', name: 'Mountain Lodge', type: 'Cabin', address: '456 Mountain Rd, Denver, CO', created_at: "2024-07-04 12:21pm", status: 'Inactive' },
-    // ]);
-
     const [loading, setLoading] = useState(false);
     const [editItemId, setEditItemId] = useState(null);
     const [deleteItemId, setDeleteItemId] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    //TO DO: uncomment this if local storage does not work
+        // const [user, setUser] = useState(null);
+    const userid = localStorage.getItem("userid");
 
     
-    useEffect(() => {
-        const token = localStorage.getItem("auth_token");
-        if (token) {
-          axios
-            .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-            .then((response) => {
-              setUser(response.data["data"]);
-              console.log("RESPONSE DATA: ", response.data["data"]);
-            })
-            .catch((error) => {
-              alert("Error decoding JWT token:", error);
-              setUser(null);
-            });
-        } else {
-          setUser(null);
-        }
-      }, []);
+    // useEffect(() => {
+    //     const token = localStorage.getItem("auth_token");
+    //     if (token) {
+    //       axios
+    //         .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+    //         .then((response) => {
+    //           setUser(response.data["data"]);
+    //           console.log("RESPONSE DATA: ", response.data["data"]);
+    //         })
+    //         .catch((error) => {
+    //           alert("Error decoding JWT token:", error);
+    //           setUser(null);
+    //         });
+    //     } else {
+    //       setUser(null);
+    //     }
+    //   }, []);
     
       useEffect(() => {
         const fetchData = async () => {
-          if (!user) return;
+          if (!userid) return;
           try {
             const propertyres = await axios.get(
               "http://127.0.0.1:8000/api/user/properties",
               {
                 params: {
-                  userid: user.userid,
+                  userid:userid,
                 },
               }
             );
@@ -67,7 +63,7 @@ export default function PropertyManagementListing() {
           }
         };
         fetchData();
-      }, [user]);
+      }, [userid]);
 
     // const handleEdit = (id) => {
     //     setEditItemId(id);
@@ -108,7 +104,7 @@ export default function PropertyManagementListing() {
                       "http://127.0.0.1:8000/api/user/properties",
                       {
                         params: {
-                          userid: user.userid,
+                          userid: userid,
                         },
                       }
                     );
@@ -146,7 +142,7 @@ export default function PropertyManagementListing() {
                       "http://127.0.0.1:8000/api/user/properties",
                       {
                         params: {
-                          userid: user.userid,
+                          userid: userid,
                         },
                       }
                     );

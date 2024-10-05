@@ -66,30 +66,31 @@ const LoginUI = () => {
   };
   
 
-  useEffect(() => {
-    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
-    const token = localStorage.getItem("auth_token");
+  // useEffect(() => {
+  //   // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+  //   const token = localStorage.getItem("auth_token");
 
-    // console.log("Token:", token);
-    if (token) {
+  //   // console.log("Token:", token);
+  //   if (token) {
 
-      const res =axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((res) => {
+  //     const res =axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .then((res) => {
    
-          loginUser(res.data.data);
-          setUser(res.data.data);
-          console.log("USER NI SYA BA", res.data.data);
+  //         loginUser(res.data.data);
+  //         setUser(res.data.data);
+  //         localStorage
+  //         console.log("USER NI SYA BA", res.data.data);
 
-        })
-        .catch((error) => {
-          alert("Error decoding JWT token:", error);
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
           
-        });
-    } else {
-      loginUser(null);
-    }
-  }, [loginUser]);
+  //       });
+  //   } else {
+  //     loginUser(null);
+  //   }
+  // }, [loginUser]);
 
 
   
@@ -135,10 +136,8 @@ const LoginUI = () => {
       if (response.data["status"] === "success") {
         console.log("Login successful!", response.data["token"]);
         const token = response.data["token"];
-       
         localStorage.setItem("auth_token", token);
         setAuth({token, user});
-        console.log(user);
         const from = location.state?.from || "/";
         navigate(from, { replace: true });
 
