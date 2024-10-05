@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\ReviewsAndRatingsController;
+use App\Http\Controllers\UserAdminAuthenticationController;
 use App\Http\Middleware\TokenMiddleware;
 
 use App\Http\Controllers\FileController;
+use App\Models\UserAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EditUserProfileController;
@@ -248,3 +250,7 @@ route::middleware(['token'])->group(function () {
 });
 
 Route::get('/property/hostimg/{propertyid}', [FileController::class, 'getHostImg']);
+
+Route::post('/createadmin', [UserAdminAuthenticationController::class, 'createUserAdmin']);
+Route::post('/loginadmin', [UserAdminAuthenticationController::class, 'login']);
+Route::post('/logoutadmin', [UserAdminAuthenticationController::class, 'logout']);
