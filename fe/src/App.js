@@ -80,6 +80,11 @@ function App() {
   
       const currentTime = Date.now();
       const timeLeft = expiryTime - currentTime;
+        // Calculate minutes left
+      const minutesLeft = Math.floor(timeLeft / 1000 / 60); // Convert milliseconds to minutes
+
+    // Log the number of minutes left
+    console.log(`Minutes left before token expiry: ${minutesLeft}`);
   
       if (timeLeft <= 0) {
         handleLogout(); // Expiry time passed, log out immediately
@@ -91,7 +96,8 @@ function App() {
     };
   
     // Check every 30 minutes (1800000 milliseconds)
-    const intervalId = setInterval(handleSessionCheck, 1800000); 
+    const intervalId = setInterval(handleSessionCheck, 60000); 
+   
   
     return () => clearInterval(intervalId);
   }, [token, navigate, user]);

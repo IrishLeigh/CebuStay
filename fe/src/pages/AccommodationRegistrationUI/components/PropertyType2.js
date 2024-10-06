@@ -9,15 +9,14 @@ import AnimatePage from "./AnimatedPage";
 const propertyTypes = [
   {
     icon: "/EntireProperty.png", // Assuming this is in public folder
-    name: "Entire Property",
-    description:
-      "Guests are able to use the entire place and do not have to share this with the host or other guests.",
+    name: "Daily Term",
+    description: "Guests can book stays ranging from 1 to 31 days, perfect for short getaways or business trips.",
   },
   {
     icon: "/PrivateRoom.png", // Assuming this is in public folder
-    name: "Private Room",
+    name: "Monthly Term",
     description:
-      "Guests rent a room within the property. There are common areas that are either shared with the host or other guests.",
+      "Guests can book longer stays, typically from 1 month to a year, ideal for extended visits or relocation.",
   },
 ];
 
@@ -44,7 +43,7 @@ export default function PropertyType2({
 
   const validateAndProceed = () => {
     if (!selectedPropertyType) {
-      alert("Please select a property type.");
+      alert("Please select a property term.");
       return;
     }
     handleNext();
@@ -66,7 +65,7 @@ export default function PropertyType2({
                 textAlign: "left",
               }}
             >
-              Property Type
+              Property Term
             </Typography>
 
             <Typography
@@ -76,7 +75,7 @@ export default function PropertyType2({
                 marginBottom: 5,
               }}
             >
-              What guests can book?
+              The term is all about how long guests can book a stay—whether it’s for a quick getaway or a longer adventure!
             </Typography>
 
             <Grid container spacing={2} justifyContent="center">

@@ -3,216 +3,214 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { RadioGroup } from '@mui/material';
+import { RadioGroup, TextField } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import PaymentIcon from '@mui/icons-material/Payment'; // Add this line
+import PaymentIcon from '@mui/icons-material/Payment';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+// Create Alert component for Snackbar
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function PaymentMethods({ onPaymentDataChange, parentPaymentData, handleNext, handleBack }) {
-  const [paymentData, setPaymentData] = useState(parentPaymentData || {
+  const [paymentData, setPaymentData] = useState({
     selectedPayment: 'Online',
-    selectedPayout: ''
+    selectedPayout: 'Paypal',
+    hasPaypal: 'yes',
+    paypalInfo: {
+      email: '',
+      mobile: ''
+    }
   });
 
-  const handleChange = (event) => {
-    const newPaymentData = {
-      ...paymentData,
-      selectedPayment: event.target.value
-    };
-    setPaymentData(newPaymentData);
-    onPaymentDataChange(newPaymentData);
-  };
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('error');
 
-  const handlePayout = (event) => {
-    const newPaymentData = {
-      ...paymentData,
-      selectedPayout: event.target.value
-    };
-    setPaymentData(newPaymentData);
-    onPaymentDataChange(newPaymentData);
-  };
-
+  // Set initial state based on parentPaymentData
   useEffect(() => {
-    onPaymentDataChange(paymentData);
-    window.scrollTo(0, 0);
-  }, []);
+    if (parentPaymentData) {
+      setPaymentData((prev) => ({
+        ...prev,
+        selectedPayment: parentPaymentData.selectedPayment || prev.selectedPayment,
+        selectedPayout: parentPaymentData.selectedPayout || prev.selectedPayout,
+        hasPaypal: parentPaymentData.hasPaypal || prev.hasPaypal,
+        paypalInfo: {
+          email: parentPaymentData.paypalInfo?.email || prev.paypalInfo.email,
+          mobile: parentPaymentData.paypalInfo?.mobile || prev.paypalInfo.mobile,
+        }
+      }));
+    }
+  }, [parentPaymentData]);
 
+  // Handle changes in payment method
+  const handlePaymentChange = (event) => {
+    const newPaymentData = { ...paymentData, selectedPayment: event.target.value };
+    setPaymentData(newPaymentData);
+    onPaymentDataChange(newPaymentData);
+  };
+
+  // Handle changes in payout method
+  const handlePayoutChange = (event) => {
+    const newPaymentData = { ...paymentData, selectedPayout: event.target.value };
+    setPaymentData(newPaymentData);
+    onPaymentDataChange(newPaymentData);
+  };
+
+  // Handle changes in PayPal availability
+  const handlePaypalChange = (event) => {
+    const newPaymentData = { ...paymentData, hasPaypal: event.target.value };
+    setPaymentData(newPaymentData);
+    onPaymentDataChange(newPaymentData);
+  };
+
+  // Handle input changes for PayPal info
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    const newPaymentData = {
+      ...paymentData,
+      paypalInfo: {
+        ...paymentData.paypalInfo,
+        [name]: value
+      }
+    };
+    setPaymentData(newPaymentData);
+    onPaymentDataChange(newPaymentData);
+  };
+
+  // Open Snackbar function
+  const openSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  // Handle Snackbar close
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  // Proceed to the next step if validation is successful
   const validateAndProceed = () => {
-    if (paymentData.selectedPayout) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email pattern
+    const phonePattern = /^[0-9]{10,}$/; // Pattern for a valid phone number (at least 10 digits)
+
+    if (paymentData.hasPaypal === "yes") {
+      const { email, mobile } = paymentData.paypalInfo;
+
+      if (!emailPattern.test(email)) {
+        openSnackbar("Please enter a valid email address.", "error");
+        return;
+      }
+
+      if (!mobile || !phonePattern.test(mobile)) {
+        openSnackbar("Please enter a valid mobile number.", "error");
+        return;
+      }
+    }
+
+    if (paymentData.selectedPayout !== "") {
       handleNext();
     } else {
-      alert("Please select both payment and payout methods.");
+      openSnackbar("Please select both payment and payout methods.", "error");
     }
   };
 
   return (
-    <Container maxWidth="lg" className="centered-container">   
-      <Box
-      >
-        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <div>
-            <Typography sx={{ fontSize: "2rem" , fontFamily: "Poppins, sans-serif",mb: 2}} fontWeight="bold">
-              Payment Methods
-            </Typography>
+    <Container maxWidth="lg">
+      <Paper elevation={3} sx={{ p: "2rem", width: "100%", borderRadius: "0.8rem", boxShadow: 3 }}>
+        <Box component="form" sx={{ '& > :not(style)': { my: 1, width: "100%" } }} autoComplete="off">
+          <Typography sx={{ fontSize: "2rem", fontFamily: "Poppins, sans-serif", mb: 2 }} fontWeight="bold">
+            Payment Methods
+          </Typography>
 
-            {/* <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2} >
-              Idk here yet.
-            </Typography> */}
+          <Typography sx={{ fontSize: "1.125rem" }} mb={2} fontWeight="bold">
+            How can your guests pay for their stay?
+          </Typography>
 
-         
-          </div>
-        </Box>
-
-        <Paper elevation={3} sx={{ p: "2rem", width: "100%" , borderRadius: "0.8rem", boxShadow: 3}}>
-          <Box
-            component="form"
-            sx={{
-              '& > :not(style)': { my: 1, width: "100%" }
-            }}
-            autoComplete="off"
-          >
-            <div>
-              <Typography sx={{ fontSize: "1.125rem" }} mb={2} fontWeight="bold">
-                How can your guests pay for their stay?
-              </Typography>
-              {/* <RadioGroup
-              
-                aria-labelledby="Payment"
-                name="Payment"
-                value={paymentData.selectedPayment}
-                onChange={handleChange}
-              >
-                <FormControlLabel
-                  value="Online"
-                  control={<Radio />}
-                  label={
-                    <Typography fontWeight="bold">
-                      Online Payment
-                    </Typography>
-                  }
-                />
-                <Typography sx={{ ml: 6 }}>
-                  CebuStay facilitates payments, allowing guests to conveniently pay the full amount online.
-                </Typography>
-
-                <FormControlLabel
-                  value="Flexible"
-                  control={<Radio />}
-                  label={
-                    <Typography fontWeight="bold">
-                      Flexible Payment
-                    </Typography>
-                  }
-                />
-                <Typography sx={{ ml: 6 }}>
-                  Pay just 50% upfront and settle the remainder conveniently in cash upon your arrival.
-                </Typography>
-              </RadioGroup> */}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  backgroundColor: "#16B4DD",
-                  height: "100%",
-                  borderRadius: "0.8rem",
-                  padding: "1rem",
-                  color: "white",
-                }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  Online Payment
-                </Typography>
-                <Box display="flex" alignItems="center" mb={2}>
-                  <LocalOfferIcon sx={{ mr: 1 }} />
-                  <Typography variant="body2">
-                    Your future guests can pay the full amount online through CebuStay, which will handle all payment transactions securely for you.
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" mb={2}>
-                  <DarkModeIcon sx={{ mr: 1 }} />
-                  <Typography variant="body2">
-                    CebuStay offers a wide range of payment methods for your guests, so you don't have to worry about configuration.
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" mb={2}>
-                  <PaymentIcon sx={{ mr: 1 }} />
-                  <Typography variant="body2">
-                    We payout to you at the end of each month, so you can manage your finances effectively.
-                  </Typography>
-                </Box>
-              </Box>
-
-            </div>
-            
-
-            <div>
-              <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">
-                How does your accommodation prefer to receive its payout?
-              </Typography>
-              <Typography sx={{ fontSize: "1rem" }} mb={2} mt={1}>
-                Please choose your preferred payout method. Additional details will be required upon publication on our platform. [Important note] For security reasons, your initial payout will be processed 30 days after the check-out date of your first booking. Subsequent payouts for future bookings will be processed 24 hours after the traveler's check-out date
-              </Typography>
-              <RadioGroup
-                aria-labelledby="Payout"
-                name="Payout"
-                value={paymentData.selectedPayout}
-                onChange={handlePayout}
-              >
-                <FormControlLabel
-                  value="Bank"
-                  control={<Radio />}
-                  label={
-                    <Typography fontWeight="bold">
-                      Local Bank Transfer (Philippine Banks)
-                    </Typography>
-                  }
-                />
-                <Typography sx={{ ml: 6 }}>
-                  Opt for seamless transactions with payments deposited directly into your Philippine bank account.
-                </Typography>
-
-                <FormControlLabel
-                  value="Gcash"
-                  control={<Radio />}
-                  label={
-                    <Typography fontWeight="bold">
-                      GCash Transfer
-                    </Typography>
-                  }
-                />
-                <Typography sx={{ ml: 6 }}>
-                  Get your payments swiftly and securely deposited into your GCash wallet.
-                </Typography>
-
-                <FormControlLabel
-                  value="Paypal"
-                  control={<Radio />}
-                  label={
-                    <Typography fontWeight="bold">
-                      PayPal Deposit
-                    </Typography>
-                  }
-                />
-                <Typography sx={{ ml: 6 }}>
-                  Receive your payments directly into your PayPal account for easy management.
-                </Typography>
-              </RadioGroup>
-            </div>
+          {/* Information about Online Payment */}
+          <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#16B4DD", padding: "1rem", borderRadius: "0.8rem", color: "white" }}>
+            <Typography variant="h6" gutterBottom>Online Payment</Typography>
+            <Box display="flex" alignItems="center" mb={2}>
+              <LocalOfferIcon sx={{ mr: 1 }} />
+              <Typography variant="body2">Your future guests can pay the full amount online through CebuStay.</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" mb={2}>
+              <DarkModeIcon sx={{ mr: 1 }} />
+              <Typography variant="body2">CebuStay offers a wide range of payment methods.</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" mb={2}>
+              <PaymentIcon sx={{ mr: 1 }} />
+              <Typography variant="body2">We payout to you at the end of each month.</Typography>
+            </Box>
           </Box>
-        </Paper>
-      </Box>
+
+          {/* PayPal Account Section */}
+          <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">PayPal Payout Account</Typography>
+          <Typography sx={{ fontSize: "1rem" }} mb={2} mt={1}>
+            Our accommodation handles payouts through PayPal. For security reasons, your initial payout will be processed 30 days after the check-out date of your first booking.
+          </Typography>
+
+          <RadioGroup
+            aria-labelledby="PaypalAccount"
+            name="PaypalAccount"
+            value={paymentData.hasPaypal}
+            onChange={handlePaypalChange}
+          >
+            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+            <FormControlLabel value="no" control={<Radio />} label="No" />
+          </RadioGroup>
+
+          {paymentData.hasPaypal === "yes" && (
+            <div>
+              <TextField
+                label="PayPal Email"
+                name="email"
+                value={paymentData.paypalInfo.email || ""}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+                required
+              />
+              <TextField
+                label="PayPal Mobile Number"
+                name="mobile"
+                value={paymentData.paypalInfo.mobile || ""}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+                required
+              />
+            </div>
+          )}
+          {paymentData.hasPaypal === "no" && (
+            <Typography sx={{ mt: 2 }}>
+              You need to register for a PayPal account to receive payments.
+            </Typography>
+          )}
+        </Box>
+      </Paper>
+
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
-          Back
-        </Button>
-        <Button onClick={validateAndProceed} className="stepperNext">
-          Next
-        </Button>
+        <Button onClick={handleBack} className="stepperPrevious">Back</Button>
+        <Button onClick={validateAndProceed} className="stepperNext">Next</Button>
       </div>
+
+      {/* Snackbar for notifications */}
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
