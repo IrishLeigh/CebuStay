@@ -27,7 +27,7 @@ use App\Http\Controllers\PropertyCompanyController;
 use App\Http\Controllers\PropertyOwnerController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PayPalController;
-
+use App\Http\Controllers\PayoutController;
 Route::post('/paypal-pay', [PayPalController::class, 'pay']);
 Route::get('/paypal/check-payout/{payoutItemId}', [PayPalController::class, 'checkPayoutStatus']);
 Route::post('/paypal/payout', [PayPalController::class, 'sendPayout']);
@@ -253,3 +253,6 @@ Route::get('/property/hostimg/{propertyid}', [FileController::class, 'getHostImg
 Route::post('/createadmin', [UserAdminAuthenticationController::class, 'createUserAdmin']);
 Route::post('/loginadmin', [UserAdminAuthenticationController::class, 'login']);
 Route::post('/logoutadmin', [UserAdminAuthenticationController::class, 'logout']);
+
+Route::get('/getpayouts', [PayoutController::class, 'getPayouts']);
+Route::post('/setPayout', [PayoutController::class, 'setPayout']);
