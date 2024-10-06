@@ -91,6 +91,7 @@ class PaymentController extends CORS
         $payment->status = $request->input('status');
         $payment->save();
 
+        $charge = $payment->amount * .15;
         $paymentId = $payment->pid;
         $payout_record = new Payout();
         $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
@@ -105,6 +106,7 @@ class PaymentController extends CORS
         $payout_record->userid = $userid;
         $payout_record->propertyid = $propertyid;
         $payout_record->pid = $paymentId;
+        $payout_record->payout_amount = $payment->amount - $charge;
         $payout_record->status = "Pending";
         $payout_record->save();
 

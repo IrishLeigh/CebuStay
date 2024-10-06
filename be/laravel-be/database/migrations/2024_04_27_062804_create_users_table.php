@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->datetime('verification_token_expires_at')->nullable();
             $table->date('birthday')->nullable(); 
             $table->string('country')->nullable(); 
+            $table->string('paypalmail')->nullable();
+            $table->string('paypalphonenumber')->nullable();
             $table->timestamps();
         });
     }
