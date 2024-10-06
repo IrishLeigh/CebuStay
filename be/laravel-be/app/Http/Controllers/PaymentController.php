@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Models\Payout;
 use App\Services\PayMongoService;
 use Illuminate\Http\Request;
 use App\Models\Booking;
@@ -50,6 +51,7 @@ class PaymentController extends CORS
 
             $payment->save();
 
+
             // Return the payment record along with the PayMongo checkout session link
             return response()->json([
                 'payment' => $payment,
@@ -79,16 +81,33 @@ class PaymentController extends CORS
     public function updatePaymentStatus(Request $request)
     {
         $this->enableCors($request);
-        
+
         $payment = Payment::where('bookingid', $request->input('bookingid'))->latest('created_at')->first();
-    
+
         if (!$payment) {
             return response()->json(['error' => 'Payment not found'], 404);
         }
-    
+
         $payment->status = $request->input('status');
         $payment->save();
-    
+
+        $paymentId = $payment->pid;
+        $payout_record = new Payout();
+        $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+            ->join('users', 'tbl_booking.userid', '=', 'users.userid')
+            ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+            ->value('users.userid');
+        $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+            ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+            ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+            ->value('property.propertyid');
+
+        $payout_record->userid = $userid;
+        $payout_record->propertyid = $propertyid;
+        $payout_record->pid = $paymentId;
+        $payout_record->status = "Pending";
+        $payout_record->save();
+
         return response()->json($payment);
     }
 
@@ -136,19 +155,18 @@ class PaymentController extends CORS
 
         // Get request data
         $paymentId = $payment->linkid;
-        $percentage = $request->input('percentage'); 
+        $percentage = $request->input('percentage');
         $reason = $request->input('reason', 'others'); // Default reason is 'others'
         $amountToRefund = null;
         $totalAmount = $payment->amount; // Assuming this is the total amount paid
-        
-        if($isCancel === 1 )
-        {
-            if($dayresult === 1){
-                $amountToRefund =  round((100 / 100) * $totalAmount);
-            }else{
-                $amountToRefund =  round(($percentage / 100) * $totalAmount);
+
+        if ($isCancel === 1) {
+            if ($dayresult === 1) {
+                $amountToRefund = round((100 / 100) * $totalAmount);
+            } else {
+                $amountToRefund = round(($percentage / 100) * $totalAmount);
             }
-        }else{
+        } else {
             $payment->status = 'Cancelled'; // Set the status to 'cancelled'
             $payment->save(); // Save changes to the database
 
@@ -161,7 +179,7 @@ class PaymentController extends CORS
                 'status' => 'cancelled',
             ], 200);
         }
-        
+
         // $refundAmount = $amountToRefund * 100;
 
         if (!$paymentId) {
@@ -207,7 +225,7 @@ class PaymentController extends CORS
                 $booking->total_price -= $amountToRefund;
                 $booking->status = 'Cancelled';
                 $booking->save();
-    
+
                 // Return the refund data
                 return response()->json([
                     'message' => 'Refund successful',
@@ -218,7 +236,7 @@ class PaymentController extends CORS
             } else {
                 return response()->json(['error' => 'Failed to process the refund.'], 500);
             }
-    
+
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
