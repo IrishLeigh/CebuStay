@@ -358,7 +358,7 @@ class PropertyController extends CORS
         // Retrieve properties
         $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')
             ->where('isActive', 1)
-            ->where('property_type', $singleunittype)
+            ->whereIn('property_type', $singleunittype)
             ->get();
 
         // Retrieve unit details
