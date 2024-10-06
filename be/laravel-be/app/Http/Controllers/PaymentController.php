@@ -272,10 +272,10 @@ class PaymentController extends CORS
                 $payment->linkid = $paymentId; // Set the link ID to the payment ID
                 $payment->save(); // Save the updated payment record
 
-                $booking = Booking::find($bookingid);
-                $booking->total_price += $payment->amount;
+                // $booking = Booking::find($bookingid);
+                // $booking->total_price += $payment->amount;
 
-                $booking->save();
+                // $booking->save();
             } else {
                 return response()->json(['error' => 'Payment record not found.'], 404);
             }

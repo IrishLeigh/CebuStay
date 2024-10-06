@@ -21,6 +21,7 @@ use App\Models\File;
 use App\Models\HouseRule;
 use App\Models\ReviewsAndRating;
 use App\Models\Booking;
+use App\Models\UserFile;
 class PropertyController extends CORS
 {
     public function disableProperty(Request $request)
@@ -173,6 +174,7 @@ class PropertyController extends CORS
         $unit_details = [];
         $property_ownerdetails = [];
         $property_companydetails = [];
+        $company_logo_url = null;
 
         foreach ($units as $unit) {
             $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $unit->proppricingid)->first();
@@ -189,6 +191,14 @@ class PropertyController extends CORS
                     ->where('propertycompanyid', $property_companydetails->propertycompanyid)
                     ->get()
                     ->toArray();
+
+                    $src_companylogo = UserFile::where('propertyid', $request->input('propertyid'))
+                    ->where('isavatar', false) 
+                    ->first();
+        
+                if ($src_companylogo) {
+                    $company_logo_url = $src_companylogo->file_url;
+                }
             }
 
 
@@ -248,6 +258,7 @@ class PropertyController extends CORS
         } else {
             $property_owner['property_company'] = $property_companydetails;
             $property_owner['legal_representative'] = $property_legalrepdetails;
+            $property_owner['company_logo'] = $company_logo_url;
         }
 
         $payment_method = PropertyPaymentMethods::select('isonline', 'paymentmethod')->where('propertyid', $request->input('propertyid'))->first();

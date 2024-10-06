@@ -10,6 +10,8 @@ use App\Models\UnitDetails;
 use App\Models\ReviewsAndRating;
 use App\Models\PropertyOwnership;
 use App\Models\UserFile;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Carbon\Carbon;
 
 class DashboardController extends CORS 
@@ -76,7 +78,7 @@ class DashboardController extends CORS
         $data = [
             [
                 'title' => 'Total Revenue',
-                'value' => number_format($this->getMonthlyRevenue($propertyId)['totalRevenue'], 0, '.', ',') . 'k',
+                'value' => number_format($this->getMonthlyRevenue($propertyId)['totalRevenue'], 0, '.', ','),
                 'interval' => 'Last 30 days',
                 'trend' => $this->calculateTrend(
                     $this->getMonthlyRevenue($propertyId)['totalRevenue'],
@@ -87,7 +89,7 @@ class DashboardController extends CORS
             // Weekly Bookings
             [
                 'title' => 'Total Bookings',
-                'value' => number_format($this->getWeeklyBookings($propertyId)['totalBookings'], 0, '.', ',') . 'k',
+                'value' => number_format($this->getWeeklyBookings($propertyId)['totalBookings'], 0, '.', ','),
                 'interval' => 'This week',
                 'trend' => $this->calculateTrend(
                     $this->getWeeklyBookings($propertyId)['totalBookings'],
@@ -577,8 +579,10 @@ class DashboardController extends CORS
         // Map the properties to return necessary details
         $propertyList = $properties->map(function ($property) {
             $propertyOwnership = PropertyOwnership::where('propertyid', $property->propertyid)->first();
-            $ownershipType = $propertyOwnership->ownershiptype;
-            $propertyImage = $this->getPropertyImageByOwnership($propertyOwnership, $property);
+            // $ownershipType = $propertyOwnership->ownershiptype;
+            $propertyImage = $propertyOwnership ? 
+            $this->getPropertyImageByOwnership($propertyOwnership, $property) : 
+            null;
     
             return [
                 'propertyid' => $property->propertyid,

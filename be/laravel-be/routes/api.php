@@ -39,7 +39,6 @@ Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrie
 Route::put('/update-payment-link', [PaymentController::class, 'updatePaymentLink']);
 Route::get('/getpayments', [PaymentController::class, 'getPayments']);
 Route::post('/payment-callback', [PaymentController::class, 'paymentCallback']);
-Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
 Route::post('/refund-payment', [PaymentController::class, 'refundPayment']);
 Route::get('/getpaymentid', [PaymentController::class, 'getPaymentId']);
 Route::get('refund', [PaymentController::class, 'getRefund']);

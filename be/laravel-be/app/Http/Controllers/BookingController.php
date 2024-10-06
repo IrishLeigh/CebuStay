@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\UnitDetails;
+use App\Models\PropertyPricing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Booking;
@@ -35,6 +37,7 @@ class BookingController extends CORS
 
         $checkin = $request->input('checkin_date');
         $checkout = $request->input('checkout_date');
+        $bookingId = $request->input('bookingId');
         $get_property = Property::where('propertyid', $request->input('propertyid'))->first();
         $get_unit = UnitDetails::where('propertyid', $get_property->propertyid)->first();
         $unitid = $get_unit->unitid;
@@ -43,16 +46,42 @@ class BookingController extends CORS
         }
         $bookings = Booking::where('unitid', $unitid)->get();
 
-        // Perform validation check for date conflict
-        foreach ($bookings as $booking) {
-            if (
-                ($checkin >= $booking->checkin_date && $checkin <= $booking->checkout_date) ||
-                ($checkout >= $booking->checkin_date && $checkout <= $booking->checkout_date) ||
-                ($checkin < $booking->checkin_date && $checkout > $booking->checkout_date)
-            ) {
-                return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
+        if ($bookingId) {
+            $bookingExcept = Booking::where('unitid', $unitid)
+                ->where('bookingid', '!=', $bookingId)
+                ->get();
+            foreach ($bookingExcept as $booking) {
+                if (
+                    ($checkin >= $booking->checkin_date && $checkin <= $booking->checkout_date) ||
+                    ($checkout >= $booking->checkin_date && $checkout <= $booking->checkout_date) ||
+                    ($checkin < $booking->checkin_date && $checkout > $booking->checkout_date)
+                ) {
+                    return response()->json(['message' => 'The selected dates conflict with an existing booking Maybe.', 'status' => 'error']);
+                }
+            }
+
+        } else {
+            foreach ($bookings as $booking) {
+                if (
+                    ($checkin >= $booking->checkin_date && $checkin <= $booking->checkout_date) ||
+                    ($checkout >= $booking->checkin_date && $checkout <= $booking->checkout_date) ||
+                    ($checkin < $booking->checkin_date && $checkout > $booking->checkout_date)
+                ) {
+                    return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
+                }
             }
         }
+
+        // Perform validation check for date conflict
+        // foreach ($bookings as $booking) {
+        //     if (
+        //         ($checkin >= $booking->checkin_date && $checkin <= $booking->checkout_date) ||
+        //         ($checkout >= $booking->checkin_date && $checkout <= $booking->checkout_date) ||
+        //         ($checkin < $booking->checkin_date && $checkout > $booking->checkout_date)
+        //     ) {
+        //         return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
+        //     }
+        // }
         $get_property = Property::where('propertyid', $request->input('propertyid'))->first();
         $get_unit = UnitDetails::where('propertyid', $get_property->propertyid)->first();
         if ($get_unit->guest_capacity < $request->input('guest_count')) {
@@ -139,7 +168,7 @@ class BookingController extends CORS
             $booking->guest_count = $request->input('guest_count');
             $booking->checkin_date = $checkin;
             $booking->checkout_date = $checkout;
-            $booking->total_price = $request->input('total_price');
+            $booking->total_price = $request->input('total_price') * $request->input('stay_length');
             $booking->special_request = $request->input('special_request');
             $booking->arrival_time = $request->input('arrival_time');
             $booking->status = $request->input('status');
@@ -166,6 +195,7 @@ class BookingController extends CORS
         $bookingId = $request->input('bookingid');
         $checkin = $request->input('checkin_date');
         $checkout = $request->input('checkout_date');
+        $lengthStay = $request->input('lengthStay');
 
         // $get_unit = UnitDetails::where('propertyid', $get_property->propertyid)->first();
         // $unitid = $get_unit->unitid;
@@ -201,19 +231,25 @@ class BookingController extends CORS
                 return response()->json(['message' => 'The selected dates conflict with an existing booking.', 'status' => 'error']);
             }
         }
-        $oldCheckin = $booking->checkin_date;
-
-        // Update the booking details
-        $booking->checkin_date = $checkin;
-        $booking->checkout_date = $checkout;
-        $booking->guest_count = $request->input('guest_count');
-
         $property = Property::find($booking->propertyid);
-
-        // Save the updated booking
-        $booking->save();
-
+        $unitDetails = UnitDetails::where('propertyid', $booking->propertyid)->first();
+        $pricing = PropertyPricing::where('proppricingid', $unitDetails->proppricingid)->first();
         $payment = Payment::where('bookingid', $booking->bookingid)->first();
+        $oldCheckin = $booking->checkin_date;
+        $oldLengthStay = $booking->stay_length;
+        $newLengthStay = 0;
+        if ($oldLengthStay != $lengthStay) {
+            $num = $lengthStay - $oldLengthStay;
+            $newLengthStay = $num * $pricing->min_price;
+        }
+
+        $totalAmountBooking = $payment->amount;
+
+        $amountToBooking = (($bookingPolicy->modificationCharge / 100) * $totalAmountBooking) + $newLengthStay;
+
+
+
+
 
         // Check if check-in date minus cancellation days is greater than the current date
         $modificationDays = $bookingPolicy->modificationDays;
@@ -225,10 +261,22 @@ class BookingController extends CORS
         if ($currentDate > $checkinDateMinusCancellationDays) {
             $totalAmount = $payment->amount; // Assuming this is the total amount paid
             $amountToRefund = ($bookingPolicy->modificationCharge / 100) * $totalAmount;
+            $saveAmount = $newLengthStay + $amountToRefund;
             $description = 'Modification Charge for booking ' . $property->property_name;
             $returnUrl = 'http://localhost:3000/paymentVerification';
             $bookingId = $booking->bookingid;
-            $totalPrice = $amountToRefund * 100;
+            $totalPrice = $saveAmount * 100;
+
+            // return response()->json([
+            //     'message' => 'Booking updated successfully sa naa charge',
+            //     'status' => 'success',
+            //     'totalPrice' => $totalPrice,
+            //     'newLengthStay' => $newLengthStay,
+            //     'saveAmount' => $saveAmount,
+            //     'amountToRefund' => $amountToRefund,
+            //     'totalAmount' => $totalAmount,
+            //     'modificationCharge' => $bookingPolicy->modificationCharge
+            // ]);
 
             // $checkoutData = createCheckoutSession($amountToRefund, $description, $returnUrl, $bookingId);
             $checkoutData = $this->payMongoService->createCheckoutSession($totalPrice, $description, $returnUrl, $bookingId);
@@ -237,15 +285,64 @@ class BookingController extends CORS
 
 
             // Save the payment record in the database
-            $payment = new Payment();
-            $payment->amount = $amountToRefund;
+            // $payment = new Payment();
+            $payment->amount += $saveAmount;
             $payment->description = $description;
             $payment->status = 'Pending';
             $payment->paymentid = $paymentId;
             $payment->bookingid = $bookingId;
-
             $payment->save();
 
+            // Update the booking details
+            $booking->checkin_date = $checkin;
+            $booking->checkout_date = $checkout;
+            $booking->guest_count = $request->input('guest_count');
+            $booking->total_price += $saveAmount;
+            $booking->stay_length = $lengthStay;
+            $booking->save();
+
+        } else if ($oldLengthStay != $lengthStay) {
+            $totalAmount = $payment->amount; // Assuming this is the total amount paid
+            $amountToRefund = 100 * $totalAmount;
+            $amountToRefund /= 100;
+            $description = 'Modification Charge for booking ' . $property->property_name;
+            $returnUrl = 'http://localhost:3000/paymentVerification';
+            $bookingId = $booking->bookingid;
+            $totalPrice = 100 * $newLengthStay;
+            $saveToPayment = $totalPrice / 100;
+
+            // return response()->json([
+            //     'message' => 'Booking updated successfully sa wlay charge',
+            //     'status' => 'success',
+            //     'totalPrice' => $totalPrice,
+            //     'newLengthStay' => $newLengthStay,
+            //     'totalAmount' => $totalAmount,
+            //     'saveToPayment' => $saveToPayment,
+            //     'oldlength' => $oldLengthStay,
+            //     'newlength' => $lengthStay
+            // ]);
+
+            // $checkoutData = createCheckoutSession($amountToRefund, $description, $returnUrl, $bookingId);
+            $checkoutData = $this->payMongoService->createCheckoutSession($totalPrice, $description, $returnUrl, $bookingId);
+            $checkoutUrl = $checkoutData['checkout_url'];
+            $paymentId = $checkoutData['payment_id'];
+
+
+            // Save the payment record in the database
+            $payment->amount += $saveToPayment;
+            $payment->description = $description;
+            $payment->status = 'Pending';
+            $payment->paymentid = $paymentId;
+            $payment->bookingid = $bookingId;
+            $payment->save();
+
+            // Update the booking details
+            $booking->checkin_date = $checkin;
+            $booking->checkout_date = $checkout;
+            $booking->guest_count = $request->input('guest_count');
+            $booking->total_price += $saveToPayment;
+            $booking->stay_length = $lengthStay;
+            $booking->save();
         }
 
         DB::commit();

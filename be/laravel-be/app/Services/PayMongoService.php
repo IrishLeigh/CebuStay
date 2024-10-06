@@ -29,9 +29,9 @@ class PayMongoService
     public function createCheckoutSession($totalprice, $description, $returnUrl, $bookingId)
     {
         $apiKey = 'sk_test_eFrCmpKXktDTxx7avwDX7uBQ'; // Replace with your actual PayMongo API key
-    
+
         $totalprice = (int) $totalprice;
-    
+
         $client = new Client([
             'base_uri' => 'https://api.paymongo.com/v1/',
             'headers' => [
@@ -39,9 +39,9 @@ class PayMongoService
                 'Content-Type' => 'application/json',
             ],
         ]);
-    
+
         $successUrl = $returnUrl . '?bookingId=' . $bookingId;
-    
+
         try {
             $response = $client->post('checkout_sessions', [
                 'json' => [
@@ -62,7 +62,16 @@ class PayMongoService
                                 ],
                             ],
                             'payment_method_types' => [
+                                'billease',
+                                'card',
+                                'dob',
+                                'dob_ubp',
+                                'brankas_bdo',
+                                'brankas_landbank',
+                                'brankas_metrobank',
                                 'gcash',
+                                'grab_pay',
+                                'paymaya',
                             ],
                             'reference_number' => null,
                             'send_email_receipt' => false,
@@ -75,14 +84,14 @@ class PayMongoService
                     ],
                 ],
             ]);
-    
+
             // Decode the response to get the checkout URL and payment ID
             $data = json_decode($response->getBody(), true);
-            
+
             // Retrieve the payment ID and checkout URL from the response
             $checkoutUrl = $data['data']['attributes']['checkout_url']; // Adjust according to actual response
             $paymentId = $data['data']['id']; // The payment ID from the PayMongo response
-    
+
             return [
                 'checkout_url' => $checkoutUrl,
                 'payment_id' => $paymentId,
@@ -91,7 +100,7 @@ class PayMongoService
             throw new \Exception('Failed to create checkout session: ' . $e->getMessage());
         }
     }
-    
+
 
     public function getRefundService($refundId)
     {
@@ -117,7 +126,7 @@ class PayMongoService
             ];
         }
     }
-    
-    
-    
+
+
+
 }
