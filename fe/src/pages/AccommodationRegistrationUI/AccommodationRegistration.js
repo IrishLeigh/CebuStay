@@ -883,7 +883,7 @@ const handleRetry = () => {
         // Reset all state variables here if needed
       } catch (error) {
         console.error("Error submitting form:", error);
-        alert("Submission failed. Please try again later.");
+        setErrorModalOpen(true);
       } finally {
         // Hide modal and reset loading state after a delay
         setIsLoading(false); // Hide the loading spinner
@@ -1384,7 +1384,7 @@ const handleRetry = () => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Submission failed. Please try again later.");
+      setErrorModalOpen(true);
     } finally {
       setIsLoading(false);
     }

@@ -108,12 +108,13 @@ export default function RoomGallery({ propertyImages }) {
       </Box>
 
       {/* Dialog for full-size image slideshow */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        maxWidth="lg"
+        maxWidth="md"
         fullWidth
-        sx={{ padding: 0,height: "90vh" }}
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} // Centering dialog
       >
         <DialogContent sx={{ padding: 0, position: 'relative' }}>
           <IconButton
@@ -147,7 +148,7 @@ export default function RoomGallery({ propertyImages }) {
                 <Box
                   sx={{
                     position: "absolute",
-                    bottom: 16,
+                    top: 16,
                     left: 16,
                     backgroundColor: "rgba(0, 0, 0, 0.6)",
                     padding: "8px 16px",
@@ -163,6 +164,7 @@ export default function RoomGallery({ propertyImages }) {
           </Slider>
         </DialogContent>
       </Dialog>
+      </Box>
     </Paper>
   );
 }

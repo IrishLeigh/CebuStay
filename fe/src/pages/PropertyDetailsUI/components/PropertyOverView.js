@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../css/SinglePropertyUI.css";
-import { Avatar, Paper, Stack, Grid, Divider, Typography } from "@mui/material";
+import { Avatar, Paper, Stack, Grid, Divider, Typography, Box } from "@mui/material";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import Location from "@mui/icons-material/LocationOn";
 import ArrowRight from "@mui/icons-material/KeyboardDoubleArrowRight";
-import GirlIcon from "@mui/icons-material/Face3";
+import PeopleIcon from '@mui/icons-material/People';
 import HomeIcon from "@mui/icons-material/Home";
 import RoomIcon from "@mui/icons-material/NightShelter";
 import axios from "axios";
@@ -45,31 +45,42 @@ export default function PropertyOverView({ rating, propertyinfo }) {
       <Grid container spacing={2} alignItems="center">
         {/* Property Name and Address */}
         <Grid item xs={12} sm={8}>
-          <div className="overview-title">
-            {propertyDetail.property_details.property_name}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              marginTop: "0.5rem",
-              flexDirection: "column",
-            }}
-          >
-            <div className="overview-text">
-              <Location sx={{ color: "#16B4DD", marginRight: "0.3rem" }} />
-              {propertyDetail.property_address.address}
-            </div>
+  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
+    {propertyDetail.property_details.property_name}
+  </Typography>
+  
+  <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+    
+    <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+      <Location sx={{ color: "#16B4DD", mr: 1 }} />
+      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+        {propertyDetail.property_address.address}
+      </Typography>
+    </Box>
 
-            <div className="overview-text">
-              <HomeIcon sx={{ color: "#16B4DD", marginRight: "0.3rem" }} />
-              {propertyDetail.property_details.property_type}
-            </div>
-            <div className="overview-text">
-              <RoomIcon sx={{ color: "#16B4DD", marginRight: "0.3rem" }} />
-              {propertyDetail.property_details.unit_type}
-            </div>
-          </div>
-        </Grid>
+    <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+      <HomeIcon sx={{ color: "#16B4DD", mr: 1 }} />
+      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+        {propertyDetail.property_details.property_type}
+      </Typography>
+    </Box>
+
+    <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+      <PeopleIcon sx={{ color: "#16B4DD", mr: 1 }} />
+      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+        Max Guests: {propertyDetail.property_unitdetails[0].guest_capacity}
+      </Typography>
+    </Box>
+
+    <Box className="overview-text" sx={{ display: "flex", alignItems: "center" }}>
+      <RoomIcon sx={{ color: "#16B4DD", mr: 1 }} />
+      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+        {propertyDetail.property_details.unit_type}
+      </Typography>
+    </Box>
+
+  </Box>
+</Grid>
 
         {/* Rating Section */}
         <Grid
@@ -248,14 +259,6 @@ export default function PropertyOverView({ rating, propertyinfo }) {
                   {/* {propertyDetail?.property_owner?.property_owner?.address} */}
                 </td>
               </tr>
-              {/* <tr>
-                <td>Gender</td>
-                <td>{propertyDetail?.property_owner?.property_owner?.gender || "N/A"}</td>
-              </tr>
-              <tr>
-                <td>Language</td>
-                <td>{propertyDetail?.property_owner?.property_owner?.language || "English"}</td>
-              </tr> */}
             </tbody>
           </table>
         </Grid>
