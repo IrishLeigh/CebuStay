@@ -1,3 +1,19 @@
-.admin-pagee{
+.admin-pagee {
     display: flex;
-}
+    height: 100vh; /* Makes sure it takes the full height of the viewport */
+  }
+  
+  .admin-sidebar {
+    width: 250px; /* Set a fixed width for the sidebar */
+    background-color: #f5f5f5; /* Example background color */
+    /* Add any other styles for the sidebar here */
+  }
+  
+  .admin-content {
+    flex-grow: 1; /* This allows the content area to take up the remaining space */
+    /* padding: 1rem; Optional padding */
+    overflow-y: auto; /* Makes sure content can scroll if it exceeds the height */
+    background-color: #fff; /* Example background color */
+    /* Add any other styles for the content area here */
+  }
+  

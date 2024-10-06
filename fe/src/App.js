@@ -40,7 +40,10 @@ import AccommodationReservationUI from "./pages/PropertyManagementUI/components/
 import UserLayout from "./components/Layout/UserLayout";
 import NoUserLayout from "./components/Layout/NoUserLayout";
 import WarningModal from "./pages/User Management/Logout/modal/LogoutAlertModal";
-import useScrollToTop from "./components/Hooks/useScrollToTop ";
+// import useScrollToTop from "./components/Hooks/useScrollToTop ";
+
+import AdminLoginUI from "./pages/Admin/AdminLoginUI";
+import AdminPayments from "./pages/Admin/AdminPayments";
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -73,7 +76,7 @@ function App() {
           console.error("Error decoding JWT token:", error);
         });
     } else {
-      navigate("/login");
+      // navigate("/login");
     }
   }, [token]);
 
@@ -149,7 +152,8 @@ function App() {
       <div ref={topRef}>
         <Routes>
           <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
-            {/* Public Routes */}
+            {/* Public Routess */}
+
             <Route index element={<LandingPageUI />} />
             <Route
               path="login"
