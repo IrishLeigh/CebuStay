@@ -19,7 +19,7 @@ export default function CalendarUI() {
 
   const dashboardTheme = createTheme(getDashboardTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-
+  localStorage.setItem('themeMode', 'light');
   React.useEffect(() => {
     const savedMode = localStorage.getItem('themeMode');
     if (savedMode) {
@@ -35,6 +35,7 @@ export default function CalendarUI() {
     setMode(newMode);
     localStorage.setItem('themeMode', newMode);
   };
+  
 
   const toggleCustomTheme = () => {
     setShowCustomTheme((prev) => !prev);

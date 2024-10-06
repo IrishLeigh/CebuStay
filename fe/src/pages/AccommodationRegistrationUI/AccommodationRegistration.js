@@ -796,7 +796,7 @@ const handleRetry = () => {
                                 const file = await fetchBlobAsFile(hostData.imageSrc, "photo.jpg"); 
                                   formData.append("file", file);
                                   formData.append("userid", user.userid);
-
+                                  formData.append("propertyid", propertyId);
                                 const company = await axios.post(
                                   "http://127.0.0.1:8000/api/propertycompany",
                                   {
