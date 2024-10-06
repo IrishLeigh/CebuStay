@@ -6,20 +6,29 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Ensure the import 
 
 const propertyTypes = [
   {
-    name: "Apartment",
-    description: "Self-contained unit within a building, typically offering one or more bedrooms, a bathroom, a kitchen, and a living area.",
+    name: "Private Residential",
+    description: "A stand-alone house with multiple bedrooms, bathrooms, a kitchen, and living spaces. Ideal for families or groups who want privacy.",
+    icon: "/apartment.png",
   },
   {
-    name: "Home",
-    description: "Private residential property offering multiple rooms, including bedrooms, bathrooms, a kitchen, and living spaces.",
+    name: "Townhouse",
+    description: "A multi-story home that shares walls with neighbors, usually with several bedrooms, bathrooms, and a small yard.",
+    icon: "/home.png",
+  },
+  {
+    name: "Subdivision House",
+    description: "A house in a private community with access to shared amenities like parks or security services.",
+    icon: "/home.png",
   },
   {
     name: "Condominium",
     description: "A residential property with private units and shared amenities like pools and fitness centers.",
+    icon: "/condominium.png",
   },
   {
     name: "Others", // This will act as a flag only
     description: "Diverse accommodations beyond traditional options, such as vacation rentals, cottages, or other unique properties.",
+    icon: "/Others.png",
   },
 ];
 
@@ -31,7 +40,7 @@ const buttonsData = [
   // { label: "Bed & Breakfast", icon: "/bnb.png" },
   // { label: "Resort", icon: "/resorts.png" },
   { label: "Cottage", icon: "/resorts.png" },
-  { label: "Luxury Home", icon: "/luxuryhome.png" },
+  { label: "Loft", icon: "/luxuryhome.png" },
   { label: "Bungalow", icon: "/homestay.png" },
   { label: "Studio", icon: "/motel.png" },
 ];
@@ -41,6 +50,16 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
   const [selectedType, setSelectedType] = useState(initialType);
   const [showOthers, setShowOthers] = useState(false);
   const [selectedButton, setSelectedButton] = useState(null); // Store a single button
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth); // Update screen width
+    };
+
+    window.addEventListener('resize', handleResize); // Add event listener
+    return () => window.removeEventListener('resize', handleResize); // Cleanup on unmount
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -81,13 +100,18 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
       <AnimatePage>
         {!showOthers ? (
           <>
-            <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem", textAlign: "left" }}>
-              Unlock the door to hosting with CebuStay! List your property and open your doors to guests effortlessly!
-            </Typography>
+            {/* Conditionally render description based on screen width */}
+           
+              <>
+                <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem", textAlign: "left" }}>
+                  Unlock the door to hosting with CebuStay! List your property and open your doors to guests effortlessly!
+                </Typography>
 
-            <Typography sx={{ fontSize: "1.1rem", textAlign: "left", marginBottom: 4 }}>
-              Ready to dive in? Kickstart your hosting journey by selecting the perfect property type to list on CebuStay.
-            </Typography>
+                <Typography sx={{ fontSize: "1.1rem", textAlign: "left", marginBottom: 4 }}>
+                  Ready to dive in? Kickstart your hosting journey by selecting the perfect property type to list on CebuStay.
+                </Typography>
+              </>
+
 
             <Grid container spacing={2} justifyContent="center" mb={5}>
               {propertyTypes.map((type, index) => (
@@ -105,9 +129,9 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
                       }}
                       startIcon={
                         <img
-                          src={`/${type.name.toLowerCase()}.png`}
-                          alt={type.name}
-                          style={{ width: "60px", height: "60px" }}
+                          src={type.icon}
+                          alt={type.icon}
+                          style={{ width: "50px", height: "50px" }}
                         />
                       }
                       onClick={() => handleClick(type.name)}
@@ -118,10 +142,12 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
                           fontSize: "1.125rem",
                           textTransform: "initial",
                           width: "250px",
+                          textAlign: "left",
                         }}
                       >
                         {type.name}
                       </Typography>
+                      {screenWidth >= 768 && (
                       <Typography
                         sx={{
                           width: "100%",
@@ -132,6 +158,7 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
                       >
                         {type.description}
                       </Typography>
+                    )}
                     </Button>
                   </Box>
                 </Grid>
@@ -152,7 +179,7 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
                 Property Type
               </Typography>
               <Typography fontSize={18} mb={2}>
-                Please click on the button you want to choose
+                This section features a variety of unique and non-traditional homes, ideal for those seeking something different.
               </Typography>
               <Grid container spacing={2}>
                 {buttonsData.map((button, index) => (
@@ -164,8 +191,11 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
                           selectedButton === button.label ? "#16B4DD" : "white",
                         color: selectedButton === button.label ? "white" : "black",
                         fontFamily: "Poppins, sans-serif",
-                        width: 200,
                         height: 80,
+                        fontWeight: "bold",
+                        fontSize: "1.125rem",
+                        textTransform: "initial",
+                        width: "250px",
                       }}
                       startIcon={
                         <img

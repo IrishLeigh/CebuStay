@@ -20,14 +20,15 @@ export default function RoomDetails({
     ],
     guestCapacity: "",
   });
-  const containerRef = useRef(null); // Create a ref for the container
+  const topRef = useRef(null); // Create a ref for scrolling to the top
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = 0; // Scroll to the top of the container
-    }
     window.scrollTo(0, 0);
-  }, []);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component
+    }
+  }, []); // Runs on mount
+  
   
   useEffect(() => {
   
@@ -105,7 +106,9 @@ export default function RoomDetails({
   };
 
   return (
+    <div ref={topRef} >
     <Container maxWidth="lg" className="centered-container">
+      
       <AnimatePage>
         <Grid container justifyContent="center" alignItems="center">
           <Grid item xs={12} md={8} lg={6}>
@@ -207,5 +210,6 @@ export default function RoomDetails({
         </Button>
       </div>
     </Container>
+    </div>
   );
 }
