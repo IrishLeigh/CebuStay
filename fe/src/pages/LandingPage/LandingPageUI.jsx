@@ -47,8 +47,8 @@ const token = localStorage.getItem("auth_token");
       fetchUser();
     } else {
       setUser(null);
-      localStorage.removeItem("auth_token");
-      navigate("/login");
+      // localStorage.removeItem("auth_token");
+      // navigate("/login");
     }
   }, [token]); 
 

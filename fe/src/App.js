@@ -1,4 +1,3 @@
-
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 
 import RegistrationUI from "./Registration_User/RegistrationUI";
@@ -21,7 +20,7 @@ import ForgotPass from "./ForgotPassword_User/ForgotPass";
 import { UserProvider } from "./components/UserProvider";
 import HeaderNoUser from "./components/Header/HeaderNoUser";
 import HeaderUser from "./components/Header/HeaderUser";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PrivateRoutes from "./protectedRoutes/ProtectedRoutes";
 import axios from "axios";
 import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
@@ -41,6 +40,10 @@ import AccommodationReservationUI from "./pages/PropertyManagementUI/components/
 import UserLayout from "./components/Layout/UserLayout";
 import NoUserLayout from "./components/Layout/NoUserLayout";
 import WarningModal from "./pages/User Management/Logout/modal/LogoutAlertModal";
+// import useScrollToTop from "./components/Hooks/useScrollToTop ";
+
+import AdminLoginUI from "./pages/Admin/AdminLoginUI";
+import AdminPayments from "./pages/Admin/AdminPayments";
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -49,13 +52,23 @@ function App() {
   });
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
+  const admin_token = localStorage.getItem("admin_token");
   const [user, setUser] = useState({});
   const [showWarning, setShowWarning] = useState(false);
   const [prevLocation, setPrevLocation] = useState(location.pathname); // State to store previous location
+  const topRef = useRef(null); // Create a ref for scrolling to the top
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component
+    }
+  }, [location]); // Runs on mount
 
   useEffect(() => {
     if (token) {
-      axios.post("http://127.0.0.1:8000/api/decodetoken", { token })
+      axios
+        .post("http://127.0.0.1:8000/api/decodetoken", { token })
         .then((res) => {
           setUser(res.data);
         })
@@ -63,42 +76,44 @@ function App() {
           console.error("Error decoding JWT token:", error);
         });
     } else {
-      navigate("/login");
+      // navigate("/login");
     }
   }, [token]);
 
   useEffect(() => {
-    
     const handleSessionCheck = () => {
       if (!token) {
         handleLogout();
         return;
       }
-  
+
       // Decode JWT to get the expiry time
-      const expiryTime = user ? JSON.parse(atob(token.split('.')[1])).exp * 1000 : 0;
-  
+      const expiryTime = user
+        ? JSON.parse(atob(token.split(".")[1])).exp * 1000
+        : 0;
+
       const currentTime = Date.now();
       const timeLeft = expiryTime - currentTime;
-        // Calculate minutes left
+      // Calculate minutes left
       const minutesLeft = Math.floor(timeLeft / 1000 / 60); // Convert milliseconds to minutes
 
-    // Log the number of minutes left
-    console.log(`Minutes left before token expiry: ${minutesLeft}`);
-  
+      // Log the number of minutes left
+      console.log(`Minutes left before token expiry: ${minutesLeft}`);
+
       if (timeLeft <= 0) {
         handleLogout(); // Expiry time passed, log out immediately
-      } else if (timeLeft <= 30 * 60 * 1000) { // 30 minutes before expiry, automatically log out
+      } else if (timeLeft <= 30 * 60 * 1000) {
+        // 30 minutes before expiry, automatically log out
         handleLogout();
-      } else if (timeLeft <= 60 * 60 * 1000) { // 1 hour before expiry, show warning modal
+      } else if (timeLeft <= 60 * 60 * 1000) {
+        // 1 hour before expiry, show warning modal
         setShowWarning(true);
       }
     };
-  
+
     // Check every 30 minutes (1800000 milliseconds)
-    const intervalId = setInterval(handleSessionCheck, 60000); 
-   
-  
+    const intervalId = setInterval(handleSessionCheck, 60000);
+
     return () => clearInterval(intervalId);
   }, [token, navigate, user]);
 
@@ -134,53 +149,85 @@ function App() {
         onContinue={handleContinue}
         onLogout={handleLogout}
       />
-      <Routes>
-        <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
-        
-          {/* Public Routes */}
-          <Route index element={<LandingPageUI />} />
-          <Route path="login" element={<LoginUI  prevLocation={prevLocation} />} />
-          <Route path="register" element={<RegistrationUI />} />
-          <Route path="login/forgot-password" element={<ForgotPassword />} />
-          <Route path="forgot-password/register" element={<RegistrationUI />} />
-          <Route path="forgot-password/otp" element={<OTP />} />
-          <Route path="forgot-password" element={<ForgotPass />} />
-          <Route path="accommodation" element={<PropertyListUI />} />
-          <Route path="property/:propertyid" element={<ViewPropertyUI />} />
-          
+      <div ref={topRef}>
+        <Routes>
+          <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
+            {/* Public Routess */}
 
-          {/* Private Routes */}
-          <Route element={<PrivateRoutes />}>
-            <Route path="account" element={<AccountManagement />} />
+            <Route index element={<LandingPageUI />} />
             <Route
-              path="list-property/create-listing"
-              element={<AccommodationRegistration />}
+              path="login"
+              element={<LoginUI prevLocation={prevLocation} />}
             />
+            <Route path="register" element={<RegistrationUI />} />
+            <Route path="login/forgot-password" element={<ForgotPassword />} />
             <Route
-              path="list-property"
-              element={<GettingStartedRegistration />}
+              path="forgot-password/register"
+              element={<RegistrationUI />}
             />
-            <Route path="login" element={<Navigate to="/" replace />} />
-            <Route
-              path="/paymentVerification"
-              element={<PaymentVerification />}
-            />
-            <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
+            <Route path="forgot-password/otp" element={<OTP />} />
+            <Route path="forgot-password" element={<ForgotPass />} />
+            <Route path="accommodation" element={<PropertyListUI />} />
+            <Route path="property/:propertyid" element={<ViewPropertyUI />} />
 
-            {/* Admin Routes */}
-            <Route path="admin/overview" element={<Dashboard />} />
-            <Route
-              path="admin/listings"
-              element={<PropertyManagementListingUI />}
-            />
-            <Route path="admin/calendar" element={<CalendarUI />} />
-            <Route path="admin/guests" element={<AccommodationReservationUI />} />
-            <Route path="edit-property/:id" element={<EditPropertyUI />} />
+            {/* Private Routes */}
+            <Route element={<PrivateRoutes />}>
+              <Route path="account" element={<AccountManagement />} />
+              <Route
+                path="list-property/create-listing"
+                element={<AccommodationRegistration />}
+              />
+              <Route
+                path="list-property"
+                element={<GettingStartedRegistration />}
+              />
+              <Route path="login" element={<Navigate to="/" replace />} />
+              <Route
+                path="/paymentVerification"
+                element={<PaymentVerification />}
+              />
+              <Route
+                path="booking/:propertyid"
+                element={<BookingDetailsUI />}
+              />
+
+              {/* Admin Routes */}
+              <Route path="admin/overview" element={<Dashboard />} />
+              <Route
+                path="admin/listings"
+                element={<PropertyManagementListingUI />}
+              />
+              <Route path="admin/calendar" element={<CalendarUI />} />
+              <Route
+                path="admin/guests"
+                element={<AccommodationReservationUI />}
+              />
+              <Route path="edit-property/:id" element={<EditPropertyUI />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
+          <Route
+            path="/superadmin"
+            element={
+              admin_token ? (
+                <Navigate to="/superadmin/payments" replace />
+              ) : (
+                <AdminLoginUI />
+              )
+            }
+          />
+          <Route
+            path="/superadmin/payments"
+            element={
+              admin_token ? (
+                <AdminPayments />
+              ) : (
+                <Navigate to="/superadmin" replace />
+              )
+            }
+          />
+        </Routes>
+      </div>
     </>
-    
   );
 }
 

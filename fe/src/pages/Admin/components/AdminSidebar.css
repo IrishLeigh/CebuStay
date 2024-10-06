@@ -1,0 +1,67 @@
+.admin-sidebar{
+    background-color: rgb(255, 255, 255);
+    width: 230px;
+    display: flex;
+    flex-direction: column;
+    /* flex-direction: column; */
+    /* justify-content: center; */
+    border: 1px solid rgba(0, 0, 0, 0.167);
+    margin: 0px;
+    padding: 0px;
+    height: 100vh;
+    -webkit-border-radius: 0px 5px 5px 0px;
+    border-radius: 0px 5px 5px 0px;
+}
+.admin-menu{
+    /* background-color: blue; */
+    width: 100%;
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2px;
+}
+.admin-logo-div{
+    width: 80%;
+}
+.admin-logo-sidebar{
+    /* width: 80%; */
+    padding: 1rem;
+}
+.navvbuttonn{
+    border: none;
+    color: #5d5d5d;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: rgba(255, 0, 0, 0);
+    width: 80%;
+    text-align: left;
+    padding: 1rem;
+}
+.navvbuttonn:hover{
+    color: #16B4DD;
+    font-weight: 300;
+    transition: 0.2s;
+}
+.navvbuttonn:not(:hover){
+    transition: 0.2s;
+}
+
+/* Disable hover styles for active button */
+.active-button:hover {
+    color: #16b4dd; /* Keep the active text color */
+    font-weight: bold; /* Keep bold text */
+    cursor: pointer; /* Change cursor to default for active buttons */
+  }
+  
+  /* Active button styles */
+  .active-button {
+    color: #16b4dd;
+    font-weight: bold;
+  }
+
+  
