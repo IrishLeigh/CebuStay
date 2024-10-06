@@ -42,9 +42,10 @@ class UserController extends CORS
         return response()->json($user);
     }
 
-    public function update(Request $request, $userId)
+    public function update(Request $request)
     {
-        $user = UserModel::find($userId);
+        $userid = $request->input('userid');
+        $user = UserModel::find($userid);
 
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
@@ -68,6 +69,14 @@ class UserController extends CORS
 
         if ($request->input('password')) {
             $user->password = Hash::make($request->input('password'));
+        }
+
+        if ($request->input('paypalmail')) {
+            $user->paypalmail = $request->input('paypalmail', $user->paypalmail);
+        }
+
+        if ($request->input('paypalphonenumber')) {
+            $user->paypalphonenumber = $request->input('paypalphonenumber', $user->paypalphonenumber);
         }
 
         $user->save();

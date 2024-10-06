@@ -10,7 +10,7 @@ class UserModel extends Model
 
     protected $table = 'users';
     protected $primaryKey = 'userid';
-    protected $guarded = ['userid', 'firstname', 'lastname', 'email', 'password', 'cellnumber', 'verificationtoken', 'accounttype', 'isverified', 'birthday', 'country', 'token'];
+    protected $guarded = ['userid', 'firstname', 'lastname', 'email', 'password', 'cellnumber', 'verificationtoken', 'accounttype', 'isverified', 'birthday', 'country', 'paypalmail', 'paypalphonenumber', 'token'];
 
     public function properties()
     {

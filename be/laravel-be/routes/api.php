@@ -47,6 +47,7 @@ Route::get('refund', [PaymentController::class, 'getRefund']);
 Route::put('/update-payment-status', [PaymentController::class, 'updatePaymentStatus']);
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
+Route::put('/users_update', [UserController::class, 'update']);
 Route::post('/users', [UserController::class, 'create']);
 Route::get('/getusers/{userId}', [UserController::class, 'getUserById']);
 
