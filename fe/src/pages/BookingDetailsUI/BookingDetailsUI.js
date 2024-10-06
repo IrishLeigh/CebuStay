@@ -28,6 +28,9 @@ function BookingDetailsUI() {
   const guestCount = searchParams.get("guestCount") || 0;
   const checkin_date = searchParams.get("checkInDate") || '';
   const checkout_date = searchParams.get("checkOutDate") || '';
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  },[])
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -177,7 +180,7 @@ function BookingDetailsUI() {
     );
   }
 
-  console.log("Property Data :", propertyData);
+  console.log("Property Price MAO GYUD NI :", price);
   return (
     <div style={{ width : '100%' }}>
       <AppBar position="static" sx={{ background: "#16B4DD" }}>
