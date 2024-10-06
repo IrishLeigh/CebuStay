@@ -343,6 +343,15 @@ class BookingController extends CORS
             $booking->total_price += $saveToPayment;
             $booking->stay_length = $lengthStay;
             $booking->save();
+        }else{
+
+            // Update the booking details
+            $booking->checkin_date = $checkin;
+            $booking->checkout_date = $checkout;
+            $booking->guest_count = $request->input('guest_count');
+            // $booking->total_price = $payment->amount;
+            $booking->stay_length = $lengthStay;
+            $booking->save();
         }
 
         DB::commit();
