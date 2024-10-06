@@ -304,9 +304,11 @@ const CancellationAndModification = ({
               } else {
                 window.location.reload();
               }
+              setModifLoading(false);
             } else {
               setSnackbarMessage("Failed to update Booking. Booking dates are not available.");
               setSnackbarSeverity("error");
+              setModifLoading(false);
             }
             // alert("Booking modification successfully updated.");
           }
@@ -554,7 +556,12 @@ const CancellationAndModification = ({
                     fontSize: '14px'
                   }}
                 >
-                  Update Details
+                  
+                  {modifLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  "Update Details"
+                )}
                 </button>
 
 
