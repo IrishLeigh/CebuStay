@@ -710,6 +710,14 @@ const handleRetry = () => {
                               paymentmethod: paymentmethod,
                             }
                           );
+                          const paypal = await axios.put(
+                            "http://127.0.0.1:8000/api/users_update",
+                            {
+                              userid: userid,
+                              paypalmail: paymentData.paypalInfo.email || "",
+                              paypalphonenumber: paymentData.paypalInfo.mobile || "",
+                            }
+                          )
                           if (paymentres.data.status === "success") {
                             console.log("paymentres: ", paymentres.data);
                             console.log("hostData: ", hostData);
@@ -800,7 +808,7 @@ const handleRetry = () => {
                                 const formData = new FormData();
                                 const file = await fetchBlobAsFile(hostData.imageSrc, "photo.jpg"); 
                                   formData.append("file", file);
-                                  formData.append("userid", user.userid);
+                                  formData.append("userid", userid);
                                   formData.append("propertyid", propertyId);
                                 const company = await axios.post(
                                   "http://127.0.0.1:8000/api/propertycompany",
