@@ -413,11 +413,12 @@ export default function ViewPropertyUI() {
                   checkout_date={checkout_date}
                 />
               )} */}
-              {propertyInfo.property_details.property_type === "Home" ? (
+              {/* {propertyInfo.property_details.property_type === "Home" ? (
                 <><SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/></>
               ) : (
                 <><MultiPropertyUI propertyid={propertyid}  onSearchData = {onSearchData}/></>
-                )}
+                )} */}
+                <SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/>
             </div>
 
           )}

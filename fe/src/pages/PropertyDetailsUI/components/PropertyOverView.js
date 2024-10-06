@@ -157,7 +157,11 @@ export default function PropertyOverView({ rating, propertyinfo }) {
           <Stack direction="row" spacing={2}>
             <Avatar
               alt={propertyDetail?.property_owner?.property_owner?.displayname}
-              src={hostimg}
+              src={
+                propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' 
+                  ? hostimg 
+                  : propertyDetail?.property_owner?.company_logo || ''
+              }
               sx={{ width: 56, height: 56 }}
             />
             <div
@@ -168,7 +172,13 @@ export default function PropertyOverView({ rating, propertyinfo }) {
               }}
             >
               <div className="overview-title">
+                {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
+                (<>
                 {propertyDetail?.property_owner?.property_owner?.displayname}
+                </>):
+                (<>
+                {propertyDetail?.property_owner?.property_company?.legal_business_name || ''}
+                </>)}
               </div>
               <div
                 style={{
@@ -188,7 +198,13 @@ export default function PropertyOverView({ rating, propertyinfo }) {
             </div>
           </Stack>
           <div style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
-            {propertyDetail?.property_owner?.property_owner?.describe}
+            {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
+                (<>
+                {propertyDetail?.property_owner?.property_owner?.describe}
+                </>):
+                (<>
+                {propertyDetail?.property_owner?.property_company?.company_description || ''}
+                </>)}
           </div>
         </Grid>
 
@@ -200,20 +216,36 @@ export default function PropertyOverView({ rating, propertyinfo }) {
               <tr>
                 <td>Contact</td>
                 <td>
-                  {
-                    propertyDetail?.property_owner?.property_owner
-                      ?.contactnumber
-                  }
+                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
+                (<>
+                {propertyDetail?.property_owner?.property_owner?.contactnumber}
+                </>):
+                (<>
+                {propertyDetail?.property_owner?.legal_representative[0]?.phone_number || ''}
+                </>)}
                 </td>
               </tr>
               <tr>
                 <td>Email</td>
-                <td>{propertyDetail?.property_owner?.property_owner?.email}</td>
+                <td>
+                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
+                (<>
+                {propertyDetail?.property_owner?.property_owner?.email}
+                </>):
+                (<>
+                {propertyDetail?.property_owner?.legal_representative[0]?.email || ''}
+                </>)}
+                  </td>
               </tr>
               <tr>
                 <td>Address</td>
                 <td>
-                  {propertyDetail?.property_owner?.property_owner?.address}
+                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+                    <>{`${propertyDetail?.property_owner?.property_owner?.street || ''}, ${propertyDetail?.property_owner?.property_owner?.barangay || ''}, 
+                    ${propertyDetail?.property_owner?.property_owner?.city || ''} ${propertyDetail?.property_owner?.property_owner?.zipcode || ''}`}</>
+                  ): (<>{`${propertyDetail?.property_owner?.property_company?.street || ''}, ${propertyDetail?.property_owner?.property_company?.barangay || ''}, 
+                    ${propertyDetail?.property_owner?.property_company?.city || ''} ${propertyDetail?.property_owner?.property_company?.zipcode || ''}`}</>)}
+                  {/* {propertyDetail?.property_owner?.property_owner?.address} */}
                 </td>
               </tr>
               {/* <tr>

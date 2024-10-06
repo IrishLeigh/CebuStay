@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import { set } from 'date-fns';
 import { Alert, CircularProgress, Snackbar } from '@mui/material';
+import dayjs from "dayjs";
 
 const CancellationAndModification = ({
   selectedBooking,
@@ -78,7 +79,7 @@ const CancellationAndModification = ({
         setLoading(false);
 
       } catch (error) {
-        setError("Error fetching profile data.");
+        setError("Error fetching booking data.");
         console.error(error);
         setLoading(false);
       }
@@ -87,25 +88,133 @@ const CancellationAndModification = ({
     fetchProfile();
   }, [selectedBooking]);
 
+
   const excludedDates = useMemo(() => {
     let dates = [];
 
     bookingList.forEach(booking => {
-      const checkInDate = new Date(booking.checkin_date);
+      const checkInDate = new Date(bookingDetails.checkIn);
       const checkOutDate = new Date(booking.checkout_date);
 
+      const excludedEndDate = new Date(checkInDate);
+      excludedEndDate.setDate(checkInDate.getDate() + selectedBooking.stay_length - 1);
+      const allBookings = bookingList.filter(b => b.bookingid !== selectedBooking.id);
+      
+
+      allBookings.forEach(booking => {
+        const checkInDate = new Date(booking.checkin_date);
+        const checkOutDate = new Date(new Date(booking.checkout_date).getTime() + 1 * 24 * 60 * 60 * 1000);
+
+        // Iterate through each day between checkInDate and checkOutDate
+        let currentDate = new Date(checkInDate);
+        while (currentDate < checkOutDate) { // Use < to exclude the last date
+          dates.push(new Date(currentDate)); // Push a copy of the date
+          currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+        }
+      });
+
       // Iterate through each day between checkInDate and checkOutDate
-      let currentDate = new Date(checkInDate);
-      while (currentDate <= checkOutDate) {
+      let currentDate = new Date(bookingDetails.checkIn);
+      while (currentDate <= excludedEndDate) {
         dates.push(new Date(currentDate)); // Push a copy of the date
         currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
       }
     });
 
     return dates;
-  }, [bookingList]);
+  }, [bookingList, bookingDetails]);
 
+  // const excludedDates = useMemo(() => {
+  //   let dates = [];
 
+  //   // Calculate the range of excluded dates based on checkIn and stay_length
+  //   if (bookingDetails.checkIn && bookingDetails.stay_length) {
+  //     const checkInDate = new Date(bookingDetails.checkIn);
+  //     const excludedEndDate = new Date(checkInDate);
+  //     excludedEndDate.setDate(checkInDate.getDate() + selectedBooking.stay_length); // Calculate checkIn + stay_length
+
+  //     // Iterate through each day between checkInDate and excludedEndDate
+  //     let currentDate = new Date(checkInDate);
+  //     while (currentDate < excludedEndDate) { // Use < to exclude the last date
+  //       dates.push(new Date(currentDate)); // Push a copy of the date
+  //       currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+  //     }
+  //   }
+  //   console.log('checkInDate', bookingList);
+
+  //   // Iterate through existing bookings and exclude those dates as well
+  //   bookingList.forEach(booking => {
+  //     const checkInDate = new Date(booking.checkin_date);
+  //     const checkOutDate = new Date(booking.checkout_date);
+
+  //     // Iterate through each day between checkInDate and checkOutDate
+  //     let currentDate = new Date(checkInDate);
+  //     while (currentDate < checkOutDate) { // Use < to exclude the last date
+  //       dates.push(new Date(currentDate)); // Push a copy of the date
+  //       currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+  //     }
+  //   });
+
+  //   return dates;
+  // }, [bookingList, bookingDetails]);
+
+  console.log("bookingList", bookingList);
+  const excludedCheckInDates = useMemo(() => {
+    let dates = [];
+
+    bookingList.forEach(booking => {
+      const bookingCheckInDate = new Date(bookingDetails.checkIn);
+      const bookingCheckOutDate = new Date(bookingDetails.checkOut);
+      const allBookings = bookingList.filter(b => b.bookingid !== selectedBooking.id);
+
+      allBookings.forEach(booking => {
+        const checkInDate = new Date(booking.checkin_date);
+        const checkOutDate = new Date(new Date(booking.checkout_date).getTime() + 1 * 24 * 60 * 60 * 1000);
+
+        // Iterate through each day between checkInDate and checkOutDate
+        let currentDate = new Date(checkInDate);
+        while (currentDate < checkOutDate) { // Use < to exclude the last date
+          dates.push(new Date(currentDate)); // Push a copy of the date
+          currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+        }
+      });
+
+      // Exclude dates between checkInDate and one day before checkOutDate
+      // let currentDate = new Date(checkInDate);
+      // currentDate.setDate(currentDate.getDate() + 1); // Start excluding from the day after check-in
+      // while (currentDate <= checkOutDate) {
+      //     dates.push(new Date(currentDate)); // Push a copy of the date
+      //     currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+      // }
+    });
+
+    return dates;
+  }, [bookingList, bookingDetails]);
+
+  const handleDateChange = (date, field) => {
+    if (field === 'checkIn') {
+      const newCheckInDate = date;
+      const newCheckOutDate = new Date(date);
+      newCheckOutDate.setDate(newCheckOutDate.getDate() + selectedBooking.stay_length); // Set to the next day
+      console.log("newCheckOutDate: ", newCheckOutDate);
+      console.log("date: ", date);
+
+      if (newCheckInDate >= bookingDetails.checkOut) {
+        setBookingDetails({ ...bookingDetails, checkIn: date, checkOut: newCheckOutDate });
+      } else if ((new Date(bookingDetails.checkIn).getTime() - new Date(bookingDetails.checkOut).getTime()) < selectedBooking.stay_length) {
+        setBookingDetails({ ...bookingDetails, checkIn: date, checkOut: newCheckOutDate });
+      }
+      else {
+        setBookingDetails({ ...bookingDetails, checkIn: date });
+      }
+    } else {
+      const newCheckOutDate = date;
+      if (newCheckOutDate <= bookingDetails.checkIn) {
+        return; // Don't update if checkout is not valid
+      }
+      setBookingDetails({ ...bookingDetails, checkOut: newCheckOutDate });
+    }
+  };
 
   useEffect(() => {
     if (bookingData) {
@@ -131,9 +240,9 @@ const CancellationAndModification = ({
     setBookingDetails({ ...bookingDetails, [name]: value });
   };
 
-  const handleDateChange = (date, field) => {
-    setBookingDetails({ ...bookingDetails, [field]: date });
-  };
+  // const handleDateChange = (date, field) => {
+  //   setBookingDetails({ ...bookingDetails, [field]: date });
+  // };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -141,36 +250,71 @@ const CancellationAndModification = ({
 
   const handleUpdateDetails = async () => {
     setModifLoading(true);
-    const checkInDate = new Date(bookingDetails.checkIn);
-    const checkOutDate = new Date(bookingDetails.checkOut);
+    const allBookings = bookingList.filter(b => b.bookingid !== selectedBooking.id);
+
+    console.log("bookingDetails.checkOut: ", bookingDetails.checkOut);
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     
-    console.log("checkOutDate", checkOutDate.toISOString().split('T')[0]);
-  
+    const checkInDate = new Date(bookingDetails.checkIn);  // Create Date object for check-in date
+    const checkOutDate = new Date(bookingDetails.checkOut); // Create Date object for check-out date
+
+    console.log("checkInDateDiri: ", checkInDate);
+    console.log("checkOutDateDiri: ", checkOutDate);
+
     if (properties.property_bookingpolicy.isModificationPolicy === 1) {
       try {
-        const response = await axios.put(`http://127.0.0.1:8000/api/updatebooking`, {
-          bookingid: selectedBooking.id,
-          checkin_date: bookingDetails.checkIn.toISOString().split('T')[0],
-          checkout_date: bookingDetails.checkOut.toISOString().split('T')[0],
-          guest_count: bookingDetails.guests,
+        const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
+          checkin_date: formatDate(checkInDate),  // Format check-in date
+          checkout_date: formatDate(checkOutDate), // Format check-out date
+          guest_count: selectedBooking.guests,
+          propertyid: selectedBooking.propertyid,
+          bookingId: selectedBooking.id,
         });
-        
-        if (response.data.status === 'success') {
-          setSnackbarMessage("Booking modification successfully updated.");
-          setSnackbarSeverity("success");
-          const checkoutUrl = response.data.checkout_url;
-          console.log("Checkout URL:", response.data);
-  
-          if (checkoutUrl) {
-            window.location.href = checkoutUrl;
-          } else {
-            window.location.reload();
+        if (res.data) {
+          console.log("Response", res.data);
+          if (res.data.status === "error") {
+            setSnackbarMessage("Failed to update Booking. Booking dates are not available.");
+              setSnackbarSeverity("error");
+          } else if (res.data.status === "success") {
+            const stayLength = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+            console.log("Stay Length sample");
+            console.log("Stay Length: ", stayLength);
+            const response = await axios.put(`http://127.0.0.1:8000/api/updatebooking`, {
+              bookingid: selectedBooking.id,
+              checkin_date: bookingDetails.checkIn.toISOString().split('T')[0],
+              checkout_date: bookingDetails.checkOut.toISOString().split('T')[0],
+              guest_count: bookingDetails.guests,
+              lengthStay: stayLength
+            });
+    
+            if (response.data.status === 'success') {
+              setSnackbarMessage("Booking modification successfully updated.");
+              setSnackbarSeverity("success");
+              const checkoutUrl = response.data.checkout_url;
+              console.log("Checkout URL:", response.data);
+    
+              if (checkoutUrl) {
+                window.location.href = checkoutUrl;
+              } else {
+                window.location.reload();
+              }
+              setModifLoading(false);
+            } else {
+              setSnackbarMessage("Failed to update Booking. Booking dates are not available.");
+              setSnackbarSeverity("error");
+              setModifLoading(false);
+            }
+            // alert("Booking modification successfully updated.");
           }
-        } else {
-          setSnackbarMessage("Failed to update Booking. Booking dates are not available.");
-          setSnackbarSeverity("error");
         }
         
+
       } catch (error) {
         console.error("Error updating booking:", error);
         setSnackbarMessage("An error occurred while updating the booking.");
@@ -243,7 +387,7 @@ const CancellationAndModification = ({
       setSnackbarMessage("An error occurred while cancelling the booking.");
       setSnackbarSeverity("error");
       setCancelLoading(false);
-    }finally {
+    } finally {
       setCancelLoading(false);
       setSnackbarOpen(true);
     }
@@ -307,28 +451,46 @@ const CancellationAndModification = ({
                   <tr>
                     <td>
                       <DatePicker
+                        label="Check-in"
                         selected={bookings && bookings.length > 0 ? bookingDetails.checkIn : null}
                         onChange={(date) => handleDateChange(date, 'checkIn')}
-                        disabled={properties &&
+                        disabled={
+                          properties &&
                           properties.property_bookingpolicy &&
-                          properties.property_bookingpolicy.isModificationPolicy === 0}
+                          properties.property_bookingpolicy.isModificationPolicy === 0
+                        }
                         dateFormat="MMM d, yyyy"
                         className="table-input"
-                        excludeDates={excludedDates}
+                        excludeDates={excludedCheckInDates}
                         minDate={new Date()}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderTopLeftRadius: "12px",
+                            borderBottomLeftRadius: "12px",
+                          },
+                        }}
                       />
                     </td>
                     <td>
                       <DatePicker
+                        label="Check-out"
                         selected={bookings && bookings.length > 0 ? bookingDetails.checkOut : null}
                         onChange={(date) => handleDateChange(date, 'checkOut')}
-                        disabled={properties &&
+                        disabled={
+                          properties &&
                           properties.property_bookingpolicy &&
-                          properties.property_bookingpolicy.isModificationPolicy === 0}
+                          properties.property_bookingpolicy.isModificationPolicy === 0
+                        }
                         dateFormat="MMM d, yyyy"
                         className="table-input"
                         excludeDates={excludedDates}
-                        minDate={new Date()}
+                        minDate={new Date()} // +1 day for check-out
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderTopRightRadius: "12px",
+                            borderBottomRightRadius: "12px",
+                          },
+                        }}
                       />
                     </td>
                     <td>
@@ -394,7 +556,12 @@ const CancellationAndModification = ({
                     fontSize: '14px'
                   }}
                 >
-                  Update Details
+                  
+                  {modifLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  "Update Details"
+                )}
                 </button>
 
 
