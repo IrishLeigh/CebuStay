@@ -349,7 +349,7 @@ class PropertyController extends CORS
     public function getAllProperties(Request $request)
     {
         $this->enableCors($request);
-        $singleunittype = ["Home", "Apartment", "Condominium", "Cabin", "Luxury Home", "Bungalow"];
+        $singleunittype = ["Home","Private Residential", "Townhouse", "Condominium", "Cabin", "Loft", "Bungalow", "Studio", "Villa", "Cottage", "Subdivision House"];
 
         // Retrieve all house rules and booking policies
         $property_hr = DB::table('house_rules')->get();
