@@ -20,7 +20,7 @@ import ForgotPass from "./ForgotPassword_User/ForgotPass";
 import { UserProvider } from "./components/UserProvider";
 import HeaderNoUser from "./components/Header/HeaderNoUser";
 import HeaderUser from "./components/Header/HeaderUser";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PrivateRoutes from "./protectedRoutes/ProtectedRoutes";
 import axios from "axios";
 import BookingDetailsUI from "./pages/BookingDetailsUI/BookingDetailsUI";
@@ -40,6 +40,7 @@ import AccommodationReservationUI from "./pages/PropertyManagementUI/components/
 import UserLayout from "./components/Layout/UserLayout";
 import NoUserLayout from "./components/Layout/NoUserLayout";
 import WarningModal from "./pages/User Management/Logout/modal/LogoutAlertModal";
+import useScrollToTop from "./components/Hooks/useScrollToTop ";
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -48,9 +49,18 @@ function App() {
   });
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
+  const admin_token = localStorage.getItem("admin_token");
   const [user, setUser] = useState({});
   const [showWarning, setShowWarning] = useState(false);
   const [prevLocation, setPrevLocation] = useState(location.pathname); // State to store previous location
+  const topRef = useRef(null); // Create a ref for scrolling to the top
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component
+    }
+  }, [location]); // Runs on mount
 
   useEffect(() => {
     if (token) {
@@ -136,52 +146,60 @@ function App() {
         onContinue={handleContinue}
         onLogout={handleLogout}
       />
-      <Routes>
-        <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
-          {/* Public Routes */}
-          <Route index element={<LandingPageUI />} />
-          <Route
-            path="login"
-            element={<LoginUI prevLocation={prevLocation} />}
-          />
-          <Route path="register" element={<RegistrationUI />} />
-          <Route path="login/forgot-password" element={<ForgotPassword />} />
-          <Route path="forgot-password/register" element={<RegistrationUI />} />
-          <Route path="forgot-password/otp" element={<OTP />} />
-          <Route path="forgot-password" element={<ForgotPass />} />
-          <Route path="accommodation" element={<PropertyListUI />} />
-          <Route path="property/:propertyid" element={<ViewPropertyUI />} />
+      <div ref={topRef}>
+        <Routes>
+          <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
+            {/* Public Routes */}
+            <Route index element={<LandingPageUI />} />
+            <Route
+              path="login"
+              element={<LoginUI prevLocation={prevLocation} />}
+            />
+            <Route path="register" element={<RegistrationUI />} />
+            <Route path="login/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="forgot-password/register"
+              element={<RegistrationUI />}
+            />
+            <Route path="forgot-password/otp" element={<OTP />} />
+            <Route path="forgot-password" element={<ForgotPass />} />
+            <Route path="accommodation" element={<PropertyListUI />} />
+            <Route path="property/:propertyid" element={<ViewPropertyUI />} />
 
-          {/* Private Routes */}
-          <Route element={<PrivateRoutes />}>
-            <Route path="account" element={<AccountManagement />} />
-            <Route
-              path="list-property/create-listing"
-              element={<AccommodationRegistration />}
-            />
-            <Route
-              path="list-property"
-              element={<GettingStartedRegistration />}
-            />
-            <Route path="login" element={<Navigate to="/" replace />} />
-            <Route
-              path="/paymentVerification"
-              element={<PaymentVerification />}
-            />
-            <Route path="booking/:propertyid" element={<BookingDetailsUI />} />
+            {/* Private Routes */}
+            <Route element={<PrivateRoutes />}>
+              <Route path="account" element={<AccountManagement />} />
+              <Route
+                path="list-property/create-listing"
+                element={<AccommodationRegistration />}
+              />
+              <Route
+                path="list-property"
+                element={<GettingStartedRegistration />}
+              />
+              <Route path="login" element={<Navigate to="/" replace />} />
+              <Route
+                path="/paymentVerification"
+                element={<PaymentVerification />}
+              />
+              <Route
+                path="booking/:propertyid"
+                element={<BookingDetailsUI />}
+              />
 
-            {/* Admin Routes */}
-            <Route path="admin/overview" element={<Dashboard />} />
-            <Route
-              path="admin/listings"
-              element={<PropertyManagementListingUI />}
-            />
-            <Route path="admin/calendar" element={<CalendarUI />} />
-            <Route
-              path="admin/guests"
-              element={<AccommodationReservationUI />}
-            />
-            <Route path="edit-property/:id" element={<EditPropertyUI />} />
+              {/* Admin Routes */}
+              <Route path="admin/overview" element={<Dashboard />} />
+              <Route
+                path="admin/listings"
+                element={<PropertyManagementListingUI />}
+              />
+              <Route path="admin/calendar" element={<CalendarUI />} />
+              <Route
+                path="admin/guests"
+                element={<AccommodationReservationUI />}
+              />
+              <Route path="edit-property/:id" element={<EditPropertyUI />} />
+            </Route>
           </Route>
           <Route
             path="/superadmin"
@@ -203,8 +221,8 @@ function App() {
               )
             }
           />
-        </Route>
-      </Routes>
+        </Routes>
+      </div>
     </>
   );
 }
