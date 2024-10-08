@@ -156,6 +156,7 @@ Route::post('/updatecomplogo', 'App\Http\Controllers\FileController@updateCompan
 Route::post('/uploadfiles', 'App\Http\Controllers\FileController@uploadFiles');
 Route::post('/upload-unit-files', 'App\Http\Controllers\FileController@uploadUnitFiles');
 //GET IMAGES
+Route::get('/getgalleryimg/{propertyid}', [FileController::class, 'getGalleryPhotos']);
 Route::get('/getfiles/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty');
 Route::get('/getfiles-gallery/{projectid}', 'App\Http\Controllers\FileController@getImgByProperty_gallery');
 Route::get('/getallfirstimg', 'App\Http\Controllers\FileController@getAllFirstImg');

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UserModel;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
 use Google_Client;
 
 class LoginUserController extends CORS
@@ -116,9 +117,14 @@ class LoginUserController extends CORS
     public function decodeToken(Request $request)
     {
         $this->enableCors($request);
-        $token = $request->input('token');
-        $key = new Key("6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f", 'HS256');
-        $decoded = JWT::decode($token, $key);
-        return response()->json($decoded);
+        try {
+            $token = $request->input('token');
+            $key = new Key("6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f", 'HS256');
+            $decoded = JWT::decode($token, $key);
+            return response()->json($decoded);
+        } catch (ExpiredException $e) {
+            return response()->json(['message' => 'Expired token.'], 401);
+        }
+
     }
 }
