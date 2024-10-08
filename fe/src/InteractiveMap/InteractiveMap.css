@@ -1,8 +1,6 @@
 .leaflet-container {
   /* background-color: rgba(255, 255, 255, 0.2); 30% opacity */
   background-color: transparent;
-  
-
 }
 .city-tooltip {
   background-color: #ffffff;
@@ -26,9 +24,7 @@
 /* Default style for markers */
 .leaflet-marker-icon {
   border: none; /* No border by default */
-
 }
-
 
 /* InteractiveMap.css */
 
@@ -51,14 +47,14 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  height: 110vh;
+  height: 111vh;
   /* padding: 0.5rem; */
   /* transform: rotate(35deg); */
   /* transform-origin: center center; */
 }
 
 .map-filter-cntr {
-  position: sticky; /* Makes the filter buttons stick when scrolling */
+  /* position: sticky; Makes the filter buttons stick when scrolling */
   top: 0; /* Position them at the top of the scrolling container */
   background-color: white; /* Ensure the background color is white for contrast */
   padding: 0.5rem; /* Add some padding */
@@ -98,7 +94,7 @@
 .reset-btn {
   background-color: white;
   border: none;
-  color: #2A2A2E;
+  color: #2a2a2e;
   padding: 10px;
   text-align: center;
   text-decoration: none;
@@ -111,14 +107,14 @@
 /* Hover state for the reset button */
 .reset-btn:hover {
   transform: scale(1.05);
-  background-color: #16B4DD;
+  background-color: #16b4dd;
   color: white;
 }
 
 /* Clicked state for the reset button */
 .reset-btn:active {
   transform: scale(0.95);
-  background-color: #16B4DD;
+  background-color: #16b4dd;
   color: white;
 }
 
@@ -186,7 +182,12 @@ path.leaflet-interactive {
   transform: translate(-50%, -20%); /* Adjust positioning */
   width: 80%; /* Width of the dialog */
   max-width: 500px; /* Maximum width */
-  background: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* Slightly transparent white background */
   padding: 20px; /* Padding inside the content */
   border-radius: 8px; /* Rounded corners */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
@@ -241,4 +242,3 @@ path.leaflet-interactive {
   color: #fff;
   width: 100px; /* Same width for all buttons */
 }
-
