@@ -2,18 +2,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 60px); 
+  height: 100%; /* Adjusted height */
 }
+
 body {
   background: linear-gradient(135deg, #F4F7FA 50%, #F4F7FA 50%);
   font-family: "Poppins", sans-serif;
 }
-
-/* body {
-  background-color: "red" ;
-  font-family : "Poppins", sans-serif;
-} */
-
 .form-container {
   background-color: #ffffff;
   padding: 30px;
