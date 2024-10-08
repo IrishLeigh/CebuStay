@@ -1,21 +1,11 @@
 [
   {
-    "name": "Liloan - Home of Rosquillos",
-    "coordinates": [10.458, 124.065],
-    "category": "Culture",
-    "iconUrl": "./resort.png",
-    "imageUrl": "./path-to-image.jpg",
-    "description": "Description of Spot 1",
-    "description2": "Description of Spot 1",
-    "city name": "Liloan"
-  },
-  {
-    "name": "Liloan - Home of Rosquillos",
+    "name": "Home of Rosquillos",
     "coordinates": [10.4121, 123.9861],
     "category": "Culture",
     "iconUrl": "./rosquillos.png",
     "imageUrl": "./liloanfestival.jpg",
-    "description": "The Rosquillos Festival is a cultural and food festival celebrated i Liloan, Cebu, Philippines. It is held in honor of the town’s most famous delicacy, the rosquillos a type of circular cookie made from flour, eggs, sugar, shortening, and baking powder. These cookies were first made by Margarita “Titay” Frasco in 1907, and they have since become a beloved local treat.",
+    "description": "The Rosquillos Festival is a cultural and food festival celebrated in Liloan, Cebu, Philippines. It is held in honor of the town’s most famous delicacy, the rosquillos a type of circular cookie. These cookies were first made by Margarita “Titay” Frasco in 1907, and they have since become a beloved local treat.",
     "description2": "For the Rosquillos Festival, wear light and comfortable clothing like a sundress or t-shirt with shorts, paired with comfortable shoes, a hat, and sunglasses to stay cool and stylish in the warm weather.",
     "city name": "Liloan"
   },
@@ -90,12 +80,12 @@
     "city name": "Balamban"
   },
   {
-    "name": "Pintos Festival",
+    "name": "Kuyayang Festival",
     "coordinates": [11.0128, 123.9861],
     "category": "Culture",
-    "iconUrl": "./pintos.png",
+    "iconUrl": "./kuyayang.png",
     "imageUrl": "./bogo.jpg",
-    "description": "Held in Bogo City, the Pintos Festival celebrates the local agricultural heritage with street dances, food fairs, and exhibits showcasing traditional crafts and produce.",
+    "description": "A unique cultural celebration in Bogo City, Cebu, held in honor of the city’s romantic heritage. Kuyayang refers to a traditional courtship dance in Bogo, where young men serenade women with graceful and elegant moves to win their affection.",
     "description2": "Light and comfortable clothing is best, along with sun protection like a hat and sunglasses. Wear sturdy shoes for walking through the festival grounds.",
     "city name": "Bogo City"
   },

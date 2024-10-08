@@ -12,44 +12,44 @@ import IconButton from "@mui/material/IconButton"; // Import IconButton
 import CloseIcon from "@mui/icons-material/Close"; // Import Close icon
 
 const CultureCard = ({ culture, allProperties, onClose }) => {
-  // Accept onClose as a prop
   const [showNearby, setShowNearby] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width:600px)"); // Define breakpoint for small screens
+  const isMediumScreen = useMediaQuery("(max-width:768px)"); // Define for medium screens
 
   const [nearbyLocations, setNearbyLocations] = useState([]);
 
   const myLocation = () => {
     const [latitude, longitude] = culture.coordinates; // Extract latitude and longitude from culture.coordinates
-    console.log("Using culture's coordinates:", latitude, longitude);
     findNearbyLocations([latitude, longitude]);
   };
 
   const findNearbyLocations = (userLocation) => {
     if (!allProperties.length) return; // No filtered locations
     const userPoint = turf.point(userLocation);
-    console.log("User's filteredLocations:", allProperties);
-    
-    // Calculate distances and filter locations within 5 km
-    const nearby = allProperties
-        .map((loc) => {
-            // Check if coordinates are valid (not null)
-            const { coordinates } = loc;
-            if (!coordinates || coordinates[0] === null || coordinates[1] === null) {
-                return null; // Skip this location
-            }
 
-            const locPoint = turf.point(coordinates);
-            console.log("locPoint:", locPoint);
-            const distance = turf.distance(userPoint, locPoint, { units: 'kilometers' });
-            return { ...loc, distance };
-        })
-        .filter(loc => loc !== null && loc.distance <= 20) // Only include valid locations within 20 km
-        .sort((a, b) => a.distance - b.distance) // Sort by distance
-        .slice(0, 5); // Take the nearest 5 locations
-    
-        setNearbyLocations(nearby);
-    console.log("Nearby locations:", nearby);
-};
+    const nearby = allProperties
+      .map((loc) => {
+        const { coordinates } = loc;
+        if (
+          !coordinates ||
+          coordinates[0] === null ||
+          coordinates[1] === null
+        ) {
+          return null; // Skip this location
+        }
+
+        const locPoint = turf.point(coordinates);
+        const distance = turf.distance(userPoint, locPoint, {
+          units: "kilometers",
+        });
+        return { ...loc, distance };
+      })
+      .filter((loc) => loc !== null && loc.distance <= 20) // Only include valid locations within 20 km
+      .sort((a, b) => a.distance - b.distance) // Sort by distance
+      .slice(0, 5); // Take the nearest 5 locations
+
+    setNearbyLocations(nearby);
+  };
 
   const handleViewNearbyButton = (event) => {
     if (event) {
@@ -76,36 +76,39 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              position: "absolute", // Position it absolutely
-              top: 0, // Adjust as needed to position vertically
-              right: "1rem", // Align it to the right
-              zIndex: 10, // Ensure it’s on top of other elements
+              position: "absolute",
+              top: 0,
+              right: "1rem",
+              zIndex: 10,
             }}
           >
             <IconButton onClick={handleGoBack}>
-              <CloseIcon sx={{ color: "white" }} />
+              <CloseIcon />
             </IconButton>
           </Box>
-          <ViewNearby nearbyLocations={nearbyLocations}/>
-          {/* Pass handleGoBack to ViewNearby */}
+          <ViewNearby nearbyLocations={nearbyLocations} />
         </div>
       ) : (
         <Card
           sx={{
-            maxWidth: isSmallScreen ? "100%" : 400,
-            margin: "1rem",
+            width: isSmallScreen ? "100vw" : 400,
+            height: isSmallScreen ? "auto" : "500",
+            // margin: isSmallScreen ? "1rem auto" : "1rem", // Center horizontally on small screens
             boxShadow: 3,
-            position: "relative", // Add relative positioning for the card
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            alignSelf: isSmallScreen ? "center" : "flex-start", // Center on small screens
           }}
         >
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              position: "absolute", // Position it absolutely
-              top: 0, // Adjust as needed to position vertically
-              right: ".5rem", // Align it to the right
-              zIndex: 10, // Ensure it’s on top of other elements
+              position: "absolute",
+              top: 0,
+              right: ".5rem",
+              zIndex: 10,
             }}
           >
             <IconButton onClick={onClose}>
@@ -115,43 +118,50 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
           <CardMedia
             component="img"
             alt={culture.name}
-            height={isSmallScreen ? "150" : "200"} // Responsive height
+            height={isSmallScreen ? "60%" : "200"} // Responsive height
             image={culture.imageUrl}
             title={culture.name}
+            sx={{
+              objectFit: "cover", // Ensure image covers the space
+              width: isSmallScreen ? "100%" : "auto", // Make sure it takes full width on small screens
+              height: isSmallScreen ? "30%" : "200", // Adjust height for small screens
+            }}
           />
-          <CardContent sx={{ padding: isSmallScreen ? "0.5rem" : "1rem" }}>
+          <CardContent
+            sx={{ padding: isSmallScreen ? "0.5rem" : "1rem", flexGrow: 1 }}
+          >
             <Typography
               gutterBottom
               variant="h5"
               component="div"
-              sx={{ fontSize: isSmallScreen ? "1.2rem" : "1.5rem" }}
+              sx={{ fontSize: isSmallScreen ? "1.5rem" : "1rem" }}
             >
               {culture.name.toUpperCase()}
             </Typography>
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "0.8rem" : "1rem" }}
+              sx={{ fontSize: isSmallScreen ? "1rem" : "0.9rem" }}
             >
               {culture.description}
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{ mt: 2, fontSize: isSmallScreen ? "1rem" : "1.25rem" }}
-            >
-              What to Wear:
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "0.8rem" : "1rem" }}
-            >
-              {culture.description2}
             </Typography>
             <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
               <Button
                 variant="contained"
-                color="primary"
+                sx={{
+                  backgroundColor: "#16B4DD",
+                  color: "white",
+                  fontSize: isSmallScreen
+                    ? "0.8rem"
+                    : isMediumScreen
+                    ? "0.8rem"
+                    : "1rem",
+                  padding: isSmallScreen
+                    ? "0.4rem 1rem"
+                    : isMediumScreen
+                    ? "0.4rem 1rem"
+                    : "0.4rem 1rem",
+                }}
                 onClick={handleViewNearbyButton}
               >
                 View Nearby
