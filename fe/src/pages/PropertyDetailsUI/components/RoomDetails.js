@@ -12,7 +12,7 @@ export default function RoomDetails({ rooms }) {
       </div>
       <Divider sx={{ width: "100%", color: "#ccc" }} />
 
-      <div className="rooms-cntr">
+      <div className="rooms-cntr" style={{ flexWrap: "wrap" }}>
         {rooms.map((room, index) => (
           <Rooms key={index} room={room} />
         ))}

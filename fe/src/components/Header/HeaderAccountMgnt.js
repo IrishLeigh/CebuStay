@@ -1,98 +1,85 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Badge from '@mui/material/Badge';
-import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import './NavigationBar.css'; 
-import { MenuItem } from '@mui/material';
-import {useNavigate } from 'react-router-dom';
-import {useState} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import './NavigationBar.css';
 
 export default function HeaderAccountMgnt() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const pages = ["Home", "Accommodation"];
-  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate();
+  const pages = ["Home", "Accommodation"];
 
-
-  const isMenuOpen = Boolean(anchorEl);
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-  
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
-  };
-
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-
   const handlePageClick = (page) => {
     if (page === 'Accommodation') {
-      window.location.href = 'accommodation'; // Redirect to accommodation page
+      window.location.href = 'accommodation';
     } else if (page === 'Home') {
-      navigate('/'); // Client-side navigation
+      navigate('/');
     } else {
-      navigate(`/${page.toLowerCase().replace(' ', '-')}`); // Client-side navigation
-      
+      navigate(`/${page.toLowerCase().replace(' ', '-')}`);
     }
-      
-    
     handleCloseNavMenu();
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
-
   return (
     <Box sx={{ width: '100%' }}>
-      <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black', width: '100%' }}>
-        <Toolbar >
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+      <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
+        <Toolbar sx={{ justifyContent: 'flex-end' }}>  {/* Align content to the right */}
+          {/* For mobile - shows the "Menu" button */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
+            <Button
+              onClick={handleOpenNavMenu}
+              sx={{ color: 'black', textTransform: 'none' }}
+            >
+              <Typography sx={{ fontSize: '0.9rem', color: '#16B4DD' }} fontWeight="bold">
+                Menu
+              </Typography>
+            </Button>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+            >
               {pages.map((page) => (
+                <MenuItem key={page} onClick={() => handlePageClick(page)}>
+                  <Typography textAlign="center">{page}</Typography>
+                </MenuItem>
+              ))}
+              <MenuItem>
+                <Link to="/list-property" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  List your property
+                </Link>
+              </MenuItem>
+            </Menu>
+          </Box>
+
+          {/* For desktop - shows the menu items directly */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', flexGrow: 1 }}>
+          {pages.map((page) => (
                 <Button
                   key={page}
                   onClick={() => handlePageClick(page)}
@@ -115,8 +102,7 @@ export default function HeaderAccountMgnt() {
                 </Link>
               </button>
             </Box>
-            
-          </Box>
+
         </Toolbar>
       </AppBar>
     </Box>

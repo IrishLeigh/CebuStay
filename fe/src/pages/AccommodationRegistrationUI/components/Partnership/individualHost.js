@@ -112,13 +112,13 @@ const countryCodes = [
 
 export default function IndividualHost({ onDataChange }) {
   const [data, setData] = useState({
-    FirstName: '',
-    LastName: '',
+    FirstName: localStorage.getItem('firstname'),
+    LastName: localStorage.getItem('lastname'),
     DateOfBirth: '',
     DisplayName: '',
     countryCode: '+63',
     PhoneNumber: '',
-    Email: '',
+    Email: localStorage.getItem('email'),
     // croppedAreaPixels: null,
     City: '',
     ZipCode: '',
@@ -234,6 +234,9 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
       <Typography variant="h5" style={styles.sectionTitle}>
         Host Details
       </Typography>
+      <Typography sx={{ fontFamily: "Poppins, sans-serif", mb: 2 }}>
+        The individual using this account is required to be the host of the property. Please ensure that all details are accurate and up-to-date to facilitate a smooth verification process.
+      </Typography>
         {/* Profile */}
         <Typography style={styles.sectionTitle}>Profile</Typography>
         
@@ -246,6 +249,8 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
               onChange={handleChange}
               fullWidth
               required
+              disabled
+              
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -256,6 +261,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
                 onChange={handleChange}
                 fullWidth
                 required
+                disabled
               />
           </Grid>
 
@@ -395,8 +401,12 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
               onChange={handleChange}
               style= {styles.formField}
               fullWidth
-              helperText={errors.Email}
+              // helperText={errors.Email}
               error={!!errors.Email}
+              
+              disabled
+              helperText = "This email cannot be edited as it must match the registered owner of the account."
+
             />
       
       {/* Location Details */}

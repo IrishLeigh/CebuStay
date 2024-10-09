@@ -8,7 +8,7 @@ import SingleBedIcon from '@mui/icons-material/SingleBed';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { Button } from '@mui/material';
+import { Button, Snackbar } from '@mui/material'; // Import Snackbar
 import { useData } from '../../../components/registration_unit/registration_location/contextAddressData';
 import '../../../components/Button/NextButton.css';
 import AnimatePage from './AnimatedPage';
@@ -17,6 +17,8 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
   const { bedroomQTY } = useData();
   const [bedrooms, setBedrooms] = useState([]);
   const [errors, setErrors] = useState({}); // Define errors state variable
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message
 
   // Initialize bedrooms based on parentBedroomDetails or bedroomQTY
   useEffect(() => {
@@ -27,8 +29,6 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
       initializeBedrooms(bedroomQTY);
     }
   }, [parentBedroomDetails, bedroomQTY]);
-
-
 
   // Initialize bedrooms array with specified number of rooms
   const initializeBedrooms = (numRooms) => {
@@ -80,14 +80,20 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
       // Proceed to the next step
       handleNext();
     } else {
-      // Alert for validation errors
-      alert('Please ensure each bedroom has at least one bed type selected.');
+      // Set Snackbar message for validation errors
+      setSnackbarMessage('Please ensure each bedroom has at least one bed type selected.');
+      setSnackbarOpen(true); // Open Snackbar
     }
   };
 
   // Handle back navigation
   const handleBackClick = () => {
     handleBack();
+  };
+
+  // Close Snackbar
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -105,7 +111,8 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
               elevation={3}
               sx={{
                 mb: 4,
-                p: 3,
+                p: "2rem",
+                borderRadius: '0.8rem',
               }}
               key={index}
             >
@@ -199,16 +206,24 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
               </Grid>
             </Paper>
           ))}
-          </Box>
+        </Box>
       </AnimatePage>
       <div className="stepperFooter">
-        <Button  onClick={handleBack} className="stepperPrevious">
+        <Button onClick={handleBack} className="stepperPrevious">
           Back
         </Button>
-        <Button  onClick={handleNextStep} className="stepperNext">
+        <Button onClick={handleNextStep} className="stepperNext">
           Next
         </Button>
       </div>
+
+      {/* Snackbar for error messages */}
+      <Snackbar
+        open={snackbarOpen}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+        autoHideDuration={6000}
+      />
     </Container>
   );
 }

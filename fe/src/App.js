@@ -2,11 +2,7 @@ import { DataProvider } from "./components/registration_unit/registration_locati
 
 import RegistrationUI from "./Registration_User/RegistrationUI";
 import LoginUI from "./Login_User/LoginUI";
-import EditProfile from "./ProfilePage_User/EditProfile";
 import ForgotPassword from "./ForgotPassword_User/ForgotPassword";
-import EditPhone from "./components/EditPhone";
-import LocationRegistration from "./components/registration_unit/registration_location/location";
-import { useData } from "./components/registration_unit/registration_location/contextAddressData";
 import {
   BrowserRouter as Router,
   Routes,
@@ -36,14 +32,13 @@ import EditPropertyUI from "./pages/PropertyManagementUI/components/edit propert
 import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 import PropertyManagementListingUI from "./pages/PropertyManagementUI/components/listings/PropertyManagementListingUI";
 import AccommodationReservationUI from "./pages/PropertyManagementUI/components/guests2/AccommodationReservationUI";
-
 import UserLayout from "./components/Layout/UserLayout";
 import NoUserLayout from "./components/Layout/NoUserLayout";
 import WarningModal from "./pages/User Management/Logout/modal/LogoutAlertModal";
-// import useScrollToTop from "./components/Hooks/useScrollToTop ";
-
 import AdminLoginUI from "./pages/Admin/AdminLoginUI";
 import AdminPayments from "./pages/Admin/AdminPayments";
+import Payout from "./pages/PropertyManagementUI/components/payout/components/Payout";
+import PayoutHostUI from "./pages/PropertyManagementUI/components/payout/PayoutHostUI";
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -57,6 +52,7 @@ function App() {
   const [showWarning, setShowWarning] = useState(false);
   const [prevLocation, setPrevLocation] = useState(location.pathname); // State to store previous location
   const topRef = useRef(null); // Create a ref for scrolling to the top
+  
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -70,13 +66,21 @@ function App() {
       axios
         .post("http://127.0.0.1:8000/api/decodetoken", { token })
         .then((res) => {
-          setUser(res.data);
+          if (res.data.message === "Expire token.") {
+            handleLogout();
+            console.log ("Expired token. Automatic Logout");
+          }else {
+            setUser(res.data);
+            //local storage here
+          }
+          
         })
         .catch((error) => {
           console.error("Error decoding JWT token:", error);
         });
     } else {
-      // navigate("/login");
+      setUser(null);
+      console.log("No token found");
     }
   }, [token]);
 
@@ -86,20 +90,21 @@ function App() {
         handleLogout();
         return;
       }
-
+  
       // Decode JWT to get the expiry time
       const expiryTime = user
         ? JSON.parse(atob(token.split(".")[1])).exp * 1000
         : 0;
-
+  
       const currentTime = Date.now();
       const timeLeft = expiryTime - currentTime;
+  
       // Calculate minutes left
       const minutesLeft = Math.floor(timeLeft / 1000 / 60); // Convert milliseconds to minutes
-
+  
       // Log the number of minutes left
       console.log(`Minutes left before token expiry: ${minutesLeft}`);
-
+  
       if (timeLeft <= 0) {
         handleLogout(); // Expiry time passed, log out immediately
       } else if (timeLeft <= 30 * 60 * 1000) {
@@ -110,12 +115,16 @@ function App() {
         setShowWarning(true);
       }
     };
-
-    // Check every 30 minutes (1800000 milliseconds)
-    const intervalId = setInterval(handleSessionCheck, 60000);
-
-    return () => clearInterval(intervalId);
-  }, [token, navigate, user]);
+  
+    // Only start the session check if the user is logged in
+    if (isLoggedIn) {
+      // Check every 30 minutes (1800000 milliseconds)
+      const intervalId = setInterval(handleSessionCheck, 1800000);
+  
+      return () => clearInterval(intervalId);
+    }
+  }, [token, navigate, user, isLoggedIn]);
+  
 
   const updateLoginStatus = () => {
     setIsLoggedIn(localStorage.getItem("auth_token") !== null);
@@ -133,12 +142,47 @@ function App() {
     setShowWarning(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("auth_token");
-    setIsLoggedIn(false);
-    setShowWarning(false);
-    setPrevLocation(location.pathname); // Save the current location before navigating to login
-    navigate("/login");
+  const handleLogout = async () => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      console.log("No token found");
+      localStorage.removeItem("auth_token");
+      localStorage.setItem("auth_token", "");
+      // setOpenLogoutModal(false);
+    }
+    // setLoading(true);
+    try {
+      console.log ("token FROM HEADER", token);
+      const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+        token: token,
+      });
+      if (res1.data) {
+        const res = await axios.post("http://127.0.0.1:8000/api/logout", {
+          userid: res1.data.data.userid,
+        });
+        if (res.data) {
+          console.log(res.data);
+          // Remove the token from local storage
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("email");
+          localStorage.removeItem("firsname");
+          localStorage.removeItem("lastname");
+          localStorage.removeItem("userid");
+          setUser(null);
+          
+          // Optionally, reset any user-related state here if applicable
+          // e.g., setUser(null); or use a context provider to reset user state
+          
+          // setOpenLogoutModal(false);
+          navigate("/login");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // setLoading(false);
+      console.log("Automatic Logout")
+    }
   };
 
   return (
@@ -201,6 +245,10 @@ function App() {
               <Route
                 path="admin/guests"
                 element={<AccommodationReservationUI />}
+              />
+              <Route
+                path="admin/payouts"
+                element={<PayoutHostUI />}
               />
               <Route path="edit-property/:id" element={<EditPropertyUI />} />
             </Route>

@@ -40,42 +40,18 @@ const Drawer = styled(MuiDrawer)({
 
 export default function SideMenu({onLogout }) {
   const navigate = useNavigate(); // Initialize useNavigate
-  // const [ user, setUser ] = React.useState({
-  //   firstname: '',
-  //   lastname: '',
-  //   email: '',
-  // });
   const token = localStorage.getItem("auth_token");
   const user = localStorage.getItem("userData");
   const email =localStorage.getItem("email");
   const firstname =localStorage.getItem("firstname") || "";
   const lastname = localStorage.getItem("lastname") || "";
-  
-  // React.useEffect(() => {
-  //   if (token) {
-  //     const fetchUser = async () => {
-  //       try {
-  //         const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-  //           token: token,
-  //         });
-  //         setUser(res.data.data);
-  //         console.log("USER:", res.data.data);
-  //       } catch (error) {
-  //         alert("Error decoding JWT token:", error);
-  //       }
-  //     };
-
-  //     fetchUser();
-  //   } else {
-  //     setUser(null);
-  //   }
-  // }, []); // Add token as a dependency
 
   const mainListItems = [
     { text: 'Overview', icon: <HomeRoundedIcon />, path: '/admin/overview' },
     { text: 'Calendar', icon: <AnalyticsRoundedIcon />, path: '/admin/calendar' },
     { text: 'Your Guests', icon: <PeopleRoundedIcon />, path: '/admin/guests' },
     { text: 'Your Properties', icon: <AssignmentRoundedIcon />, path: '/admin/listings' },
+    { text: 'Your Payouts', icon: <InfoRoundedIcon />, path: '/admin/payouts' },
   ];
 
   const secondaryListItems = [

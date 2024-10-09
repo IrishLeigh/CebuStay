@@ -14,15 +14,15 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
   const [price, setPrice] = useState(0);
   const [vatDaily, setVatDaily] = useState(0);
   const [vatMonthly, setVatMonthly] = useState(0);
-  const [allServices, setAllServices] = useState([]);
-  const unitData = PropertyData?.[0]; // Access the first item in PropertyData array
   const [basePrice, setBasePrice] = useState(0);
   const [monthlyBasePrice, setMonthlyBasePrice] = useState(0);
   const [totalDailyPrice, setTotalDailyPrice] = useState(0);
   const [totalMonthlyPrice, setTotalMonthlyPrice] = useState(0);
   const [isDaily, setIsDaily] = useState(details?.unit_type === 'Daily Term' ? true : false);
   const [isMonthly, setIsMonthly] = useState(details?.unit_type === 'Monthly Term' ? true : false);
-  const [lengthStayMonths, setLengthStayMonths] = useState(0);
+  const [allServices, setAllServices] = useState({});
+  const [monthlyLengthStay, setMonthlyLengthStay] = useState(0);
+  const unitData = PropertyData?.[0];
 
   const formatPrice = (value) => {
     return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
@@ -30,43 +30,55 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
 
   useEffect(() => {
     if (unitData?.unitpricing?.min_price) {
-      const basePrice = unitData.unitpricing.min_price / 1.12; // Base price excluding VAT (12%)
-      const dailyPriceWithService = (basePrice * lengthStay).toFixed(2); // Base price multiplied by length of stay
-      const calculatedVat = (dailyPriceWithService * 0.12).toFixed(2); // VAT calculation
-      const totalDailyPriceWithService = parseFloat(dailyPriceWithService) + parseFloat(calculatedVat); // Total with VAT
-  
-      // Set daily pricing states
-      setBasePrice(basePrice.toFixed(2));
-      setVatDaily(calculatedVat);
-      setPrice(dailyPriceWithService);
-      setTotalDailyPrice(totalDailyPriceWithService.toFixed(2));
-  
-      // Monthly Calculations
-      const monthlyPrice = unitData.unitpricing.min_price;
-      const calculateMonths = Math.ceil(lengthStay / 31); // Calculate number of months
-      const monthlyPriceWithService = (monthlyPrice * 1).toFixed(2); // Total monthly price
-      const securityDeposit = monthlyPrice; // Security deposit equals one month base price
-      const oneMonthAdvance = monthlyPrice; // One month advance payment
-  
-      // Calculate total monthly price with service and fees
-      const totalMonthlyPriceWithService = parseFloat(monthlyPriceWithService) + parseFloat(securityDeposit);
-      const calculatedMonthlyVat = (totalMonthlyPriceWithService * 0.12).toFixed(2); // Calculate VAT per month
-  
-      // Set state with calculated values
-      setLengthStayMonths(calculateMonths);
-      setMonthlyBasePrice(monthlyPrice.toFixed(2));
-      setVatMonthly(calculatedMonthlyVat);
-      setTotalMonthlyPrice(totalMonthlyPriceWithService.toFixed(2));
-  
       if (isDaily) {
+        const basePrice = unitData.unitpricing.min_price / 1.12; // Base price excluding VAT (12%)
+        const dailyPriceWithService = (basePrice * lengthStay).toFixed(2); // Base price multiplied by length of stay without VAT
+        const calculatedVat = (dailyPriceWithService * 0.12).toFixed(2); // VAT calculation
+        const totalDailyPriceWithService = parseFloat(dailyPriceWithService) + parseFloat(calculatedVat); // Total with VAT
+
+        // Set daily pricing states
+        setBasePrice(basePrice.toFixed(2));
+        setVatDaily(calculatedVat);
+        setPrice(dailyPriceWithService);
+        setTotalDailyPrice(totalDailyPriceWithService.toFixed(2));
+
         // Call price change function with the total daily price
         onPriceChange(totalDailyPriceWithService);
       } else {
+        // Monthly Calculations
+        const monthlyPrice = unitData.unitpricing.min_price; // With VAT
+        const baseMonthlyPrice = monthlyPrice / 1.12; // Base price excluding VAT
+        const calculateMonths = Math.ceil(lengthStay / 31); // Calculate number of months
+        console.log("calcualted months: ",calculateMonths);
+
+        let securityDeposit = 0; // Initialize security deposit
+        let monthsAdvance = 0; // Initialize advance payment
+
+        // Determine security deposit and advance payment based on months
+        if (calculateMonths === 2) {
+          securityDeposit = baseMonthlyPrice; // Security deposit equals one month base price
+        } else if (calculateMonths > 2) {
+          securityDeposit = baseMonthlyPrice; // Security deposit equals one month base price
+          monthsAdvance = baseMonthlyPrice; // Two months advance payment
+        }
+
+        // Total monthly price without VAT
+        const totalMonthlyWithoutVAT = parseFloat(baseMonthlyPrice) + parseFloat(securityDeposit) + parseFloat(monthsAdvance);
+        const calculatedTotalMonthlyVat = (totalMonthlyWithoutVAT * 0.12).toFixed(2); // Calculate VAT
+        const totalMonthlyPriceWithService = totalMonthlyWithoutVAT + parseFloat(calculatedTotalMonthlyVat); // Total with VAT
+
+        // Set state with calculated values
+        setMonthlyBasePrice(baseMonthlyPrice.toFixed(2));
+        setVatMonthly(calculatedTotalMonthlyVat);
+        setTotalMonthlyPrice(totalMonthlyPriceWithService.toFixed(2)); // Add VAT to total monthly price
+        setMonthlyLengthStay(calculateMonths);
         // When not daily, set total monthly price with service
         onPriceChange(totalMonthlyPriceWithService);
       }
     }
   }, [unitData, onPriceChange, lengthStay, isDaily]);
+
+  
   
   useEffect(() => {
     const services = [
@@ -166,51 +178,46 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
         </Card>
         
       {/* For Daily Term */}
-        {isDaily ? (
+      {isDaily ? (
           <Card sx={{ p: 3, mt: 3 }}>
-          <Typography variant="h6" color="primary" ml={1} pt={0.5}>
-            <PriceCheckIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
-            Invoice Summary:
-          </Typography>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
-            <Typography variant="body1" color="textSecondary">
-              Base Price Per Night
+            <Typography variant="h6" color="primary" ml={1} pt={0.5}>
+              <PriceCheckIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
+              Invoice Summary:
             </Typography>
-            <Typography variant="body1" color="textSecondary">
-              {formatPrice(basePrice) || 'N/A'}
-            </Typography>
-          </Stack>
-          
-          <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
-            <Typography variant="body1" color="textSecondary">
-              X {lengthStay || 'N/A'} =
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              {formatPrice(price) || 'N/A'}
-            </Typography>
-          </Stack>
-          
-          <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
-            <Typography variant="body1" color="textSecondary">
-              VAT (12%)
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              {formatPrice(vatDaily) || 'N/A'}
-            </Typography>
-          </Stack>
-
-          <Divider sx={{ my: 1 }} />
-
-          <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
-            <Typography variant="body1" fontWeight="bold">
-              Total Amount
-            </Typography>
-            <Typography variant="body1" fontWeight="bold">
-              {formatPrice(totalDailyPrice)}
-            </Typography>
-          </Stack>
-        </Card>
-          
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" color="textSecondary">
+                Base Price Per Night
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(basePrice) || 'N/A'}
+              </Typography>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" color="textSecondary">
+                X {lengthStay || 'N/A'} =
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(price) || 'N/A'}
+              </Typography>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" color="textSecondary">
+                VAT (12%)
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(vatDaily) || 'N/A'}
+              </Typography>
+            </Stack>
+            <Divider sx={{ my: 1 }} />
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" fontWeight="bold">
+                Total Amount
+              </Typography>
+              <Typography variant="body1" fontWeight="bold">
+                {formatPrice(totalDailyPrice)}
+              </Typography>
+            </Stack>
+          </Card>
         ) : (
           <Card sx={{ p: 3, mt: 3 }}>
             <Typography variant="h6" color="primary" ml={1} pt={0.5}>
@@ -222,38 +229,37 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
                 Base Price Per Month
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(basePrice) || 'N/A'}
+                {formatPrice(monthlyBasePrice) || 'N/A'}
               </Typography>
             </Stack>
-            
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" color="textSecondary">
-                X 1 month advance =
+                {monthlyLengthStay == 1 ? "X 1 month advance =" : "X 2 months advance ="}
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(basePrice) || 'N/A'}
+                {formatPrice(monthlyLengthStay == 1 ? monthlyBasePrice  : monthlyBasePrice * 2) || 'N/A'}
               </Typography>
             </Stack>
-            
-            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
-              <Typography variant="body1" color="textSecondary">
-                Security Deposit
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                +{formatPrice(monthlyBasePrice) || 'N/A'}
-              </Typography>
-            </Stack>
+           {/* Conditional rendering for Security Deposit */}
+            {monthlyLengthStay !== 1 && (
+              <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+                <Typography variant="body1" color="textSecondary">
+                  Security Deposit
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  +{formatPrice(monthlyBasePrice) || 'N/A'}
+                </Typography>
+              </Stack>
+            )}
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" color="textSecondary">
                 VAT (12%)
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                +{formatPrice(vatMonthly) || 'N/A'}
+                {formatPrice(vatMonthly) || 'N/A'}
               </Typography>
             </Stack>
-
             <Divider sx={{ my: 1 }} />
-
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" fontWeight="bold">
                 Total Amount
@@ -263,7 +269,6 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
               </Typography>
             </Stack>
           </Card>
-
         )}
 
         <Card sx={{ p: 3, mt: 3 }}>

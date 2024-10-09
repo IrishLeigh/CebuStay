@@ -8,6 +8,7 @@ import { UserProvider } from "./components/UserProvider";
 import { AuthProvider } from "./components/AuthProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import TopRated from "./InteractiveMap/components/TopRated";
+import Payout from "./pages/PropertyManagementUI/components/payout/components/Payout";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

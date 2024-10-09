@@ -9,14 +9,15 @@ import PropertyViewServices from "./PropertyViewServices";
 import PropertyHouseRules from "./PropertyHouseRules";
 import PropertyCancellation from "./Cancellation";
 
-export default function PropertyInfo({ propertyImages, propertyInfo }) {
+export default function PropertyInfo({ propertyImages, propertyInfo , galleryImages}) {
   const [propertyImg, setPropertyImg] = useState([]);
   const [rooms, setTransformedRooms] = useState([]);
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    if (propertyImages && propertyInfo && propertyInfo.property_unitdetails) {
-      setPropertyImg(propertyImages);
+    if (propertyImages, galleryImages && propertyInfo && propertyInfo.property_unitdetails) {
+      setPropertyImg(propertyImages );
+
 
       const allRooms = [];
 
@@ -69,7 +70,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo }) {
     if (isSingleUnit) {
       switch (activeSection) {
         case "gallery":
-          return <RoomGallery propertyImages={propertyImg} />;
+          return <RoomGallery propertyImages={propertyImg} galleryImages={galleryImages} />;
         case "details":
           return <RoomDetails rooms={rooms} />;
         case "amenities":

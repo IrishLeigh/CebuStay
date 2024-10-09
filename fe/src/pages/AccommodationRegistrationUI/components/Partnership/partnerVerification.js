@@ -3,17 +3,19 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button } from '@mui/material';
+import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, Snackbar } from '@mui/material';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
 import AnimatePage from '../AnimatedPage';
-import { Crop } from '@mui/icons-material';
-import { Last } from 'react-bootstrap/esm/PageItem';
 
 export default function PartnerVerification({ onHostDataChange, parentPartnerData, handleBack, openModal }) {
-  const [hostType, setHostType] = useState('');
+  const [hostType, setHostType] = useState('Individual');
   const [individualData, setIndividualData] = useState({});
   const [companyData, setCompanyData] = useState({});
+  
+  // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     if (parentPartnerData) {
@@ -38,10 +40,14 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
     setCompanyData(data);
   };
 
-  // useEffect(() => {
-  //   const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
-  //   onHostDataChange(dataToSend);
-  // }, [hostType, individualData, companyData, onHostDataChange]);
+  const openSnackbar = (message) => {
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const validateAndProceed = () => {
     const fieldLabels = {
@@ -53,6 +59,16 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
       DisplayName: "Display Name",
     };
   
+    const legalRepresentativeFieldLabels = {
+      firstName: "First Name",
+      lastName: "Last Name",
+      email: "Email",
+      phone: "Phone Number",
+      countryCode: "Country Code",
+      position : "Position",
+      dob: "Date of Birth",
+    };
+  
     const getEmptyFields = (data) => {
       if (Object.keys(data).length === 0) {
         return ['No information has been filled out yet.'];
@@ -60,15 +76,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
       return Object.keys(data).filter(key => !data[key]).map(key => fieldLabels[key] || key);
     };
   
-    const email = individualData.Email || companyData.legalRepresentatives[0].email;
-    const phoneNumber = individualData.PhoneNumber || companyData.legalRepresentatives[0].phone;
-    const countryCode = individualData.countryCode || (companyData.legalRepresentatives.length > 0 ? companyData.legalRepresentatives[0].countryCode : null);
-
-    console.log(countryCode); // This will log the country code or `null` if none are available.
-    
-  
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
-  
     const phonePatterns = {
       '+1': /^\+1\d{10}$/, // USA/Canada
       '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
@@ -76,47 +84,69 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
       // Add more country codes and patterns as needed
     };
   
-    // Validate empty fields
+    // Validate Individual Host
     if (hostType === 'Individual') {
       const emptyFields = getEmptyFields(individualData);
       if (emptyFields.length > 0) {
-        alert(`Please fill in the following required information for the individual host: ${emptyFields.join(', ')}.`);
+        openSnackbar(`Please fill in the following required information for the individual host: ${emptyFields.join(', ')}.`);
         return;
       }
-    } else if (hostType === 'Company') {
+      const email = individualData.Email || '';
+      if (!emailPattern.test(email)) {
+        openSnackbar('Invalid email address. Please enter a valid email.');
+        return;
+      }
+    }
+  
+    // Validate Company Host
+    if (hostType === 'Company') {
       const emptyFields = getEmptyFields(companyData);
       if (emptyFields.length > 0) {
-        alert(`Please provide the following required details for the company host: ${emptyFields.join(', ')}.`);
+        openSnackbar(`Please provide the following required details for the company host: ${emptyFields.join(', ')}.`);
         return;
       }
-    }
   
-    // Email validation
-    if (!emailPattern.test(email)) {
-      alert('Invalid email address. Please enter a valid email.');
-      console.log("Email",email);
-      return;
-    }
+      // Ensure all legal representatives have valid emails, phones, and other required fields
+      if (companyData.legalRepresentatives && companyData.legalRepresentatives.length > 0) {
+        for (let rep of companyData.legalRepresentatives) {
+          // Check for empty fields in legal representative
+          const repEmptyFields = Object.keys(legalRepresentativeFieldLabels).filter(key => !rep[key]);
+          if (repEmptyFields.length > 0) {
+            console.log("companydata" ,companyData);
+            openSnackbar(`Please fill in the following required information for the legal representative: ${repEmptyFields.map(key => legalRepresentativeFieldLabels[key]).join(', ')}.`);
+            return;
+          }
   
-    // Phone number validation
-    const phoneWithCountryCode = `${countryCode}${phoneNumber}`;
-    const pattern = phonePatterns[countryCode] || /^\+[1-9]\d{1,14}$/;  // Default pattern
+          // Validate email
+          if (!rep.email || !emailPattern.test(rep.email)) {
+            openSnackbar(`Invalid or missing email for legal representative. Please provide a valid email.`);
+            return;
+          }
   
-    if (!pattern.test(phoneWithCountryCode)) {
-      alert(`Invalid phone number for country code ${countryCode}. Please enter a valid phone number.`);
-      return;
+          // Validate phone
+          const countryCode = rep.countryCode || '';
+          const phoneNumber = rep.phone || '';
+          const phoneWithCountryCode = `${countryCode}${phoneNumber}`;
+          const pattern = phonePatterns[countryCode] || /^\+[1-9]\d{1,14}$/;
+  
+          if (!pattern.test(phoneWithCountryCode)) {
+            openSnackbar(`Invalid or missing phone number for legal representative. Please provide a valid phone number.`);
+            return;
+          }
+        }
+      } else {
+        openSnackbar('Please add at least one legal representative.');
+        return;
+      }
     }
   
     // If all validations pass
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
     onHostDataChange(dataToSend);
+    
     openModal();
-    // alert("Successfully submitted!");
   };
   
-  console.log ("hostType", hostType);
-  console.log ("individualData from parent", individualData);
-  console.log ("companyData from parent", companyData);
 
   return (
     <Container maxWidth="lg">
@@ -178,8 +208,14 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
       </AnimatePage>
       <div className="stepperFooter">
         <Button onClick={handleBack} className="stepperPrevious">Back</Button>
-        <Button onClick={validateAndProceed} className="stepperNext" sx ={{ backgroundColor: "#A334CF", }}>Finish</Button>
+        <Button onClick={validateAndProceed} className="stepperNext" sx={{ backgroundColor: "#A334CF", }}>Finish</Button>
       </div>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
     </Container>
   );
 }
