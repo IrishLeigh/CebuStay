@@ -21,7 +21,7 @@ export default function EditRulesPolicies({
   policies,
   onHouseRulesChange,
   onPoliciesChange,
-  onSaveStatusChange ,
+  onSaveStatusChange,
 }) {
   const [houseRulesData, setHouseRulesData] = useState({
     smokingAllowed: false,
@@ -118,21 +118,19 @@ export default function EditRulesPolicies({
   const handleStandardInputChange = (e, field) => {
     const { type, checked, value } = e.target;
     const newValue = type === "checkbox" ? checked : value;
-  
+
     setHouseRulesData((prevData) => ({
       ...prevData,
       [field]: newValue,
     }));
     setHasChanges(true);
-  
+
     // If the field is "noise_restrictions", control the time picker visibility
     if (field === "noise_restrictions") {
       setShowTimePicker(newValue);
     }
     setHasChanges(true);
   };
-  
-  
 
   const handleDaysChange = (e) => {
     setPoliciesData((prevData) => ({
@@ -144,7 +142,9 @@ export default function EditRulesPolicies({
 
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
@@ -156,14 +156,12 @@ export default function EditRulesPolicies({
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
-
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -181,7 +179,7 @@ export default function EditRulesPolicies({
     console.log("Submitted Policies:", policiesData);
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/updatepropertyrules-single/${propertyid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertyrules-single/${propertyid}`,
         {
           updated_rules: houseRulesData,
           updated_policies: policiesData,
@@ -201,26 +199,29 @@ export default function EditRulesPolicies({
           }));
           onHouseRulesChange(res.data.rawUpdatedRules);
           onPoliciesChange(res.data.rawUpdatedPolicies);
-         
+
           setIsEditing(false);
           setIsLoading(false);
           setOpenSnackbar(true);
-          onSaveStatusChange('Saved');
+          onSaveStatusChange("Saved");
         }
       }
     } catch (error) {
       console.error(error);
     }
-   
- 
   };
-  const handleCloseSnackbar  = () => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
 
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+      />
       <Paper
         style={{
           width: "auto",
@@ -243,7 +244,7 @@ export default function EditRulesPolicies({
               fontWeight: "bold",
             }}
           >
-           Rules and Policies
+            Rules and Policies
           </Typography>
           {/* <div>
             {!isEditing && (
@@ -269,9 +270,9 @@ export default function EditRulesPolicies({
             marginBottom: "2rem",
           }}
         >
-          Update your property's house rules and booking policies here. Set rules
-          for smoking, pets, and quiet hours, and define cancellation terms and
-          refund policies. Make sure to save your changes.
+          Update your property's house rules and booking policies here. Set
+          rules for smoking, pets, and quiet hours, and define cancellation
+          terms and refund policies. Make sure to save your changes.
         </Typography>
 
         <Grid container spacing={2}>
@@ -305,42 +306,43 @@ export default function EditRulesPolicies({
                 >
                   Standard Rules
                 </Typography>
-
                 <Checkbox
                   checked={houseRulesData.smokingAllowed}
                   color="secondary"
                   disabled={!isEditing}
-                  onChange={(e) => handleStandardInputChange(e, 'smokingAllowed')}
+                  onChange={(e) =>
+                    handleStandardInputChange(e, "smokingAllowed")
+                  }
                 />{" "}
                 Smoking Allowed
                 <br />
-
                 <Checkbox
                   checked={houseRulesData.petsAllowed}
                   color="secondary"
                   disabled={!isEditing}
-                  onChange={(e) => handleStandardInputChange(e, 'petsAllowed')}
+                  onChange={(e) => handleStandardInputChange(e, "petsAllowed")}
                 />{" "}
                 Pets Allowed
                 <br />
-
                 <Checkbox
                   checked={houseRulesData.partiesAllowed}
                   color="secondary"
                   disabled={!isEditing}
-                  onChange={(e) => handleStandardInputChange(e, 'partiesAllowed')}
+                  onChange={(e) =>
+                    handleStandardInputChange(e, "partiesAllowed")
+                  }
                 />{" "}
                 Parties/Events Allowed
                 <br />
-
                 <Checkbox
                   checked={showTimePicker}
                   disabled={!isEditing}
-                  onChange={(e) => handleStandardInputChange(e, 'noise_restrictions')}
+                  onChange={(e) =>
+                    handleStandardInputChange(e, "noise_restrictions")
+                  }
                   color="secondary"
                 />{" "}
                 Noise Restrictions
-
                 {showTimePicker && (
                   <div>
                     <TextField
@@ -356,7 +358,9 @@ export default function EditRulesPolicies({
                         step: 300, // 5 min
                       }}
                       disabled={!isEditing}
-                      onChange={(e) => handleStandardInputChange(e, 'quietHoursStart')}
+                      onChange={(e) =>
+                        handleStandardInputChange(e, "quietHoursStart")
+                      }
                     />
                     <TextField
                       id="quiet-hours-end"
@@ -370,7 +374,9 @@ export default function EditRulesPolicies({
                         step: 300, // 5 min
                       }}
                       disabled={!isEditing}
-                      onChange={(e) => handleStandardInputChange(e, 'quietHoursEnd')}
+                      onChange={(e) =>
+                        handleStandardInputChange(e, "quietHoursEnd")
+                      }
                     />
                   </div>
                 )}
@@ -390,13 +396,27 @@ export default function EditRulesPolicies({
                   maxRows={10}
                   value={houseRulesData.customRules}
                   disabled={!isEditing}
-                  onChange={(e) => handleStandardInputChange(e, 'customRules')}
+                  onChange={(e) => handleStandardInputChange(e, "customRules")}
                   sx={{ m: 2, width: "92%" }}
                 />
               </Box>
 
-              <Box sx={{ display: "column", justifyContent: "left", alignItems: "left", m: 2 }}>
-                <Box sx={{ display: "flex", justifyContent: "left", alignItems: "left", m: 2 }}>
+              <Box
+                sx={{
+                  display: "column",
+                  justifyContent: "left",
+                  alignItems: "left",
+                  m: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "left",
+                    m: 2,
+                  }}
+                >
                   <TextField
                     id="check-in-from"
                     label="Check-in From"
@@ -409,7 +429,9 @@ export default function EditRulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkInFrom')}
+                    onChange={(e) =>
+                      handleStandardInputChange(e, "checkInFrom")
+                    }
                     sx={{ marginRight: 2 }}
                   />
                   <TextField
@@ -424,12 +446,21 @@ export default function EditRulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkInUntil')}
+                    onChange={(e) =>
+                      handleStandardInputChange(e, "checkInUntil")
+                    }
                     sx={{ marginRight: 2 }}
                   />
                 </Box>
 
-                <Box sx={{ display: "flex", justifyContent: "left", alignItems: "left", m: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "left",
+                    m: 2,
+                  }}
+                >
                   <TextField
                     id="check-out-from"
                     label="Check-out From"
@@ -442,7 +473,9 @@ export default function EditRulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkOutFrom')}
+                    onChange={(e) =>
+                      handleStandardInputChange(e, "checkOutFrom")
+                    }
                     sx={{ marginRight: 2 }}
                   />
                   <TextField
@@ -457,15 +490,15 @@ export default function EditRulesPolicies({
                       step: 300, // 5 min
                     }}
                     disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkOutUntil')}
+                    onChange={(e) =>
+                      handleStandardInputChange(e, "checkOutUntil")
+                    }
                     sx={{ marginRight: 2 }}
                   />
                 </Box>
               </Box>
             </div>
           </Grid>
-
-
 
           <Grid item xs={12} sx={{ padding: "1rem" }}>
             <div
@@ -509,7 +542,9 @@ export default function EditRulesPolicies({
                   onChange={handleDaysChange}
                   sx={{ marginRight: 2 }}
                 />
-                <InputLabel sx={{ marginRight: 2 }}>Refundable Rates</InputLabel>
+                <InputLabel sx={{ marginRight: 2 }}>
+                  Refundable Rates
+                </InputLabel>
                 <Checkbox
                   checked={policiesData.nonRefundableRate}
                   color="secondary"
@@ -565,11 +600,11 @@ export default function EditRulesPolicies({
             severity="success"
             sx={{ width: "100%" }}
           >
-          Basic Info saved successfully!
+            Basic Info saved successfully!
           </Alert>
         </Snackbar>
       </Paper>
-    <LoadingModal open={isLoading} />
+      <LoadingModal open={isLoading} />
     </>
   );
 }

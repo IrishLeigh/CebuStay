@@ -24,7 +24,7 @@ const CalendarLayout = () => {
   const [propertyTypes, setPropertyTypes] = useState({});
   const [home, setHome] = useState(true);
   //TODO: uncomment this if local storage does not work
- const userid = localStorage.getItem("userid") || null;
+  const userid = localStorage.getItem("userid") || null;
 
   const handlePropertyChange = (event) => {
     const propertyDataName = event.target.value;
@@ -49,7 +49,7 @@ const CalendarLayout = () => {
   //   const token = localStorage.getItem("auth_token");
   //   if (token) {
   //     axios
-  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
   //       .then((response) => {
   //         setUser(response.data["data"]);
   //         console.log("RESPONSE DATA: ", response.data["data"]);
@@ -68,7 +68,7 @@ const CalendarLayout = () => {
       if (!userid) return;
       try {
         const propertyres = await axios.get(
-          "http://127.0.0.1:8000/api/property/bookings",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/property/bookings",
           {
             params: {
               userid: userid,
@@ -93,18 +93,41 @@ const CalendarLayout = () => {
         </Grid> */}
 
         <Grid item xs={12}>
-        <div style={{ background: 'linear-gradient(to right,  #16B4DD, #A0F9FF, #4FF3FE)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%',}}>
-                <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Calendar</h1>
-                <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>An effortless overview of your property bookings!</p>
-            </div>
+          <div
+            style={{
+              background:
+                "linear-gradient(to right,  #16B4DD, #A0F9FF, #4FF3FE)",
+              padding: "1.5rem",
+              color: "#ffffff",
+              borderBottomLeftRadius: "0.5rem",
+              borderBottomRightRadius: "0.5rem",
+              width: "100%",
+            }}
+          >
+            <h1
+              className="title"
+              style={{
+                fontSize: "1.875rem",
+                fontWeight: "700",
+                marginBottom: "0.5rem",
+                color: "white",
+                font: "poppins",
+                textAlign: "left",
+              }}
+            >
+              Calendar
+            </h1>
+            <p style={{ fontSize: "0.875rem", textAlign: "left" }}>
+              An effortless overview of your property bookings!
+            </p>
+          </div>
 
-          <Paper style={{ paddingTop: "2rem", paddingBottom: "2rem", }}>
-
+          <Paper style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
             <Paper
               style={{
                 padding: ".5rem",
                 width: !home ? "18rem" : "12rem",
-                margin: "0 1rem 1rem 1rem"
+                margin: "0 1rem 1rem 1rem",
               }}
             >
               <div style={{ display: "flex", alignContent: "center" }}>
@@ -116,7 +139,7 @@ const CalendarLayout = () => {
                     value={selectedProperty}
                     onChange={handlePropertyChange}
                     style={{ minWidth: "15rem" }}
-                  // disabled = {!propertyData ? false : true}
+                    // disabled = {!propertyData ? false : true}
                   >
                     {propertyData
                       .filter(
@@ -142,7 +165,7 @@ const CalendarLayout = () => {
                       value={selectedUnitType}
                       onChange={handleUnitTypeChange}
                       style={{ minWidth: "7rem" }}
-                    // disabled = {!propertyData ? false : true}
+                      // disabled = {!propertyData ? false : true}
                     >
                       {propertyData
                         .filter(
@@ -167,13 +190,11 @@ const CalendarLayout = () => {
                 )}
               </div>
             </Paper>
-          
-          
-          <CalendarComponent propertyTypes={propertyTypes} />
+
+            <CalendarComponent propertyTypes={propertyTypes} />
           </Paper>
         </Grid>
       </Grid>
-
     </>
   );
 };

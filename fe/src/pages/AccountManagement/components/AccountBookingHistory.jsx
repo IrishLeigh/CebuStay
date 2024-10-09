@@ -54,7 +54,7 @@ export default function BookingHistory({ profile }) {
         const token = localStorage.getItem("auth_token");
         if (token) {
             axios
-                .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+                .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
                 .then((response) => {
                     setUser(response.data["data"]);
                 })
@@ -73,10 +73,10 @@ export default function BookingHistory({ profile }) {
             if (!user) return; // Exit if user is not set
             console.log("User:", user.userid);
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/user/bookings`, {
+                const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/user/bookings`, {
                     params: { userid: user.userid },
                 });
-                const resHistory = await axios.get(`http://127.0.0.1:8000/api/user/bookinghistory`, {
+                const resHistory = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/user/bookinghistory`, {
                     params: { userid: user.userid },
                 });
                 const bookings = response.data;
@@ -190,7 +190,7 @@ export default function BookingHistory({ profile }) {
         setViewReviewisOpen(true);
     
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/getreviewsandratings", {
+            const res = await axios.get("https://whitesmoke-shark-473197.hostingersite.com/api/getreviewsandratings", {
                 params: { bhid: bhid }
             });
             console.log("res: ", res.data);
@@ -238,7 +238,7 @@ export default function BookingHistory({ profile }) {
             console.log("PropertyId:", currentPropertyId);
             console.log("BID:", currentBID);
             try {
-                const res = await axios.post("http://127.0.0.1:8000/api/reviewsandratings", {
+                const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/reviewsandratings", {
                     userid: user.userid,
                     propertyid: currentPropertyId,
                     rating,
@@ -247,7 +247,7 @@ export default function BookingHistory({ profile }) {
                 })
                 console.log(res);
                 if(res.data){
-                    const resHistory = await axios.get(`http://127.0.0.1:8000/api/user/bookinghistory`, {
+                    const resHistory = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/user/bookinghistory`, {
                         params: { userid: user.userid },
                     });
                     setCompletedBooking(resHistory.data);

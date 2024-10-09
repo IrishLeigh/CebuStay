@@ -40,7 +40,7 @@ export default function MultiPropertyUI(propertyid) {
       const propertyId = propertyid.propertyid; // Replace with the ID of the property you want to fetch
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/api/getfiles/${propertyId}`
+          `https://whitesmoke-shark-473197.hostingersite.com/api/getfiles/${propertyId}`
         );
         if (res.data) {
           // Transform the image data
@@ -55,7 +55,7 @@ export default function MultiPropertyUI(propertyid) {
           setPropertyImages(images);
           console.log("PROPERTY IMAGES", images);
           const res2 = await axios.get(
-            "http://127.0.0.1:8000/api/getproperty",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/getproperty",
             {
               params: {
                 propertyid: propertyId,

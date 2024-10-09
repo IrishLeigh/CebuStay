@@ -142,7 +142,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     try {
       const formattedDate = selectedDate.toISOString().split("T")[0];
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           birthday: formattedDate || null,

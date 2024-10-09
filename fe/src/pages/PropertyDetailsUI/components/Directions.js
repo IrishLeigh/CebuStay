@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import MapComponent from './MapComponent'; // Adjust the import path based on your project structure
-import { Paper, CircularProgress, Typography } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import MapComponent from "./MapComponent"; // Adjust the import path based on your project structure
+import { Paper, CircularProgress, Typography } from "@mui/material";
 
 export default function Directions(propertyid) {
   // Example coordinates for demonstration
@@ -10,25 +10,31 @@ export default function Directions(propertyid) {
     lng: 123.8554313,
   };
   const [coordinates, setCoordinates] = useState(initialPosition);
-  const [directions, setDirections] = useState('');
+  const [directions, setDirections] = useState("");
   const [loading, setLoading] = useState(true); // State to manage loading status
 
   useEffect(() => {
     const fetchData = async () => {
       const propertyId = propertyid; // Replace with the ID of the property you want to fetch
       try {
-        const reslocation = await axios.get("http://127.0.0.1:8000/api/getlocation", {
-          params: {
-            propertyid: propertyId
+        const reslocation = await axios.get(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getlocation",
+          {
+            params: {
+              propertyid: propertyId,
+            },
           }
-        
-        });
-        const resdirection = await axios.get("http://127.0.0.1:8000/api/getdirection", {
-          params: {
-            propertyid: propertyId
-          }});
-        console.log('location',reslocation.data);
-        console.log('direction',resdirection.data);
+        );
+        const resdirection = await axios.get(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getdirection",
+          {
+            params: {
+              propertyid: propertyId,
+            },
+          }
+        );
+        console.log("location", reslocation.data);
+        console.log("direction", resdirection.data);
         const lat = parseFloat(reslocation.data.latitude);
         const lng = parseFloat(reslocation.data.longitude);
         setDirections(resdirection.data.direction);
@@ -48,10 +54,24 @@ export default function Directions(propertyid) {
 
   return (
     <div>
-      <div style={{ height: 'auto', width: '100% '}}>
-        <Paper  sx={{  borderRadius: '.8rem', maxHeight: '33.5rem', overflow: 'auto' , padding: '1rem'}}>
+      <div style={{ height: "auto", width: "100% " }}>
+        <Paper
+          sx={{
+            borderRadius: ".8rem",
+            maxHeight: "33.5rem",
+            overflow: "auto",
+            padding: "1rem",
+          }}
+        >
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
               <CircularProgress /> {/* Loader while fetching data */}
             </div>
           ) : (
@@ -59,8 +79,15 @@ export default function Directions(propertyid) {
           )}
           <div>
             <br />
-            <Typography variant="h6" style={{ fontSize: '1.25rem' }}>Directions</Typography>
-            <Typography variant="body1" style={{ fontSize: '1.125rem', maxHeight: '100%' }}>{directions}</Typography>
+            <Typography variant="h6" style={{ fontSize: "1.25rem" }}>
+              Directions
+            </Typography>
+            <Typography
+              variant="body1"
+              style={{ fontSize: "1.125rem", maxHeight: "100%" }}
+            >
+              {directions}
+            </Typography>
           </div>
         </Paper>
       </div>

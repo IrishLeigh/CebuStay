@@ -36,18 +36,18 @@ const PropertyListUI = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/allproperties');
+        const response = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/allproperties');
         const properties = response.data;
 
         // Fetch images
-        const imgResponse = await axios.get('http://127.0.0.1:8000/api/getallfirstimg');
+        const imgResponse = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getallfirstimg');
         const imgMap = new Map();
         imgResponse.data.forEach(img => {
           imgMap.set(img.propertyid, img.src);
         });
 
         // Fetch amenities
-        const amenityResponse = await axios.get('http://127.0.0.1:8000/api/getamenities');
+        const amenityResponse = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getamenities');
         const amenityMap = new Map();
         if (amenityResponse.data.status === 'success') {
           amenityResponse.data.data.forEach(amenity => {
@@ -59,7 +59,7 @@ const PropertyListUI = () => {
         }
 
         // Fetch pricing
-        const pricingResponse = await axios.get('http://127.0.0.1:8000/api/allpropertypricing');
+        const pricingResponse = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/allpropertypricing');
         const pricingMap = new Map();
         if (pricingResponse.data.status === 'success') {
           pricingResponse.data.pricings.forEach(pricing => {
@@ -69,7 +69,7 @@ const PropertyListUI = () => {
         }
 
         // Fetch locations
-        const locationResponse = await axios.get('http://127.0.0.1:8000/api/getlocations');
+        const locationResponse = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getlocations');
         const locationMap = new Map();
         if (locationResponse.data.status === 'success') {
           locationResponse.data.data.forEach(location => {

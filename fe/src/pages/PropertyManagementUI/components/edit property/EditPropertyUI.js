@@ -21,7 +21,6 @@ import EditPhotos from "./components/EditPhotos";
 import { Box } from "@mui/material";
 import EditRulesPolicies from "./components/EditRulesPolicies";
 
-
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -68,7 +67,7 @@ export default function EditPropertyUI() {
   const { id } = useParams();
   const [isSingleUnit, setIsSingleUnit] = useState(false);
   const [basicInfoStatus, setBasicInfoStatus] = useState("");
-  const [saveCount, setSaveCount] = useState(0); // Add save count state  
+  const [saveCount, setSaveCount] = useState(0); // Add save count state
 
   useEffect(() => {
     if (!id) return;
@@ -76,7 +75,7 @@ export default function EditPropertyUI() {
     const fetchPropertyData = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/getproperty",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getproperty",
           {
             params: { propertyid: id },
           }
@@ -111,13 +110,13 @@ export default function EditPropertyUI() {
         setPartnerData(data.property_owner);
         if (response.data) {
           const res_img = await axios.get(
-            `http://127.0.0.1:8000/api/getfiles/${id}`
+            `https://whitesmoke-shark-473197.hostingersite.com/api/getfiles/${id}`
           );
           console.log(res_img.data.img);
           setCoverImg(res_img.data.img);
 
           const res_img2 = await axios.get(
-            `http://127.0.0.1:8000/api/getfiles-gallery/${id}`
+            `https://whitesmoke-shark-473197.hostingersite.com/api/getfiles-gallery/${id}`
           );
           console.log("GALLERY", res_img2.data.img);
           setGalleryImg(res_img2.data.img);
@@ -138,7 +137,6 @@ export default function EditPropertyUI() {
   const handleSaveStatusChange = (status) => {
     setBasicInfoStatus(status);
     incrementSaveCount();
-   
   };
   const incrementSaveCount = () => {
     setSaveCount((prevCount) => prevCount + 1);
@@ -147,16 +145,13 @@ export default function EditPropertyUI() {
   const handleChange = (index) => {
     setValue(index);
   };
-  
 
-  
   // console.log("Property Data TYPE?: ", propertyData.property_type);
-  console.log ("basicinfo status?: ", saveCount);
-  console.log ("Parent Partner Data: ", partnerData);
+  console.log("basicinfo status?: ", saveCount);
+  console.log("Parent Partner Data: ", partnerData);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>
-     
       <div
         style={{
           background: "#15A1C6",
@@ -166,7 +161,6 @@ export default function EditPropertyUI() {
           color: "#FFF",
         }}
       >
-        
         <Box
           style={{
             display: "flex",
@@ -232,7 +226,10 @@ export default function EditPropertyUI() {
               onSaveStatusChange={handleSaveStatusChange}
             />
           ) : (
-            <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms}  onSaveStatusChange={handleSaveStatusChange}/>
+            <EditRoomDetailsMultipleUnit
+              parentRoomsAndBedsData={rooms}
+              onSaveStatusChange={handleSaveStatusChange}
+            />
           )}
         </CustomTabPanel>
 
@@ -244,7 +241,7 @@ export default function EditPropertyUI() {
             setGalleryP={setGalleryImg}
             galleryImages={galleryImg}
             propertyid={id}
-            onSaveStatusChange={handleSaveStatusChange} 
+            onSaveStatusChange={handleSaveStatusChange}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
@@ -260,7 +257,7 @@ export default function EditPropertyUI() {
               setServices(newServices);
             }}
             isSingleUnit={isSingleUnit}
-            onSaveStatusChange={handleSaveStatusChange} 
+            onSaveStatusChange={handleSaveStatusChange}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={4}>
@@ -272,9 +269,8 @@ export default function EditPropertyUI() {
             onPoliciesChange={(updatedPolicies) => setPolicies(updatedPolicies)}
             onHouseRulesChange={(updatedHouseRules) =>
               setHouseRules(updatedHouseRules)
-              
             }
-            onSaveStatusChange={handleSaveStatusChange} 
+            onSaveStatusChange={handleSaveStatusChange}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={5}>
@@ -290,8 +286,11 @@ export default function EditPropertyUI() {
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={6}>
-          <EditPartnerVerification parentPartnerData={partnerData} onSaveStatusChange={handleSaveStatusChange}
-          propertyid = {id} />
+          <EditPartnerVerification
+            parentPartnerData={partnerData}
+            onSaveStatusChange={handleSaveStatusChange}
+            propertyid={id}
+          />
         </CustomTabPanel>
       </Box>
     </div>

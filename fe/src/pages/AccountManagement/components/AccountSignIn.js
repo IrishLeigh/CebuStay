@@ -49,17 +49,19 @@ export default function AccountSignIn({ profile }) {
 
   const handleSavePassword = async (e) => {
     e.preventDefault();
-  
+
     // Check if the new password contains at least one capital letter or symbol
     const passwordRequirements = /^(?=.*[A-Z])(?=.*[\W_]).+$/;
-  
+
     if (!newPassword.match(passwordRequirements)) {
-      setSnackbarMessage("Password must contain at least one symbol or a capital letter");
+      setSnackbarMessage(
+        "Password must contain at least one symbol or a capital letter"
+      );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return; // Stop further execution
     }
-  
+
     // Check if new password matches the confirm password field
     if (newPassword !== confirmNewPassword) {
       setSnackbarMessage("Passwords do not match");
@@ -67,17 +69,17 @@ export default function AccountSignIn({ profile }) {
       setSnackbarOpen(true);
       return; // Stop further execution
     }
-  
+
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           old_password: currentPassword, // Assuming currentPassword is the old password
           password: newPassword,
         }
       );
-  
+
       // Password successfully changed
       setSnackbarMessage("Password Successfully Changed");
       setSnackbarSeverity("success");
@@ -85,11 +87,10 @@ export default function AccountSignIn({ profile }) {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
-  
     } catch (error) {
       console.error(error.response.data.message);
       // Handle error state or display an error message to the user
-      
+
       if (error.response?.data?.status === "invalid") {
         setSnackbarMessage("Invalid Password");
       } else {
@@ -100,7 +101,6 @@ export default function AccountSignIn({ profile }) {
       setSnackbarOpen(true); // Always open the snackbar
     }
   };
-  
 
   const handleCancel = () => {
     setCurrentPassword(profile.currentPassword);

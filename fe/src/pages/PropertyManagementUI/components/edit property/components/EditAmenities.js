@@ -22,7 +22,7 @@ export default function EditAmenities({
   isSingleUnit,
   onAmenitiesChange,
   propertyid,
-  onSaveStatusChange
+  onSaveStatusChange,
 }) {
   const [selectedAmenities, setSelectedAmenities] = useState(amenities || []);
   const [selectedFacilities, setSelectedFacilities] = useState(
@@ -34,7 +34,7 @@ export default function EditAmenities({
   const [hasChanges, setHasChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [ isSaved, setIsSaved ] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     // setSelectedAmenities(amenities || []);
@@ -85,7 +85,7 @@ export default function EditAmenities({
     console.log("Selected Services:", selectedServices);
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/updatepropertybenefits-single/${propertyid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertybenefits-single/${propertyid}`,
         {
           updated_amenities: selectedAmenities,
           updated_facilities: selectedFacilities,
@@ -108,7 +108,7 @@ export default function EditAmenities({
         //   facilities: selectedFacilities,
         //   services: selectedServices,
         // });
-        onSaveStatusChange('Saved');
+        onSaveStatusChange("Saved");
         setHasChanges(false);
         setIsEditing(false);
         setIsLoading(false);
@@ -117,13 +117,13 @@ export default function EditAmenities({
     } catch (error) {
       console.error(error);
     }
-   
-   
   };
 
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
@@ -133,28 +133,32 @@ export default function EditAmenities({
     setSelectedServices(originalData.services || []);
     setIsEditing(false);
     setHasChanges(false);
-   
   };
-  
+
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
-  const handleCloseSnackbar  = () => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
 
-  console.log ("isSIngleUnit:", isSingleUnit);
+  console.log("isSIngleUnit:", isSingleUnit);
 
   return (
     <>
-       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        saved={isSaved}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+      />
       <Paper
         style={{
           width: "auto",
@@ -420,7 +424,7 @@ export default function EditAmenities({
             severity="success"
             sx={{ width: "100%" }}
           >
-         Room Benefits saved successfully!
+            Room Benefits saved successfully!
           </Alert>
         </Snackbar>
       </Paper>

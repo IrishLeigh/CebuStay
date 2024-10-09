@@ -19,7 +19,7 @@ const EditProfile3 = () => {
     if (token) {
       const jwtToken = token.split("=")[1];
       axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
         .then((response) => {
           setUser(response.data["data"]);
           
@@ -37,7 +37,7 @@ const EditProfile3 = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
         console.log("Response Data:", response.data); // Log the entire response object
         console.log("Response Data Email:", response.data.userid); // Log the entire response object
         setProfile(response.data);

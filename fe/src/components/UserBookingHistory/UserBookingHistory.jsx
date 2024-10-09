@@ -15,7 +15,7 @@ export default function UserBookingHistory() {
     const getUser = async () => {
       const token = localStorage.getItem("auth_token");
       if (token) {
-        const userres = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+        const userres = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", {
           token
         });
         console.log(userres.data["data"].userid);
@@ -28,7 +28,7 @@ export default function UserBookingHistory() {
     const fetchUserBookings = async (userId) => {
       console.log("loggedin user id: ", userId);
       try {
-        const upcoming_current = await axios.get('http://127.0.0.1:8000/api/user/bookings', {
+        const upcoming_current = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/user/bookings', {
           params: {
             userid: userId // Replace with the logged in user's id
           }
@@ -42,7 +42,7 @@ export default function UserBookingHistory() {
   
     const fetchUserBookingHistory = async (userId) => {
       try {
-        const history = await axios.get('http://127.0.0.1:8000/api/user/bookinghistory', {
+        const history = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/user/bookinghistory', {
           params: {
             userid: userId // Replace with the logged in user's id
           }

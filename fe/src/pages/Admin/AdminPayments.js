@@ -13,7 +13,7 @@ export default function AdminPayments() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/getpayouts"
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getpayouts"
         );
         console.log(response.data);
         setPayoutData(response.data);

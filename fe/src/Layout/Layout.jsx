@@ -14,18 +14,18 @@ const [pricinglist, setPricinglist] = useState([]);
 useEffect(() => {
   const fetchProperties = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/allproperties');
+      const response = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/allproperties');
       const properties = response.data;
       console.log("response", response);
       // Fetch images
-      const imglist = await axios.get('http://127.0.0.1:8000/api/getallfirstimg');
+      const imglist = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getallfirstimg');
       const imgMap = new Map();
       imglist.data.forEach(img => {
         imgMap.set(img.propertyid, img.src);
       });
 
       // Fetch amenities
-      const amenityres = await axios.get('http://127.0.0.1:8000/api/getamenities');
+      const amenityres = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getamenities');
       const amenityMap = new Map();
       if (amenityres.data.status === 'success') {
         amenityres.data.data.forEach(amenity => {
@@ -37,7 +37,7 @@ useEffect(() => {
       }
 
       // Fetch pricing
-      const pricingres = await axios.get('http://127.0.0.1:8000/api/allpropertypricing');
+      const pricingres = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/allpropertypricing');
       const pricingMap = new Map();
       if (pricingres.data.status === 'success') {
         pricingres.data.pricings.forEach(pricing => {
@@ -47,7 +47,7 @@ useEffect(() => {
       }
 
       // Fetch locations
-      const locres = await axios.get('http://127.0.0.1:8000/api/getlocations');
+      const locres = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getlocations');
       const locMap = new Map();
       if (locres.data.status === 'success') {
         locres.data.data.forEach(location => {

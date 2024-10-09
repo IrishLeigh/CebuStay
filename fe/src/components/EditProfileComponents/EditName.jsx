@@ -19,7 +19,7 @@
 //   useEffect(() => {
 //     const fetchProfile = async () => {
 //       try {
-//         const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+//         const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
 //         // console.log("Response Data another:", response.data);
 //         setFirstname(response.data.firstname);
 //         setLastname(response.data.lastname);
@@ -37,7 +37,7 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     try {
-//       const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${userId}`, {
+//       const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${userId}`, {
 //         userid: userId, // Assuming userId is defined somewhere in your frontend code
 //         firstname: firstname,
 //         lastname: lastname,
@@ -140,7 +140,7 @@
 //     const token = localStorage.getItem("auth_token");
 //     if (token) {
 //       axios
-//         .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+//         .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
 //         .then((response) => {
 //           setUser(response.data["data"]);
 //           console.log("RESPONSE DATA: ", response.data["data"]);
@@ -159,7 +159,7 @@
 //     const fetchProfile = async () => {
 //       if (!user) return; 
 //       try {
-//         const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+//         const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
 //         // console.log("Response Data another:", response.data);
 //         setFirstname(response.data.firstname);
 //         setLastname(response.data.lastname);
@@ -178,7 +178,7 @@
 //     e.preventDefault();
 //     try {
 //       console.log("User:", user.userid);
-//       const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+//       const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${user.userid}`, {
 //         userid: user.userid, // Assuming userId is defined somewhere in your frontend code
 //         firstname: firstname,
 //         lastname: lastname,
@@ -272,7 +272,7 @@ const EditName = ({ onCancel }) => {
     const token = localStorage.getItem("auth_token");
     if (token) {
       axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
         .then((response) => {
           setUser(response.data["data"]);
         })
@@ -292,7 +292,7 @@ const EditName = ({ onCancel }) => {
       if (!user) return;
       setLoading(true);
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
         setFirstname(response.data.firstname);
         setLastname(response.data.lastname);
         setLoading(false);
@@ -310,7 +310,7 @@ const EditName = ({ onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+      const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${user.userid}`, {
         userid: user.userid,
         firstname: firstname,
         lastname: lastname,

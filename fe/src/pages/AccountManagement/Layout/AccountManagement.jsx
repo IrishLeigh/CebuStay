@@ -113,7 +113,7 @@ const AccountManagement = () => {
       const token = localStorage.getItem("auth_token");
       if (token) {
         axios
-          .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+          .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
           .then((response) => {
             setUser(response.data["data"]);
             console.log("RESPONSE DATA: ", response.data["data"]);
@@ -132,7 +132,7 @@ const AccountManagement = () => {
         const fetchProfile = async () => {
           if (!user) return; // Exit if user is not set
           try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+            const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
             console.log("Response Data:", response.data); // Log the entire response object
             console.log("Response Data UserID:", response.data.userid); // Log the entire response object
             setProfile(response.data);

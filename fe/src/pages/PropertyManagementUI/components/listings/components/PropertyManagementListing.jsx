@@ -29,7 +29,7 @@ export default function PropertyManagementListing() {
     //     const token = localStorage.getItem("auth_token");
     //     if (token) {
     //       axios
-    //         .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+    //         .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
     //         .then((response) => {
     //           setUser(response.data["data"]);
     //           console.log("RESPONSE DATA: ", response.data["data"]);
@@ -48,7 +48,7 @@ export default function PropertyManagementListing() {
           if (!userid) return;
           try {
             const propertyres = await axios.get(
-              "http://127.0.0.1:8000/api/user/properties",
+              "https://whitesmoke-shark-473197.hostingersite.com/api/user/properties",
               {
                 params: {
                   userid:userid,
@@ -85,7 +85,7 @@ export default function PropertyManagementListing() {
         console.log("id: ", id);
         const token = localStorage.getItem("auth_token")
         try {
-            const res = await axios.put("http://127.0.0.1:8000/api/activateproperty", {
+            const res = await axios.put("https://whitesmoke-shark-473197.hostingersite.com/api/activateproperty", {
                 propertyid: id,
             },{
                 headers: {
@@ -97,7 +97,7 @@ export default function PropertyManagementListing() {
                 // alert(res.data.message);
                 try {
                     const propertyres = await axios.get(
-                      "http://127.0.0.1:8000/api/user/properties",
+                      "https://whitesmoke-shark-473197.hostingersite.com/api/user/properties",
                       {
                         params: {
                           userid: userid,
@@ -123,7 +123,7 @@ export default function PropertyManagementListing() {
         const token = localStorage.getItem("auth_token")
         console.log("token: ", token);
         try {
-            const res = await axios.put("http://127.0.0.1:8000/api/disableproperty", {
+            const res = await axios.put("https://whitesmoke-shark-473197.hostingersite.com/api/disableproperty", {
                 propertyid: id,
             },{
                 headers: {
@@ -135,7 +135,7 @@ export default function PropertyManagementListing() {
                 // alert(res.data.message);
                 try {
                     const propertyres = await axios.get(
-                      "http://127.0.0.1:8000/api/user/properties",
+                      "https://whitesmoke-shark-473197.hostingersite.com/api/user/properties",
                       {
                         params: {
                           userid: userid,

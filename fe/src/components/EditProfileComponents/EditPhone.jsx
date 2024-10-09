@@ -19,7 +19,7 @@
 // //   useEffect(() => {
 // //     const fetchProfile = async () => {
 // //       try {
-// //         const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+// //         const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
 // //         set_cellphone_number(response.data.cellnumber);
 // //       } catch (error) {
 // //         setError("Error fetching profile data.");
@@ -44,7 +44,7 @@
 // //       return;
 // //     }
 // //     try {
-// //       const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+// //       const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${user.userid}`, {
 // //         userid: user.userid, // Assuming userId is defined somewhere in your frontend code
 // //         cellnumber: cellphone_number,
 // //       });
@@ -155,7 +155,7 @@
 //     const token = localStorage.getItem("auth_token");
 //     if (token) {
 //       axios
-//         .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+//         .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
 //         .then((response) => {
 //           setUser(response.data["data"]);
 //           console.log("RESPONSE DATA: ", response.data["data"]);
@@ -174,7 +174,7 @@
 //     const fetchProfile = async () => {
 //       if (!user) return; 
 //       try {
-//         const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+//         const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
 //         setCellphoneNumber(response.data.cellnumber);
 //       } catch (error) {
 //         setError("Error fetching profile data.");
@@ -199,7 +199,7 @@
 //       return;
 //     }
 //     try {
-//       const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+//       const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${user.userid}`, {
 //         userid: user.userid, // Assuming userId is defined somewhere in your frontend code
 //         cellnumber: cellphone_number,
 //       });
@@ -268,7 +268,7 @@ const EditPhone = ({ onCancel }) => {
     const token = localStorage.getItem("auth_token");
     if (token) {
       axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+        .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
         .then((response) => {
           setUser(response.data["data"]);
         })
@@ -287,7 +287,7 @@ const EditPhone = ({ onCancel }) => {
     const fetchProfile = async () => {
       if (!user) return; 
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
         setCellphoneNumber(response.data.cellnumber);
         setLoading(false); // Set loading to false after fetching data
       } catch (error) {
@@ -314,7 +314,7 @@ const EditPhone = ({ onCancel }) => {
     }
     try {
       setLoading(true); // Set loading to true before submitting data
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+      const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${user.userid}`, {
         userid: user.userid,
         cellnumber: cellphoneNumber,
       });

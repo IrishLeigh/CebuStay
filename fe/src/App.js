@@ -51,10 +51,9 @@ function App() {
   const [user, setUser] = useState({});
   const [showWarning, setShowWarning] = useState(false);
   const [prevLocation, setPrevLocation] = useState(location.pathname); // State to store previous location
-  
+
   const [isPropertyListed, setPropertyListed] = useState(0);
   const topRef = useRef(null); // Create a ref for scrolling to the top
-  
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -66,17 +65,18 @@ function App() {
   useEffect(() => {
     if (token) {
       axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token })
+        .post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
+          { token }
+        )
         .then((res) => {
           if (res.data.message === "Expired token.") {
             handleLogout();
-            console.log ("Expired token. Automatic Logout");
-          }else {
+            console.log("Expired token. Automatic Logout");
+          } else {
             setUser(res.data);
             //local storage here
-            
           }
-          
         })
         .catch((error) => {
           console.error("Error decoding JWT token:", error);
@@ -94,21 +94,21 @@ function App() {
         handleLogout();
         return;
       }
-  
+
       // Decode JWT to get the expiry time
       const expiryTime = user
         ? JSON.parse(atob(token.split(".")[1])).exp * 1000
         : 0;
-  
+
       const currentTime = Date.now();
       const timeLeft = expiryTime - currentTime;
-  
+
       // Calculate minutes left
       const minutesLeft = Math.floor(timeLeft / 1000 / 60); // Convert milliseconds to minutes
-  
+
       // Log the number of minutes left
       console.log(`Minutes left before token expiry: ${minutesLeft}`);
-  
+
       if (timeLeft <= 0) {
         handleLogout(); // Expiry time passed, log out immediately
       } else if (timeLeft <= 30 * 60 * 1000) {
@@ -119,16 +119,15 @@ function App() {
         setShowWarning(true);
       }
     };
-  
+
     // Only start the session check if the user is logged in
     if (isLoggedIn) {
       // Check every 30 minutes (1800000 milliseconds)
       const intervalId = setInterval(handleSessionCheck, 1800000);
-  
+
       return () => clearInterval(intervalId);
     }
-  }, [token, navigate, user, isLoggedIn, ]);
-  
+  }, [token, navigate, user, isLoggedIn]);
 
   const updateLoginStatus = () => {
     setIsLoggedIn(localStorage.getItem("auth_token") !== null);
@@ -156,14 +155,20 @@ function App() {
     }
     // setLoading(true);
     try {
-      console.log ("token FROM HEADER", token);
-      const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-        token: token,
-      });
+      console.log("token FROM HEADER", token);
+      const res1 = await axios.post(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
+        {
+          token: token,
+        }
+      );
       if (res1.data) {
-        const res = await axios.post("http://127.0.0.1:8000/api/logout", {
-          userid: res1.data.data.userid,
-        });
+        const res = await axios.post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/logout",
+          {
+            userid: res1.data.data.userid,
+          }
+        );
         if (res.data) {
           console.log(res.data);
           // Remove the token from local storage
@@ -173,10 +178,10 @@ function App() {
           localStorage.removeItem("lastname");
           localStorage.removeItem("userid");
           setUser(null);
-          
+
           // Optionally, reset any user-related state here if applicable
           // e.g., setUser(null); or use a context provider to reset user state
-          
+
           // setOpenLogoutModal(false);
           navigate("/login");
         }
@@ -185,28 +190,28 @@ function App() {
       console.log(error);
     } finally {
       // setLoading(false);
-      console.log("Automatic Logout")
+      console.log("Automatic Logout");
       localStorage.removeItem("auth_token");
-          localStorage.removeItem("email");
-          localStorage.removeItem("firsname");
-          localStorage.removeItem("lastname");
-          localStorage.removeItem("userid");
-          setUser(null);
-          
-          // Optionally, reset any user-related state here if applicable
-          // e.g., setUser(null); or use a context provider to reset user state
-          
-          // setOpenLogoutModal(false);
-          navigate("/login");
+      localStorage.removeItem("email");
+      localStorage.removeItem("firsname");
+      localStorage.removeItem("lastname");
+      localStorage.removeItem("userid");
+      setUser(null);
+
+      // Optionally, reset any user-related state here if applicable
+      // e.g., setUser(null); or use a context provider to reset user state
+
+      // setOpenLogoutModal(false);
+      navigate("/login");
     }
   };
   const handleListProperty = () => {
     // Logic for listing the property
     // Once successful, increment the isPropertyListed state
-    setPropertyListed(prev => prev + 1);
+    setPropertyListed((prev) => prev + 1);
   };
-  
-console.log("IsPropertyListed", isPropertyListed);
+
+  console.log("IsPropertyListed", isPropertyListed);
 
   return (
     <>
@@ -218,7 +223,15 @@ console.log("IsPropertyListed", isPropertyListed);
       />
       <div ref={topRef}>
         <Routes>
-          <Route element={isLoggedIn ? <UserLayout isPropertyListed={isPropertyListed} /> : <NoUserLayout />}>
+          <Route
+            element={
+              isLoggedIn ? (
+                <UserLayout isPropertyListed={isPropertyListed} />
+              ) : (
+                <NoUserLayout />
+              )
+            }
+          >
             {/* Public Routess */}
 
             <Route index element={<LandingPageUI />} />
@@ -242,7 +255,11 @@ console.log("IsPropertyListed", isPropertyListed);
               <Route path="account" element={<AccountManagement />} />
               <Route
                 path="list-property/create-listing"
-                element={<AccommodationRegistration  onPropertyListedClick={handleListProperty}/>}
+                element={
+                  <AccommodationRegistration
+                    onPropertyListedClick={handleListProperty}
+                  />
+                }
               />
               <Route
                 path="list-property"
@@ -269,10 +286,7 @@ console.log("IsPropertyListed", isPropertyListed);
                 path="admin/guests"
                 element={<AccommodationReservationUI />}
               />
-              <Route
-                path="admin/payouts"
-                element={<PayoutHostUI />}
-              />
+              <Route path="admin/payouts" element={<PayoutHostUI />} />
               <Route path="edit-property/:id" element={<EditPropertyUI />} />
             </Route>
           </Route>

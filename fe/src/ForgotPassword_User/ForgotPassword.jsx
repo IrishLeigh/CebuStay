@@ -84,7 +84,7 @@ const ForgotPassword = () => {
     }
     try {
 
-      const res = await axios.post("http://127.0.0.1:8000/api/forgotPass", {
+      const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/forgotPass", {
         email
       });
       console.log("forgotpass",res.data);
@@ -118,7 +118,7 @@ const ForgotPassword = () => {
       return;
     }
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/resendemail", {
+      const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/resendemail", {
         email
       });
       console.log("forgotpass",res.data);
@@ -153,7 +153,7 @@ const ForgotPassword = () => {
     }
     try {
 
-      const res = await axios.post("http://127.0.0.1:8000/api/passverifytoken", {
+      const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/passverifytoken", {
         email,
         token
       });
@@ -216,7 +216,7 @@ const ForgotPassword = () => {
       }, 2500);
     } else {
       try {
-        const response = await axios.put('http://127.0.0.1:8000/api/changepass', {
+        const response = await axios.put('https://whitesmoke-shark-473197.hostingersite.com/api/changepass', {
           email,
           password
         });

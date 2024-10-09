@@ -22,7 +22,7 @@ export default function PricePayment({
   isSingleUnit,
   onPricingChange,
   onPaymentChange,
-  onSaveStatusChange
+  onSaveStatusChange,
 }) {
   const pesoSign = "\u20B1";
   const [priceEntered, setPriceEntered] = useState(false);
@@ -103,11 +103,10 @@ export default function PricePayment({
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
@@ -124,7 +123,7 @@ export default function PricePayment({
     };
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/updatepropertypricingpayment-single/${propertyid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertypricingpayment-single/${propertyid}`,
         {
           unitPricing: dataToSave.unitPricing,
           paymentData: dataToSave.paymentData,
@@ -384,8 +383,8 @@ export default function PricePayment({
                   }
                 />
                 <Typography sx={{ ml: 6 }}>
-                  Get your payments swiftly and securely deposited into your GCash
-                  account, ensuring quick access to funds.
+                  Get your payments swiftly and securely deposited into your
+                  GCash account, ensuring quick access to funds.
                 </Typography>
                 <FormControlLabel
                   value="Paypal"

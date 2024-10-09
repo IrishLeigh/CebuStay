@@ -61,7 +61,7 @@ const ForgotPass = () => {
     console.log("Email before sending request:", email);
     try {
 
-      const profileResponse = await axios.post("http://127.0.0.1:8000/api/forgotPass", {
+      const profileResponse = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/forgotPass", {
           email:email
         });
         setProfile(profileResponse.data);
@@ -78,7 +78,7 @@ const ForgotPass = () => {
       // If registration successful, set verificationSent to true
       
       if (profileResponse.data.email === email && profileResponse.data.is_verified === 1) {
-        const res = await axios.post("http://127.0.0.1:8000/api/resendEmail", {
+        const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/resendEmail", {
         email: email,
       });
       if(res.data.status === "error" && res.data.message === "Incorrect code"){

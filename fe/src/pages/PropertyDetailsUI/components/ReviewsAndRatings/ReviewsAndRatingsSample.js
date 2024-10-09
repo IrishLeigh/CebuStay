@@ -13,7 +13,9 @@ const ReviewsAndRatingsSingleUnitss = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/api/getallreviewsandratings`);
+      const res = await axios.get(
+        `https://whitesmoke-shark-473197.hostingersite.com/api/getallreviewsandratings`
+      );
       console.log("reviews", res.data);
       setReviews(res.data.reviews); // Set the reviews from the response
     } catch (err) {
@@ -27,7 +29,7 @@ const ReviewsAndRatingsSingleUnitss = () => {
 
   return (
     <>
-      <div className="reviews-container" >
+      <div className="reviews-container">
         {reviews.map((review, index) => (
           <div key={index} className="review">
             <div className="review-header">

@@ -25,7 +25,7 @@ export default function PricePayment({
   isSingleUnit,
   onPricingChange,
   onPaymentChange,
-  onSaveStatusChange
+  onSaveStatusChange,
 }) {
   const pesoSign = "\u20B1";
   const [priceEntered, setPriceEntered] = useState(false);
@@ -44,7 +44,6 @@ export default function PricePayment({
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
 
   useEffect(() => {
     console.log("ON MOUNT");
@@ -105,7 +104,9 @@ export default function PricePayment({
 
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
@@ -115,15 +116,14 @@ export default function PricePayment({
     setBasePrice(originalData.basePrice);
     setPaymentData(originalData.paymentData);
   };
-  
+
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
@@ -142,7 +142,7 @@ export default function PricePayment({
     };
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/updatepropertypricingpayment-single/${propertyid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertypricingpayment-single/${propertyid}`,
         {
           unitPricing: dataToSave.unitPricing,
           paymentData: dataToSave.paymentData,
@@ -163,7 +163,7 @@ export default function PricePayment({
           setIsSaved(true);
           setIsEditing(false);
           setOpenSnackbar(true);
-          onSaveStatusChange('Saved');
+          onSaveStatusChange("Saved");
           setIsLoading(false);
         }
       }
@@ -171,14 +171,19 @@ export default function PricePayment({
       console.log("Error saving data:", error);
     }
     console.log("Saving data:", dataToSave);
-
   };
-  const handleCloseSnackbar  = () => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        saved={isSaved}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+      />
       <Paper
         style={{
           width: "auto",
@@ -406,8 +411,8 @@ export default function PricePayment({
                   }
                 />
                 <Typography sx={{ ml: 6 }}>
-                  Get your payments swiftly and securely deposited into your GCash
-                  account, ensuring quick access to funds.
+                  Get your payments swiftly and securely deposited into your
+                  GCash account, ensuring quick access to funds.
                 </Typography>
                 <FormControlLabel
                   value="Paypal"
@@ -438,19 +443,19 @@ export default function PricePayment({
             )} */}
           </Grid>
         </Grid>
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={6000}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
             onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: "100%" }}
           >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity="success"
-              sx={{ width: "100%" }}
-            >
             Basic Info saved successfully!
-            </Alert>
-          </Snackbar>
+          </Alert>
+        </Snackbar>
       </Paper>
       <LoadingModal open={isLoading} />
     </>

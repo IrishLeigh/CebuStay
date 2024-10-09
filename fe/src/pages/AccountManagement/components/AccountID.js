@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import "../css/AccountID.css";
-import { Divider, TextField, InputAdornment, Paper, CircularProgress, Snackbar, Alert } from "@mui/material";
-import AccountCircle from '@mui/icons-material/PermIdentity';
-import axios from 'axios';
+import {
+  Divider,
+  TextField,
+  InputAdornment,
+  Paper,
+  CircularProgress,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import AccountCircle from "@mui/icons-material/PermIdentity";
+import axios from "axios";
 
 export default function AccountID({ profile, onUpdateProfile }) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isChanged, setIsChanged] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -22,11 +30,13 @@ export default function AccountID({ profile, onUpdateProfile }) {
 
   useEffect(() => {
     if (profile) {
-      setIsChanged(firstName !== profile.firstname || lastName !== profile.lastname);
+      setIsChanged(
+        firstName !== profile.firstname || lastName !== profile.lastname
+      );
       setEditedProfile({
         ...profile,
         firstname: firstName,
-        lastname: lastName
+        lastname: lastName,
       });
     }
   }, [firstName, lastName, profile]);
@@ -37,33 +47,40 @@ export default function AccountID({ profile, onUpdateProfile }) {
 
   const handleSaveName = async (e) => {
     e.preventDefault();
-  
+
     // Regular expression to allow only alphabetic characters and spaces (if needed)
     const namePattern = /^[A-Za-z\s]+$/;
-  
+
     // Validate the first name
     if (!namePattern.test(firstName)) {
-      setSnackbarMessage("Invalid first name. Only alphabetic characters are allowed.");
+      setSnackbarMessage(
+        "Invalid first name. Only alphabetic characters are allowed."
+      );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-  
+
     // Validate the last name
     if (!namePattern.test(lastName)) {
-      setSnackbarMessage("Invalid last name. Only alphabetic characters are allowed.");
+      setSnackbarMessage(
+        "Invalid last name. Only alphabetic characters are allowed."
+      );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-  
+
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${profile.userid}`, {
-        userid: profile.userid,
-        firstname: firstName,
-        lastname: lastName,
-      });
-  
+      const response = await axios.put(
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
+        {
+          userid: profile.userid,
+          firstname: firstName,
+          lastname: lastName,
+        }
+      );
+
       setSnackbarMessage("Personal information updated successfully!");
       setSnackbarSeverity("success");
       setIsChanged(false);
@@ -78,7 +95,6 @@ export default function AccountID({ profile, onUpdateProfile }) {
       setSnackbarOpen(true);
     }
   };
-  
 
   const handleCancel = () => {
     if (profile) {
@@ -93,15 +109,17 @@ export default function AccountID({ profile, onUpdateProfile }) {
   }
 
   return (
-    <Paper className="account-cntr" sx={{ borderRadius: '12px' }}>
+    <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
       <div className="account-id-cntr">
         <div className="account-id-title">Cebustay ID</div>
         <div className="account-id-desc">
-          Your unique Cebustay ID is used to help others find and identify you on our booking platform. It is displayed in your bookings and profile information.
+          Your unique Cebustay ID is used to help others find and identify you
+          on our booking platform. It is displayed in your bookings and profile
+          information.
         </div>
       </div>
 
-      <Divider orientation="vertical" sx={{ padding: '2rem' }} />
+      <Divider orientation="vertical" sx={{ padding: "2rem" }} />
 
       {/* First name and last name fields */}
       <div className="account-id-cntr">
@@ -112,13 +130,13 @@ export default function AccountID({ profile, onUpdateProfile }) {
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
           sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '8px',
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
             },
           }}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start" sx={{ marginRight: '1rem' }}>
+              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
                 <AccountCircle />
               </InputAdornment>
             ),
@@ -132,13 +150,13 @@ export default function AccountID({ profile, onUpdateProfile }) {
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
           sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '8px',
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
             },
           }}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start" sx={{ marginRight: '1rem' }}>
+              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
                 <AccountCircle />
               </InputAdornment>
             ),
@@ -146,14 +164,18 @@ export default function AccountID({ profile, onUpdateProfile }) {
         />
         <div className="account-btn-cntr">
           <button
-            className={`save-btn ${isChanged ? 'save-btn-withChanges' : 'save-btn-withoutChanges'}`}
+            className={`save-btn ${
+              isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+            }`}
             onClick={handleSaveName}
             disabled={!isChanged}
           >
             Save
           </button>
           <button
-            className={`cancel-btn ${isChanged ? 'cancel-btn-withChanges' : 'cancel-btn-withoutChanges'}`}
+            className={`cancel-btn ${
+              isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+            }`}
             onClick={handleCancel}
             disabled={!isChanged}
           >

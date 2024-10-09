@@ -18,7 +18,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
         setProfile(response.data);
         setLoading(false);
       } catch (error) {
