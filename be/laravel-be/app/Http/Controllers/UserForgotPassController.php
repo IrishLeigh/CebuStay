@@ -82,8 +82,8 @@ class UserForgotPassController extends CORS
         $mail->SMTPAuth = true;
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
-        $mail->Username = 'cebustay2024@gmail.com';                     //SMTP username
-        $mail->Password = 'ncef xiex ercb ptuu';
+        $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
+        $mail->Password = 'zwnx vmxk vghl igzt';
 
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;
