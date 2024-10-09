@@ -15,6 +15,7 @@ const LandingPageUI = () => {
   const navigate=useNavigate();
   const [user, setUser] = useState(null);
 
+
   
   // const clearLocalStorage = () => {
   //   localStorage.removeItem("auth_token"); // Remove specific item
@@ -24,6 +25,49 @@ const LandingPageUI = () => {
   // navigate("/login");
   // // Function to scroll to the map
 
+  const handleLogout = async () => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      console.log("No token found");
+      localStorage.removeItem("auth_token");
+      localStorage.setItem("auth_token", "");
+      // setOpenLogoutModal(false);
+    }
+    // setLoading(true);
+    try {
+      console.log ("token FROM HEADER", token);
+      const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+        token: token,
+      });
+      if (res1.data) {
+        const res = await axios.post("http://127.0.0.1:8000/api/logout", {
+          userid: res1.data.data.userid,
+        });
+        if (res.data) {
+          console.log(res.data);
+          // Remove the token from local storage
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("email");
+          localStorage.removeItem("firsname");
+          localStorage.removeItem("lastname");
+          localStorage.removeItem("userid");
+          setUser(null);
+          
+          // Optionally, reset any user-related state here if applicable
+          // e.g., setUser(null); or use a context provider to reset user state
+          
+          // setOpenLogoutModal(false);
+          navigate("/login");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // setLoading(false);
+      console.log("Automatic Logout")
+    }
+  };
+
 const token = localStorage.getItem("auth_token");
   useEffect(() => {
     if (token) {
@@ -32,11 +76,18 @@ const token = localStorage.getItem("auth_token");
           const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
             token: token,
           });
-          setUser(res.data);
-          localStorage.setItem("email", res.data.data.email);
-          localStorage.setItem("userid", res.data.data.userid);
-          localStorage.setItem("firstname", res.data.data.firstname);
-          localStorage.setItem("lastname", res.data.data.lastname);
+          if (res.data.message === "Expire token.") {
+            handleLogout();
+            console.log ("Expired token. Automatic Logout");
+          }else {
+            setUser(res.data);
+            localStorage.setItem("email", res.data.data.email);
+            localStorage.setItem("userid", res.data.data.userid);
+            localStorage.setItem("firstname", res.data.data.firstname);
+            localStorage.setItem("lastname", res.data.data.lastname);
+            //local storage here
+          }
+          
 
           console.log("USER IN LANDING PAGE:", res.data);
         } catch (error) {

@@ -75,7 +75,17 @@ function HeaderUser() {
           const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
             token: token,
           });
-          setUser(res.data.data);
+          if (res.data.message === "Expire token.") {
+            handleLogout();
+            console.log ("Expired token. Automatic Logout");
+          }else {
+            setUser(res.data);
+            localStorage.setItem("email", res.data.data.email);
+            localStorage.setItem("userid", res.data.data.userid);
+            localStorage.setItem("firstname", res.data.data.firstname);
+            localStorage.setItem("lastname", res.data.data.lastname);
+            //local storage here
+          }
         } catch (error) {
           alert("Error decoding JWT token:", error);
         }
