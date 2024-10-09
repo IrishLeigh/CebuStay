@@ -66,7 +66,7 @@ function App() {
       axios
         .post("http://127.0.0.1:8000/api/decodetoken", { token })
         .then((res) => {
-          if (res.data.message === "Expire token.") {
+          if (res.data.message === "Expired token.") {
             handleLogout();
             console.log ("Expired token. Automatic Logout");
           }else {
