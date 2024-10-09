@@ -24,7 +24,7 @@ const pages = ["Home", "Accommodation"];
 const settings = ["Account",  "Your Bookings", "Your Properties","Logout"];
 
 
-function HeaderUser() {
+function HeaderUser( {isPropertyListed}) {
   const [loading, setLoading] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -95,7 +95,7 @@ function HeaderUser() {
     } else {
       setUser(null);
     }
-  }, [token]);
+  }, [token,isPropertyListed]);
 
 
   const handleOpenNavMenu = (event) => {
@@ -213,6 +213,8 @@ function HeaderUser() {
   const handleCloseLogoutModal = () => {
     setOpenLogoutModal(false);
   };
+
+  console.log("IspropertyListed SYA SA HEADER", isPropertyListed);
 console.log ("USER FROM HEADER NI SYA HA", user);
   return (
     <>
@@ -344,7 +346,7 @@ console.log ("USER FROM HEADER NI SYA HA", user);
                   {settings
                     .filter((setting) => {
                       // Filter out "Your Properties" if the user is not a Manager
-                      return !(setting === "Your Properties" && user?.role !== "manager");
+                      return !(setting === "Your Properties" && user?.data.role !== "manager");
                     })
                     .map((setting) => (
                       <MenuItem

@@ -119,7 +119,7 @@ QontoStepIcon.propTypes = {
   completed: PropTypes.bool,
 };
 
-export default function AccommodationRegistration() {
+export default function AccommodationRegistration( {onPropertyListedClick}) {
   const handleSubmit = async () => {
     if (isSingleUnit) {
       //For Single Unit
@@ -290,6 +290,7 @@ function formatDate(dateString) {
   };
   const closeSuccessModal = () => {
     setIsSuccessModalOpen(false); // Close the success modal
+    onPropertyListedClick();
     navigate('/'); // Redirect to the homepage
   };
   const handleCloseCompliance = () => {
@@ -1687,7 +1688,7 @@ return (
                 handleSubmit={handleSubmit}
               />
 
-              <SuccessModal isOpen={isSuccessModalOpen} onClose={closeSuccessModal} />
+              <SuccessModal isOpen={isSuccessModalOpen} onClose={closeSuccessModal}   />
 
           {/* ComplianceModal */}
           <ComplianceModal open={openCompliance} onClose={handleCloseCompliance} />

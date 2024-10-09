@@ -51,6 +51,8 @@ function App() {
   const [user, setUser] = useState({});
   const [showWarning, setShowWarning] = useState(false);
   const [prevLocation, setPrevLocation] = useState(location.pathname); // State to store previous location
+  
+  const [isPropertyListed, setPropertyListed] = useState(0);
   const topRef = useRef(null); // Create a ref for scrolling to the top
   
 
@@ -72,6 +74,7 @@ function App() {
           }else {
             setUser(res.data);
             //local storage here
+            
           }
           
         })
@@ -83,7 +86,7 @@ function App() {
       setUser(null);
       console.log("No token found");
     }
-  }, [token]);
+  }, [token, isPropertyListed]);
 
   useEffect(() => {
     const handleSessionCheck = () => {
@@ -124,7 +127,7 @@ function App() {
   
       return () => clearInterval(intervalId);
     }
-  }, [token, navigate, user, isLoggedIn]);
+  }, [token, navigate, user, isLoggedIn, ]);
   
 
   const updateLoginStatus = () => {
@@ -197,6 +200,13 @@ function App() {
           navigate("/login");
     }
   };
+  const handleListProperty = () => {
+    // Logic for listing the property
+    // Once successful, increment the isPropertyListed state
+    setPropertyListed(prev => prev + 1);
+  };
+  
+console.log("IsPropertyListed", isPropertyListed);
 
   return (
     <>
@@ -208,7 +218,7 @@ function App() {
       />
       <div ref={topRef}>
         <Routes>
-          <Route element={isLoggedIn ? <UserLayout /> : <NoUserLayout />}>
+          <Route element={isLoggedIn ? <UserLayout isPropertyListed={isPropertyListed} /> : <NoUserLayout />}>
             {/* Public Routess */}
 
             <Route index element={<LandingPageUI />} />
@@ -232,7 +242,7 @@ function App() {
               <Route path="account" element={<AccountManagement />} />
               <Route
                 path="list-property/create-listing"
-                element={<AccommodationRegistration />}
+                element={<AccommodationRegistration  onPropertyListedClick={handleListProperty}/>}
               />
               <Route
                 path="list-property"

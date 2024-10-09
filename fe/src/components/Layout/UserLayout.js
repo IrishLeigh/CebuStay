@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import HeaderUser from "../Header/HeaderUser";
 
-const UserLayout = () => {
+const UserLayout = ({isPropertyListed}) => {
   const location = useLocation();
   
   // Define an array of admin routes where you don't want to show the header
@@ -21,7 +21,7 @@ const UserLayout = () => {
   return (
     <>
       {/* Conditionally render the HeaderUser only if not on an admin route */}
-      {!isAdminRoute && <HeaderUser />}
+      {!isAdminRoute && <HeaderUser isPropertyListed={isPropertyListed} />}
       <main>
         <Outlet />
       </main>
