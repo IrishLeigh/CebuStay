@@ -45,10 +45,67 @@ class RegisterUserController extends CORS
         $mail->Subject = 'Email Verification from CebuStay';
 
         $email_template = "
-            <h3>Hi $firstname $lastname,</h3>
-            <h4>This is your registration code</h4>
-            <h5>verification code: $verify_token</h5>
+        <!DOCTYPE html>
+        <html lang='en'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Account Registration Code</title>
+            <style>
+                body {
+                    font-family: 'Poppins', sans-serif;
+                    background-color: #f9f9f9;
+                    color: #333;
+                    margin: 0;
+                    padding: 0;
+                }
+                .email-container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+                h3 {
+                    color: #007BFF;
+                    margin-bottom: 15px;
+                }
+                h4 {
+                    color: #333;
+                    margin-bottom: 10px;
+                }
+                .verification-code {
+                    font-size: 18px;
+                    color: #ffffff;
+                    background-color: #28a745;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    display: inline-block;
+                    margin-top: 10px;
+                }
+                .email-footer {
+                    margin-top: 20px;
+                    font-size: 12px;
+                    color: #888;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='email-container'>
+                <h3>Hi $firstname $lastname,</h3>
+                <h4>Welcome! Your account registration is almost complete.</h4>
+                <p>Please use the code below to complete your registration:</p>
+                <div class='verification-code'>$verify_token</div>
+                <div class='email-footer'>
+                    <p>&copy; " . date('Y') . " CebuStay. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
         ";
+
 
         $mail->Body = $email_template;
         try {

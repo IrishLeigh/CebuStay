@@ -880,7 +880,7 @@ class FileController extends CORS
 
         try {
             // Find the existing image for the user
-            $existingFile = UserFile::where('propertyid', $propertyid)->first();
+            $existingFile = UserFile::where('propertyid', $propertyid)->where('isavatar', 0)->first();
             if (!$existingFile) {
                 return response()->json(['message' => 'No existing image found for this user', 'status' => 'error']);
             }
