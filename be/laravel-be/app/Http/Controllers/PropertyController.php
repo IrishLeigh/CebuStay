@@ -72,7 +72,22 @@ class PropertyController extends CORS
 
     public function InsertPropertyInfo(Request $request)
     {
-        $singleunittype = ["Home", "Apartment", "Condominium", "Cabin", "Luxury Home", "Bungalow"];
+        $singleunittype = [
+            "Home",
+            "Apartment",
+            "Condominium",
+            "Cabin",
+            "Luxury Home",
+            "Bungalow",
+            "Villa",
+            "Loft",
+            "Cabin",
+            "Cottage",
+            "Studio",
+            "Private Residential",
+            "Townhouse",
+            "Subdivision House",
+        ];
 
         $this->enableCors($request);
         $property = new Property();
@@ -81,7 +96,8 @@ class PropertyController extends CORS
         $property->property_type = $request->input('property_type');
         $property->property_desc = $request->input('property_desc');
         $property->property_directions = $request->input('property_directions');
-        $property->unit_type = in_array($request->input('property_type'), $singleunittype) ? $request->input('unit_type') : "Multi Unit";
+        // $property->unit_type = in_array($request->input('property_type'), $singleunittype) ? $request->input('unit_type') : "Multi Unit";
+        $property->unit_type = $request->input('unit_type');
 
         $property->save();
         $propertyid = $property->propertyid;
@@ -192,10 +208,10 @@ class PropertyController extends CORS
                     ->get()
                     ->toArray();
 
-                    $src_companylogo = UserFile::where('propertyid', $request->input('propertyid'))
-                    ->where('isavatar', false) 
+                $src_companylogo = UserFile::where('propertyid', $request->input('propertyid'))
+                    ->where('isavatar', false)
                     ->first();
-        
+
                 if ($src_companylogo) {
                     $company_logo_url = $src_companylogo->file_url;
                 }
@@ -349,7 +365,7 @@ class PropertyController extends CORS
     public function getAllProperties(Request $request)
     {
         $this->enableCors($request);
-        $singleunittype = ["Home","Private Residential", "Townhouse", "Condominium", "Cabin", "Loft", "Bungalow", "Studio", "Villa", "Cottage", "Subdivision House"];
+        $singleunittype = ["Home", "Private Residential", "Townhouse", "Condominium", "Cabin", "Loft", "Bungalow", "Studio", "Villa", "Cottage", "Subdivision House"];
 
         // Retrieve all house rules and booking policies
         $property_hr = DB::table('house_rules')->get();
@@ -1129,15 +1145,15 @@ class PropertyController extends CORS
                             ->where('proppricingid', $proppricingId) // Use the proppricingid for the query
                             ->first(); // Get the first matching record
 
-                            if ($pricing) {
-                                $newProperty['pricing'] = [ // Add to array if multiple
-                                    'proppricingid' => $pricing->proppricingid,
-                                    'max_price' => $pricing->max_price,
-                                    'min_price' => $pricing->min_price,
-                                    'profit' => $pricing->profit,
-                                    'created_at' => $pricing->created_at,
-                                ];
-                            }
+                        if ($pricing) {
+                            $newProperty['pricing'] = [ // Add to array if multiple
+                                'proppricingid' => $pricing->proppricingid,
+                                'max_price' => $pricing->max_price,
+                                'min_price' => $pricing->min_price,
+                                'profit' => $pricing->profit,
+                                'created_at' => $pricing->created_at,
+                            ];
+                        }
                     }
                 }
                 $finalProperties[] = $newProperty;

@@ -306,6 +306,32 @@ class FileController extends CORS
         }
     }
 
+    public function getGalleryPhotos(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+
+        $galleryimgs = File::where('propertyid', $propertyid)
+            ->whereNull('unitid')
+            ->where('iscover', 0)
+            ->get(); // Retrieve the collection of File models
+
+        if ($galleryimgs->count() == 0) {
+            return response()->json(['galleryPhotos' => [], 'message' => 'No gallery photos found', 'status' => 'error']);
+        }
+
+        // Apply map to the collection
+        $imglist = $galleryimgs->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'src' => $item->file_url,
+                'caption' => $item->caption
+            ];
+        });
+
+        return response()->json(['galleryPhotos' => $imglist, 'message' => 'Gallery photos retrieved successfully', 'status' => 'success']);
+    }
+
+
     public function uploadMultipleFiles_Gallery(array $files, string $folderId, string $propertyid)
     {
         $accessToken = $this->token();
@@ -854,7 +880,7 @@ class FileController extends CORS
 
         try {
             // Find the existing image for the user
-            $existingFile = UserFile::where('propertyid', $propertyid)->first();
+            $existingFile = UserFile::where('propertyid', $propertyid)->where('isavatar', 0)->first();
             if (!$existingFile) {
                 return response()->json(['message' => 'No existing image found for this user', 'status' => 'error']);
             }

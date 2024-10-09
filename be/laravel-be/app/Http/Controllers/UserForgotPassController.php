@@ -44,36 +44,36 @@ class UserForgotPassController extends CORS
     public function changePass(Request $request)
     {
         $this->enableCors($request);
-    
+
         // Retrieve input data
         $email = $request->input('email');
         $plainPassword = $request->input('password');
-    
+
         // Debugging: Log received data
         \Log::info('Email: ' . $email);
         \Log::info('Received password: ' . $plainPassword);
-    
+
         // Check if user exists
         $user = UserModel::where('email', $email)->first();
-    
+
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
-    
+
         // Hash the password
         $hashedPassword = Hash::make($plainPassword);
-    
+
         // Update the user password
         $user->password = $hashedPassword;
         $user->save();
-    
+
         // Return response (avoid including plain password in production)
         return response()->json([
             'message' => 'Password updated successfully.',
             // 'user' => $user,
         ]);
     }
-    
+
 
     public function sendEmail($firstname, $lastname, $email, $verify_token)
     {
@@ -82,8 +82,8 @@ class UserForgotPassController extends CORS
         $mail->SMTPAuth = true;
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
-        $mail->Username = 'misternonoy11@gmail.com';                     //SMTP username
-        $mail->Password = 'zwnx vmxk vghl igzt';
+        $mail->Username = 'cebustay2024@gmail.com';                     //SMTP username
+        $mail->Password = 'ncef xiex ercb ptuu';
 
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;
@@ -92,13 +92,66 @@ class UserForgotPassController extends CORS
         $mail->addAddress($email);     //Add a recipient
 
         $mail->isHTML(true);                                  //Set email format to HTML
-        $mail->Subject = 'Email Verification from CebuStay';
+        $mail->Subject = 'Password Reset Verification from CebuStay';
 
         $email_template = "
-            <h3>Hi $firstname $lastname,</h3>
-            <h4>This is your registration code</h4>
-            <h5>verification code: $verify_token</h5>
-        ";
+            <!DOCTYPE html>
+            <html lang='en'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>Verification Code</title>
+                <style>
+                    body {
+                        font-family: 'Poppins', sans-serif;
+                        background-color: #f4f4f4;
+                        color: #333;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .email-container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #ffffff;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    h4, h5 {
+                        margin: 0 0 10px;
+                    }
+                    .verify-code {
+                        background-color: #007BFF;
+                        color: #ffffff;
+                        padding: 10px;
+                        display: inline-block;
+                        font-size: 18px;
+                        border-radius: 5px;
+                        margin-top: 10px;
+                    }
+                    .email-footer {
+                        margin-top: 20px;
+                        font-size: 12px;
+                        color: #666;
+                        text-align: center;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class='email-container'>
+                    <h3>Hello $firstname $lastname,</h3>
+                    <h4>This is your verification code. Please use it to verify your account.</h4>
+                    <h5>Verification code:</h5>
+                    <div class='verify-code'>$verify_token</div>
+                    <div class='email-footer'>
+                        <p>If you did not request this code, please ignore this email.</p>
+                        <p>&copy; " . date('Y') . " CebuStay. All rights reserved.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            ";
+
 
         $mail->Body = $email_template;
         try {
