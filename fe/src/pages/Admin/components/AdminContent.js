@@ -51,6 +51,43 @@ export default function AdminContent({ payoutData, selectedTab }) {
     navigate("/superadmin");
   };
 
+  const handlePayout = async () => {
+    try {
+      const payoutData = {
+        items: [
+          {
+            recipient_type: "EMAIL",
+            amount: {
+              value: "10000",
+              currency: "PHP"
+            },
+            receiver: "amabarobert@gmail.com"
+          }
+        ]
+      };
+  
+      const response = await axios.post("http://127.0.0.1:8000/api/paypal/payout", payoutData);
+  
+      console.log(response.data);  // Handle the response data here
+      if(response.data.message === "Payout successful")
+        {
+          console.log("Payout successful na daw");
+          const resCheck = await axios.get(`http://127.0.0.1:8000/api/payouts/batch/${response.data.data.batch_header.payout_batch_id}`);
+          console.log('rescheckdata',resCheck.data);
+          if(resCheck.data.message === "Payout batch details retrieved successfully"){
+            const resStatus = await axios.get(`http://127.0.0.1:8000/api/paypal/check-payout/${resCheck.data.data.items[0].payout_item_id}`);
+            console.log('resstatusdata',resStatus.data);
+            console.log(resStatus.data.data.transaction_status);
+            if(resStatus.data.message === "Payout item details retrieved successfully"){
+              console.log("Payout item details retrieved successfully");
+            }
+          }
+        }
+    } catch (error) {
+      console.error("Error sending payout:", error);  // Handle error
+    }
+  };
+
   return (
     <>
       <div className="admin-content">
