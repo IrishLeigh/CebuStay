@@ -92,6 +92,19 @@ const token = localStorage.getItem("auth_token");
           console.log("USER IN LANDING PAGE:", res.data);
         } catch (error) {
           console.log("Error decoding JWT token:", error);
+          handleLogout();
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("email");
+          localStorage.removeItem("firsname");
+          localStorage.removeItem("lastname");
+          localStorage.removeItem("userid");
+          setUser(null);
+          
+          // Optionally, reset any user-related state here if applicable
+          // e.g., setUser(null); or use a context provider to reset user state
+          
+          // setOpenLogoutModal(false);
+          navigate("/login");
         }
       };
 

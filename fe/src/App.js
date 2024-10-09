@@ -77,6 +77,7 @@ function App() {
         })
         .catch((error) => {
           console.error("Error decoding JWT token:", error);
+          handleLogout();
         });
     } else {
       setUser(null);
@@ -182,6 +183,18 @@ function App() {
     } finally {
       // setLoading(false);
       console.log("Automatic Logout")
+      localStorage.removeItem("auth_token");
+          localStorage.removeItem("email");
+          localStorage.removeItem("firsname");
+          localStorage.removeItem("lastname");
+          localStorage.removeItem("userid");
+          setUser(null);
+          
+          // Optionally, reset any user-related state here if applicable
+          // e.g., setUser(null); or use a context provider to reset user state
+          
+          // setOpenLogoutModal(false);
+          navigate("/login");
     }
   };
 

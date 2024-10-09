@@ -92,11 +92,35 @@ export default function UserProfile({ profile }) {
       if (res.data) {
         console.log(res.data);
         localStorage.removeItem("auth_token");
+        localStorage.removeItem("auth_token");
+          localStorage.removeItem("email");
+          localStorage.removeItem("firsname");
+          localStorage.removeItem("lastname");
+          localStorage.removeItem("userid");
+ 
+          
+          // Optionally, reset any user-related state here if applicable
+          // e.g., setUser(null); or use a context provider to reset user state
+          
+          // setOpenLogoutModal(false);
         setLogoutloading(false);
         navigate("/login");
       }
     } catch (error) {
       console.log(error);
+    }finally{
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("email");
+      localStorage.removeItem("firsname");
+      localStorage.removeItem("lastname");
+      localStorage.removeItem("userid");
+
+          
+          // Optionally, reset any user-related state here if applicable
+          // e.g., setUser(null); or use a context provider to reset user state
+          
+          // setOpenLogoutModal(false);
+          navigate("/login");
     }
   };
 
