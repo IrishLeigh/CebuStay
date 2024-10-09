@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\UnitDetails;
 use App\Models\PropertyPricing;
+use App\Models\MonthlyPayment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Booking;
@@ -343,7 +344,7 @@ class BookingController extends CORS
             $booking->total_price += $saveToPayment;
             $booking->stay_length = $lengthStay;
             $booking->save();
-        }else{
+        } else {
 
             // Update the booking details
             $booking->checkin_date = $checkin;
@@ -611,44 +612,61 @@ class BookingController extends CORS
     }
 
     public function getAllBookingByUserId(Request $request)
-    {
-        $this->enableCors($request);
+{
+    $this->enableCors($request);
 
-        $userid = $request->input('userid');
+    $userid = $request->input('userid');
 
-        // Eager load the property, location, booker, and guest relationships
-        $bookings = Booking::with(['property.location', 'booker', 'guest'])
-            ->select('bookingid', 'booking_date', 'propertyid', 'guest_count', 'stay_length', 'total_price', 'status', 'type', 'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid')
-            ->where('userid', $userid)
-            ->get();
+    // Retrieve bookings with relationships and monthly payments using left join
+    $bookings = Booking::with(['property.location', 'booker', 'guest'])
+        ->select(
+            'tbl_booking.bookingid', 'booking_date', 'tbl_booking.propertyid', 'guest_count', 'stay_length', 'total_price', 'tbl_booking.status', 'type', 
+            'checkin_date', 'checkout_date', 'special_request', 'bookerid', 'guestid',
+            'monthly_payment.amount_paid', 'monthly_payment.userid as payment_userid', 'monthly_payment.amount_due', 'monthly_payment.due_date', 
+            'monthly_payment.status as monthly_payment_status', 'tbl_payment.status as payment_status', 'tbl_payment.amount as payment_amount'
+        )
+        ->leftJoin('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+        ->leftJoin('monthly_payment', 'tbl_booking.bookingid', '=', 'monthly_payment.bookingid')
+        ->leftJoin('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
+        ->where('tbl_booking.userid', $userid)
+        ->get();
 
-        // Format the response to include the additional property, booker, and guest data
-        $formattedBookings = $bookings->map(function ($booking) {
-            return [
-                'id' => $booking->bookingid,
-                'date' => $booking->booking_date,
-                'propertyid' => $booking->propertyid,
-                'name' => $booking->property->property_name,
-                'type' => $booking->property->property_type,
-                'location' => $booking->property->location->address,
-                'guests' => $booking->guest_count,
-                'stay_length' => $booking->stay_length,
-                'amount' => $booking->total_price,
-                'status' => $booking->type === 'booking' ? 'Checked In' : 'Booked',
-                'isCancel' => $booking->status,
-                'checkIn' => $booking->checkin_date,
-                'checkOut' => $booking->checkout_date,
-                'special_request' => $booking->special_request,
-                'first_name' => $booking->booker->firstname,
-                'last_name' => $booking->booker->lastname,
-                'email' => $booking->booker->email,
-                'phone' => $booking->booker->phonenum,
-                'guest' => $booking->guest->guestname
-            ];
-        });
+    // Format the response to include the additional property, booker, and guest data
+    $formattedBookings = $bookings->map(function ($booking) {
+        return [
+            'id' => $booking->bookingid,
+            'date' => $booking->booking_date,
+            'propertyid' => $booking->propertyid,
+            'name' => $booking->property->property_name,
+            'type' => $booking->property->property_type,
+            'location' => $booking->property->location->address,
+            'guests' => $booking->guest_count,
+            'stay_length' => $booking->stay_length,
+            'amount' => $booking->total_price,
+            'status' => $booking->type === 'booking' ? 'Checked In' : 'Booked',
+            'isCancel' => $booking->status,
+            'checkIn' => $booking->checkin_date,
+            'checkOut' => $booking->checkout_date,
+            'special_request' => $booking->special_request,
+            'first_name' => $booking->booker->firstname,
+            'last_name' => $booking->booker->lastname,
+            'email' => $booking->booker->email,
+            'phone' => $booking->booker->phonenum,
+            'guest' => $booking->guest->guestname,
+            'unit_type' => $booking->property->unit_type,
+            'amount_paid' => $booking->amount_paid ?? 0, 
+            'userid' => $booking->payment_userid ?? 0,   
+            'payment_status' => $booking->payment_status ?? null,
+            'payment_amount' => $booking->payment_amount ?? 0,
+            'monthly_payment_status' => $booking->monthly_payment_status ?? null,
+            'amount_due' => $booking->amount_due ?? 0, 
+            'due_date' => $booking->due_date ?? null,
+        ];
+    });
 
-        return response()->json($formattedBookings);
-    }
+    return response()->json($formattedBookings);
+}
+
 
 
 

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Payout;
+use App\Models\MonthlyPayment;
+use App\Models\Property;
 use App\Services\PayMongoService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use GuzzleHttp\Client;
@@ -27,12 +30,23 @@ class PaymentController extends CORS
         // Get request data
         $amount = $request->input('amount');
         $description = $request->input('description');
-        $status = $request->input('status');
-        $lengthStay = $request->input('length');
+        $status = $request->input('status') ?? 'Pending';
+        $lengthStay = $request->input('length') ?? 1;
         $returnUrl = $request->input('return_url');
         $bookingId = $request->input('bookingid');
+        $propertyId = $request->input('propertyid');
 
-        $totalprice = $amount * $lengthStay;
+        $property = Property::find($propertyId);
+        $totalprice = null;
+        $isMonthlyPayment = $property && $property->unit_type === 'Multi Unit';
+        if ($isMonthlyPayment) {
+            $description = 'Monthly Payment';
+            $totalprice = $amount;
+        } else {
+            $totalprice = $amount * $lengthStay;
+        }
+
+        $payment = Payment::where('bookingid', $bookingId)->first();
 
         // Create the checkout session using the PayMongo service
         try {
@@ -40,16 +54,23 @@ class PaymentController extends CORS
             $checkoutUrl = $checkoutData['checkout_url'];
             $paymentId = $checkoutData['payment_id'];
 
+            if ($payment) {
+                if ($payment->status === 'Pending' && !$isMonthlyPayment) {
+                    $payment->status = 'Paid';
+                    $payment->save();
+                }
+            } else {
+                // Save the payment record in the database
+                $payment = new Payment();
+                $payment->amount = $totalprice / 100;
+                $payment->description = $description;
+                $payment->status = $status;
+                $payment->paymentid = $paymentId;
+                $payment->bookingid = $bookingId;
 
-            // Save the payment record in the database
-            $payment = new Payment();
-            $payment->amount = $totalprice / 100;
-            $payment->description = $description;
-            $payment->status = $status;
-            $payment->paymentid = $paymentId;
-            $payment->bookingid = $bookingId;
+                $payment->save();
+            }
 
-            $payment->save();
 
 
             // Return the payment record along with the PayMongo checkout session link
@@ -83,13 +104,64 @@ class PaymentController extends CORS
         $this->enableCors($request);
 
         $payment = Payment::where('bookingid', $request->input('bookingid'))->latest('created_at')->first();
+        $booking = Booking::find($request->input('bookingid'));
 
         if (!$payment) {
             return response()->json(['error' => 'Payment not found'], 404);
         }
 
         $payment->status = $request->input('status');
+        // $payment->amount += $request->input('amount');
         $payment->save();
+
+
+        $property = Property::find($booking->propertyid);
+        if ($property->unit_type === 'Multi Unit') {
+            if ($payment->status === 'Paid') {
+                // Retrieve the latest monthly payment or create a new one
+                $monthlyPayment = MonthlyPayment::where('bookingid', $request->input('bookingid'))
+                    ->latest('created_at')
+                    ->first();
+
+                if (!$monthlyPayment) {
+                    // If there is no previous monthly payment, create a new one
+                    $monthlyPayment = new MonthlyPayment();
+                }
+
+                // Get booking check-in and check-out dates
+                $checkinDate = Carbon::parse($booking->checkin_date);
+                $checkoutDate = Carbon::parse($booking->checkout_date);
+
+                // Calculate the next due date
+                if ($monthlyPayment->due_date) {
+                    // If there is already a due date, calculate the next one (next month)
+                    $nextDueDate = Carbon::parse($monthlyPayment->due_date)->addMonth();
+                } else {
+                    // If this is the first payment, use the check-in date as the initial due date
+                    $nextDueDate = $checkinDate->addMonth();
+                }
+
+                // Ensure the next due date does not exceed the checkout date
+                if ($nextDueDate->greaterThan($checkoutDate)) {
+                    $monthlyPayment->status = 'Paid';
+                    $monthlyPayment->due_date = $checkoutDate; // Set the final due date to the checkout date
+                    $monthlyPayment->save();
+                    return response()->json(['message' => 'No further payments needed, stay is completed']);
+
+                } else {
+                    $monthlyPayment->status = 'Pending';
+                }
+
+                // Update or create the monthly payment
+                $monthlyPayment->bookingid = $request->input('bookingid');
+                $monthlyPayment->userid = $booking->userid;
+                $monthlyPayment->amount_due = $payment->amount;  // Assuming the amount is the same each month
+                $monthlyPayment->amount_paid += $payment->amount; // Update the amount paid
+                // $monthlyPayment->status = 'paid';
+                $monthlyPayment->due_date = $nextDueDate; // Set the next due date
+                $monthlyPayment->save();
+            }
+        }
 
         $charge = $payment->amount * .15;
         $paymentId = $payment->pid;

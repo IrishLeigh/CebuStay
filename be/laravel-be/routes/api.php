@@ -5,6 +5,7 @@ use App\Http\Controllers\UserAdminAuthenticationController;
 use App\Http\Middleware\TokenMiddleware;
 
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\MonthlyPaymentController;
 use App\Models\UserAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,10 @@ Route::post('/refund-payment', [PaymentController::class, 'refundPayment']);
 Route::get('/getpaymentid', [PaymentController::class, 'getPaymentId']);
 Route::get('refund', [PaymentController::class, 'getRefund']);
 Route::put('/update-payment-status', [PaymentController::class, 'updatePaymentStatus']);
+
+// Route for Monthly Payment
+Route::post('/payments/notify-pending', [MonthlyPaymentController::class, 'notifyUpcomingPayments']);
+Route::post('/payments/check-due', [MonthlyPaymentController::class, 'checkDuePayments']);
 
 // Route::post('/users', 'App\Http\Controllers\UserController@create');
 Route::put('/users_update', [UserController::class, 'update']);
