@@ -2,9 +2,16 @@ import React, { useState, useEffect, useMemo } from "react";
 // import Sidebar from "../../components/Sidebar";
 // import Sidebar from "../../../sidebar";
 import EditReservationModal from "../../../modals/EditReservationModal";
+import CheckInCheckOut from "../../../modals/CheckInCheckOut";
 import axios from "axios";
 // import Grid from "@mui/material/Grid";
-import { MdMenuOpen, MdSearch, MdEdit, MdWarning } from "react-icons/md";
+import {
+  MdMenuOpen,
+  MdSearch,
+  MdEdit,
+  MdWarning,
+  MdClose,
+} from "react-icons/md";
 import "../css/AccommodationReservation.css";
 import { Box, CircularProgress } from "@mui/material";
 
@@ -25,6 +32,7 @@ export default function AccommodationReservation() {
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   // Function to add a new reservation
   const addReservation = (newReservation) => {
@@ -287,11 +295,7 @@ export default function AccommodationReservation() {
         <div className="header-container">
           <h1 className="header-title">Your Guests</h1>
           <p className="header-description">
-            Manage and oversee all accommodation reservations, including booking
-            details, guest information, and property availability, to ensure a
-            seamless experience for guests. The admin interface allows for
-            real-time updates and modifications, providing flexibility in
-            responding to guest needs and preferences.
+            Manage and oversee all accommodation reservations.
           </p>
         </div>
 
@@ -454,91 +458,142 @@ export default function AccommodationReservation() {
               textAlign: "center",
             }}
           >
-            <table style={{ width: "100%", textAlign: "center" }}>
-              <thead className="table-header">
-                <tr>
-                  <th>Select</th>
-                  <th>Booking ID</th>
-                  <th>Firstname</th>
-                  <th>Lastname</th>
-                  <th>Email</th>
-                  <th>Property Name</th>
-                  <th>Type</th>
-                  <th>Address</th>
-                  <th>Price</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
+            {/* Render the modal conditionally */}
+            {editModalOpen && (
+              <div style={{ position: "relative", padding: "20px" }}>
+                {/* Close button in the modal */}
+                <button
+                  onClick={closeModal}
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "1.5rem",
+                    color: "gray", // Change the color as needed
+                  }}
+                >
+                  <MdClose />
+                </button>
+                <CheckInCheckOut item={selectedItem} onClose={closeModal} />
+              </div>
+            )}
+
+            {/* Render the table only if the modal is not open */}
+            {!editModalOpen && (
+              <table style={{ width: "100%", textAlign: "center" }}>
+                <thead className="table-header">
                   <tr>
-                    <td
-                      colSpan="11"
-                      style={{ padding: "1rem 0", textAlign: "center" }}
-                    >
-                      <div
-                        className="loading-container"
+                    <th>Booking ID</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Email</th>
+                    <th>Property Name</th>
+                    <th>Type</th>
+                    <th>Address</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td
+                        colSpan="10"
+                        style={{ padding: "1rem 0", textAlign: "center" }}
+                      >
+                        <div
+                          className="loading-container"
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            margin: "2rem",
+                            height: "100%",
+                          }}
+                        >
+                          <CircularProgress />
+                          <p>Retrieving Data...</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : filteredPropertyData.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="10"
                         style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          margin: "2rem",
-                          height: "100%",
+                          padding: "1rem 0",
+                          color: "gray",
+                          textAlign: "center",
                         }}
                       >
-                        <CircularProgress />
-                        <p>Retrieving Data...</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : filteredPropertyData.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="11"
-                      style={{
-                        padding: "1rem 0",
-                        color: "gray",
-                        textAlign: "center",
-                      }}
-                    >
-                      No data available
-                    </td>
-                  </tr>
-                ) : (
-                  <>
-                    {selectedButton === "all" &&
-                      filteredPropertyData.map((item) => (
+                        No data available
+                      </td>
+                    </tr>
+                  ) : (
+                    <>
+                      {filteredPropertyData.map((item) => (
                         <tr
                           key={item.id}
-                          style={{
-                            borderBottom: "1px solid #e0e0e0",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            handleEdit(item); // Replace this with the modal opening logic
-                          }}
+                          style={{ borderBottom: "1px solid #e0e0e0" }}
                         >
-                          <td className="px-4 py-2">
-                            <input
-                              type="checkbox"
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </td>
-                          <td className="px-4 py-2">
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
                             {item.bookingid ? item.bookingid : item.bhid}
                           </td>
-                          <td className="px-4 py-2">{item.booker.firstname}</td>
-                          <td className="px-4 py-2">{item.booker.lastname}</td>
-                          <td className="px-4 py-2">{item.booker.email}</td>
-                          <td className="px-4 py-2">{item.property_name}</td>
-                          <td className="px-4 py-2">{item.property_type}</td>
-                          <td className="px-4 py-2">{item.property_address}</td>
-                          <td className="px-4 py-2">{item.total_price}</td>
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
+                            {item.booker.firstname}
+                          </td>
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
+                            {item.booker.lastname}
+                          </td>
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
+                            {item.booker.email}
+                          </td>
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
+                            {item.property_name}
+                          </td>
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
+                            {item.property_type}
+                          </td>
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
+                            {item.property_address}
+                          </td>
+                          <td
+                            className="px-4 py-2"
+                            onClick={() => handleEdit(item)}
+                          >
+                            {item.total_price}
+                          </td>
                           <td
                             className="px-4 py-2"
                             style={{
                               color: item.status === "Active" ? "green" : "red",
                             }}
+                            onClick={() => handleEdit(item)}
                           >
                             {item.status}
                           </td>
@@ -546,7 +601,7 @@ export default function AccommodationReservation() {
                             <MdEdit
                               onClick={(e) => {
                                 e.stopPropagation(); // Prevent row click event
-                                handleEdit(item.id); // Replace with your edit handling function
+                                handleEdit(item.id);
                               }}
                               style={{
                                 cursor: "pointer",
@@ -567,144 +622,23 @@ export default function AccommodationReservation() {
                           </td>
                         </tr>
                       ))}
-                    {selectedButton === "in" &&
-                      checkIns.map((item) => (
-                        <tr
-                          key={item.id}
-                          style={{
-                            borderBottom: "1px solid #e0e0e0",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            handleEdit(item); // Replace this with the modal opening logic
-                          }}
-                        >
-                          <td className="px-4 py-2">
-                            <input
-                              type="checkbox"
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </td>
-                          <td className="px-4 py-2">
-                            {item.bookingid ? item.bookingid : item.bhid}
-                          </td>
-                          <td className="px-4 py-2">{item.booker.firstname}</td>
-                          <td className="px-4 py-2">{item.booker.lastname}</td>
-                          <td className="px-4 py-2">{item.booker.email}</td>
-                          <td className="px-4 py-2">{item.property_name}</td>
-                          <td className="px-4 py-2">{item.property_type}</td>
-                          <td className="px-4 py-2">{item.property_address}</td>
-                          <td className="px-4 py-2">{item.total_price}</td>
-                          <td
-                            className="px-4 py-2"
-                            style={{
-                              color: item.status === "Active" ? "green" : "red",
-                            }}
-                          >
-                            {item.status}
-                          </td>
-                          <td className="px-4 py-2">
-                            <MdEdit
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent row click event
-                                handleEdit(item.id); // Replace with your edit handling function
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                marginRight: "0.5rem", // Space between icons
-                                color: "blue", // You can change the color as needed
-                              }}
-                            />
-                            <MdWarning
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent row click event
-                                handleDelete(item.id);
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                color: "red",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    {selectedButton === "out" &&
-                      checkOut.map((item) => (
-                        <tr
-                          key={item.id}
-                          style={{
-                            borderBottom: "1px solid #e0e0e0",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => {
-                            handleEdit(item); // Replace this with the modal opening logic
-                          }}
-                        >
-                          <td className="px-4 py-2">
-                            <input
-                              type="checkbox"
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </td>
-                          <td className="px-4 py-2">
-                            {item.bookingid ? item.bookingid : item.bhid}
-                          </td>
-                          <td className="px-4 py-2">{item.booker.firstname}</td>
-                          <td className="px-4 py-2">{item.booker.lastname}</td>
-                          <td className="px-4 py-2">{item.booker.email}</td>
-                          <td className="px-4 py-2">{item.property_name}</td>
-                          <td className="px-4 py-2">{item.property_type}</td>
-                          <td className="px-4 py-2">{item.property_address}</td>
-                          <td className="px-4 py-2">{item.total_price}</td>
-                          <td
-                            className="px-4 py-2"
-                            style={{
-                              color: item.status === "Active" ? "green" : "red",
-                            }}
-                          >
-                            {item.status}
-                          </td>
-                          <td className="px-4 py-2">
-                            <MdEdit
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent row click event
-                                handleEdit(item.id); // Replace with your edit handling function
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                marginRight: "0.5rem", // Space between icons
-                                color: "blue", // You can change the color as needed
-                              }}
-                            />
-                            <MdWarning
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent row click event
-                                handleDelete(item.id);
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                color: "red",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                  </>
-                )}
-              </tbody>
-            </table>
+                    </>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
       {/* </Grid>
       </Grid> */}
-      <EditReservationModal
+      {/* <EditReservationModal
         open={editModalOpen}
         reservation={selectedReservation}
         onSave={handleSave}
         onCancel={handleCancelEdit}
         onClose={handleClose} // Pass handleClose to the modal
-      />
+      /> */}
       {modalOpen && (
         <div
           style={{
