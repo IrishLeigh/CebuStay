@@ -343,7 +343,7 @@ class BookingController extends CORS
             $booking->total_price += $saveToPayment;
             $booking->stay_length = $lengthStay;
             $booking->save();
-        }else{
+        } else {
 
             // Update the booking details
             $booking->checkin_date = $checkin;
@@ -405,13 +405,12 @@ class BookingController extends CORS
         $mail->SMTPAuth = true;
         //Enable SMTP authentication
         $mail->Host = 'smtp.gmail.com';                     //Set the SMTP server to send through                                 
-        $mail->Username = 'ludivicombalaterojr@gmail.com';                     //SMTP username
-        $mail->Password = 'smjk vkqa bjsh zwtr';
-
+        $mail->Username = 'cebustay2024@gmail.com';                     //SMTP username
+        $mail->Password = 'ncef xiex ercb ptuu';
         $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
         $mail->Port = 587;
 
-        $mail->setFrom('ludivicombalaterojr@gmail.com', $bookerFirstName);
+        $mail->setFrom('cebustay2024@gmail.com', $bookerFirstName);
         $mail->addAddress($bookerEmail);     //Add a recipient
 
         $mail->isHTML(true);                                  //Set email format to HTML
