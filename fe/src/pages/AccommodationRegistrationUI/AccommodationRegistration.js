@@ -169,6 +169,8 @@ export default function AccommodationRegistration() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openCompliance, setOpenCompliance] = useState(false);
   const containerRef = useRef(null);
+  const contentRef = useRef(null); // Reference to the main content
+
   // Determine if the selected property type is single or multi-unit
     // Determine if the selected property type is single or multi-unit
     const isSingleUnit =
@@ -1391,6 +1393,13 @@ const handleRetry = () => {
     
     console.log("NICE ONE!");
   };
+
+  // Scroll to the top of the main content area when the step changes
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [step]); // Trigger this effect when 'step' changes
   console.log("Property Information from parent", propertyInfo);
   console.log("Multi beds from parent", multiRoomsAndBeds);
   console.log("Policies from parent:", policiesData);

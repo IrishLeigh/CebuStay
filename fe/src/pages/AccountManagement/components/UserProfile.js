@@ -18,6 +18,7 @@ export default function UserProfile({ profile }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
   const [profileImage, setProfileImage] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
   );
@@ -190,6 +191,7 @@ export default function UserProfile({ profile }) {
     setModalOpen(false);
   };
 
+  console.log("Current profile", currentProfile);
   return !currentProfile ? (
     <div className="loading-container">
       <CircularProgress />
@@ -236,6 +238,7 @@ export default function UserProfile({ profile }) {
               <div className="user-name">
                 {`${currentProfile.firstname} ${currentProfile.lastname}`.toUpperCase()}
               </div>
+              <div className="user-id">{currentProfile.email}</div>
               <div className="user-id">#{currentProfile.userid}</div>
             </div>
           </div>

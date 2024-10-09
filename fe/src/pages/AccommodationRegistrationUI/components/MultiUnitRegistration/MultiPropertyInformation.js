@@ -6,10 +6,17 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert"; // For custom styled alert inside the snackbar
 import AnimatePage from "../AnimatedPage";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+
+// Custom Alert for the Snackbar
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function MultiPropertyInformation({
   onMultiPropertyInformationChange,
@@ -18,6 +25,7 @@ export default function MultiPropertyInformation({
   handleBack,
 }) {
   const [multiPropertyData, setMultiPropertyData] = useState(parentMultiPropertyInfo);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to the top when the component mounts
@@ -41,17 +49,23 @@ export default function MultiPropertyInformation({
     return (
       multiPropertyData.propertyName &&
       multiPropertyData.propertyDescription &&
-      // multiPropertyData.numberOfUnits &&
       multiPropertyData.gettingToProperty
     );
   };
 
   const validateAndProceed = () => {
     if (!validateForm()) {
-      alert("Please fill in all fields.");
+      setSnackbarOpen(true); // Show snackbar when validation fails
       return;
     }
     handleNext();
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
   };
 
   console.log("Property Information:", multiPropertyData);
@@ -59,12 +73,7 @@ export default function MultiPropertyInformation({
   return (
     <Container maxWidth="lg" className="centered-container">
       <AnimatePage>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-         
-        >
+        <Box display="flex" justifyContent="center" alignItems="center">
           <Paper
             sx={{
               width: '80vw',
@@ -88,7 +97,7 @@ export default function MultiPropertyInformation({
                 <Box
                   component="form"
                   sx={{
-                    "& > :not(style)": { my: 1, width: "100%" }, // Set width of children to 100%
+                    "& > :not(style)": { my: 1, width: "100%" },
                   }}
                   noValidate
                   autoComplete="off"
@@ -126,7 +135,7 @@ export default function MultiPropertyInformation({
                 </Box>
               </Grid>
               <Grid item xs={12} md={3}>
-              <Box
+                <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -172,6 +181,13 @@ export default function MultiPropertyInformation({
           Next
         </Button>
       </div>
+
+      {/* Snackbar for error message */}
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: "100%" }}>
+          Please fill in all fields.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

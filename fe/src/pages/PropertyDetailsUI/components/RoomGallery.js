@@ -17,8 +17,8 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-export default function RoomGallery({ propertyImages }) {
-  const [images, setPropertyImages] = useState([]);
+export default function RoomGallery({ propertyImages, galleryImages }) {
+  const [images, setImages] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const galleryRef = useRef(null);
@@ -29,9 +29,12 @@ export default function RoomGallery({ propertyImages }) {
 
   useEffect(() => {
     if (propertyImages) {
-      setPropertyImages(propertyImages);
+      setImages(propertyImages);
     }
-  }, [propertyImages]);
+    if (galleryImages) {
+      setImages((prevImages) => [...prevImages, ...galleryImages]);
+    }
+  }, [propertyImages, galleryImages]);
 
   const scrollGallery = (direction) => {
     galleryRef.current.scrollBy({ left: direction === 'left' ? -300 : 300, behavior: "smooth" });
@@ -80,8 +83,7 @@ export default function RoomGallery({ propertyImages }) {
 
   return (
     <Paper sx={{ borderRadius: 2, padding: 2, boxShadow: 3, mt: 2 }}>
-      
-      <Box sx={{ display: 'flex', alignItems: 'center',justifyContent: 'space-between'}}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <ArrowBack sx={{ color: "#16B4DD", cursor: 'pointer' }} onClick={() => scrollGallery('left')} />
         <Box sx={{ flexGrow: 1, overflowX: 'auto', width: '100%', display: 'flex', justifyContent: 'center' }} ref={galleryRef}>
           <ImageList cols={getCols()} gap={8} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
@@ -93,7 +95,7 @@ export default function RoomGallery({ propertyImages }) {
                   onClick={() => handleImageClick(index)}
                   style={{
                     width: '100%',
-                    height: 'auto', // Ensure height is auto to maintain aspect ratio
+                    height: 'auto',
                     objectFit: 'cover',
                     cursor: 'pointer',
                     borderRadius: 8,
@@ -108,13 +110,11 @@ export default function RoomGallery({ propertyImages }) {
       </Box>
 
       {/* Dialog for full-size image slideshow */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
-        maxWidth="md"
+        maxWidth={isMobile ? "xs" : "md"}
         fullWidth
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} // Centering dialog
       >
         <DialogContent sx={{ padding: 0, position: 'relative' }}>
           <IconButton
@@ -164,7 +164,6 @@ export default function RoomGallery({ propertyImages }) {
           </Slider>
         </DialogContent>
       </Dialog>
-      </Box>
     </Paper>
   );
 }

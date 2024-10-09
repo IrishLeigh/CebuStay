@@ -8,9 +8,11 @@ import PeopleIcon from '@mui/icons-material/People';
 import HomeIcon from "@mui/icons-material/Home";
 import RoomIcon from "@mui/icons-material/NightShelter";
 import axios from "axios";
+
 export default function PropertyOverView({ rating, propertyinfo }) {
   const [propertyDetail, setPropertyDetail] = useState({});
   const [hostimg, setHostimg] = useState("");
+
   useEffect(() => {
     setPropertyDetail(propertyinfo);
     console.log("PropertyOverview", propertyinfo);
@@ -40,47 +42,46 @@ export default function PropertyOverView({ rating, propertyinfo }) {
   const { property_details } = propertyDetail;
 
   console.log("Property Details:", propertyDetail);
+  
   return (
     <Paper className="overview-container" sx={{ borderRadius: "12px" }}>
       <Grid container spacing={2} alignItems="center">
         {/* Property Name and Address */}
         <Grid item xs={12} sm={8}>
-  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
-    {propertyDetail.property_details.property_name}
-  </Typography>
-  
-  <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
-    
-    <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
-      <Location sx={{ color: "#16B4DD", mr: 1 }} />
-      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
-        {propertyDetail.property_address.address}
-      </Typography>
-    </Box>
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
+            {propertyDetail.property_details.property_name}
+          </Typography>
 
-    <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
-      <HomeIcon sx={{ color: "#16B4DD", mr: 1 }} />
-      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
-        {propertyDetail.property_details.property_type}
-      </Typography>
-    </Box>
+          <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+            <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+              <Location sx={{ color: "#16B4DD", mr: 1 }} />
+              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+                {propertyDetail.property_address.address}
+              </Typography>
+            </Box>
 
-    <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
-      <PeopleIcon sx={{ color: "#16B4DD", mr: 1 }} />
-      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
-        Max Guests: {propertyDetail.property_unitdetails[0].guest_capacity}
-      </Typography>
-    </Box>
+            <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+              <HomeIcon sx={{ color: "#16B4DD", mr: 1 }} />
+              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+                {propertyDetail.property_details.property_type}
+              </Typography>
+            </Box>
 
-    <Box className="overview-text" sx={{ display: "flex", alignItems: "center" }}>
-      <RoomIcon sx={{ color: "#16B4DD", mr: 1 }} />
-      <Typography variant="body1" sx={{ fontSize: '1rem' }}>
-        {propertyDetail.property_details.unit_type}
-      </Typography>
-    </Box>
+            <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+              <PeopleIcon sx={{ color: "#16B4DD", mr: 1 }} />
+              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+                Max Guests: {propertyDetail.property_unitdetails[0].guest_capacity}
+              </Typography>
+            </Box>
 
-  </Box>
-</Grid>
+            <Box className="overview-text" sx={{ display: "flex", alignItems: "center" }}>
+              <RoomIcon sx={{ color: "#16B4DD", mr: 1 }} />
+              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+                {propertyDetail.property_details.unit_type}
+              </Typography>
+            </Box>
+          </Box>
+        </Grid>
 
         {/* Rating Section */}
         <Grid
@@ -146,11 +147,6 @@ export default function PropertyOverView({ rating, propertyinfo }) {
         </Grid>
       </Grid>
 
-      {/* <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem", color: "#16B4DD", fontWeight: "bold" }}>
-        See all 24 reviews
-        <ArrowRight sx={{ marginLeft: "0.5rem" }} />
-      </div> */}
-
       <div className="overview-text" style={{ marginTop: "2rem" }}>
         <p component="b" style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
           Overview
@@ -164,13 +160,13 @@ export default function PropertyOverView({ rating, propertyinfo }) {
 
       <Grid container spacing={2}>
         {/* Host Display */}
-        <Grid item xs={5}>
+        <Grid item xs={12} sm={5}>
           <Stack direction="row" spacing={2}>
             <Avatar
               alt={propertyDetail?.property_owner?.property_owner?.displayname}
               src={
-                propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' 
-                  ? hostimg 
+                propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual'
+                  ? hostimg
                   : propertyDetail?.property_owner?.company_logo || ''
               }
               sx={{ width: 56, height: 56 }}
@@ -183,13 +179,15 @@ export default function PropertyOverView({ rating, propertyinfo }) {
               }}
             >
               <div className="overview-title">
-                {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
-                (<>
-                {propertyDetail?.property_owner?.property_owner?.displayname}
-                </>):
-                (<>
-                {propertyDetail?.property_owner?.property_company?.legal_business_name || ''}
-                </>)}
+                {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+                  <>
+                    {propertyDetail?.property_owner?.property_owner?.displayname}
+                  </>
+                ) : (
+                  <>
+                    {propertyDetail?.property_owner?.property_company?.legal_business_name || ''}
+                  </>
+                )}
               </div>
               <div
                 style={{
@@ -204,60 +202,62 @@ export default function PropertyOverView({ rating, propertyinfo }) {
                     fontSize: "1.5rem",
                   }}
                 />
-                <div>host</div>
+                <div>Host</div>
               </div>
             </div>
           </Stack>
           <div style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
-            {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
-                (<>
+            {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+              <>
                 {propertyDetail?.property_owner?.property_owner?.describe}
-                </>):
-                (<>
+              </>
+            ) : (
+              <>
                 {propertyDetail?.property_owner?.property_company?.company_description || ''}
-                </>)}
+              </>
+            )}
           </div>
         </Grid>
 
         {/* Host Details */}
-        <Grid item xs={7}>
+        <Grid xs={12} sm={7}>
           <div className="hostdetails-cntr">Host Details</div>
           <table className="host-details-table">
             <tbody>
               <tr>
                 <td>Contact</td>
                 <td>
-                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
-                (<>
-                {propertyDetail?.property_owner?.property_owner?.contactnumber}
-                </>):
-                (<>
-                {propertyDetail?.property_owner?.legal_representative[0]?.phone_number || ''}
-                </>)}
+                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+                    <>
+                      {propertyDetail?.property_owner?.property_owner?.contactnumber}
+                    </>
+                  ) : (
+                    <>
+                      {propertyDetail?.property_owner?.legal_representative[0]?.phone_number || ''}
+                    </>
+                  )}
                 </td>
               </tr>
               <tr>
                 <td>Email</td>
                 <td>
-                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? 
-                (<>
-                {propertyDetail?.property_owner?.property_owner?.email}
-                </>):
-                (<>
-                {propertyDetail?.property_owner?.legal_representative[0]?.email || ''}
-                </>)}
-                  </td>
+                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+                    <a 
+                      href={`mailto:${propertyDetail?.property_owner?.property_owner?.email}`} 
+                      style={{ color: '#16B4DD', fontWeight: 'bold' }}
+                    >
+                      {propertyDetail?.property_owner?.property_owner?.email}
+                    </a>
+                  ) : (
+                    <>
+                      {propertyDetail?.property_owner?.legal_representative[0]?.email || ''}
+                    </>
+                  )}
+                </td>
               </tr>
               <tr>
-                <td>Address</td>
-                <td>
-                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
-                    <>{`${propertyDetail?.property_owner?.property_owner?.street || ''}, ${propertyDetail?.property_owner?.property_owner?.barangay || ''}, 
-                    ${propertyDetail?.property_owner?.property_owner?.city || ''} ${propertyDetail?.property_owner?.property_owner?.zipcode || ''}`}</>
-                  ): (<>{`${propertyDetail?.property_owner?.property_company?.street || ''}, ${propertyDetail?.property_owner?.property_company?.barangay || ''}, 
-                    ${propertyDetail?.property_owner?.property_company?.city || ''} ${propertyDetail?.property_owner?.property_company?.zipcode || ''}`}</>)}
-                  {/* {propertyDetail?.property_owner?.property_owner?.address} */}
-                </td>
+                <td>Location</td>
+                <td>{propertyDetail.property_address.address}</td>
               </tr>
             </tbody>
           </table>

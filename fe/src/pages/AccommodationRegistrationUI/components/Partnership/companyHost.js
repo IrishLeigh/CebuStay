@@ -223,37 +223,49 @@ const handleCountryCodeChange = (id, newCountryCode) => {
 
   useEffect(() => {
     const validateData = () => {
-      const newErrors = { phone: '', email: '', dateOfBirth: '' };
-       const phonePatterns = {
-      '+1': /^\+1\d{10}$/, // USA/Canada
-      '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
-      '+44': /^\+44\d{10}$/, // UK
-      // Add more country codes and patterns as needed
-    };
+      // Create an array to hold error messages for each legal representative
+      const newErrors = data.legalRepresentatives.map(() => ({
+        phone: '',
+        email: '',
+        dateOfBirth: ''
+      }));
   
+      const phonePatterns = {
+        '+1': /^\+1\d{10}$/, // USA/Canada
+        '+63': /^\+63[1-9]\d{9}$/, // Philippines (10 digits, no leading 0)
+        '+44': /^\+44\d{10}$/, // UK
+        // Add more country codes and patterns as needed
+      };
   
-      data.legalRepresentatives.forEach((rep) => {
+      data.legalRepresentatives.forEach((rep, index) => {
+        // Validate phone
         if (!rep.phone || rep.phone.length < 10) {
-          newErrors.phone = 'Invalid phone number';
+          newErrors[index].phone = 'Invalid phone number';
+        } else if (!phonePatterns[rep.countryCode]?.test(rep.phone)) {
+          newErrors[index].phone = 'Phone number does not match the country code';
         }
   
+        // Validate email
         if (!rep.email || !/\S+@\S+\.\S+/.test(rep.email)) {
-          newErrors.email = 'Invalid email address';
+          newErrors[index].email = 'Invalid email address';
         }
       });
   
+      // Set the errors state
       setErrors(newErrors);
+  
       // Return true if no errors
-      return !Object.values(newErrors).some(error => error);
+      return !newErrors.some(error => Object.values(error).some(err => err));
     };
   
     // Always send data, but validate it before.
     onDataChange(data); // This will send data regardless of validation.
     
-    // You can keep the validation for display purposes
+    // Keep the validation for display purposes
     validateData();
   
-  }, [data ]);
+  }, [data]);
+  
   
  console.log ("data", data);
 
@@ -273,6 +285,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
         fullWidth
         sx={{ mb: 2 }}
         style={styles.formField}
+        required
       />
       
       <Typography style={styles.sectionTitle}>Company Description</Typography>
@@ -285,6 +298,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
         rows={4}
         fullWidth
         style={styles.formField}
+        required
       />
 
       <Typography style={styles.sectionTitle}>Upload Company Photo</Typography>
@@ -347,18 +361,18 @@ const handleCountryCodeChange = (id, newCountryCode) => {
       <Typography style={styles.sectionTitle}>Registered Business Address</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md = {6}>
-          <TextField id="Street" label="Street" value={data.Street} onChange={handleChange} fullWidth style={styles.formField} />
+          <TextField id="Street" label="Street" value={data.Street} onChange={handleChange} fullWidth style={styles.formField} required/>
         </Grid>
         <Grid item xs={12} md = {6}>
-          <TextField id="Barangay" label="Barangay" value={data.Barangay} onChange={handleChange} fullWidth style={styles.formField} />
+          <TextField id="Barangay" label="Barangay" value={data.Barangay} onChange={handleChange} fullWidth style={styles.formField} required />
         </Grid>
       </Grid>
       <Grid container spacing={2}>
        <Grid item xs={12} md = {6}>
-          <TextField id="City" label="Municipality / City" value={data.City} onChange={handleChange} fullWidth style={styles.formField} />
+          <TextField id="City" label="Municipality / City" value={data.City} onChange={handleChange} fullWidth style={styles.formField} required />
         </Grid>
         <Grid item xs={12} md = {6}>
-          <TextField type ="number" id="ZipCode" label="Zip Code" value={data.ZipCode} onChange={handleChange} fullWidth style={styles.formField} />
+          <TextField type ="number" id="ZipCode" label="Zip Code" value={data.ZipCode} onChange={handleChange} fullWidth style={styles.formField} required />
         </Grid>
       </Grid>
 
@@ -378,6 +392,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
           onChange={(e) => handleLegalRepChange(rep.id, 'firstName', e.target.value)}
           fullWidth
           style={styles.formField}
+          required
         />
         <TextField
           label="Last Name"
@@ -385,6 +400,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
           onChange={(e) => handleLegalRepChange(rep.id, 'lastName', e.target.value)}
           fullWidth
           style={styles.formField}
+          required
         />
         <TextField
           label="Email"
@@ -394,6 +410,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
           style={styles.formField}
           helperText={errors.email}
           error={!!errors.email}
+          required
         />
         <Grid container spacing={1}>
           <Grid item xs={4}>
@@ -402,6 +419,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
               onChange={(e) => handleCountryCodeChange(rep.id, e.target.value)}
               fullWidth
               style={styles.countryCodeSelect}
+              required
             >
               {countryCodes.map((country) => (
                 <MenuItem key={country.code} value={country.code}>
@@ -422,6 +440,7 @@ const handleCountryCodeChange = (id, newCountryCode) => {
               }}
               helperText={errors.phone}
               error={!!errors.phone}
+              required
             />
           </Grid>
         </Grid>
@@ -431,7 +450,9 @@ const handleCountryCodeChange = (id, newCountryCode) => {
           onChange={(e) => handleLegalRepChange(rep.id, 'position', e.target.value)}
           fullWidth
           style={styles.formField}
+          required
         />
+        
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="Date of Birth"

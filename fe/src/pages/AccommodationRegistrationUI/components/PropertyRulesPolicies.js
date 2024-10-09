@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider } from "@mui/material";
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
@@ -14,7 +14,6 @@ import AnimatePage from './AnimatedPage';
 import { AccessAlarm, MonetizationOn } from '@mui/icons-material'; // Import icons for the new section
 import DatePicker from '../../../components/time';
 
-
 export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoliciesData, onHouseRulesDataChange, parentHouseRules, handleNext, handleBack }) {
   const initialPoliciesData = {
     isCancellationPolicy: true,  // true for standard, false for non-refundable
@@ -28,8 +27,15 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   const [error, setError] = useState("");
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
+  const topRef = useRef(null); // Create a reference for the top of the component
+
 
   useEffect(() => {
+     // Scroll to the top of the component when it mounts
+     window.scrollTo(0, 0);
+     if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     if (parentPoliciesData) {
         // Update local state with values from parentPoliciesData
         setPoliciesData({// spread the incoming data
@@ -101,60 +107,79 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   };
 
   const validateAndProceed = () => {
-   
-  if (policiesData.isCancellationPolicy && (!policiesData.cancellationDays || !policiesData.cancellationCharge)) {
-    if (!policiesData.cancellationDays) {
-      alert("Please specify the number of days for cancellation policy.");
-      return;
+    // Validate cancellation policy
+    if (policiesData.isCancellationPolicy && (!policiesData.cancellationDays || !policiesData.cancellationCharge)) {
+      if (!policiesData.cancellationDays) {
+        alert("Please specify the number of days for cancellation policy.");
+        return;
+      }
+      if (!policiesData.cancellationCharge) {
+        alert("Please specify the charge for cancellation.");
+        return;
+      }
     }
-    if (!policiesData.cancellationCharge) {
-      alert("Please specify the charge for cancellation.");
-      return;
+  
+    // Validate modification policy
+    if (policiesData.isModification) {
+      if (!policiesData.modificationDays) {
+        alert("Please specify the number of days for modification policy.");
+        return;
+      }
+      if (!policiesData.modificationCharge) {
+        alert("Please specify the charge for modification.");
+        return;
+      }
     }
-  }
-
-  // Validate modification policy
-  if (policiesData.isModification) {
-    if (!policiesData.modificationDays) {
-      alert("Please specify the number of days for modification policy.");
-      return;
-    }
-    if (!policiesData.modificationCharge) {
-      alert("Please specify the charge for modification.");
-      return;
-    }
-  }
-   
+    
+    // Validate house rules
     if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed) {
       alert("Please select at least one standard rule.");
       return;
     }
-
+  
     if (showTimePicker && (!houseRulesData.quietHoursStart || !houseRulesData.quietHoursEnd)) {
       alert("Please specify quiet hours.");
       return;
     }
-
+  
     if (!houseRulesData.customRules) {
       alert("Please enter your custom rules.");
       return;
     }
-
-    if (!houseRulesData.checkInFrom || !houseRulesData.checkInUntil || !houseRulesData.checkOutFrom || !houseRulesData.checkOutUntil) {
+  
+    // Validate check-in and check-out times
+    if (
+      !houseRulesData.checkInFrom ||
+      !houseRulesData.checkInUntil ||
+      !houseRulesData.checkOutFrom ||
+      !houseRulesData.checkOutUntil
+    ) {
       alert("Please specify check-in and check-out times.");
       return;
     }
-
+  
+    // Check that check-out is after check-in
+    const checkInFrom = new Date(houseRulesData.checkInFrom);
+    const checkInUntil = new Date(houseRulesData.checkInUntil);
+    const checkOutFrom = new Date(houseRulesData.checkOutFrom);
+    const checkOutUntil = new Date(houseRulesData.checkOutUntil);
+  
+    if (checkOutFrom < checkInUntil) {
+      alert("Check-out time must be after check-in time.");
+      return;
+    }
+  
     setError("");
     onPoliciesDataChange(policiesData); // Send updated data to parent
     onHouseRulesDataChange(houseRulesData);
     handleNext(); // Navigate to the next component
   };
+  
 
   console.log("policiesData", policiesData);
   console.log("houseRulesData", houseRulesData);
   return (
-    <div>
+    <div ref={topRef}>
     <Container maxWidth="lg">
       <AnimatePage>
         <Box display="flex" justifyContent="center" alignItems="center">
@@ -174,7 +199,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
             </Typography>
             <form>
               {/* Cancellation Policy Selection */}
-              <Grid container spacing={2} sx={{ padding: '2rem' }}>
+              <Grid container spacing={2} sx={{ padding: '1rem' }}>
                 <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
                   What is your cancellation policy?
                 </Typography>
@@ -193,7 +218,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                     />
                     {policiesData.isCancellationPolicy && ( // Open by default
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Standard Cancellation Plan
                           </Typography>
@@ -252,7 +277,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                     />
                     {!policiesData.isCancellationPolicy && ( // Open if non-refundable is selected
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Non-refundable Rate Plan
                           </Typography>
@@ -267,7 +292,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
               </Grid>
 
               {/* Modification Policy Selection */}
-              <Grid container spacing={2} sx={{ padding: '2rem' }}>
+              <Grid container spacing={2} sx={{ padding: '1rem' }}>
                 <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
                   What is your modification policy?
                 </Typography>
@@ -285,7 +310,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                     />
                     {policiesData.isModification && ( // Open by default
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Modification Policy
                           </Typography>
@@ -339,7 +364,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                     />
                     {!policiesData.isModification && ( // Open if fixed is selected
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Fixed Modification Rate Plan
                           </Typography>
@@ -459,37 +484,57 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       Specify the times when guests can check-in and check-out. Make sure to communicate these times clearly to avoid any misunderstandings.
                     </Typography>
                     <Grid container spacing={2}>
-                    <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', m: 2 }}>
+                      <Grid item xs={12} md={6}>
                       <DatePicker
-                        title="Check-in From"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
-                        value={houseRulesData.checkInFrom}
-                      />
-                      <DatePicker
-                        title="Check-in Until"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
-                        value={houseRulesData.checkInUntil}
-                      />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'left',
-                        alignItems: 'left',
-                        m: 2
-                      }}
-                    >
-                      <DatePicker
-                        title="Check-out From"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutFrom: value }))}
-                        value={houseRulesData.checkOutFrom}
-                      />
-                      <DatePicker
-                        title="Check-out Until"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
-                        value={houseRulesData.checkOutUntil}
-                      />
-                    </Box>
+                          title="Check-in From"
+                          onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
+                          value={houseRulesData.checkInFrom}
+                          fullWidth
+                        />
+
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <DatePicker
+                            title="Check-in Until"
+                            onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
+                            value={houseRulesData.checkInUntil}
+                            fullWidth
+                          />
+                        
+                      </Grid>
+                      {/* <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', m: 2 }}>
+                       
+                      
+                      </Box> */}
+                    </Grid>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <DatePicker
+                            title="Check-out From"
+                            onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutFrom: value }))}
+                            value={houseRulesData.checkOutFrom}
+                          />
+                        
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <DatePicker
+                            title="Check-out Until"
+                            onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
+                            value={houseRulesData.checkOutUntil}
+                          />
+                        
+                      </Grid>
+                      {/* <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'left',
+                          alignItems: 'left',
+                          m: 2
+                        }}
+                      >
+                        
+                       
+                      </Box> */}
                     </Grid>
                   </Box>
                 </form>

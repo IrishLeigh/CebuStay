@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { Paper, Typography, IconButton, Button, Box, Grid, Container, Card, CardMedia } from "@mui/material";
+import { Paper, Typography, IconButton, Button, Box, Grid, Container, Card, CardMedia, Snackbar, Alert } from "@mui/material";
 import { Delete as DeleteIcon, Image as ImageIcon } from "@mui/icons-material";
 import AnimatePage from "./AnimatedPage";
 
 const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [errors, setErrors] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -18,7 +20,7 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
   const handleImageChange = (event) => {
     const imageFiles = event.target.files;
     if (!imageFiles) return;
-  
+
     const oversizedImages = [];
     const newImages = Array.from(imageFiles).map((file) => {
       // Adjust the size limit to 2MB (2 * 1024 * 1024 bytes)
@@ -32,26 +34,25 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
         size: file.size,
       };
     });
-  
+
     if (oversizedImages.length > 0) {
-      setErrors((prevErrors) => [
-        ...prevErrors,
-        `The following image(s) exceed the 2MB size limit: ${oversizedImages.join(", ")}`,
-      ]);
+      setSnackbarMessage(`The following image(s) exceed the 2MB size limit: ${oversizedImages.join(", ")}`);
+      setSnackbarOpen(true);
     }
-  
+
     const validImages = newImages.filter((image) => image !== null);
     const totalImages = validImages.length + selectedImages.length;
-  
+
     if (totalImages > 5) {
-      alert("You can only upload a maximum of 5 images.");
+      setSnackbarMessage("You can only upload a maximum of 5 images.");
+      setSnackbarOpen(true);
       return;
     }
-  
+
     const imagesToAdd = validImages.slice(0, 5 - selectedImages.length);
     setSelectedImages((prevImages) => [...prevImages, ...imagesToAdd]);
   };
-  
+
   const onDrop = (acceptedFiles) => {
     const newImages = acceptedFiles
       .filter(
@@ -62,18 +63,18 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
         url: URL.createObjectURL(file),
         size: file.size,
       }));
-  
+
     const totalImages = newImages.length + selectedImages.length;
-  
+
     if (totalImages > 5) {
-      alert("You can only upload a maximum of 5 images.");
+      setSnackbarMessage("You can only upload a maximum of 5 images.");
+      setSnackbarOpen(true);
       return;
     }
-  
+
     const imagesToAdd = newImages.slice(0, 5 - selectedImages.length);
     setSelectedImages((prevImages) => [...prevImages, ...imagesToAdd]);
   };
-  
 
   const handleDeleteImage = (index) => {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
@@ -96,11 +97,8 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
   const handleNextStep = () => {
     // Check if there are exactly 5 images
     if (selectedImages.length !== 5) {
-      alert("Please upload exactly 5 images.");
-      return;
-    }
-    if (selectedImages.length >5) {
-      alert("Please upload no more than 5 images.");
+      setSnackbarMessage("Please upload exactly 5 images.");
+      setSnackbarOpen(true);
       return;
     }
 
@@ -109,8 +107,13 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
       onImagesChange(selectedImages);
       handleNext();
     } else {
-      alert("Please ensure all images are under the 5MB size limit.");
+      setSnackbarMessage("Please ensure all images are under the 5MB size limit.");
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -127,8 +130,6 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
                   padding: "1rem",
                 }}
               >
-                
-
                 <Paper
                   elevation={3}
                   sx={{
@@ -138,12 +139,11 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
                   }}
                 >
                   <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "1rem" }}>
-                  Upload Up to 5 Stunning Cover Photos
-                </Typography>
-                <Typography  sx={{ marginBottom: "1rem", color: '#333', lineHeight: 1.5 , fontFamily: "Poppins, sans-serif",fontSize: "1.125rem"}}>
-                  
-                  Showcase the best features of your property with high-quality images. These photos will be the first thing guests see, so make sure they highlight what makes your place special. You can always add more room photos later. Let your property shine and attract guests with captivating visuals!
-                </Typography>
+                    Upload Up to 5 Stunning Cover Photos
+                  </Typography>
+                  <Typography sx={{ marginBottom: "1rem", color: '#333', lineHeight: 1.5, fontFamily: "Poppins, sans-serif", fontSize: "1.125rem" }}>
+                    Showcase the best features of your property with high-quality images. These photos will be the first thing guests see, so make sure they highlight what makes your place special. You can always add more room photos later. Let your property shine and attract guests with captivating visuals!
+                  </Typography>
                   <div
                     {...getRootProps()}
                     style={{
@@ -228,6 +228,12 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
           Next
         </Button>
       </div>
+
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity="warning" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

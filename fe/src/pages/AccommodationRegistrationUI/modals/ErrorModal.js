@@ -1,7 +1,12 @@
 import React from "react";
 import { Modal, Button, Typography, Box } from "@mui/material";
 
-const ErrorModal = ({ isOpen, onClose, onRetry }) => {
+const ErrorModal = ({ isOpen, onClose }) => {
+  const handleRetry = () => {
+    onClose(); // Close the modal
+    window.location.reload(); // Refresh the page
+  };
+
   return (
     <Modal open={isOpen} onClose={onClose} aria-labelledby="error-modal-title">
       <Box 
@@ -28,17 +33,10 @@ const ErrorModal = ({ isOpen, onClose, onRetry }) => {
           <Button 
             variant="contained" 
             color="primary" 
-            onClick={onRetry} // Button to redo listing your property
+            onClick={handleRetry} // Call handleRetry on button click
             sx={{ marginRight: 2 }} // Add spacing between buttons
           >
             Retry Listing
-          </Button>
-          <Button 
-            variant="outlined" 
-            color="secondary" 
-            onClick={onClose}
-          >
-            Close
           </Button>
         </Box>
       </Box>

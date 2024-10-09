@@ -65,10 +65,6 @@ export default function PropertyManagementListing() {
         fetchData();
       }, [userid]);
 
-    // const handleEdit = (id) => {
-    //     setEditItemId(id);
-    //     setEditModalOpen(true);
-    // };
     const handleEdit = (id) => {
         navigate(`/edit-property/${id}`); // Navigate to the edit page
       };
@@ -213,8 +209,8 @@ export default function PropertyManagementListing() {
               
                 <div className="full-height" style={{position: 'relative'}}>
                     <div style={{ background: 'linear-gradient(to right, #F8A640, #F89E2D, #FCCD6E)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%' }}>
-                        <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Property Management Listing</h1>
-                        <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Your Properties Listed</p>
+                        <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Your Properties</h1>
+                        <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Property management lsiting, where you can easily view, edit, and manage all property details.</p>
                     </div>
                     {loading && (
                     <div style={{

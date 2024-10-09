@@ -1,4 +1,4 @@
-import { Box, Container, Grid, CircularProgress } from "@mui/material";
+import { Box, Container, Grid, CircularProgress, Snackbar, Alert } from "@mui/material"; // Import Snackbar and Alert
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../css/SinglePropertyUI.css";
@@ -13,14 +13,17 @@ import Directions from "./Directions";
 
 export default function SinglePropertyUI({ propertyid }) {
   const [propertyImages, setPropertyImages] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]); // State for gallery images
   const [propertyInfo, setPropertyInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [checkInDate, setCheckInDate] = useState(dayjs());
   const [checkOutDate, setCheckOutDate] = useState(dayjs().add(1, "day"));
   const [guestCount, setGuestCount] = useState(2);
+  const [rating, setRating] = useState(0);
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message
   const navigate = useNavigate();
   const location = useLocation(); // Get the location object
-  const [rating, setRating] = useState(0);
   // Extract query parameters
   const searchParams = new URLSearchParams(location.search);
 
@@ -28,25 +31,35 @@ export default function SinglePropertyUI({ propertyid }) {
   const handleCheckOutChange = (date) => setCheckOutDate(date);
   const handleGuestCountChange = (event) => setGuestCount(event.target.value);
 
+  // Snackbar close handler
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
   // Handle reservation click
   const handleReserveClick = async () => {
     console.log("Reserve clicked");
     console.log("Propertyid", propertyid);
     console.log("Checkin Date", checkInDate.format("YYYY-MM-DD"));
     console.log("Checkout Date", checkOutDate.format("YYYY-MM-DD"));
-    if (!checkInDate && !checkOutDate) {
-      alert("Please select check-in and check-out dates ");
+    
+    if (!checkInDate || !checkOutDate) {
+      setSnackbarMessage("Please select check-in and check-out dates");
+      setSnackbarOpen(true);
       return;
     }
     if (!guestCount || guestCount <= 0) {
-      alert("Please enter valid number of guests");
+      setSnackbarMessage("Please enter a valid number of guests");
+      setSnackbarOpen(true);
       return;
     }
+    
     const queryParams = new URLSearchParams({
       guestCount,
       checkInDate: checkInDate.format("YYYY-MM-DD"),
       checkOutDate: checkOutDate.format("YYYY-MM-DD"),
     }).toString();
+    
     try {
       const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
         checkin_date: checkInDate.format("YYYY-MM-DD"),
@@ -54,16 +67,20 @@ export default function SinglePropertyUI({ propertyid }) {
         guest_count: guestCount,
         propertyid: propertyid,
       });
+      
       if (res.data) {
         console.log("Response", res.data);
         if (res.data.status === "error") {
-          alert(res.data.message);
+          setSnackbarMessage(res.data.message);
+          setSnackbarOpen(true);
         } else if (res.data.status === "success") {
           navigate(`/booking/${propertyid}?${queryParams}`);
         }
       }
     } catch (error) {
       console.log(error);
+      setSnackbarMessage("An error occurred. Please try again.");
+      setSnackbarOpen(true);
     }
   };
 
@@ -71,14 +88,13 @@ export default function SinglePropertyUI({ propertyid }) {
     setGuestCount(searchParams.get("guestCapacity") || 0);
     setCheckInDate(dayjs(searchParams.get("checkin_date") || ""));
     setCheckOutDate(dayjs(searchParams.get("checkout_date") || ""));
-  }, []);
+  }, []);  
+  
   // Fetch property data
   const fetchPropertyData = async () => {
     const propertyId = propertyid; // Use the property ID passed as a prop
     try {
-      const res = await axios.get(
-        `http://127.0.0.1:8000/api/getfiles/${propertyId}`
-      );
+      const res = await axios.get(`http://127.0.0.1:8000/api/getfiles/${propertyId}`);
       if (res.data) {
         const images = res.data.img.map((image, index) => ({
           id: image.id,
@@ -105,15 +121,30 @@ export default function SinglePropertyUI({ propertyid }) {
     }
   };
 
+  // Fetch gallery images
+  const fetchGalleryImages = async () => {
+    const propertyId = propertyid;
+    try {
+      const res = await axios.get(`http://127.0.0.1:8000/api/getgalleryimg/${propertyId}`);
+      if (res.data) {
+        const gallery = res.data.map((image) => ({
+          id: image.id,
+          caption: image.caption,
+          src: image.src,
+        }));
+        setGalleryImages(gallery);
+      
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // Fetch data when property ID changes or on mount
   useEffect(() => {
     fetchPropertyData();
+    fetchGalleryImages(); // Call to fetch gallery images
   }, [propertyid]); // Add propertyid as a dependency
-
-  // Fetch data when checkInDate, checkOutDate, or guestCount changes
-  useEffect(() => {
-    fetchPropertyData();
-  }, [checkInDate, checkOutDate, guestCount]);
 
   // Conditionally render content based on loading state
   if (loading) {
@@ -129,10 +160,13 @@ export default function SinglePropertyUI({ propertyid }) {
     );
   }
 
+  console.log("GALLERY IMAGES IN PARENT", galleryImages);
+
   return (
     <div>
       <div style={{ paddingBottom: "2rem" }}>
         <ImageGallery images={propertyImages} />
+        <ImageGallery images={galleryImages} /> {/* Render gallery images */}
         <div
           style={{
             height: "clamp(2rem, 5vw, 2rem)",
@@ -176,6 +210,7 @@ export default function SinglePropertyUI({ propertyid }) {
           <PropertyInfo
             propertyInfo={propertyInfo}
             propertyImages={propertyImages}
+            galleryImages={galleryImages}
           />
         </div>
         <div style={{ margin: "1rem 0" }}>
@@ -185,6 +220,18 @@ export default function SinglePropertyUI({ propertyid }) {
           />
         </div>
       </div>
+
+      {/* Snackbar for alerts */}
+      <Snackbar 
+        open={snackbarOpen} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar} 
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

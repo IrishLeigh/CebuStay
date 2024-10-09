@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AppBar, Toolbar, Typography, Grid, Button, Box, CircularProgress, Snackbar, Alert, Container } from "@mui/material";
 import BookingDetails from "./BookingDetails";
 import BookingGuestDetails from "./BookingGuestDetails";
@@ -28,12 +28,16 @@ function BookingDetailsUI() {
   const guestCount = searchParams.get("guestCount") || 0;
   const checkin_date = searchParams.get("checkInDate") || '';
   const checkout_date = searchParams.get("checkOutDate") || '';
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  },[])
+  const topRef = useRef(null); // Create a ref for scrolling to the top
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [propertyData, user]); // Add dependencies based on when you want to scroll
+  
+  useEffect(() => {
+
     if (checkin_date && checkout_date) {
       const checkIn = new Date(checkin_date);
       const checkOut = new Date(checkout_date);
@@ -101,7 +105,6 @@ function BookingDetailsUI() {
 
     fetchPropertyData();
 
-    window.scrollTo(0, 0);
   }, [propertyid]);
 
   // Guest details validation
@@ -182,7 +185,7 @@ function BookingDetailsUI() {
 
   console.log("Property Price MAO GYUD NI :", price);
   return (
-    <div style={{ width : '100%' }}>
+    <div ref={topRef} style={{ width : '100%'  }}>
       <AppBar position="static" sx={{ background: "#16B4DD" }}>
         <Toolbar>
           <Typography variant="h6" sx={{ margin: '0 auto', maxWidth: 'lg', width: '100%' ,padding: '1%' }}>

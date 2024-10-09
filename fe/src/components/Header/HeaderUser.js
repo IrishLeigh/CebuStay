@@ -67,6 +67,7 @@ function HeaderUser() {
     fetchUserImage();
   }, []);
 
+
   useEffect(() => {
     if (token) {
       const fetchUser = async () => {
@@ -75,17 +76,15 @@ function HeaderUser() {
             token: token,
           });
           setUser(res.data.data);
-          console.log("USER:", res.data.data);
         } catch (error) {
           alert("Error decoding JWT token:", error);
         }
       };
-
       fetchUser();
     } else {
       setUser(null);
     }
-  }, [token]); 
+  }, [token]);
 
 
   const handleOpenNavMenu = (event) => {
@@ -103,6 +102,7 @@ function HeaderUser() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  
 
   const handlePageClick = (page) => {
     if (page === "Accommodation") {
@@ -124,6 +124,9 @@ function HeaderUser() {
   };
 
   const handleSettings = (setting) => {
+
+
+    
     switch (setting) {
       case "Account":
         if (token) {
@@ -227,106 +230,110 @@ console.log ("USER FROM HEADER NI SYA HA", user);
             </Box>
 
             <Box sx={{ flexGrow: 1 }} />
-
             {/* Hamburger menu for mobile */}
-            <Box sx={{ display: { xs: "flex", md: "none" } }}>
-              <IconButton
-                size="large"
-                aria-label="open navigation"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenNavMenu}
-                sx={{ color: "#16B4DD" }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-              >
-                {pages.map((page) => (
-                  <MenuItem key={page} onClick={() => handlePageClick(page)}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </MenuItem>
-                ))}
-                <MenuItem onClick={() => handlePageClick("List your property")}>
-                  <Typography textAlign="center">List your property</Typography>
-                </MenuItem>
-              </Menu>
-            </Box>
-
-            {/* Full menu for larger screens */}
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={() => handlePageClick(page)}
-                  sx={{ mx: 1, color: "black" }}
+              <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                <IconButton
+                  size="large"
+                  aria-label="open navigation"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleOpenNavMenu}
+                  sx={{ color: "#16B4DD" }}
                 >
-                  <Typography
-                    sx={{ fontSize: "0.9rem", color: "#16B4DD" }}
-                    fontWeight="bold"
-                  >
-                    {page}
-                  </Typography>
-                </Button>
-              ))}
-              <button className="property-listing">
-                <Link
-                  to="/list-property"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  List your property
-                </Link>
-              </button>
-            </Box>
-            {/* User profile settings */}
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar
-                    src={profileImage}
-                    onError={(e) => handleImageError(e)}
-                  />
+                  <MenuIcon />
                 </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {settings.map((setting) => (
-                  <MenuItem
-                    key={setting}
-                    onClick={() => handleSettings(setting)}
-                  >
-                    <Typography textAlign="center">{setting}</Typography>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorElNav}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  open={Boolean(anchorElNav)}
+                  onClose={handleCloseNavMenu}
+                >
+                  {pages.map((page) => (
+                    <MenuItem key={page} onClick={() => handlePageClick(page)}>
+                      <Typography textAlign="center">{page}</Typography>
+                    </MenuItem>
+                  ))}
+                  <MenuItem onClick={() => handlePageClick("List your property")}>
+                    <Typography textAlign="center">List your property</Typography>
                   </MenuItem>
+                </Menu>
+              </Box>
+              {/* Full menu for larger screens */}
+              <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                {pages.map((page) => (
+                  <Button
+                    key={page}
+                    onClick={() => handlePageClick(page)}
+                    sx={{ mx: 1, color: "black" }}
+                  >
+                    <Typography
+                      sx={{ fontSize: "0.9rem", color: "#16B4DD" }}
+                      fontWeight="bold"
+                    >
+                      {page}
+                    </Typography>
+                  </Button>
                 ))}
-              </Menu>
-            </Box>
+                <button className="property-listing">
+                  <Link
+                    to="/list-property"
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    List your property
+                  </Link>
+                </button>
+              </Box>
+              {/* User profile settings */}
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      src={profileImage}
+                      onError={(e) => handleImageError(e)}
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings
+                    .filter((setting) => {
+                      // Filter out "Your Properties" if the user is not a Manager
+                      return !(setting === "Your Properties" && user?.role !== "manager");
+                    })
+                    .map((setting) => (
+                      <MenuItem
+                        key={setting}
+                        onClick={() => handleSettings(setting)}
+                      >
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                    ))
+                  }
+                </Menu>
+              </Box>
           </Toolbar>
         </Container>
       </AppBar>

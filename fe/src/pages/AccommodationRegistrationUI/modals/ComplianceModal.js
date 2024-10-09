@@ -1,11 +1,11 @@
-import React from 'react';
-import { Modal, Box, Button, Typography, Divider, Icon } from '@mui/material';
+import React, { useState } from 'react';
+import { Modal, Box, Button, Typography, Divider, Checkbox, FormControlLabel } from '@mui/material';
 import { styled } from '@mui/system';
 import InfoIcon from '@mui/icons-material/Info';
 
 const ModalContent = styled(Box)(({ theme }) => ({
-  width: '600px', // Wider modal
-  maxWidth: '90%',
+  width: '100%',
+  maxWidth: '600px',
   backgroundColor: 'white',
   padding: '2rem',
   borderRadius: '8px',
@@ -15,7 +15,17 @@ const ModalContent = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',
-  transform: 'translate(-50%, -50%)', // Centering modal
+  transform: 'translate(-50%, -50%)',
+  overflowY: 'auto',
+  maxHeight: '90vh', // Allow scrolling if content overflows
+  [theme.breakpoints.down('md')]: {
+    padding: '1.5rem',
+    maxWidth: '80%',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '1rem',
+    maxWidth: '90%',
+  },
 }));
 
 const ModalTitle = styled(Box)(({ theme }) => ({
@@ -24,21 +34,38 @@ const ModalTitle = styled(Box)(({ theme }) => ({
   fontWeight: 600,
   marginBottom: '1rem',
   fontFamily: 'Poppins',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1rem',
+  },
 }));
 
 const ModalTitleText = styled(Typography)(({ theme }) => ({
   marginLeft: '0.5rem',
+  fontSize: '1.25rem',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1rem',
+  },
 }));
 
 const ModalBody = styled(Typography)(({ theme }) => ({
   marginBottom: '1.5rem',
+  fontSize: '1rem',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.875rem',
+  },
 }));
 
 const ComplianceModal = ({ open, onClose }) => {
+  const [checked, setChecked] = useState(false);
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
   return (
     <Modal
       open={open}
-      onClose={() => {}} // Prevent closing when clicking outside
+      onClose={onClose}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
@@ -46,27 +73,41 @@ const ComplianceModal = ({ open, onClose }) => {
         <ModalTitle>
           <InfoIcon sx={{ color: '#16B4DD', fontSize: '1.5rem' }} />
           <ModalTitleText id="modal-title" variant="h6" component="h2">
-            Important Information
+            Terms, Conditions, and Privacy Policy
           </ModalTitleText>
         </ModalTitle>
         <Divider />
         <ModalBody id="modal-description" variant="body1">
           <Typography paragraph>
-            Please ensure that the following aspects of your listing are accurate and complete:
+            By using our platform, you agree to the following terms:
           </Typography>
           <Typography paragraph>
-            1. All information provided, including addresses and descriptions, should be accurate and up-to-date.
+            1. All the information you provide, including property details, photos, and descriptions, must be accurate and up-to-date.
           </Typography>
           <Typography paragraph>
-            2. Ensure that all photos meet the required standards and are a true representation of the property.
+            2. The property must comply with local laws and regulations, including those related to safety and permits.
           </Typography>
           <Typography paragraph>
-            This will help in a smooth and efficient registration process.
+            3. You must ensure that the property is available as described, and any cancellations should be handled in accordance with our policy.
+          </Typography>
+          <Typography paragraph>
+            4. We are committed to protecting your personal data. Any personal information you provide will be used solely for the purposes of this platform, in compliance with applicable data privacy laws. Your data will not be shared with third parties without your explicit consent, except as required by law.
+          </Typography>
+          <Typography paragraph>
+            Please read these terms carefully. Failure to comply may result in the removal of your listing.
           </Typography>
         </ModalBody>
+
+        <FormControlLabel
+          control={<Checkbox checked={checked} onChange={handleCheckboxChange} />}
+          label="I have read and agree to the terms, conditions, and privacy policy."
+          sx={{ fontFamily: 'Poppins' }}
+        />
+
         <Button
           variant="contained"
           onClick={onClose}
+          disabled={!checked}
           sx={{ marginTop: '1rem', backgroundColor: '#16B4DD', color: 'white', fontFamily: 'Poppins', '&:hover': { backgroundColor: '#16B4DD' } }}
         >
           I Agree

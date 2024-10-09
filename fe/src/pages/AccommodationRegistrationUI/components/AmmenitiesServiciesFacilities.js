@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Button, Typography, Grid, Container, Card, CardContent, Paper } from "@mui/material";
+import { Button, Typography, Grid, Container, Card, CardContent, Paper, Snackbar, Alert } from "@mui/material";
 import { motion } from "framer-motion";
+import { useRef } from "react";
 
 // Sample data
 const data = {
@@ -135,9 +136,17 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
     facilities: parentAmenities.facilities || [],
   });
   
+  const topRef = useRef(null); // Create a ref for scrolling to the top
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(""); 
+
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to the top when the component mounts
-  }, []);
+    window.scrollTo(0, 0);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component
+    }
+  }, []); // Runs on mount
+
   const handleItemsChange = useCallback((category, items) => {
     setSelectedAmenities((prev) => ({
       ...prev,
@@ -147,56 +156,80 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
   }, [onAmenitiesChange]);
 
   const handleSave = () => {
+    const isAnySelected = Object.values(selectedAmenities).some(category => category.length > 0);
+    
+    if (!isAnySelected) {
+      setSnackbarMessage("Please select at least one amenity, service, or facility.");
+      setSnackbarOpen(true);
+      return; // Prevent proceeding if no amenities are selected
+    }
+
     console.log("Selected Amenities from child:", selectedAmenities);
     onAmenitiesChange(selectedAmenities);
     handleNext();
   };
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   return (
-    <Container
-      maxWidth="lg"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        textAlign: "left",
-        marginTop: "2rem",
-        marginBottom: "8rem",
-      }}
-    >
-      <Typography sx={{ fontSize: "2rem", fontWeight: "bold", mb: 2, fontFamily: "Poppins, sans-serif" }}>
-        Customize Your Stay
-      </Typography>
-      <Typography sx={{ mb: 2, fontFamily: "Poppins, sans-serif" }}>
-        Please select the amenities, services, and facilities you would like to include for your property:
-      </Typography>
-      <CategorySection
-        category="basicAmenities"
-        label="Basic Amenities"
-        onItemsChange={handleItemsChange}
-        initialSelectedItems={selectedAmenities.basicAmenities}
-      />
-      <CategorySection
-        category="basicServices"
-        label="Basic Services"
-        onItemsChange={handleItemsChange}
-        initialSelectedItems={selectedAmenities.basicServices}
-      />
-      <CategorySection
-        category="facilities"
-        label="Facilities"
-        onItemsChange={handleItemsChange}
-        initialSelectedItems={selectedAmenities.facilities}
-      />
-      <div className="stepperFooter" style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
-        <Button onClick={handleBack} className="stepperPrevious" sx={{ marginRight: 1 }}>
-          Back
-        </Button>
-        <Button onClick={handleSave} className="stepperNext">
-          Next
-        </Button>
-      </div>
-    </Container>
+    <div ref={topRef}>
+      <Container
+        maxWidth="lg"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          textAlign: "left",
+          marginTop: "2rem",
+          marginBottom: "8rem",
+        }}
+      >
+        <Typography sx={{ fontSize: "2rem", fontWeight: "bold", mb: 2, fontFamily: "Poppins, sans-serif" }}>
+          Customize Your Stay
+        </Typography>
+        <Typography sx={{ mb: 2, fontFamily: "Poppins, sans-serif" }}>
+          Please select the amenities, services, and facilities you would like to include for your property:
+        </Typography>
+        <CategorySection
+          category="basicAmenities"
+          label="Basic Amenities"
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicAmenities}
+        />
+        <CategorySection
+          category="basicServices"
+          label="Basic Services"
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicServices}
+        />
+        <CategorySection
+          category="facilities"
+          label="Facilities"
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.facilities}
+        />
+        <div className="stepperFooter" style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
+          <Button onClick={handleBack} className="stepperPrevious" sx={{ marginRight: 1 }}>
+            Back
+          </Button>
+          <Button onClick={handleSave} className="stepperNext">
+            Next
+          </Button>
+        </div>
+
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Box } from "@mui/material";
+import { Alert, Box, Snackbar } from "@mui/material";
 import { useData } from "../../../../components/registration_unit/registration_location/contextAddressData";
 import { Button } from "@mui/material";
 import AnimatePage from "../AnimatedPage";
@@ -27,10 +27,21 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   const { location2 } = useData();
   const [position, setPosition] = useState(addPin);
   const [mapPos, setMapPos] = useState(addPin);
+  const topRef = useRef(null); // Create a ref for scrolling to the top
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  // Error states for form validation
+  const [streetError, setStreetError] = useState(false);
+  const [postalCodeError, setPostalCodeError] = useState(false);
+
 
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to the top when the component mounts
+    window.scrollTo(0, 0);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component
+    }
   }, []);
 
   useEffect(() => {
@@ -82,19 +93,42 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   }, [street, postalCode]);
 
   const validateAndProceed = () => {
-    if (street && postalCode && addPin && address) {
+    let isValid = true;
+
+    if (!street) {
+      setStreetError(true);
+      isValid = false;
+      setSnackbarMessage("Street address is required.");
+      setSnackbarOpen(true);
+    } else {
+      setStreetError(false);
+    }
+
+    if (!postalCode) {
+      setPostalCodeError(true);
+      isValid = false;
+      setSnackbarMessage("Postal/ZIP code is required.");
+      setSnackbarOpen(true);
+    } else {
+      setPostalCodeError(false);
+    }
+
+    if (isValid && addPin && address) {
       saveLocation();
       handleNext();
     } else if (mapVal === null) {
-      alert("Please pin your exact location on the map.");
+      setSnackbarMessage("Please pin your exact location on the map.");
+      setSnackbarOpen(true);
     } else {
-      alert(
-        "Please fill in all the required fields and pin your location on the map."
-      );
+      setSnackbarMessage("Please fill in all the required fields and pin your location on the map.");
+      setSnackbarOpen(true);
     }
   };
 
+
   const handleChange = (event) => {
+    setStreetError(false);
+    setPostalCodeError(false);
     const { name, value } = event.target;
     switch (name) {
       case "street":
@@ -170,7 +204,9 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
       console.log("No location to save");
     }
   };
-
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
   useEffect(() => {
     if (mapRef.current && position) {
       // Update the center of the map when position changes
@@ -179,42 +215,44 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   }, [position]);
 
   return (
-    <Container maxWidth="lg" className="centered-container">
-      <AnimatePage>
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <Paper
-            sx={{
-              width: "80vw",
-              padding: "2rem",
-              borderRadius: "0.8rem",
-              boxShadow: 3,
-            }}
-          >
-            <Typography
+    <div ref={topRef} >
+      <Container maxWidth="lg" className="centered-container">
+        <AnimatePage>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Paper
               sx={{
-                fontSize: "2rem",
-                fontWeight: "bold",
-                mb: 2,
-                fontFamily: "Poppins",
+                width: "80vw",
+                padding: "2rem",
+                borderRadius: "0.8rem",
+                boxShadow: 3,
               }}
             >
-              Property Location
-            </Typography>
+              <Typography
+                sx={{
+                  fontSize: "2rem",
+                  fontWeight: "bold",
+                  mb: 2,
+                  fontFamily: "Poppins",
+                }}
+              >
+                Property Location
+              </Typography>
 
-            <Typography sx={{ fontSize: "1rem" }} mb={2}>
-              Describe your property in detail. Highlight its unique features,
-              amenities, and any additional information potential tenants or
-              buyers should know.
-            </Typography>
-            <Grid container>
-              <Grid item xs={12} md={6}>
-                <Box>
+              <Typography sx={{ fontSize: "1rem" }} mb={2}>
+                Describe your property in detail. Highlight its unique features,
+                amenities, and any additional information potential tenants or
+                buyers should know.
+              </Typography>
+              <Grid container>
+                <Grid item xs={12} md={6}>
+                  <Box>
                   <TextField
                     label="Street Address"
                     value={street}
                     name="street"
                     onChange={handleChange}
-                    helperText="Enter your street address"
+                    helperText={streetError ? "Street address is required" : "Enter your street address"}
+                    error={streetError}
                     fullWidth
                     sx={{ mb: 2 }}
                   />
@@ -223,109 +261,116 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                     value={postalCode}
                     name="postalCode"
                     onChange={handleChange}
-                    helperText="Enter your postal or ZIP code"
+                    helperText={postalCodeError ? "Postal/ZIP code is required" : "Enter your postal or ZIP code"}
+                    error={postalCodeError}
                     fullWidth
                   />
-                  {/* <TextField
-                  label="Full Address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  helperText="You cannot edit here. Pin your exact location on the map to view the full address"
-                  fullWidth
-                  sx={{ mb: 2 }}
-                  disabled
-                  
-                /> */}
-                  <Box mt={2}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleSubmit}
-                    >
-                      Pin Your Location
-                    </Button>
+                    {/* <TextField
+                    label="Full Address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    helperText="You cannot edit here. Pin your exact location on the map to view the full address"
+                    fullWidth
+                    sx={{ mb: 2 }}
+                    disabled
+                    
+                  /> */}
+                    <Box mt={2}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                      >
+                        Pin Your Location
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
-              </Grid>
+                </Grid>
 
-              <Grid item xs={12} md={6}>
-                <Box className={addPin ? "active" : "greyed-out"}>
-                  {/* <Typography sx={{ fontSize: "1rem", textAlign: "left", fontFamily: "Poppins" }} fontWeight="bold">
-                    Pin your exact location here:
-                  </Typography> */}
-                  <Paper
-                    elevation={3}
-                    sx={{
-                      borderRadius: ".5rem",
-                      padding: "1rem",
-                      width: "100%",
-                    }}
-                  >
-                    <Map
-                      google={google}
-                      zoom={14}
-                      containerStyle={{
+                <Grid item xs={12} md={6}>
+                  <Box className={addPin ? "active" : "greyed-out"}>
+                    {/* <Typography sx={{ fontSize: "1rem", textAlign: "left", fontFamily: "Poppins" }} fontWeight="bold">
+                      Pin your exact location here:
+                    </Typography> */}
+                    <Paper
+                      elevation={3}
+                      sx={{
+                        borderRadius: ".5rem",
+                        padding: "1rem",
                         width: "100%",
-                        height: "25rem",
-                        position: "relative",
-                        borderRadius: "0.8rem",
                       }}
-                      initialCenter={{
-                        lat: addPin ? addPin.lat : 0,
-                        lng: addPin ? addPin.lng : 0,
-                      }}
-                      onClick={onMapClick}
-                      mapTypeId={"terrain"}
-                      ref={mapRef}
                     >
-                      {position && (
-                        <Marker
-                          position={position}
-                          draggable={true}
-                          onDragend={(t, map, coords) =>{
-                            const newPosition = { lat: coords.latLng.lat(), lng: coords.latLng.lng() };
-                  setPosition(newPosition);
-                  fetchAddress(newPosition); 
-                         } }
-                        />
-                      )}
-                    </Map>
-                    {!isInCebu && position && (
-            <Typography color="error" sx={{ marginTop: "1rem" }}>
-              The location you selected is outside Cebu.
-            </Typography>
-          )}
-          <Button
-            variant="contained"
-            onClick={resetPosition}
-            style={{ fontSize: "1rem", marginTop: "1rem" }}
-          >
-            Reset
-          </Button>
-          {/* <Button
-            variant="contained"
-            onClick={saveLocation}
-            style={{ fontSize: "1rem", marginTop: "1rem" }}
-            disabled={!isInCebu}
-          >
-            Save Location
-          </Button> */}
-                  </Paper>
-                </Box>
+                      <Map
+                        google={google}
+                        zoom={14}
+                        containerStyle={{
+                          width: "100%",
+                          height: "25rem",
+                          position: "relative",
+                          borderRadius: "0.8rem",
+                        }}
+                        initialCenter={{
+                          lat: addPin ? addPin.lat : 0,
+                          lng: addPin ? addPin.lng : 0,
+                        }}
+                        onClick={onMapClick}
+                        mapTypeId={"terrain"}
+                        ref={mapRef}
+                      >
+                        {position && (
+                          <Marker
+                            position={position}
+                            draggable={true}
+                            onDragend={(t, map, coords) =>{
+                              const newPosition = { lat: coords.latLng.lat(), lng: coords.latLng.lng() };
+                    setPosition(newPosition);
+                    fetchAddress(newPosition); 
+                          } }
+                          />
+                        )}
+                      </Map>
+                      {!isInCebu && position && (
+              <Typography color="error" sx={{ marginTop: "1rem" }}>
+                The location you selected is outside Cebu.
+              </Typography>
+            )}
+            <Button
+              variant="contained"
+              onClick={resetPosition}
+              style={{ fontSize: "1rem", marginTop: "1rem" }}
+            >
+              Reset
+            </Button>
+            {/* <Button
+              variant="contained"
+              onClick={saveLocation}
+              style={{ fontSize: "1rem", marginTop: "1rem" }}
+              disabled={!isInCebu}
+            >
+              Save Location
+            </Button> */}
+                    </Paper>
+                  </Box>
+                </Grid>
               </Grid>
-            </Grid>
-          </Paper>
-        </Box>
-      </AnimatePage>
-      <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
-          Back
-        </Button>
-        <Button onClick={validateAndProceed} className="stepperNext">
-          Next
-        </Button>
-      </div>
-    </Container>
+            </Paper>
+          </Box>
+        </AnimatePage>
+        <div className="stepperFooter">
+          <Button onClick={handleBack} className="stepperPrevious">
+            Back
+          </Button>
+          <Button onClick={validateAndProceed} className="stepperNext">
+            Next
+          </Button>
+        </div>
+        <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+          <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </div>
   );
 };
 

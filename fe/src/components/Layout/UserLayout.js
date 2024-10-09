@@ -10,6 +10,7 @@ const UserLayout = () => {
     "/admin/listings",
     "/admin/calendar",
     "/admin/guests",
+    "/admin/payouts",
     "/edit-property",
     "/account",
   ];
