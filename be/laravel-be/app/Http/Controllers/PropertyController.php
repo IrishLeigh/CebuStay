@@ -72,7 +72,22 @@ class PropertyController extends CORS
 
     public function InsertPropertyInfo(Request $request)
     {
-        $singleunittype = ["Home", "Apartment", "Condominium", "Cabin", "Luxury Home", "Bungalow"];
+        $singleunittype = [
+            "Home",
+            "Apartment",
+            "Condominium",
+            "Cabin",
+            "Luxury Home",
+            "Bungalow",
+            "Villa",
+            "Loft",
+            "Cabin",
+            "Cottage",
+            "Studio",
+            "Private Residential",
+            "Townhouse",
+            "Subdivision House",
+        ];
 
         $this->enableCors($request);
         $property = new Property();
