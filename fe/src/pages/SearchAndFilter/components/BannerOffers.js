@@ -49,7 +49,12 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import axios from "axios";
 import Search from "./Search";
 
-export default function BannerOffers({ accommodations, setAccommodationList }) {
+export default function BannerOffers({
+  accommodations,
+  setAccommodationList,
+  onSearchUpdate,
+  originalAccommodationList,
+}) {
   const [guestCapacity, setGuestCapacity] = useState(null);
   const [availability, setAvailability] = useState({
     startDate: null,
@@ -59,6 +64,8 @@ export default function BannerOffers({ accommodations, setAccommodationList }) {
   const [checkout_date, setCheckout_date] = useState(null);
 
   const fetchProperties = async (checkin_date, checkout_date, guest_count) => {
+    const accList = originalAccommodationList;
+    console.log("Originallist: ", originalAccommodationList);
     const formattedCheckinDate = new Date(checkin_date)
       .toISOString()
       .slice(0, 10);
@@ -77,8 +84,10 @@ export default function BannerOffers({ accommodations, setAccommodationList }) {
           },
         }
       );
+
       const availablePropertyIds = response.data.map((item) => item.propertyid);
-      const filteredAccommodations = accommodations.filter((accommodation) =>
+      console.log("Available Property Ids:", availablePropertyIds);
+      const filteredAccommodations = accList.filter((accommodation) =>
         availablePropertyIds.includes(accommodation.propertyid)
       );
       console.log(filteredAccommodations);
@@ -95,6 +104,20 @@ export default function BannerOffers({ accommodations, setAccommodationList }) {
     fetchProperties(startDate, endDate, guestCapacity);
     setCheckin_date(startDate);
     setCheckout_date(endDate);
+
+    // Call the parent callback with updated values
+    if (onSearchUpdate) {
+      onSearchUpdate({
+        guestCapacity,
+        checkin_date: startDate,
+        checkout_date: endDate,
+      });
+      console.log("NADAWAT NAKO FROM SEARCH", {
+        guestCapacity,
+        checkin_date: startDate,
+        checkout_date: endDate,
+      });
+    }
   };
 
   return (
@@ -114,21 +137,21 @@ export default function BannerOffers({ accommodations, setAccommodationList }) {
               className="offers-icon"
               sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
             />
-            <p>Earn rewards on every night you stay</p>
+            <p>Book accommodations tailored to your vibe</p>
           </Box>
           <Box className="offers">
             <LocalOfferIcon
               className="offers-icon"
               sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
             />
-            <p>Save more with Member Prices</p>
+            <p>Pay with ease with our  options</p>
           </Box>
           <Box className="offers">
             <CalendarMonthIcon
               className="offers-icon"
               sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
             />
-            <p>Free cancellation options if plans change</p>
+            <p>Flexible booking options </p>
           </Box>
         </Box>
       </Box>

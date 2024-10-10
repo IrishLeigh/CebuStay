@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import axios from "axios";
 import "./Form.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useUser } from "../components/UserProvider";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import { Button, Snackbar, CircularProgress } from "@mui/material";
 
-const LoginUI = ({ setToken }) => {
+import useAuth from "../components/useAuth";
+
+
+const LoginUI = () => {
   const { loginUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +24,18 @@ const LoginUI = ({ setToken }) => {
   const [open, setOpen] = React.useState(false);
   const [user, setUser] = useState([]);
   const [loginGoogleError, setLoginGoogleError] = useState('');
+  const {setAuth} = useAuth();
   const navigate = useNavigate(); // Use useNavigate for navigation
+  const location = useLocation();
+  const isLoggedIn = localStorage.getItem("auth_token") !== null;
+
+
+  
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleClick = () => {
     setOpen(true);
@@ -50,30 +64,36 @@ const LoginUI = ({ setToken }) => {
     // Store the "Remember me" option in local storage
     localStorage.setItem("remember_me", !rememberMe);
   };
+  
 
-  useEffect(() => {
-    // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
-    const token = localStorage.getItem("auth_token");
+  // useEffect(() => {
+  //   // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+  //   const token = localStorage.getItem("auth_token");
 
-    // console.log("Token:", token);
-    if (token) {
-      const jwtToken = token.split("=")[1];
-      axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((response) => {
-          setUser(response.data["data"]);
-          loginUser(response.data.data);
-          console.log("RESPONSE DATA: ", response.data["data"]);
-        })
-        .catch((error) => {
-          alert("Error decoding JWT token:", error);
-          setUser(null);
-        });
-    } else {
-      setUser(null);
-    }
-  }, [loginUser]);
+  //   // console.log("Token:", token);
+  //   if (token) {
 
+  //     const res =axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .then((res) => {
+   
+  //         loginUser(res.data.data);
+  //         setUser(res.data.data);
+  //         localStorage
+  //         console.log("USER NI SYA BA", res.data.data);
+
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
+          
+  //       });
+  //   } else {
+  //     loginUser(null);
+  //   }
+  // }, [loginUser]);
+
+
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -117,8 +137,11 @@ const LoginUI = ({ setToken }) => {
         console.log("Login successful!", response.data["token"]);
         const token = response.data["token"];
         localStorage.setItem("auth_token", token);
-        setToken(token);
+        setAuth({token, user});
+        const from = location.state?.from || "/";
+        navigate(from, { replace: true });
 
+        // Store the "Remember me" option in local storage  
         if (rememberMe) {
           localStorage.setItem("remembered_email", email);
           localStorage.setItem("remembered_password", password);
@@ -126,15 +149,9 @@ const LoginUI = ({ setToken }) => {
           localStorage.removeItem("remembered_email");
           localStorage.removeItem("remembered_password");
         }
-
-        // console.log("Login successful! User iS: ", response.data);
-        // console.log(response.data["message"]);
-        // console.log("Login successful!");
-
-        navigate("/landing"); // Correct usage of navigate function
+        navigate("/"); // Correct usage of navigate function
       } else {
         setLoginError("Invalid credentials"); // Update error message for invalid credentials
-        console.log(response.data["message"]);
         console.log("Login failed");
       }
     } catch (error) {
@@ -210,7 +227,6 @@ const LoginUI = ({ setToken }) => {
         console.log("Login successful! google", response.data["token"]);
         const token = response.data["token"];
         localStorage.setItem("auth_token", token);
-        setToken(token);
 
         if (rememberMe) {
           localStorage.setItem("remembered_email", decoded.email);
@@ -218,7 +234,8 @@ const LoginUI = ({ setToken }) => {
           localStorage.removeItem("remembered_email");
         }
 
-        navigate("/landing"); // Correct usage of navigate function
+        const from = location.state?.from || "/";
+        navigate(from, { replace: true }); // Correct usage of navigate function
       } else {
         setLoginError("Invalid credentials"); // Update error message for invalid credentials
         console.log(response.data["message"]);
@@ -237,7 +254,10 @@ const LoginUI = ({ setToken }) => {
     setLoginGoogleError('Google login failed.');
   };
 
+  console.log('USER NI:', user);
+
   return (
+    <div style={{width:"100%"}}>
     <div className="formContainer">
       <div className="form-container">
         <div style={{ textAlign: "center" }}>
@@ -385,6 +405,7 @@ const LoginUI = ({ setToken }) => {
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 };

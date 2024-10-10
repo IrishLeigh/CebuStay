@@ -25,7 +25,13 @@ const PropertyListUI = () => {
   });
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [accommodationList, setAccommodationList] = useState([]);
+  const [originalAccommodationList, setOriginalAccommodationList] = useState([]);
   const [pricingList, setPricingList] = useState([]);
+  const [searchUpdateData, setSearchUpdateData] = useState({
+    checkin_date: null,
+    checkout_date: null,
+    guestCapacity: null,
+  })
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -72,15 +78,57 @@ const PropertyListUI = () => {
         }
 
         // Update properties with images, amenities, min_price, and address
-        const updatedList = properties.map(property => ({
-          ...property,
-          src: imgMap.get(property.propertyid) || null,
-          amenities: amenityMap.get(property.propertyid) || [],
-          min_price: pricingMap.get(property.propertyid) || null,
-          address: locationMap.get(property.propertyid) || null
-        }));
-
+       
+        const updatedList = properties.map(property => {
+          // Initialize an empty array for booking options
+          const bookingOptionsArray = [];
+        
+          // Get the first booking policy
+          const bookingPolicy = property.booking_policies && property.booking_policies.length > 0 ? property.booking_policies[0] : {};
+        
+          // Check the booking policy and push to bookingOptionsArray if the value is 1
+          if (bookingPolicy.isCancellationPolicy === 1) {
+            bookingOptionsArray.push("Cancellation Plan");
+          }
+          if (bookingPolicy.non_refundable === 1) {
+            bookingOptionsArray.push("Non-Refundable");
+          }
+          if (bookingPolicy.isModificationPolicy === 1) {
+            bookingOptionsArray.push("Modification Plan");
+          }
+        
+          // Get the first house rule
+          const houseRule = property.house_rules && property.house_rules.length > 0 ? property.house_rules[0] : {};
+        
+          // Check house rules and push to bookingOptionsArray based on their values
+          if (houseRule.pets_allowed === 1) {
+            bookingOptionsArray.push("Allows Pets");
+          }
+          if (houseRule.smoking_allowed === 1) {
+            bookingOptionsArray.push("Allow Smoking");
+          }
+          if (houseRule.parties_events_allowed === 1) {
+            bookingOptionsArray.push("Party Events Allowed");
+          }
+          if (houseRule.noise_restrictions === "1") {
+            bookingOptionsArray.push("Noise Restrictions");
+          }
+        
+          // Add any additional conditions for house rules if necessary
+        
+          return {
+            ...property,
+            src: imgMap.get(property.propertyid) || null,
+            amenities: amenityMap.get(property.propertyid) || [],
+            min_price: pricingMap.get(property.propertyid) || null,
+            address: locationMap.get(property.propertyid) || null,
+            bookingoptions: bookingOptionsArray // Combine both booking options and house rules
+          };
+        });
+                
+        
         setAccommodationList(updatedList);
+        setOriginalAccommodationList(updatedList);
         console.log('Accommodation list with images, amenities, prices, and addresses:', updatedList);
       } catch (error) {
         console.error(error);
@@ -97,22 +145,35 @@ const PropertyListUI = () => {
   const handleAmenityChange = (amenities) => {
     setSelectedAmenities(amenities);
   };
+  const handleSearchUpdate = ({ guestCapacity, checkin_date, checkout_date }) => {
+    setSearchUpdateData({ guestCapacity, checkin_date, checkout_date });
+    // You can do other things here based on the search updates
+    console.log("Guest Capacity FROM PROPERTY LIST:", guestCapacity);
+    console.log("Checkin Date  PROPERTY LIST:", checkin_date);
+    console.log("Checkout Date  PROPERTY LIST:", checkout_date);
+
+  };
+
+  console.log("Search UPDATE FROM PORPERTY LIST:", searchUpdateData);
 
   return (
-    <Container maxWidth="lg">
-      <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList} />
-      <SortMenu />
-      <div className="content-layout">
-        <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
-        <MainContent
-          selectedAmenities={selectedAmenities}
-          accommodations={accommodationList}
-          filters={filters}
-          searchData={searchData}
-          setSearchData={setSearchData}
-        />
-      </div>
-    </Container>
+    // <div style ={{ overflowY: "scroll", width : "100%"}}>
+      <Container maxWidth="lg">
+        <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList}  onSearchUpdate={handleSearchUpdate} originalAccommodationList={originalAccommodationList}/>
+        {/* <SortMenu /> */}
+        <div className="content-layout">
+          <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
+          <MainContent
+            selectedAmenities={selectedAmenities}
+            accommodations={accommodationList}
+            filters={filters}
+            searchData={searchData}
+            setSearchData={setSearchData}
+            searchUpdate = {searchUpdateData}
+          />
+        </div>
+      </Container>
+    // </div>
   );
 };
 

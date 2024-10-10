@@ -4,11 +4,11 @@
   align-items: center;
   height: 100%; /* Adjusted height */
 }
+
 body {
-  background: linear-gradient(135deg, #e0f7fa 50%, #ffffff 50%);
+  background: linear-gradient(135deg, #F4F7FA 50%, #F4F7FA 50%);
   font-family: "Poppins", sans-serif;
 }
-
 .form-container {
   background-color: #ffffff;
   padding: 30px;
@@ -140,5 +140,35 @@ body {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media screen and (max-width: 432px) {
+  .form-container{
+    scale: 0.9;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .form-container{
+    scale: 0.86;
+  }
+}
+
+@media screen and (max-width: 368px) {
+  .form-container{
+    scale: 0.82;
+  }
+}
+
+@media screen and (max-width: 345) {
+  .form-container{
+    scale: 0.78;
+  }
+}
+
+@media screen and (max-width: 321px) {
+  .form-container{
+    scale: 0.7;
   }
 }

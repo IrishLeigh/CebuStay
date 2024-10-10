@@ -48,8 +48,8 @@ export default function Directions(propertyid) {
 
   return (
     <div>
-      <div style={{ height: '20vh', width: '20rem' }}>
-        <Paper elevation={3} sx={{ p: '1rem', borderRadius: '.5rem', maxHeight: '33.5rem', overflow: 'auto' }}>
+      <div style={{ height: 'auto', width: '100% '}}>
+        <Paper  sx={{  borderRadius: '.8rem', maxHeight: '33.5rem', overflow: 'auto' , padding: '1rem'}}>
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <CircularProgress /> {/* Loader while fetching data */}

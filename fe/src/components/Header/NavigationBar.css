@@ -93,5 +93,21 @@ body{
 }
 /* Logo */
 .header-logo img {
-  height: 3rem; /* Adjust the height as needed */
+  height: 3.5rem; /* Adjust the height as needed */
+  padding: 0;
+  margin: 0;
+}
+
+@media screen and (max-width: 433px) {
+  .sign-in{
+    text-wrap: nowrap;
+    margin-left: 2%;
+  }
+}
+
+@media screen and (max-width: 387px) {
+  .sign-in{
+    margin-left: 0px;
+    scale: 0.8;
+  }
 }

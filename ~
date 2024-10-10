@@ -1,0 +1,22 @@
+Updated the UI for partnership
+
+# Conflicts:
+#	fe/src/index.js
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# interactive rebase in progress; onto 0e12b44
+# Last command done (1 command done):
+#    pick 9003ef3 Updated the UI for partnership
+# Next commands to do (2 remaining commands):
+#    pick 94f56cf Initial Multi Rooms without API
+#    pick d53299c Conditional rendering for multi-unit
+# You are currently rebasing branch 'feat/updated-edit-ui' on '0e12b44'.
+#
+# Changes to be committed:
+#	modified:   src/components/registration_unit/registration_partner/individualHost.js
+#	modified:   src/components/registration_unit/registration_partner/partnerVerification.js
+#	modified:   src/index.js
+#	modified:   src/pages/AccommodationRegistrationUI/components/MultiUnitRegistration/PropertyRulesPolicies.js
+#

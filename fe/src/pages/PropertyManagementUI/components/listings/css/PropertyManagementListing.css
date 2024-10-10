@@ -1,0 +1,274 @@
+/* PropertyManagementListing.css */
+
+.full-height {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bg-light {
+  background-color: #f8f9fa;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: white;
+  font-family: Poppins, sans-serif;
+  text-align: left;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: fit-content;
+}
+
+.btn {
+  background-color: transparent;
+  color: #333;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.underline {
+  text-decoration: none;
+}
+
+.table-row {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-cell {
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 30%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close:hover {
+  color: #555;
+}
+
+.modal-actions {
+  margin-top: 1rem;
+}
+
+.modal-actions button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-actions button:last-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-modal {
+  background-color: white;
+  padding: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 70%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+  max-height: 90vh; /* Set maximum height to 80% of viewport height */
+  overflow-y: auto; /* Enable vertical scroll if content exceeds height */
+}
+
+.edit-form {
+  width: 100%;
+  text-align: left;
+}
+
+.edit-item {
+  margin-left: 2rem;
+}
+.edit-title {
+  margin-top: 1rem;
+  margin-bottom: -8px;
+  font-weight: bold;
+}
+
+.edit-item label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.edit-item input {
+  width: calc(100% - 2rem);
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+.text {
+  margin: 0px;
+}
+
+.edit-actions {
+  margin-top: 1rem;
+  text-align: center;
+  margin-right: 1.5rem;
+}
+.btn-blue {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.btn-red {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.edit-actions button {
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.buttons {
+  display: flex;
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* Add this to your CSS file */
+
+.btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  color: black;
+  position: relative;
+}
+
+.btn.underline {
+  color: orange;
+}
+
+.btn.underline::after {
+  content: "";
+  position: absolute;
+  bottom: -0.2rem;
+  left: 0;
+  right: 0;
+  height: 0.2rem;
+  background-color: orange;
+}
+
+.controls {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-row {
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background-color: #f0f0f0;
+}
+
+.table-cell {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}

@@ -38,7 +38,6 @@ export default function RoomAccordion({ index , onRoomDetailsUpdate, roomData, o
       { roomType: "Kitchen", quantity: 0 },
       { roomType: "Dining", quantity: 0 },
     ],
-    guestCapacity: "",
   });
   const [bedDetails, setBedDetails] = useState({
     singleBed: { selected: false, quantity: 0 },
@@ -394,7 +393,7 @@ export default function RoomAccordion({ index , onRoomDetailsUpdate, roomData, o
                 }}
                 helperText="Minimum price for this room"
               />
-              <TextField
+              {/* <TextField
                 label="Max Price"
                 type="number"
                 value={maxPrice}
@@ -411,7 +410,7 @@ export default function RoomAccordion({ index , onRoomDetailsUpdate, roomData, o
                   style: { fontSize: '0.875rem' } // Adjust text size
                 }}
                 helperText="Maximum price for this room"
-              />
+              /> */}
             </Grid>
             <Grid item xs={12} md={4}>
               <Box>

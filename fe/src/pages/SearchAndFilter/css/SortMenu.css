@@ -1,10 +1,11 @@
 .sort-menu {
   display: flex;
   width: 100%;
-  border: 1px solid #ccc; /* Grey border around the whole box */
+  /* border: 1px solid #ccc; Grey border around the whole box */
   border-radius: 12px; /* Rounded corners */
   overflow: hidden; /* Ensures no overflow issues */
   background-color: #FFFF; /* White background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Box shadow for a subtle effect */
 }
 
 .sort-btn {
@@ -28,7 +29,11 @@
   pointer-events: none; /* Disable pointer events for the first button */
   background-color: #FFF; /* White background */
   color: #000; /* Black text color */
-  border: 1px solid #ccc; /* Grey border around the whole box */
+   border-right: 1px solid #ccc; /* Only right border */
+  border-top: none; /* No top border */
+  border-bottom: none; /* No bottom border */
+  border-left: none; /* No left border */
+  border-radius: 12px 0 0 12px; /* Rounded corners */
 }
 
 .sort-btn:not(:first-of-type):hover,

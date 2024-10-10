@@ -1,4 +1,4 @@
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Container, Grid, CircularProgress } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../css/SinglePropertyUI.css";
@@ -81,6 +81,19 @@ export default function MultiPropertyUI(propertyid) {
     fetchData();
   }, []);
 
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <div>
       {/* <HeaderUser /> */}
@@ -150,7 +163,7 @@ export default function MultiPropertyUI(propertyid) {
           <div className="review-container">
             <div className="info-title-cntr">
               <ArrowRight sx={{ color: "#16B4DD" }} />
-              <div>Reviews And Ratings</div>
+              <div>Reviews</div>
               {/* <div>Review And Rating for {review.unit}</div>{" "} */}
               {/* Display unit in title */}
             </div>

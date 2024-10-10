@@ -32,10 +32,14 @@
   margin-top: -250px; /* Move it up to overlap the banner */
 }
 
-
 .avatar-details-container {
   display: flex;
   align-items: center;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
 .avatar-image {
@@ -43,6 +47,27 @@
   height: 200px;
   object-fit: cover;
   border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ccc;
+}
+
+.camera-icon-container {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  background-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.camera-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+}
+
+.camera-icon:hover {
+  color: #000;
 }
 
 .user-details {
@@ -73,7 +98,7 @@
   color: #fff;
   border-radius: 8px;
   padding: 0.5rem 2rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   border: none;
   box-shadow: none;
   cursor: pointer;
@@ -84,6 +109,20 @@
 
 .logout-btn:hover {
   background-color: #cc3940;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+}
+
+.loading-container p {
+  margin-top: 16px;
+  font-size: 18px;
+  color: #666; /* Adjust color to your theme */
 }
 
 /* Adjust  for resolutions below 1920px */

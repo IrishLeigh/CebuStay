@@ -27,35 +27,37 @@ const Listings = () => {
   const [selectedListings, setSelectedListings] = useState([]);
   const [open, setOpen] = useState(false);
   const [currentListing, setCurrentListing] = useState(null);
-  const [user, setUser] = useState(null);
+  // TO DO: uncomment this if local storage does not work
+  // const [user, setUser] = useState(null);
+  const userid = localStorage.getItem("userid") || null;
 
-  useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
-        .then((response) => {
-          setUser(response.data["data"]);
-          console.log("RESPONSE DATA: ", response.data["data"]);
-        })
-        .catch((error) => {
-          alert("Error decoding JWT token:", error);
-          setUser(null);
-        });
-    } else {
-      setUser(null);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("auth_token");
+  //   if (token) {
+  //     axios
+  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .then((response) => {
+  //         setUser(response.data["data"]);
+  //         console.log("RESPONSE DATA: ", response.data["data"]);
+  //       })
+  //       .catch((error) => {
+  //         alert("Error decoding JWT token:", error);
+  //         setUser(null);
+  //       });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
+      if (!userid) return;
       try {
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/user/properties",
           {
             params: {
-              userid: user.userid,
+              userid: userid,
             },
           }
         );
@@ -67,7 +69,7 @@ const Listings = () => {
       }
     };
     fetchData();
-  }, [user]);
+  }, [userid]);
 
   const handleOpen = (listing) => {
     setCurrentListing(listing);
@@ -118,9 +120,9 @@ const Listings = () => {
   return (
     <Grid container>
       {/* Sidebar */}
-      <Grid item xs={2}>
-        <Sidebar />
-      </Grid>
+      {/* <Grid item xs={2}>
+        <Sidebar /> */}
+      {/* </Grid> */}
       {/* Main Content */}
       <Grid
         item

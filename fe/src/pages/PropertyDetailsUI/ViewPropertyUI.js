@@ -25,40 +25,6 @@ function srcset(image, size, rows = 1, cols = 1) {
       }&fit=crop&auto=format&dpr=2 2x`,
   };
 }
-//I TRANSFERED THIS TO A SEPARATE FILE, ImageGallery.js
-
-
-// const ImageGallery = ({ images }) => {
-//   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-//   // Calculate rowHeight dynamically based on screen height
-//   const rowHeight = isMobile ? Math.floor(window.innerHeight / 8) : Math.floor(window.innerHeight / 4);
-
-//   return (
-//     <ImageList
-//       variant="quilted"
-//       cols={4}
-//       rowHeight={rowHeight}
-//       style={{ width: "100%" }}
-//     >
-//       {images.map((image) => (
-//         <ImageListItem
-//           key={image.id}
-//           cols={image.cols || 1}
-//           rows={image.rows || 1}
-//         >
-//           <img
-//             src={image.src}
-//             alt={`Property Image ${image.id}`}
-//             style={{ width: "100%", height: "100%", objectFit: "cover" }}
-//           />
-//         </ImageListItem>
-//       ))}
-//     </ImageList>
-//   );
-// };
-
 const AmenitiesFacilitiesServices = ({
   amenities = [],
   facilities = [],
@@ -263,7 +229,11 @@ export default function ViewPropertyUI() {
   const [propertyInfo, setPropertyInfo] = useState({});
   const [loading, setLoading] = useState(true); // Loading state
   const location = useLocation();
-  const { guestCapacity, checkin_date, checkout_date } = location.state;
+  const searchParams = new URLSearchParams(location.search);
+  const guestCapacity = searchParams.get('guestCapacity') || null;
+  const checkin_date = searchParams.get('checkin_date') || null;
+  const checkout_date = searchParams.get('checkout_date') || null;
+  const [onSearchData, setOnSearchData] = useState({});
   //fetchdata for Property ID
   useEffect(() => {
     const fetchData = async () => {
@@ -306,9 +276,7 @@ export default function ViewPropertyUI() {
   // Set initial values based on the received state
   useEffect(() => {
     if (checkin_date && checkout_date && guestCapacity) {
-      setCheckInDate(dayjs(checkin_date));
-      setCheckOutDate(dayjs(checkout_date));
-      setGuestCount(guestCapacity);
+      setOnSearchData({ checkin_date, checkout_date, guestCapacity });
     }
   }, [checkin_date, checkout_date, guestCapacity]);
 
@@ -351,73 +319,77 @@ export default function ViewPropertyUI() {
     }
   };
 
+  console.log ("guestCapactiy", guestCapacity);
   return (
-    <div style={{ backgroundColor: "#F4F7FA" }}>
-      <Container maxWidth="xl" >
-        <CssBaseline />
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          <div>
-            {/* <div>
-              <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
-                <ImageGallery images={propertyImages} />
+    <div style={{ width: "100%"}}>
+      <div style={{ backgroundColor: "#F4F7FA" }}>
+        <Container maxWidth="xl" >
+          <CssBaseline />
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <div>
+              {/* <div>
+                <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
+                  <ImageGallery images={propertyImages} />
+                </div>
+                <div style={{ height: "clamp(2rem, 5vw, 3rem)", display: "flex", marginTop: "-16px" }}>
+                  <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
+                  <div style={{ flex: "1 0 0", background: "#ADC939" }} />
+                  <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
+                  <div style={{ flex: "1 0 0", background: "#F77D1E" }} />
+                  <div style={{ flex: "1 0 0", background: "#EE414B" }} />
+                  <div style={{ flex: "1 0 0", background: "#A334CF" }} />
+                  <div style={{ flex: "1 0 0", background: "#1780CB" }} />
+                </div>
               </div>
-              <div style={{ height: "clamp(2rem, 5vw, 3rem)", display: "flex", marginTop: "-16px" }}>
-                <div style={{ flex: "1 0 0", background: "#16B4DD" }} />
-                <div style={{ flex: "1 0 0", background: "#ADC939" }} />
-                <div style={{ flex: "1 0 0", background: "#F9CC41" }} />
-                <div style={{ flex: "1 0 0", background: "#F77D1E" }} />
-                <div style={{ flex: "1 0 0", background: "#EE414B" }} />
-                <div style={{ flex: "1 0 0", background: "#A334CF" }} />
-                <div style={{ flex: "1 0 0", background: "#1780CB" }} />
-              </div>
-            </div>
-            <Grid container spacing={3} style={{ padding: "20px 0" }}>
-              <Grid item xs={12} md={7}>
-                {propertyInfo.property_details && (
-                  <PropertyDetails property={propertyInfo.property_details} />
-                )}
-                <AmenitiesFacilitiesServices
-                  amenities={propertyInfo.property_amenities}
-                  facilities={propertyInfo.property_facilities}
-                  services={propertyInfo.property_services}
-                />
+              <Grid container spacing={3} style={{ padding: "20px 0" }}>
+                <Grid item xs={12} md={7}>
+                  {propertyInfo.property_details && (
+                    <PropertyDetails property={propertyInfo.property_details} />
+                  )}
+                  <AmenitiesFacilitiesServices
+                    amenities={propertyInfo.property_amenities}
+                    facilities={propertyInfo.property_facilities}
+                    services={propertyInfo.property_services}
+                  />
+                </Grid>
+                <Grid item xs={12} md={5}>
+                  <ReservationSection
+                    checkInDate={checkInDate}
+                    checkOutDate={checkOutDate}
+                    handleCheckInChange={handleCheckInChange}
+                    handleCheckOutChange={handleCheckOutChange}
+                    handleReserveClick={handleReserveClick}
+                    guestCount={guestCount}
+                    handleGuestCountChange={handleGuestCountChange}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={5}>
-                <ReservationSection
-                  checkInDate={checkInDate}
-                  checkOutDate={checkOutDate}
-                  handleCheckInChange={handleCheckInChange}
-                  handleCheckOutChange={handleCheckOutChange}
-                  handleReserveClick={handleReserveClick}
+              {showReservationForm && (
+                <ReservationForm
+                  propertyinfos={propertyInfo}
+                  property_images={propertyImages}
+                  amenities={propertyInfo.property_amenities} // Pass amenities as prop
+                  facilities={propertyInfo.property_facilities} // Pass facilities as prop
+                  services={propertyInfo.property_services} // Pass services as prop
                   guestCount={guestCount}
-                  handleGuestCountChange={handleGuestCountChange}
+                  propertyid={propertyid}
+                  checkin_date={checkin_date}
+                  checkout_date={checkout_date}
                 />
-              </Grid>
-            </Grid>
-            {showReservationForm && (
-              <ReservationForm
-                propertyinfos={propertyInfo}
-                property_images={propertyImages}
-                amenities={propertyInfo.property_amenities} // Pass amenities as prop
-                facilities={propertyInfo.property_facilities} // Pass facilities as prop
-                services={propertyInfo.property_services} // Pass services as prop
-                guestCount={guestCount}
-                propertyid={propertyid}
-                checkin_date={checkin_date}
-                checkout_date={checkout_date}
-              />
-            )} */}
-            {propertyInfo.property_details.property_type === "Home" ? (
-              <><SinglePropertyUI propertyid={propertyid} /></>
-            ) : (
-              <><MultiPropertyUI propertyid={propertyid} /></>
-              )}
-          </div>
+              )} */}
+              {/* {propertyInfo.property_details.property_type === "Home" ? (
+                <><SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/></>
+              ) : (
+                <><MultiPropertyUI propertyid={propertyid}  onSearchData = {onSearchData}/></>
+                )} */}
+                <SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/>
+            </div>
 
-        )}
-      </Container>
+          )}
+        </Container>
+      </div>
     </div>
   );
 }

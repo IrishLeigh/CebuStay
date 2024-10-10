@@ -1,13 +1,16 @@
 import React from 'react';
 import './Footer.css';
+import { Box } from '@mui/material';
 
 const Footer = () => {
   return (
-    <footer className="footer">
-      <div className="footer-background">
-
-      </div>
+    <Box>
+      <div className="footer-background"></div>
       <div className="footer-container">
+   
+        <div className="footer-logo">
+          <img src="/Logo2.png" alt="Booking Website Logo" /> {/* Accessing logo from public folder */}
+        </div>
         <div className="footer-section">
           <h4>About Us</h4>
           <p>We provide the best accommodation booking service to ensure you have a pleasant stay wherever you go.</p>
@@ -27,9 +30,9 @@ const Footer = () => {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>&copy; 2024 Booking Website. All rights reserved.</p>
+        <p>&copy; 2024 Cebustay Website. All rights reserved.</p>
       </div>
-    </footer>
+    </Box>
   );
 }
 

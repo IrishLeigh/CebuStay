@@ -1,0 +1,72 @@
+.centerrr{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh ;
+    background-color: #FFFFFF;
+}
+.adminlogin-container{
+    text-align: center;
+    /* gap: 20px; */
+    /* background-color: rgb(255, 20, 20); */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.adminlogin-logo{
+    margin-top: 10px;
+}
+.adminlogin-input{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    /* background-color: blue; */
+}
+.adminlogin-input > input{
+    width: 85%;
+    border-radius: 10px;
+    border:none;
+    padding: 3%;
+    padding-left: 5%;
+    font-size: 1rem;
+    background-color: #D9D9D9;
+    color: black;
+}
+.adminlogin-input > input:focus{
+    outline: none;
+}
+.adminlogin-input > input::placeholder{
+    color: black;
+}
+.adminlogin-button{
+    margin-top: 40px;
+    border: none;
+    color: white;
+    background-color: #16B4DD;
+    width: 85%;
+    padding: 3%;
+    font-size: 1rem;
+    border-radius: 10px;
+    -webkit-box-shadow: 1px 6px 7px 3px rgba(0,0,0,0.41); 
+    box-shadow: 1px 6px 7px 3px rgba(0,0,0,0.41);
+}
+.adminlogin-button:hover{
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: #1197b9;
+    -webkit-box-shadow: 0px 11px 15px 5px rgba(0,0,0,0.44); 
+    box-shadow: 0px 11px 15px 5px rgba(0,0,0,0.44);
+}
+.adminlogin-button:not(:hover){
+    transition: 0.3s;
+}
+.footeradmin{
+    width: 100%;
+}

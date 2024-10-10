@@ -1,44 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { Button, Typography, Grid, Container } from "@mui/material";
+import React, { useState, useEffect, useCallback } from "react";
+import { Button, Typography, Grid, Container, Card, CardContent, Paper, Snackbar, Alert } from "@mui/material";
 import { motion } from "framer-motion";
+import { useRef } from "react";
 
-// Sample data (consider moving this to a separate file if it's large)
+// Sample data
 const data = {
   basicAmenities: [
-    { icon: "toiletries.png", text: "Toiletries" },
-    { icon: "aircon.png", text: "Air Conditioning" },
-    { icon: "wifi.png", text: "Wi-Fi" },
-    { icon: "minibar.png", text: "Mini Bar" },
-    { icon: "workspace.png", text: "Workspace" },
-    { icon: "tv.png", text: "Television" },
-    { icon: "refrigerator.png", text: "Refrigerator" },
-    { icon: "microwave.png", text: "Microwave" },
+    { icon: "/toiletries.png", text: "Toiletries" },
+    { icon: "/aircon.png", text: "Air Conditioning" },
+    { icon: "/wifi.png", text: "Wi-Fi" },
+    { icon: "/minibar.png", text: "Mini Bar" },
+    { icon: "/workspace.png", text: "Workspace" },
+    { icon: "/tv.png", text: "Television" },
+    { icon: "/refrigerator.png", text: "Refrigerator" },
+    { icon: "/microwave.png", text: "Microwave" },
   ],
   basicServices: [
-    { icon: "housekeeping.png", text: "House Keeping" },
-    { icon: "breakfast.png", text: "Breakfast" },
-    { icon: "shuttle.png", text: "Shuttle Service" },
-    { icon: "carrental.png", text: "Car Rental" },
-    { icon: "frontdesk.png", text: "24hours Front Desk" },
-    { icon: "concierge.png", text: "Concierge" },
-    { icon: "laundry.png", text: "Laundry" },
-    { icon: "petfriendly.png", text: "Pet Friendly" },
-    { icon: "roomservice.png", text: "Room Service" },
-    { icon: "cleaningservice.png", text: "Cleaning Service" },
-    { icon: "wakeupcall.png", text: "Wake-up Call Service" },
+    { icon: "/housekeeping.png", text: "House Keeping" },
+    { icon: "/breakfast.png", text: "Breakfast" },
+    { icon: "/shuttle.png", text: "Shuttle Service" },
+    { icon: "/carrental.png", text: "Car Rental" },
+    { icon: "/frontdesk.png", text: "24hours Front Desk" },
+    { icon: "/concierge.png", text: "Concierge" },
+    { icon: "/laundry.png", text: "Laundry" },
+    { icon: "/petfriendly.png", text: "Pet Friendly" },
+    { icon: "/roomservice.png", text: "Room Service" },
+    { icon: "/cleaningservice.png", text: "Cleaning Service" },
+    { icon: "/wakeupcall.png", text: "Wake-up Call Service" },
   ],
   facilities: [
-    { icon: "swimmingpool.png", text: "Swimming Pool" },
-    { icon: "gym.png", text: "Gym" },
-    { icon: "wellness.png", text: "Wellness Facilities" },
-    { icon: "gameroom.png", text: "Game Room" },
-    { icon: "sports.png", text: "Sports Facilities" },
-    { icon: "parking.png", text: "Parking" },
-    { icon: "businesscenter.png", text: "Business Center" },
+    { icon: "/swimmingpool.png", text: "Swimming Pool" },
+    { icon: "/gym.png", text: "Gym" },
+    { icon: "/wellness.png", text: "Wellness Facilities" },
+    { icon: "/gameroom.png", text: "Game Room" },
+    { icon: "/sports.png", text: "Sports Facilities" },
+    { icon: "/parking.png", text: "Parking" },
+    { icon: "/businesscenter.png", text: "Business Center" },
   ],
 };
 
-function AmenityButton({ icon, text, isSelected, onClick }) {
+const AmenityButton = React.memo(({ icon, text, isSelected, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -60,20 +61,12 @@ function AmenityButton({ icon, text, isSelected, onClick }) {
           fontFamily: "Poppins, sans-serif",
           width: 200,
           height: 80,
+          opacity: 100,
           "&:hover": {
-            backgroundColor:
-              isHovered && !isSelected
-                ? "#16B4DD"
-                : isSelected
-                ? "#1780CB"
-                : "white",
-            color:
-              isHovered && !isSelected
-                ? "white"
-                : isSelected
-                ? "white"
-                : "black",
+            backgroundColor: isHovered && !isSelected ? "#16B4DD" : isSelected ? "#1780CB" : "white",
+            color: isHovered && !isSelected ? "white" : isSelected ? "white" : "black",
           },
+          margin: "0.5rem",
         }}
         startIcon={
           <motion.img
@@ -87,24 +80,15 @@ function AmenityButton({ icon, text, isSelected, onClick }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: 18,
-              textTransform: "none",
-            }}
-          >
-            {text}
-          </Typography>
-          <span>&nbsp;</span>
-        </div>
+        <Typography sx={{ fontWeight: "bold", fontSize: 18, textTransform: "none" }}>
+          {text}
+        </Typography>
       </Button>
     </Container>
   );
-}
+});
 
-function CategorySection({ category, label, onItemsChange, initialSelectedItems }) {
+const CategorySection = React.memo(({ category, label, onItemsChange, initialSelectedItems }) => {
   const [selectedAmenities, setSelectedAmenities] = useState(initialSelectedItems || []);
 
   const toggleItemSelection = (itemText) => {
@@ -116,25 +100,18 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
     onItemsChange(category, newSelectedAmenities);
   };
 
-  useEffect(() => {
-    onItemsChange(category, selectedAmenities);
-  }, [selectedAmenities, category, onItemsChange]);
-
   return (
-    <>
-      <Typography
-        variant="h5"
-        sx={{
-          fontWeight: "bold",
-          mx: { xs: 2, sm: 10, md: 20 },
-          my: 2,
-          textAlign: "left",
-        }}
-      >
+    <Paper sx={{ 
+      marginBottom: 2, 
+      p: "1rem", 
+      borderRadius: "0.8rem", 
+      backgroundColor: "rgba(255, 255, 255, 0.8)" // Adjust this color and opacity as needed
+    }}>
+      <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "left", pl: 4 }}>
         {label}
       </Typography>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Grid container spacing={1} sx={{ maxWidth: 800 }}>
+        <Grid container spacing={2} sx={{ maxWidth: 800 }}>
           {data[category].map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <AmenityButton
@@ -147,30 +124,56 @@ function CategorySection({ category, label, onItemsChange, initialSelectedItems 
           ))}
         </Grid>
       </div>
-    </>
+    </Paper>
   );
-}
+});
 
 
-function AmenitiesFacilitiesServices({ onAmenitiesChange, parentAmenities, handleNext, handleBack }) {
-  const [selectedAmenities, setSelectedAmenities] = useState(parentAmenities);
+const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handleNext, handleBack }) => {
+  const [selectedAmenities, setSelectedAmenities] = useState({
+    basicAmenities: parentAmenities.basicAmenities || [],
+    basicServices: parentAmenities.basicServices || [],
+    facilities: parentAmenities.facilities || [],
+  });
+  
+  const topRef = useRef(null); // Create a ref for scrolling to the top
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(""); 
 
-  const handleItemsChange = (category, items) => {
-    setSelectedAmenities((prevSelectedAmenities) => ({
-      ...prevSelectedAmenities,
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component
+    }
+  }, []); // Runs on mount
+
+  const handleItemsChange = useCallback((category, items) => {
+    setSelectedAmenities((prev) => ({
+      ...prev,
       [category]: items,
     }));
     onAmenitiesChange(category, items);
-  };
+  }, [onAmenitiesChange]);
 
   const handleSave = () => {
+    const isAnySelected = Object.values(selectedAmenities).some(category => category.length > 0);
+    
+    if (!isAnySelected) {
+      setSnackbarMessage("Please select at least one amenity, service, or facility.");
+      setSnackbarOpen(true);
+      return; // Prevent proceeding if no amenities are selected
+    }
+
     console.log("Selected Amenities from child:", selectedAmenities);
     onAmenitiesChange(selectedAmenities);
     handleNext();
   };
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   return (
-    <>
+    <div ref={topRef}>
       <Container
         maxWidth="lg"
         style={{
@@ -182,41 +185,52 @@ function AmenitiesFacilitiesServices({ onAmenitiesChange, parentAmenities, handl
           marginBottom: "8rem",
         }}
       >
-        <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
-          Property Information
+        <Typography sx={{ fontSize: "2rem", fontWeight: "bold", mb: 2, fontFamily: "Poppins, sans-serif" }}>
+          Customize Your Stay
         </Typography>
-        <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
-          Please click the buttons you choose.
+        <Typography sx={{ mb: 2, fontFamily: "Poppins, sans-serif" }}>
+          Please select the amenities, services, and facilities you would like to include for your property:
         </Typography>
         <CategorySection
           category="basicAmenities"
-          label={"Basic Amenities"}
+          label="Basic Amenities"
           onItemsChange={handleItemsChange}
           initialSelectedItems={selectedAmenities.basicAmenities}
         />
         <CategorySection
           category="basicServices"
-          label={"Basic Services"}
+          label="Basic Services"
           onItemsChange={handleItemsChange}
           initialSelectedItems={selectedAmenities.basicServices}
         />
         <CategorySection
           category="facilities"
-          label={"Facilities"}
+          label="Facilities"
           onItemsChange={handleItemsChange}
           initialSelectedItems={selectedAmenities.facilities}
         />
-         <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
-          Back
-        </Button>
-        <Button onClick={handleSave} className="stepperNext">
-          Next
-        </Button>
-      </div>
+        <div className="stepperFooter" style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
+          <Button onClick={handleBack} className="stepperPrevious" sx={{ marginRight: 1 }}>
+            Back
+          </Button>
+          <Button onClick={handleSave} className="stepperNext">
+            Next
+          </Button>
+        </div>
+
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Container>
-    </>
+    </div>
   );
-}
+};
 
 export default AmenitiesFacilitiesServices;

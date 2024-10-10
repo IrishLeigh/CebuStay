@@ -1,91 +1,108 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-
+import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import './NavigationBar.css'; 
-import { MenuItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import './NavigationBar.css';
 
 export default function HeaderAccountMgnt() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const navigate = useNavigate();
+  const pages = ["Home", "Accommodation"];
 
-  const isMenuOpen = Boolean(anchorEl);
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
   };
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
+  const handlePageClick = (page) => {
+    if (page === 'Accommodation') {
+      window.location.href = 'accommodation';
+    } else if (page === 'Home') {
+      navigate('/');
+    } else {
+      navigate(`/${page.toLowerCase().replace(' ', '-')}`);
+    }
+    handleCloseNavMenu();
+  };
 
   return (
-    <Box>
+    <Box sx={{ width: '100%' }}>
       <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
-        <Toolbar>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" sx={{ color: '#A5A5A5' }}>
-              <Badge badgeContent={4} sx={{ 
-                '& .MuiBadge-badge': {
-                  backgroundColor: '#16B4DD',
-                  color: 'white',
-                },
-              }}>
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              sx={{ color: '#A5A5A5' }}
+        <Toolbar sx={{ justifyContent: 'flex-end' }}>  {/* Align content to the right */}
+          {/* For mobile - shows the "Menu" button */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
+            <Button
+              onClick={handleOpenNavMenu}
+              sx={{ color: 'black', textTransform: 'none' }}
             >
-              <Badge badgeContent={17} sx={{ 
-                '& .MuiBadge-badge': {
-                  backgroundColor: '#16B4DD',
-                  color: 'white',
-                },
-              }}>
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <button className="property-listing">
-              <Link to="/list-your-property" style={{ textDecoration: 'none', color: 'inherit' }}>
-                List your property
-              </Link>
-            </button>
+              <Typography sx={{ fontSize: '0.9rem', color: '#16B4DD' }} fontWeight="bold">
+                Menu
+              </Typography>
+            </Button>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={() => handlePageClick(page)}>
+                  <Typography textAlign="center">{page}</Typography>
+                </MenuItem>
+              ))}
+              <MenuItem>
+                <Link to="/list-property" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  List your property
+                </Link>
+              </MenuItem>
+            </Menu>
           </Box>
+
+          {/* For desktop - shows the menu items directly */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', flexGrow: 1 }}>
+          {pages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={() => handlePageClick(page)}
+                  sx={{ mx: 1, color: "black" }}
+                >
+                  <Typography
+                    sx={{ fontSize: "0.9rem", color: "#16B4DD" }}
+                    fontWeight="bold"
+                  >
+                    {page}
+                  </Typography>
+                </Button>
+              ))}
+              <button className="property-listing">
+                <Link
+                  to="/list-property"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  List your property
+                </Link>
+              </button>
+            </Box>
+
         </Toolbar>
       </AppBar>
     </Box>

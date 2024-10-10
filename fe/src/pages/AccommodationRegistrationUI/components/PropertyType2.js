@@ -8,12 +8,15 @@ import AnimatePage from "./AnimatedPage";
 
 const propertyTypes = [
   {
-    name: "Entire Property",
-    description: "Guests are able to use the entire place and do not have to share this with the host or other guests.",
+    icon: "/EntireProperty.png", // Assuming this is in public folder
+    name: "Daily Term",
+    description: "Guests can book stays ranging from 1 to 31 days, perfect for short getaways or business trips.",
   },
   {
-    name: "Private Room",
-    description: "Guests rent a room within the property. There are common areas that are either shared with the host or other guests.",
+    icon: "/PrivateRoom.png", // Assuming this is in public folder
+    name: "Monthly Term",
+    description:
+      "Guests can book longer stays, typically from 1 month to a year, ideal for extended visits or relocation.",
   },
 ];
 
@@ -30,13 +33,17 @@ export default function PropertyType2({
     onSelectedPropertyTypeChange(selectedPropertyType);
   }, [selectedPropertyType, onSelectedPropertyTypeChange]);
 
+  //Make the screen at the top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  })
   const handleClick = (button) => {
     setSelectedPropertyType(button);
   };
 
   const validateAndProceed = () => {
     if (!selectedPropertyType) {
-      alert("Please select a property type.");
+      alert("Please select a property term.");
       return;
     }
     handleNext();
@@ -44,7 +51,7 @@ export default function PropertyType2({
 
   return (
     
-      <Box sx={{ flexGrow: 1 }}>
+      <Box >
         
           <Container
             maxWidth="md"
@@ -58,7 +65,7 @@ export default function PropertyType2({
                 textAlign: "left",
               }}
             >
-              Property Type
+              Property Term
             </Typography>
 
             <Typography
@@ -68,7 +75,7 @@ export default function PropertyType2({
                 marginBottom: 5,
               }}
             >
-              What guests can book?
+              The term is all about how long guests can book a stay—whether it’s for a quick getaway or a longer adventure!
             </Typography>
 
             <Grid container spacing={2} justifyContent="center">
@@ -78,7 +85,8 @@ export default function PropertyType2({
                     <Button
                       variant="contained"
                       sx={{
-                        backgroundColor: selectedPropertyType === type.name ? "#1780CB" : "white",
+                        backgroundColor:
+                          selectedPropertyType === type.name ? "#1780CB" : "white",
                         color: selectedPropertyType === type.name ? "white" : "black",
                         fontFamily: "Poppins, sans-serif",
                         width: "100%",
@@ -87,12 +95,13 @@ export default function PropertyType2({
                       }}
                       startIcon={
                         <img
-                          src={`${type.name.toLowerCase()}.png`}
+                          src={type.icon} // Make sure this resolves correctly
                           alt={type.name}
                           style={{
                             width: "60px",
                             height: "60px",
                           }}
+                          onError={() => console.error(`Image failed to load: ${type.icon}`)} // Add this to troubleshoot
                         />
                       }
                       onClick={() => handleClick(type.name)}
@@ -124,7 +133,6 @@ export default function PropertyType2({
               ))}
             </Grid>
             </AnimatePage>
-
             <div className="stepperFooter">
               <Button  onClick={handleBack} className="stepperPrevious">
                 Back
@@ -133,6 +141,9 @@ export default function PropertyType2({
                 Next
               </Button>
             </div>
+            </Container>
+
+            
             {/* <Box mt={4} display="flex" justifyContent="space-between">
               <Button variant="contained" onClick={handleBack}>
                 Back
@@ -141,7 +152,7 @@ export default function PropertyType2({
                 Next
               </Button>
             </Box> */}
-          </Container>
+       
       </Box>
   );
 }

@@ -1,26 +1,39 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import { Divider, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import { useParams } from "react-router-dom";
-import Container from "@mui/material/Container";
+import { Divider } from "@mui/material";
 import ArrowRight from "@mui/icons-material/Send";
+import NetworkWifiIcon from "@mui/icons-material/NetworkWifi";
+import KitchenIcon from "@mui/icons-material/Kitchen"; // Refrigerator
+import TvIcon from "@mui/icons-material/Tv"; // Television
+import WorkIcon from "@mui/icons-material/Work"; // Workspace
+import LocalBarIcon from "@mui/icons-material/LocalBar"; // Mini Bar
+import ShowerIcon from "@mui/icons-material/Shower"; // Toiletries
+import MicrowaveIcon from "@mui/icons-material/Microwave"; // Microwave
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"; // Fallback icon for unknown amenities
+import AcUnitIcon from "@mui/icons-material/AcUnit"; // Air Conditioning alternative
 import "../css/PropertyBenefits.css";
 
+// MUI icons for amenities
 const amenitiesIcons = {
-  Toiletries: "toiletries.png",
-  "Air Conditioning": "aircon.png",
-  "Wi-Fi": "wifi.png",
-  "Mini Bar": "minibar.png",
-  Workspace: "workspace.png",
-  Television: "tv.png",
-  Refrigerator: "refrigerator.png",
-  Microwave: "microwave.png",
+  Toiletries: <ShowerIcon style={{ color: "#16B4DD" }} />,
+  "Air Conditioning": <AcUnitIcon style={{ color: "#16B4DD" }} />,
+  "Wi-Fi": <NetworkWifiIcon style={{ color: "#16B4DD" }} />,
+  "Mini Bar": <LocalBarIcon style={{ color: "#16B4DD" }} />,
+  Workspace: <WorkIcon style={{ color: "#16B4DD" }} />,
+  Television: <TvIcon style={{ color: "#16B4DD" }} />,
+  Refrigerator: <KitchenIcon style={{ color: "#16B4DD" }} />,
+  Microwave: <MicrowaveIcon style={{ color: "#16B4DD" }} />,
 };
 
+// Component to render a list of amenities with MUI icons
 const Amenities = ({ amenities = [] }) => {
+  console.log("Amenities data:", amenities); // Log the incoming data for debugging
+
+  // Filter out duplicate amenities
+  const uniqueAmenities = Array.from(
+    new Set(amenities.map((a) => a.amenity_name))
+  ).map((name) => amenities.find((a) => a.amenity_name === name));
+
   return (
     <Paper className="info-cntr" sx={{ borderRadius: "12px" }}>
       <div className="info-title-cntr">
@@ -29,14 +42,14 @@ const Amenities = ({ amenities = [] }) => {
       </div>
       <Divider sx={{ width: "100%", color: "#ccc" }} />
       <div className="amenity-cntr">
-        {amenities.length > 0 ? (
-          amenities.map((amenity) => (
+        {uniqueAmenities.length > 0 ? (
+          uniqueAmenities.map((amenity) => (
             <div className="each-amenity" key={amenity.amenity_name}>
-              <img
-                src={amenitiesIcons[amenity.amenity_name]}
-                alt={amenity.amenity_name}
-                style={{ width: "24px", height: "24px", marginRight: "8px" }}
-              />
+              <div style={{ marginRight: "8px" }}>
+                {amenitiesIcons[amenity.amenity_name] || (
+                  <HelpOutlineIcon style={{ color: "#16B4DD" }} />
+                )}
+              </div>
               <div className="rooms-name">{amenity.amenity_name}</div>
             </div>
           ))
@@ -48,6 +61,7 @@ const Amenities = ({ amenities = [] }) => {
   );
 };
 
+// Main component to fetch and display property amenities
 export default function PropertyViewAmenities({ propertyinfo }) {
   const [loading, setLoading] = useState(true); // Loading state
   const [propertyInfo, setPropertyInfo] = useState();
@@ -56,7 +70,6 @@ export default function PropertyViewAmenities({ propertyinfo }) {
     try {
       if (propertyinfo) {
         setPropertyInfo(propertyinfo);
-        // console.log("PROPERTY INFO", propertyinfo);
       }
     } catch (err) {
       console.log(err);
@@ -70,7 +83,7 @@ export default function PropertyViewAmenities({ propertyinfo }) {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <Amenities amenities={propertyInfo.property_amenities} />
+        <Amenities amenities={propertyInfo?.property_amenities || []} />
       )}
     </div>
   );

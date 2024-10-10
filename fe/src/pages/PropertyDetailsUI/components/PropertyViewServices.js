@@ -1,29 +1,37 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import { Divider, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import { useParams } from "react-router-dom";
-import Container from "@mui/material/Container";
+import { Divider } from "@mui/material";
 import ArrowRight from "@mui/icons-material/Send";
+import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
+import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
+import CarRentalIcon from "@mui/icons-material/CarRental";
+import LocalHotelIcon from "@mui/icons-material/LocalHotel";
+import PetsIcon from "@mui/icons-material/Pets";
+import LocalLaundryServiceIcon from "@mui/icons-material/LocalLaundryService";
+import RoomServiceIcon from "@mui/icons-material/RoomService";
+import AlarmIcon from "@mui/icons-material/Alarm";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import "../css/PropertyBenefits.css";
 
 const servicesIcons = {
-  "House Keeping": "housekeeping.png",
-  Breakfast: "breakfast.png",
-  "Shuttle Service": "shuttle.png",
-  "Car Rental": "carrental.png",
-  "24hours Front Desk": "frontdesk.png",
-  Concierge: "concierge.png",
-  Laundry: "laundry.png",
-  "Pet Friendly": "petfriendly.png",
-  "Room Service": "roomservice.png",
-  "Cleaning Service": "cleaningservice.png",
-  "Wake-up Call Service": "wakeupcall.png",
+  Housekeeping: <CleaningServicesIcon sx={{ color: "#16B4DD" }} />, // Updated icon
+  Breakfast: <FreeBreakfastIcon sx={{ color: "#16B4DD" }} />,
+  "Shuttle Service": <DirectionsBusIcon sx={{ color: "#16B4DD" }} />,
+  "Car Rental": <CarRentalIcon sx={{ color: "#16B4DD" }} />,
+  "24hours Front Desk": <LocalHotelIcon sx={{ color: "#16B4DD" }} />,
+  Concierge: <LocalHotelIcon sx={{ color: "#16B4DD" }} />,
+  Laundry: <LocalLaundryServiceIcon sx={{ color: "#16B4DD" }} />,
+  "Pet Friendly": <PetsIcon sx={{ color: "#16B4DD" }} />,
+  "Room Service": <RoomServiceIcon sx={{ color: "#16B4DD" }} />,
+  "Cleaning Service": <CleaningServicesIcon sx={{ color: "#16B4DD" }} />,
+  "Wake-up Call Service": <AlarmIcon sx={{ color: "#16B4DD" }} />,
 };
 
 const Services = ({ services = [] }) => {
+  const uniqueServices = Array.from(
+    new Set(services.map((s) => s.service_name))
+  ); // Ensure each service is displayed only once
+
   return (
     <Paper className="info-cntr" sx={{ borderRadius: "12px" }}>
       <div className="info-title-cntr">
@@ -33,15 +41,13 @@ const Services = ({ services = [] }) => {
       <Divider sx={{ width: "100%", color: "#ccc" }} />
 
       <div className="amenity-cntr">
-        {services.length > 0 ? (
-          services.map((service) => (
-            <div className="each-amenity" key={service.service_name}>
-              <img
-                src={servicesIcons[service.service_name]}
-                alt={service.service_name}
-                style={{ width: "24px", height: "24px", marginRight: "8px" }}
-              />
-              <div className="rooms-name">{service.service_name}</div>
+        {uniqueServices.length > 0 ? (
+          uniqueServices.map((service) => (
+            <div className="each-amenity" key={service}>
+              {servicesIcons[service]}
+              <div className="rooms-name" style={{ marginLeft: "8px" }}>
+                {service}
+              </div>
             </div>
           ))
         ) : (
@@ -53,14 +59,13 @@ const Services = ({ services = [] }) => {
 };
 
 export default function PropertyViewServices({ propertyinfo }) {
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [propertyInfo, setPropertyInfo] = useState();
 
   useEffect(() => {
     try {
       if (propertyinfo) {
         setPropertyInfo(propertyinfo);
-        // console.log("PROPERTY INFO", propertyinfo);
       }
     } catch (err) {
       console.log(err);

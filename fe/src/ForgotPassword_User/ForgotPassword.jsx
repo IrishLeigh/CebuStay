@@ -2,22 +2,45 @@ import React, { useState } from 'react';
 import './ForgotPassword.css';
 import axios from "axios";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import { CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const [showVerification, setShowVerification] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loadingresend, setLoadingresend] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [instructionText, setInstructionText] = useState('Please Select Option To Reset Password');
+  const [instructionText, setInstructionText] = useState('Password Reset');
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [email, setEmail] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
   const [token, setToken] = useState("");
+  const [message, setMessage] = useState("");
   const [profile, setProfile] = useState(null);
   const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState(false);
+
+  const loaderStyle = {
+    border: "4px solid rgb(178, 190, 181)",
+    borderTopColor: "transparent",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    animation: loading ? "spin 1s linear infinite" : "none",
+  };
+  const loaderStyle2 = {
+    // border: "4px solid",
+    // borderTopColor: "transparent",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    animation: loading ? "spin 1s linear infinite" : "none",
+  };
 
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisibility(!confirmPasswordVisibility);
@@ -45,93 +68,186 @@ const ForgotPassword = () => {
   const handleVerify = () => {
     setShowVerification(false);
     setShowResetPassword(true);
-    setInstructionText('Please Fill in the Form');
+    setInstructionText('Reset Password');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email before sending request:", email);
+    setLoading(true);
+    if (!email) {
+      setMessage("Please enter an email");
+      setLoading(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+      return;
+    }
     try {
-      const profileResponse = await axios.post("http://127.0.0.1:8000/api/login", {
-        email: email
-      });
-      setProfile(profileResponse.data);
-      console.log("Profile Response Data:", profileResponse.data);
-      const res = await axios.post("http://localhost/API/pass.php", {
+
+      const res = await axios.post("http://127.0.0.1:8000/api/forgotPass", {
         email
       });
-      console.log(res.data);
-      setVerificationSent(true);
-      if (profileResponse.data.email === email && profileResponse.data.is_verified === 1) {
+      console.log("forgotpass",res.data);
+      // setVerificationSent(true);
+      if (res.data) {
+        setLoading(false);
         handleSendEmail();
       }
     } catch (error) {
+      setLoading(false);
       console.error("Error validating password and email:", error);
       console.error("Error occurred while submitting data:", error);
+      setMessage("Error occurred while submitting data");
+      setTimeout(() => {
+        setMessage("");
+      }, 1000);
     }
   };
+
+  const handleResendToken = async (e) => {
+ 
+    e.preventDefault();
+    setLoadingresend(true);
+    setMessage("");
+    if (!email) {
+      setMessage("Please enter an email");
+      setLoading(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+      return;
+    }
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/resendemail", {
+        email
+      });
+      console.log("forgotpass",res.data);
+      // setVerificationSent(true);
+      if (res.data) {
+        setLoadingresend(false);
+        handleSendEmail();
+        setMessage(res.data.message)
+      }
+    } catch (error) {
+      setLoadingresend(false);
+      console.error("Error validating password and email:", error);
+      console.error("Error occurred while submitting data:", error);
+      setMessage("Error occurred while submitting data");
+      setTimeout(() => {
+        setMessage("");
+      }, 1000);
+    }
+  };
+
 
   const handleSubmitToken = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    if (!token) {
+      setMessage("Please enter a token");
+      setLoading(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+      return;
+    }
     try {
-      const profileResponse = await axios.get("http://localhost/API/loadProfile.php", {
-        params: {
-          userid: 18 
-        }
-      });
-      const res = await axios.post("http://localhost/API/verifytoken.php", {
+
+      const res = await axios.post("http://127.0.0.1:8000/api/passverifytoken", {
         email,
         token
       });
-      console.log(res.data);
-      console.log("Profile Response Data:", profileResponse.data);
+      console.log();
+      console.log("Profile Response Data:", res.data);
       console.log("Token:", token);
-      if (profileResponse.data.verify_token === token) {
+      if (res.data.status === "success") {
+        setLoading(false);
         handleVerify();
       }
+      if (res.data.status === "expired"){
+        setLoading(false);
+        setMessage("Token is expired.");
+        setTimeout(() => {
+          setMessage("");
+        }, 2500);
+      }
+      if (res.data.status === "error") {
+        setLoading(false);
+      setMessage("Invalid Token");
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+      }
     } catch (error) {
+      // setLoading(false);
+      // setMessage("Invalid Token");
+      // setTimeout(() => {
+      //   setMessage("");
+      // }, 2500);
       console.error(error);
     }
   };
 
-  const handleSubmitPass = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put('http://localhost/api/updateProfile.php', {
-        userid: 18,
-        password
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
-  const handleResetPassword = (e) => {
+  const handleResetPassword = async (e) => {
+
+
     e.preventDefault();
+    setLoading(true);
+    var passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z]).*$/;
+    if (!passwordRegex.test(password)) {
+      setMessage(
+        "Password must contain at least one symbol or a capital letter"
+      ); // Set error message
+      setLoading(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+      return;
+    }
+
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setMessage("Passwords do not match");
+      setLoading(false);
+      setTimeout(() => {
+        setMessage("");
+        
+      }, 2500);
     } else {
-      handleSubmitPass(e); 
-      alert("Password reset successful");
+      try {
+        const response = await axios.put('http://127.0.0.1:8000/api/changepass', {
+          email,
+          password
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+      setMessage("Password reset successful");
+      setTimeout(() => {
+        setMessage("");
+        setLoading(false);
+        navigate("/login");
+      }, 2500);
     }
   };
 
   return (
     <form className="forgot-password">
       <div className="header">
-        <p className="sub-title">{instructionText}</p>
+        <p className="sub-title" style={{fontSize:'1.5rem', color: "#1780CB"}}>{instructionText}</p>
       </div>
-      {!showVerification && !showResetPassword && !selectedOption && (
+      {!showVerification && !showResetPassword && !selectedOption && !showEmailInput && (
         <div className="reset-option">
           <label className="reset-info" onClick={() => handleResetOptionClick('email')}>
             <span className="reset-title">Reset via Email</span>
             <span className="reset-sub-title">Reset code will be sent to your registered email address</span>
           </label>
-          <label className="reset-info" onClick={() => handleResetOptionClick('sms')}>
+          {/* <label className="reset-info" onClick={() => handleResetOptionClick('sms')}>
             <span className="reset-title">Reset via SMS</span>
             <span className="reset-sub-title">Reset code will be sent to your registered number</span>
-          </label>
+          </label> */}
         </div>
       )}
       {showEmailInput && (
@@ -141,16 +257,30 @@ const ForgotPassword = () => {
             placeholder="Enter Email"
             className="input-box"
             onChange={(e) => setEmail(e.target.value)} 
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent the default behavior of submitting the form
+                document.querySelector(".button").click(); // Simulate a button click
+              }
+            }}
           />
           
           <button
             type="button"
             className="button"
             onClick={handleSubmit}
-            style={{width:'20rem', justifyContent:'center', backgroundColor:'black', color:'white'}}
+            style={{width:'20rem', justifyContent:'center',  background: "#1780CB", color:'white'}}
+            disabled={loading}
           >
-            Send Email
+            {loading ? (
+              <CircularProgress size={24} style={loaderStyle} />
+            ) : (
+              "Send Email"
+            )}
           </button>
+          <div style={{ color: "red", textAlign: "center" }}>
+            {message}
+          </div>
         </div>
       )}
       {showVerification && (
@@ -166,9 +296,34 @@ const ForgotPassword = () => {
             type="button"
             className="button"
             onClick={handleSubmitToken}
+            style={{width:'20rem', justifyContent:'center',  background: "#1780CB", color:'white'}}
+            disabled={loading}
           >
-            Verify
+           
+            {loading ? (
+              <CircularProgress size={24} style={loaderStyle} />
+            ) : (
+              "Verify"
+            )}
           </button>
+
+          <button
+            type="button"
+            className="button-resnd"
+            onClick={handleResendToken}
+            style={{width:'20rem', justifyContent:'center',  background: "white", color:'#1780CB'}}
+            disabled={loadingresend}
+          >
+            {loadingresend ? (
+              <CircularProgress size={24} style={loaderStyle2} />
+            ) : (
+              "Resend Code"
+            )}
+          </button>
+         
+          <div style={{ color: "red", textAlign: "center" }}>
+            {message}
+          </div>
         </div>
       )}
       {showResetPassword && (
@@ -185,11 +340,13 @@ const ForgotPassword = () => {
               <MdVisibilityOff
                 onClick={togglePasswordVisibility}
                 className="visibility-icon"
+                style={{ marginRight: "5%", top: "40%" }}
               />
             ) : (
               <MdVisibility
                 onClick={togglePasswordVisibility}
                 className="visibility-icon"
+                style={{ marginRight: "5%", top: "40%" }}
               />
             )}
           </div>
@@ -205,21 +362,33 @@ const ForgotPassword = () => {
               <MdVisibilityOff
                 onClick={toggleConfirmPasswordVisibility}
                 className="visibility-icon"
+                style={{ marginRight: "5%", top: "40%" }}
               />
             ) : (
               <MdVisibility
                 onClick={toggleConfirmPasswordVisibility}
                 className="visibility-icon"
+                style={{ marginRight: "5%", top: "40%" }}
               />
             )}
           </div>
           <button
             type="button"
             className="button"
+            style={{width:'20rem', justifyContent:'center',  background: "#1780CB", color:'white'}}
             onClick={handleResetPassword}
+            disabled={loading}
           >
-            Reset Password
+            {loading ? (
+              <CircularProgress size={24} style={loaderStyle} />
+            ) : (
+              "Reset Password"
+            )}
+            
           </button>
+          <div style={{ color: "red", textAlign: "center" }}>
+            {message}
+          </div>
         </div>
       )}
     </form>

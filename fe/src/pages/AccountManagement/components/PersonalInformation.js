@@ -15,6 +15,10 @@ import CalendarToday from "@mui/icons-material/CalendarToday";
 import Public from "@mui/icons-material/Public";
 import Phone from "@mui/icons-material/Phone";
 import axios from "axios";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const countries = [
   { value: "USA", label: "USA", code: "+1" },
@@ -27,7 +31,7 @@ const countries = [
 export default function PersonalInformation({ profile, onUpdateProfile }) {
   const [country, setCountry] = useState("");
   const [birthday, setBirthday] = useState("");
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState("");
   const [phoneNumberPrefix, setPhoneNumberPrefix] = useState("");
   const [isChanged, setIsChanged] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -38,8 +42,8 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -52,12 +56,19 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
       setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
       setCountry(profile.country);
       setPhone(profile.cellnumber);
+      const countryCode =
+        countries.find((c) => c.value === profile.country)?.code || "";
+      setPhoneNumberPrefix(countryCode);
     }
   }, [profile]);
 
   useEffect(() => {
     if (profile) {
-      setIsChanged((profile.birthday ? formatDate(profile.birthday) : "") !== birthday || country !== profile.country || phone !== profile.cellnumber);
+      setIsChanged(
+        (profile.birthday ? formatDate(profile.birthday) : "") !== birthday ||
+          country !== profile.country ||
+          phone !== profile.cellnumber
+      );
       setEditedProfile({
         ...profile,
         birthday: birthday,
@@ -67,39 +78,84 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     }
   }, [birthday, country, phone, profile]);
 
+  const handleCountryChange = (e) => {
+    const selectedCountry = e.target.value;
+    const countryCode =
+      countries.find((c) => c.value === selectedCountry)?.code || "";
+    setCountry(selectedCountry);
+    setPhoneNumberPrefix(countryCode);
+    setPhone(""); // Reset phone number when country changes
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+
+    // Allow only digits and limit input to 11 digits
+    if (/^\d*$/.test(value) && value.length <= 11) {
+      setPhone(value);
+    }
+  };
+
   const handleSaveInfo = async (e) => {
     e.preventDefault();
-  
-    const phoneRegex = /^09\d{9}$/;
+
+    let phoneRegex;
+    switch (country) {
+      case "USA":
+      case "Canada":
+        phoneRegex = /^[2-9]\d{2}[2-9]\d{2}\d{4}$/; // Matches 10-digit numbers without country code (e.g., 2125551234)
+        break;
+      case "Mexico":
+        phoneRegex = /^\d{10}$/; // Matches 10-digit numbers without the country code (e.g., 1234567890)
+        break;
+      case "Philippines":
+        phoneRegex = /^9\d{9}$/; // Matches 11-digit numbers starting with 9 (e.g., 9123456789)
+        break;
+      default:
+        phoneRegex = /^\d+$/; // Default regex that only allows digits
+        break;
+    }
     if (!phoneRegex.test(phone)) {
-      setSnackbarMessage('Invalid phone number format. Please enter a valid 11-digit mobile number starting with 09 (e.g., 09123456789).');
-      setSnackbarSeverity('error');
+      setSnackbarMessage(
+        `Invalid phone number format for ${country}. Please enter a valid number.`
+      );
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-  
+
     const selectedDate = new Date(birthday);
     const today = new Date();
-    const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-  
+    const minAgeDate = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    );
+
     if (selectedDate > minAgeDate) {
-      setSnackbarMessage('You must be at least 18 years old to proceed.');
-      setSnackbarSeverity('error');
+      setSnackbarMessage("You must be at least 18 years old to proceed.");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-  
+
     try {
-      const formattedDate = selectedDate.toISOString().split('T')[0];
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${profile.userid}`, {
-        userid: profile.userid,
-        birthday: formattedDate || null,
-        country: country,
-        cellnumber: phone,
-      });
-      
+      const formattedDate = selectedDate.toISOString().split("T")[0];
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        {
+          userid: profile.userid,
+          birthday: formattedDate || null,
+          country: country,
+          cellnumber: phone,
+        }
+      );
+
       setSnackbarMessage("Personal information updated successfully!");
       setSnackbarSeverity("success");
+      setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
+      setCountry(profile.country);
+      setPhone(profile.cellnumber);
       setIsChanged(false);
       if (onUpdateProfile) {
         onUpdateProfile(editedProfile); // Pass updated profile back to parent component
@@ -107,12 +163,12 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     } catch (error) {
       setSnackbarMessage("Failed to update data. Please try again later.");
       setSnackbarSeverity("error");
-      console.error('Failed to update data. Please try again later.', error);
+      console.error("Failed to update data. Please try again later.", error);
     } finally {
       setSnackbarOpen(true);
     }
   };
-  
+
   const handleCancel = () => {
     if (profile) {
       setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
@@ -142,26 +198,40 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
       {/* Email, Birthday, Country, and Phone Number */}
       <div className="account-id-cntr">
-        <TextField
-          required
-          id="outlined-required"
-          label="Birthday"
-          type="date"
-          value={birthday}
-          onChange={(e) => setBirthday(e.target.value)}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <CalendarToday />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Birthday"
+            value={birthday ? dayjs(birthday) : null}
+            onChange={(date) =>
+              setBirthday(date ? date.format("YYYY-MM-DD") : "")
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                required
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                  marginTop: "1rem",
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment
+                      position="start"
+                      sx={{ marginRight: "1rem" }}
+                    >
+                      <CalendarToday />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+            maxDate={dayjs().subtract(18, "year")}
+          />
+        </LocalizationProvider>
 
         <TextField
           required
@@ -169,7 +239,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           select
           label="Country"
           value={country}
-          onChange={(e) => setCountry(e.target.value)}
+          onChange={handleCountryChange}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
@@ -195,7 +265,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           id="outlined-required-phone"
           label="Phone Number"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={handlePhoneChange}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
@@ -204,22 +274,35 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <Phone />
+                <Phone sx={{ marginRight: "0.5rem" }} />
+                {phoneNumberPrefix}{" "}
+                {/* Displays the country code (+63) next to the icon */}
               </InputAdornment>
             ),
           }}
+          inputProps={{
+            maxLength: 11, // Limit input to 11 digits (excluding the prefix)
+          }}
+          helperText={
+            phone && phone.length !== 11 ? "Phone number must be 11 digits" : ""
+          }
+          error={phone && phone.length > 0 && phone.length !== 11}
         />
 
         <div className="account-btn-cntr">
           <button
-            className={`save-btn ${isChanged ? 'save-btn-withChanges' : 'save-btn-withoutChanges'}`}
+            className={`save-btn ${
+              isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+            }`}
             onClick={handleSaveInfo}
             disabled={!isChanged}
           >
             Save
           </button>
           <button
-            className={`cancel-btn ${isChanged ? 'cancel-btn-withChanges' : 'cancel-btn-withoutChanges'}`}
+            className={`cancel-btn ${
+              isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+            }`}
             onClick={handleCancel}
             disabled={!isChanged}
           >

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField } from "@mui/material";
+import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider } from "@mui/material";
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
-
+import { Cancel, MoneyOff, CheckCircle } from '@mui/icons-material'; // Import Material-UI icons
 import RefundIcon from '@mui/icons-material/CurrencyExchange';
 import EditIcon from '@mui/icons-material/Edit';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
@@ -13,69 +13,143 @@ import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import TextFieldOutlineShort from '../../../../components/textfield_short_withOutline';
 import AnimatePage from '../AnimatedPage';
 import DatePicker from '../../../../components/time';
+import { AccessAlarm, MonetizationOn } from '@mui/icons-material'; // Import icons for the new section
+import { truncate } from '@turf/turf';
+
 
 export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoliciesData, onHouseRulesDataChange, parentHouseRules, handleNext, handleBack }) {
   const initialPoliciesData = {
-    standardCancellation: false,
-    nonRefundableRate: false,
-    modificationPlan: false,
-    offerDiscounts: false,
+    isCancellationPolicy: true,  // true for standard, false for non-refundable
+    isModification: true,  // true for modification, false for fixed plan
     cancellationDays: '',
+    cancellationCharge: '',
+    modificationDays: '',
+    modificationCharge: '',
   };
-
   const [policiesData, setPoliciesData] = useState(initialPoliciesData);
   const [error, setError] = useState("");
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
-
+  const topRef = useRef(null); // Create a ref for scrolling to the top
   useEffect(() => {
-    // Update local state when parentPoliciesData changes
-    setPoliciesData(parentPoliciesData || initialPoliciesData);
-  }, [parentPoliciesData]);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component smoothly
+    }
+  }, [parentHouseRules, parentPoliciesData]);
+  
+  useEffect(() => {
+    if (parentPoliciesData) {
+        // Update local state with values from parentPoliciesData
+        setPoliciesData({// spread the incoming data
+            isCancellationPolicy: true,  // true for standard
+            isModification: true,  // true for modification
+            cancellationDays: parentPoliciesData.cancellationDays || '',  // default empty
+            cancellationCharge: parentPoliciesData.cancellationCharge || '',  // default empty
+            modificationDays: parentPoliciesData.modificationDays || '',  // default empty
+            modificationCharge:parentPoliciesData.modificationCharge || ''  // default empty
+        });
+    } else {
+        // Set initial values if parentPoliciesData is not provided
+        setPoliciesData(initialPoliciesData);
+    }
+}, [parentPoliciesData]);
 
-  const handleDaysChange = (newValue) => {
-    setPoliciesData(prevData => ({
+
+  const handleDaysChange = (e, key) => {
+    let value = Number(e.target.value);
+
+    // Check if the value is NaN (not a number)
+    if (isNaN(value)) {
+      value = ''; // Clear the input if not a number
+    } else if (value < 1) {
+      value = 1; // Set to 1 if negative
+    } else if (value > 30) {
+      value = 30; // Set to 30 if exceeds 30
+    }
+
+    // Update the state with the adjusted value
+    setPoliciesData((prevData) => ({
       ...prevData,
-      cancellationDays: newValue,
+      [key]: value
     }));
   };
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
+  const handleChargeChange = (e, type) => {
+    const { value } = e.target;
+    
+    // Prevent negative values
+    if (value < 0) {
+      return;
+    }
+  
     setPoliciesData(prevData => ({
       ...prevData,
-      [name]: checked,
+      [type]: value,
+    }));
+  };
+  
+
+  const handleRadioCancellationChange = (event) => {
+    const { name, value } = event.target;
+
+    setPoliciesData(prevData => ({
+      ...prevData,
+      [name]: value === "standard" ? true : false,  // Toggle true/false based on value
+    }));
+  };
+
+  
+  const handleModificationChange = (event) => {
+    const { value } = event.target;
+
+    setPoliciesData(prevData => ({
+      ...prevData,
+      isModification: value === "modification" ? true : false,  // true if 'modification', false if 'fixed'
     }));
   };
 
   const validateAndProceed = () => {
-    if (!policiesData.standardCancellation && !policiesData.nonRefundableRate && !policiesData.modificationPlan && !policiesData.offerDiscounts) {
-      setError("Please select at least one reservation option.");
+   
+  if (policiesData.isCancellationPolicy && (!policiesData.cancellationDays || !policiesData.cancellationCharge)) {
+    if (!policiesData.cancellationDays) {
+      alert("Please specify the number of days for cancellation policy.");
       return;
     }
-
-    if (policiesData.standardCancellation && !policiesData.cancellationDays) {
-      setError("Please specify the number of days for standard cancellation.");
+    if (!policiesData.cancellationCharge) {
+      alert("Please specify the charge for cancellation.");
       return;
     }
+  }
 
+  // Validate modification policy
+  if (policiesData.isModification) {
+    if (!policiesData.modificationDays) {
+      alert("Please specify the number of days for modification policy.");
+      return;
+    }
+    if (!policiesData.modificationCharge) {
+      alert("Please specify the charge for modification.");
+      return;
+    }
+  }
+   
     if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed) {
-      setError("Please select at least one standard rule.");
+      alert("Please select at least one standard rule.");
       return;
     }
 
     if (showTimePicker && (!houseRulesData.quietHoursStart || !houseRulesData.quietHoursEnd)) {
-      setError("Please specify quiet hours.");
+      alert("Please specify quiet hours.");
       return;
     }
 
     if (!houseRulesData.customRules) {
-      setError("Please enter your custom rules.");
+      alert("Please enter your custom rules.");
       return;
     }
 
     if (!houseRulesData.checkInFrom || !houseRulesData.checkInUntil || !houseRulesData.checkOutFrom || !houseRulesData.checkOutUntil) {
-      setError("Please specify check-in and check-out times.");
+      alert("Please specify check-in and check-out times.");
       return;
     }
 
@@ -85,247 +159,368 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     handleNext(); // Navigate to the next component
   };
 
+  console.log("policiesData", policiesData);
+
   return (
-    <Container maxWidth="lg">
-      <AnimatePage>
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <Paper
-            sx={{
-              width: '80vw',
-              padding: '2rem',
-              borderRadius: '0.8rem',
-              boxShadow: 3,
-            }}
-          >
-            <Typography sx={{ fontWeight: 'bold', mb: 2 , fontFamily: 'Poppins',fontSize: "2rem"}} >
-              Booking Policies, Rules, and Payment Methods
-            </Typography>
-            <Typography sx={{ fontFamily: 'Poppins',fontSize: "1rem" ,mb: 2 }}>
-              Embark on a smooth booking adventure with our reservation policies and flexible payment options.
-            </Typography>
-            <form>
-              <Box>
-                <Typography sx={{ fontWeight: 'bold', fontFamily: 'Poppins',fontSize: "1.125rem", mb: 2,mt:4 }}>
-                  Reservation Options
-                </Typography>
-                <Box display="flex" alignItems="center">
-                  <Checkbox
-                    name="standardCancellation"
-                    checked={policiesData.standardCancellation || false}
-                    onChange={handleCheckboxChange}
-                    color="secondary"
-                  />
-                  <DateRangeIcon sx={{ marginRight: 1 }} />
-                  Standard Cancellation Plan
-                </Box>
-                {policiesData.standardCancellation && (
-                  <Box sx={{ border: '1px dotted black', p: 2, width: 'auto', m: 2, height: 'auto' }}>
-                    <Typography>
-                      Within how many days prior to their arrival can guests cancel their booking without any charges?
-                    </Typography>
-                    <br />
-                    <TextFieldOutlineShort
-                      width="150"
-                      label="Number of Days"
-                      value={policiesData.cancellationDays || ''}
-                      onDaysChange={handleDaysChange}
-                    />
-                    <br />
-                    <Typography sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
-                      <LightbulbTwoToneIcon sx={{ fontSize: '14px', color: 'orange' }} />
-                      The guest will receive a 25% refund if they cancel outside the free cancellation window.
-                    </Typography>
-                  </Box>
-                )}
-                <Box display="flex" alignItems="center">
-                  <Checkbox
-                    name="nonRefundableRate"
-                    checked={policiesData.nonRefundableRate || false}
-                    onChange={handleCheckboxChange}
-                    color="secondary"
-                  />
-                  <RefundIcon sx={{ marginRight: 1 }} />
-                  Non-refundable Rate Plan
-                </Box>
-                <Box display="flex" alignItems="center">
-                  <Checkbox
-                    name="modificationPlan"
-                    checked={policiesData.modificationPlan || false}
-                    onChange={handleCheckboxChange}
-                    color="secondary"
-                  />
-                  <EditIcon sx={{ marginRight: 1 }} />
-                  Modification Plan
-                </Box>
-                <Box display="flex" alignItems="center">
-                  <Checkbox
-                    name="offerDiscounts"
-                    checked={policiesData.offerDiscounts || false}
-                    onChange={handleCheckboxChange}
-                    color="secondary"
-                  />
-                  <LocalOfferIcon sx={{ marginRight: 1 }} />
-                  Offer Discounts
-                </Box>
-              </Box>
-            </form>
-            <Box
+    <div ref={topRef} > 
+      <Container maxWidth="lg">
+        <AnimatePage>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Paper
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                textAlign: "left",
+                width: '80vw',
+                padding: '2rem',
+                borderRadius: '0.8rem',
+                boxShadow: 3,
               }}
             >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <Typography sx={{ fontWeight: 'bold', fontFamily: 'Poppins',fontSize: "1.5rem", mb: 2,mt:4 }}>
-                    House Rules
+              <Typography sx={{ fontWeight: 'bold', mb: 2 , fontFamily: 'Poppins',fontSize: "2rem"}} >
+                Booking Policies, Rules, and Payment Methods
+              </Typography>
+              <Typography sx={{ fontFamily: 'Poppins',fontSize: "1rem" ,mb: 5 }}>
+                Embark on a smooth booking adventure with our reservation policies and flexible payment options.
+              </Typography>
+              <form>
+                {/* Cancellation Policy Selection */}
+                <Grid container spacing={2} sx={{ padding: '2rem' }}>
+                  <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
+                    What is your cancellation policy?
                   </Typography>
-                  <Typography sx={{ fontSize: "1.25rem", width: "100%" }} mb={2} >
-                    Set clear rules for your listing to ensure a smooth and enjoyable stay for your guests
+
+                  <Grid item xs={12} md={12}>
+                    <Divider sx={{ mt: 1, mb: 1, borderColor: '#6A6A6A', width: '100%' }} />
+                    <RadioGroup
+                      name="isCancellationPolicy"
+                      value={policiesData.isCancellationPolicy ? 'standard' : 'non-refundable'}
+                      onChange={handleRadioCancellationChange}
+                  >
+                      <FormControlLabel
+                        value="standard"
+                        control={<Radio color="secondary" />}
+                        label="Standard Cancellation Plan"
+                      />
+                      {policiesData.isCancellationPolicy && ( // Open by default
+                        <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                              Standard Cancellation Plan
+                            </Typography>
+                            <Box sx={{ display: 'flex' }}>
+                              <ListItemIcon>
+                                <AccessAlarm color="primary" />
+                              </ListItemIcon>
+                              <Typography>
+                                Within how many days prior to their arrival can guests cancel their booking without any charges?
+                              </Typography>
+                            </Box>
+                            <TextField
+                              label="Number of Days"
+                              value={policiesData.cancellationDays || ''}
+                              onChange={(e) => handleDaysChange(e, 'cancellationDays')}
+                              type="number"
+                              InputProps={{ 
+                                inputProps: { 
+                                  min: 1, 
+                                  max: 31 // Set your desired maximum value here
+                                } 
+                              }}
+                              variant="outlined"
+                            />
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <ListItemIcon>
+                                <MonetizationOn color="secondary" />
+                              </ListItemIcon>
+                              <Typography>
+                                How much is the charge for the guest if they cancel after the given days?
+                              </Typography>
+                            </Box>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              value={policiesData.cancellationCharge || ''}
+                              onChange={(e) => handleChargeChange(e, 'cancellationCharge')}
+                              displayEmpty
+                              variant="outlined"
+                            >
+                            
+                              <MenuItem value={10}>10%</MenuItem>
+                              <MenuItem value={20}>20%</MenuItem>
+                              <MenuItem value={30}>30%</MenuItem>
+                              <MenuItem value={40}>40%</MenuItem>
+                              <MenuItem value={50}>50%</MenuItem>
+                              <MenuItem value={60}>60%</MenuItem>
+                            </Select>
+                          </Box>
+                        </Box>
+                      )}
+                      <FormControlLabel
+                        value="non-refundable"
+                        control={<Radio color="secondary" />}
+                        label="Non-refundable Rate Plan"
+                      />
+                      {!policiesData.isCancellationPolicy && ( // Open if non-refundable is selected
+                        <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                              Non-refundable Rate Plan
+                            </Typography>
+                            <Typography>
+                              No charges will be refunded if the guest cancels at any point.
+                            </Typography>
+                          </Box>
+                        </Box>
+                      )}
+                    </RadioGroup>
+                  </Grid>
+                </Grid>
+
+                {/* Modification Policy Selection */}
+                <Grid container spacing={2} sx={{ padding: '2rem' }}>
+                  <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
+                    What is your modification policy?
                   </Typography>
-                </div>
+                  <Grid item xs={12} md={12}>
+                    <Divider sx={{ mt: 1, mb: 1, borderColor: '#6A6A6A', width: '100%' }} />
+                    <RadioGroup
+                      name="isModification"
+                      value={policiesData.isModification ? 'modification' : 'fixed'}
+                      onChange={handleModificationChange}
+                    >
+                      <FormControlLabel
+                        value="modification"
+                        control={<Radio color="secondary" />}
+                        label="Modification Allowed"
+                      />
+                      {policiesData.isModification && ( // Open by default
+                        <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                              Modification Policy
+                            </Typography>
+                            <Box sx={{ display: 'flex' }}>
+                              <ListItemIcon>
+                                <AccessAlarm color="primary" />
+                              </ListItemIcon>
+                              <Typography>
+                                Within how many days prior to their arrival can guests modify their booking without any charges?
+                              </Typography>
+                            </Box>
+                            <TextField
+                              label="Number of Days"
+                              value={policiesData.modificationDays || ''}
+                              onChange={(e) => handleDaysChange(e, 'modificationDays')}
+                              type="number"
+                              InputProps={{ inputProps: { min: 1 } }}
+                              variant="outlined"
+                            />
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <ListItemIcon>
+                                <MonetizationOn color="secondary" />
+                              </ListItemIcon>
+                              <Typography>
+                                How much is the charge for the guest if they modify after the given days?
+                              </Typography>
+                            </Box>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              value={policiesData.modificationCharge || ''}
+                              onChange={(e) => handleChargeChange(e, 'modificationCharge')}
+                              displayEmpty
+                              variant="outlined"
+                            >
+                            
+                              <MenuItem value={10}>10%</MenuItem>
+                              <MenuItem value={20}>20%</MenuItem>
+                              <MenuItem value={30}>30%</MenuItem>
+                              <MenuItem value={40}>40%</MenuItem>
+                              <MenuItem value={50}>50%</MenuItem>
+                              <MenuItem value={60}>60%</MenuItem>
+                            </Select>
+                          </Box>
+                        </Box>
+                      )}
+                      <FormControlLabel
+                        value="fixed"
+                        control={<Radio color="secondary" />}
+                        label="Fixed Modification Rate Plan"
+                      />
+                      {!policiesData.isModification && ( // Open if fixed is selected
+                        <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                              Fixed Modification Rate Plan
+                            </Typography>
+                            <Typography>
+                              No modifications will be allowed after the guest confirms the reservation.
+                            </Typography>
+                          </Box>
+                        </Box>
+                      )}
+                    </RadioGroup>
+                  </Grid>
+                </Grid>
+                {/* Validation Error Message */}
+                {error && <Typography color="red">{error}</Typography>}
+                {/* Action Buttons */}
+              </form>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <Typography sx={{ fontWeight: 'bold', fontFamily: 'Poppins',fontSize: "1.5rem", mb: 2,mt:4 }}>
+                      House Rules
+                    </Typography>
+                    <Typography sx={{ width: "100%" }} mb={2} >
+                      Set clear rules for your listing to ensure a smooth and enjoyable stay for your guests
+                    </Typography>
+                  </div>
+                </Box>
+                
+                  <form>
+                    <Box>
+                      <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: 18, m: 2 }}>Standard Rules</Typography>
+                      <Box display="flex" alignItems="center">
+                        <Checkbox
+                          checked={houseRulesData.smokingAllowed}
+                          color="secondary"
+                          onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, smokingAllowed: e.target.checked }))}
+                        />
+                        <SmokeFreeIcon sx={{ marginRight: 1 }} />
+                        Smoking Allowed
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <Checkbox
+                          checked={houseRulesData.petsAllowed}
+                          color="secondary"
+                          onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, petsAllowed: e.target.checked }))}
+                        />
+                        <PetsIcon sx={{ marginRight: 1 }} />
+                        Pets Allowed
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <Checkbox
+                          checked={houseRulesData.partiesAllowed}
+                          color="secondary"
+                          onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, partiesAllowed: e.target.checked }))}
+                        />
+                        <EventAvailableIcon sx={{ marginRight: 1 }} />
+                        Parties/Events Allowed
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <Checkbox
+                          checked={showTimePicker}
+                          onChange={(e) => setShowTimePicker(e.target.checked)}
+                          color="secondary"
+                        />
+                        <VolumeOffIcon sx={{ marginRight: 1 }} />
+                        Noise Restrictions
+                      </Box>
+                      {showTimePicker && (
+                        <Box sx={{ border: '1px dotted black', p: 2, width: 'auto', m: 2, height: 'auto' }}>
+                          <Typography>
+                            Set Quiet Hours
+                          </Typography>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} md={6}>
+                              <DatePicker
+                                label="Quiet Hours Start"
+                                value={houseRulesData.quietHoursStart}
+                                onChange={(newValue) => setHouseRulesData(prevData => ({ ...prevData, quietHoursStart: newValue }))}
+                              />
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                              <DatePicker
+                                label="Quiet Hours End"
+                                value={houseRulesData.quietHoursEnd}
+                                onChange={(newValue) => setHouseRulesData(prevData => ({ ...prevData, quietHoursEnd: newValue }))}
+                              />
+                            </Grid>
+                          </Grid>
+                        </Box>
+                      )}
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontWeight: 'bold', fontSize: 18, mt: 2, mb: 1 }}>
+                        Custom Rules
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        label="Enter your custom rules"
+                        variant="outlined"
+                        value={houseRulesData.customRules}
+                        onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, customRules: e.target.value }))}
+                        multiline
+                        rows={4}
+                      />
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontWeight: 'bold', fontSize: 18, mt: 2, mb: 1 }}>
+                        Check-In and Check-Out Times
+                      </Typography>
+                      <Typography sx={{ fontSize: 14, color: 'text.secondary', mb: 2 }}>
+                        Specify the times when guests can check-in and check-out. Make sure to communicate these times clearly to avoid any misunderstandings.
+                      </Typography>
+                      <Grid container spacing={2}>
+                      <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', m: 2 }}>
+                        <DatePicker
+                          title="Check-in From"
+                          onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
+                          value={houseRulesData.checkInFrom}
+                        />
+                        <DatePicker
+                          title="Check-in Until"
+                          onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
+                          value={houseRulesData.checkInUntil}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'left',
+                          alignItems: 'left',
+                          m: 2
+                        }}
+                      >
+                        <DatePicker
+                          title="Check-out From"
+                          onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutFrom: value }))}
+                          value={houseRulesData.checkOutFrom}
+                        />
+                        <DatePicker
+                          title="Check-out Until"
+                          onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
+                          value={houseRulesData.checkOutUntil}
+                        />
+                      </Box>
+                      </Grid>
+                    </Box>
+                  </form>
+
+                {error && (
+                  <Typography color="error" sx={{ mt: 2, textAlign: 'center', fontWeight: 'bold' }}>
+                    {error}
+                  </Typography>
+                )}
               </Box>
               
-              <Paper elevation={3} sx={{ p: 2, display: "flex", flexDirection: "column", alignItems: "left" }}>
-                <form>
-                  <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: 18, m: 2 }}>Standard Rules</Typography>
-                    <Box display="flex" alignItems="center">
-                      <Checkbox
-                        checked={houseRulesData.smokingAllowed}
-                        color="secondary"
-                        onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, smokingAllowed: e.target.checked }))}
-                      />
-                      <SmokeFreeIcon sx={{ marginRight: 1 }} />
-                      Smoking Allowed
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                      <Checkbox
-                        checked={houseRulesData.petsAllowed}
-                        color="secondary"
-                        onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, petsAllowed: e.target.checked }))}
-                      />
-                      <PetsIcon sx={{ marginRight: 1 }} />
-                      Pets Allowed
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                      <Checkbox
-                        checked={houseRulesData.partiesAllowed}
-                        color="secondary"
-                        onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, partiesAllowed: e.target.checked }))}
-                      />
-                      <EventAvailableIcon sx={{ marginRight: 1 }} />
-                      Parties/Events Allowed
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                      <Checkbox
-                        checked={showTimePicker}
-                        onChange={(e) => setShowTimePicker(e.target.checked)}
-                        color="secondary"
-                      />
-                      <VolumeOffIcon sx={{ marginRight: 1 }} />
-                      Noise Restrictions
-                    </Box>
-                    {showTimePicker && (
-                      <Box sx={{ border: '1px dotted black', p: 2, width: 'auto', m: 2, height: 'auto' }}>
-                        <Typography>
-                          Set Quiet Hours
-                        </Typography>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} md={6}>
-                            <DatePicker
-                              label="Quiet Hours Start"
-                              value={houseRulesData.quietHoursStart}
-                              onChange={(newValue) => setHouseRulesData(prevData => ({ ...prevData, quietHoursStart: newValue }))}
-                            />
-                          </Grid>
-                          <Grid item xs={12} md={6}>
-                            <DatePicker
-                              label="Quiet Hours End"
-                              value={houseRulesData.quietHoursEnd}
-                              onChange={(newValue) => setHouseRulesData(prevData => ({ ...prevData, quietHoursEnd: newValue }))}
-                            />
-                          </Grid>
-                        </Grid>
-                      </Box>
-                    )}
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontWeight: 'bold', fontSize: 18, mt: 2, mb: 1 }}>
-                      Custom Rules
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Enter your custom rules"
-                      variant="outlined"
-                      value={houseRulesData.customRules}
-                      onChange={(e) => setHouseRulesData(prevData => ({ ...prevData, customRules: e.target.value }))}
-                      multiline
-                      rows={4}
-                    />
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontWeight: 'bold', fontSize: 18, mt: 2, mb: 1 }}>
-                      Check-In and Check-Out Times
-                    </Typography>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', mb: 2 }}>
-                      Specify the times when guests can check-in and check-out. Make sure to communicate these times clearly to avoid any misunderstandings.
-                    </Typography>
-                    <Grid container spacing={2}>
-                    <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', m: 2 }}>
-                      <DatePicker
-                        title="Check-in From"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
-                        value={houseRulesData.checkInFrom}
-                      />
-                      <DatePicker
-                        title="Check-in Until"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
-                        value={houseRulesData.checkInUntil}
-                      />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'left',
-                        alignItems: 'left',
-                        m: 2
-                      }}
-                    >
-                      <DatePicker
-                        title="Check-out From"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutFrom: value }))}
-                        value={houseRulesData.checkOutFrom}
-                      />
-                      <DatePicker
-                        title="Check-out Until"
-                        onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkOutUntil: value }))}
-                        value={houseRulesData.checkOutUntil}
-                      />
-                    </Box>
-                    </Grid>
-                  </Box>
-                </form>
-              </Paper>
-              {error && (
-                <Typography color="error" sx={{ mt: 2, textAlign: 'center', fontWeight: 'bold' }}>
-                  {error}
-                </Typography>
-              )}
-            </Box>
-            
-          </Paper>
-        </Box>
-      </AnimatePage>
-      <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
-          Back
-        </Button>
-        <Button onClick={validateAndProceed} className="stepperNext">
-          Next
-        </Button>
-      </div>
-    </Container>
+            </Paper>
+          </Box>
+        </AnimatePage>
+        <div className="stepperFooter">
+          <Button onClick={handleBack} className="stepperPrevious">
+            Back
+          </Button>
+          <Button onClick={validateAndProceed} className="stepperNext">
+            Next
+          </Button>
+        </div>
+      </Container>
+    </div>
   );
 }

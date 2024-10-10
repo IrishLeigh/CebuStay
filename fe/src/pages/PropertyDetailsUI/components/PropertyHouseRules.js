@@ -5,12 +5,11 @@ import Grid from "@mui/material/Grid";
 import ArrowRight from "@mui/icons-material/Send";
 import {
   AccessTime,
-  Hotel,
-  Pets,
-  SmokeFree,
   EventNote,
   NaturePeople,
   NoMeetingRoom,
+  Pets,
+  SmokeFree,
 } from "@mui/icons-material";
 
 // Constants for house rule properties
@@ -19,7 +18,6 @@ const check_in_until = "check_in_until";
 const check_out_from = "check_out_from";
 const check_out_until = "check_out_until";
 const custom_rules = "custom_rules";
-const houserulesid = "houserulesid";
 const noise_restrictions = "noise_restrictions";
 const parties_events_allowed = "parties_events_allowed";
 const pets_allowed = "pets_allowed";
@@ -34,7 +32,6 @@ const iconMap = {
   [check_out_from]: <AccessTime sx={{ color: "#16B4DD" }} />,
   [check_out_until]: <AccessTime sx={{ color: "#16B4DD" }} />,
   [custom_rules]: <EventNote sx={{ color: "#16B4DD" }} />,
-  [houserulesid]: <Hotel sx={{ color: "#16B4DD" }} />,
   [noise_restrictions]: <NaturePeople sx={{ color: "#16B4DD" }} />,
   [parties_events_allowed]: <NoMeetingRoom sx={{ color: "#16B4DD" }} />,
   [pets_allowed]: <Pets sx={{ color: "#16B4DD" }} />,
@@ -73,11 +70,6 @@ const HouseRules = ({ houserules = {} }) => {
         formatTime(houserules[quiet_hours_end]) ?? "N/A"
       }`,
       icon: iconMap[quiet_hours_start],
-    },
-    {
-      label: "House rules ID",
-      value: houserules[houserulesid] ?? "N/A",
-      icon: iconMap[houserulesid],
     },
     {
       label: "Custom rules",
@@ -129,51 +121,46 @@ const HouseRules = ({ houserules = {} }) => {
         {rulesArray.length > 0 ? (
           <Grid container spacing={3}>
             {chunkedRules.map((ruleChunk, index) => (
-              <Grid key={index} item>
-                <Grid
+              <Grid key={index} item xs={12} md={4}>
+                <Paper
                   sx={{
                     padding: "16px",
                     borderRadius: "8px",
-                    height: 200,
-                    width: 357,
+                    height: "200px",
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark" ? "#1A2027" : "#fff",
                     border: "1px solid #DDDDDD",
+                    boxShadow: "none", // Remove box shadow
                   }}
                 >
                   {ruleChunk.map((rule, subIndex) => (
-                    <div key={subIndex} style={{ marginBottom: "45px" }}>
-                      <div key={subIndex} style={{ marginBottom: "45px" }}>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
+                    <div key={subIndex} style={{ marginBottom: "24px" }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ display: "flex", alignItems: "center" }}
+                      >
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            marginRight: "8px",
+                            fontFamily: "poppins",
                           }}
                         >
-                          <span
-                            style={{
-                              fontWeight: "bold",
-                              marginRight: "8px",
-                              fontFamily: "poppins",
-                            }}
-                          >
-                            {rule.icon} {rule.label}
-                          </span>
-                          <span
-                            style={{
-                              fontWeight: "normal",
-                              marginLeft: "auto",
-                              fontFamily: "poppins",
-                            }}
-                          >
-                            {rule.value}
-                          </span>
-                        </Typography>
-                      </div>
+                          {rule.icon} {rule.label}
+                        </span>
+                        <span
+                          style={{
+                            fontWeight: "normal",
+                            marginLeft: "auto",
+                            fontFamily: "poppins",
+                          }}
+                        >
+                          {rule.value}
+                        </span>
+                      </Typography>
                     </div>
                   ))}
-                </Grid>
+                </Paper>
               </Grid>
             ))}
           </Grid>

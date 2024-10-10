@@ -5,14 +5,10 @@ import reportWebVitals from "./reportWebVitals";
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./components/UserProvider";
-import SinglePropertyUI from "./pages/PropertyDetailsUI/components/SinglePropertyUI";
-import Sample from "./pages/AccountManagement/Sample";
-import AccountManagement from "./pages/AccountManagement/Layout/AccountManagement";
-import Sidebar from "./pages/PropertyManagementUI/components/sidebar";
-import AccommodationRegistration from "./pages/AccommodationRegistrationUI/AccommodationRegistration";
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import GettingStartedRegistration from "./pages/AccommodationRegistrationUI/components/GettingStarttedRegistration";
-
+import { AuthProvider } from "./components/AuthProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import TopRated from "./InteractiveMap/components/TopRated";
+import Payout from "./pages/PropertyManagementUI/components/payout/components/Payout";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -21,7 +17,9 @@ root.render(
       <DataProvider>
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
-            <App />
+            <AuthProvider>
+              <App />
+            </AuthProvider>
           </GoogleOAuthProvider>
         </UserProvider>
       </DataProvider>

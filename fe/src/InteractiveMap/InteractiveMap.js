@@ -1,16 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MapContainer, GeoJSON, Marker, Popup, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  GeoJSON,
+  Marker,
+  Popup,
+  useMap,
+  Polyline,
+  Tooltip,
+} from "react-leaflet";
+import * as turf from "@turf/turf";
 import axios from "axios";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import cebuCity from "./data/Cebu.MuniCities.json";
 import "./InteractiveMap.css";
+import CultureCard from "./components/CultureCard"; // Import the CultureCard component
+import CulturalExperiences from "./data/CulturalExperiences.json";
+import SeeAndDo from "./data/SeeAndDo.json"; // Import see and do JSON data
 import SeeAndDoCard from "./components/SeeAndDoCard";
-import CultureCard from "./CultureCard";
-import Culture from "./data/culture.json";
-import SeeAndDo from "./data/SeeAndDo.json";
-import WhereToStay from "./data/wheretostay.json"; // Import WhereToStay JSON data
+import { Chip } from "@mui/material";
+import MyLocationIcon from "@mui/icons-material/MyLocation"; // Icon for nearby locations
+import RefreshIcon from "@mui/icons-material/Refresh"; // Icon for reset
+import HelpIcon from "@mui/icons-material/Help"; // Icon for instructions
 import StayCard from "./components/StayCard";
+import ClickOutsideComponent from "./components/ClickOutsideComponent";
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
@@ -18,17 +31,49 @@ export default function InteractiveMap() {
   const [selectedStay, setSelectedStay] = useState(null);
   const [selectedCulture, setSelectedCulture] = useState(null);
   const [selectedSeeAndDo, setSelectedSeeAndDo] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
   const mapContainerRef = useRef(null);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
   const [zoom, setZoom] = useState(9);
+  const [foundLocations, setFoundLocations] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
+  const [nearbyLocations, setNearbyLocations] = useState([]);
+  const [filteredLocations, setFilteredLocations] = useState([]);
+  const [allProperties, setAllProperties] = useState([]);
+  const [option, setOption] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/getPropertyLocation"
+        );
+        const fetchedLocations = response.data.data.map((property) => ({
+          name: property.property_name,
+          coordinates: [
+            parseFloat(property.longitude),
+            parseFloat(property.latitude),
+          ],
+        }));
+        const allproperty = await axios.get(
+          "http://127.0.0.1:8000/api/getallpropertiescoord"
+        );
+        setAllProperties(allproperty.data);
+        setLocations(fetchedLocations);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
       const screenWidth = window.innerWidth;
 
       if (screenWidth < 768) {
-        setZoom(7); // Lower zoom for smaller screens
+        setZoom(6); // Lower zoom for smaller screens
       } else if (screenWidth < 1024) {
         setZoom(8); // Medium zoom for tablet-sized screens
       } else {
@@ -44,6 +89,102 @@ export default function InteractiveMap() {
     };
   }, []);
 
+  const SetScrollWheelZoom = () => {
+    const map = useMap();
+
+    useEffect(() => {
+      map.scrollWheelZoom.disable();
+
+      const handleWheel = (e) => {
+        e.preventDefault(); // Prevent zooming on scroll
+      };
+
+      // Attach wheel event to the map container
+      map.on("wheel", handleWheel);
+
+      return () => {
+        map.off("wheel", handleWheel);
+        map.scrollWheelZoom.enable(); // Re-enable if needed
+      };
+    }, [map]);
+
+    return null; // This component does not render anything
+  };
+
+  useEffect(() => {
+    // Filter locations based on selected category
+    let newFilteredLocations = locations;
+    if (selectedCategory === "See And Do") {
+      newFilteredLocations = SeeAndDo;
+      setOption("see");
+    } else if (selectedCategory === "Culture & Experiences") {
+      newFilteredLocations = CulturalExperiences;
+      setOption("culture");
+    } else if (selectedCategory === "Where to stay") {
+      newFilteredLocations = allProperties; // Use allProperties for "Where to stay?"
+      setOption("stay");
+    }
+    setFilteredLocations(newFilteredLocations);
+  }, [selectedCategory, locations, allProperties]);
+  const myLocation = () => {
+    if (!selectedCategory) {
+      alert(
+        "Please select a category first: See And Do, Culture & Experiences, or Where to stay?"
+      );
+      return;
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+          console.log("User's location:", latitude, longitude);
+          findNearbyLocations([latitude, longitude]);
+        },
+        (error) => {
+          console.error("Error getting user's location:", error);
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  };
+  const resetLocations = () => {
+    setUserLocation(null);
+    setNearbyLocations([]);
+  };
+  const findNearbyLocations = (userLocation) => {
+    if (!filteredLocations.length) return; // No filtered locations
+    const userPoint = turf.point(userLocation);
+    console.log("User's filteredLocations:", filteredLocations);
+
+    // Calculate distances and filter locations within 5 km
+    const nearby = filteredLocations
+      .map((loc) => {
+        // Check if coordinates are valid (not null)
+        const { coordinates } = loc;
+        if (
+          !coordinates ||
+          coordinates[0] === null ||
+          coordinates[1] === null
+        ) {
+          return null; // Skip this location
+        }
+
+        const locPoint = turf.point(coordinates);
+        console.log("locPoint:", locPoint);
+        const distance = turf.distance(userPoint, locPoint, {
+          units: "kilometers",
+        });
+        return { ...loc, distance };
+      })
+      .filter((loc) => loc !== null && loc.distance <= 20) // Only include valid locations within 20 km
+      .sort((a, b) => a.distance - b.distance) // Sort by distance
+      .slice(0, 5); // Take the nearest 5 locations
+
+    setSelectedCategory(null);
+    setNearbyLocations(nearby);
+  };
   const handleClickOutside = (event) => {
     if (
       mapContainerRef.current &&
@@ -52,7 +193,7 @@ export default function InteractiveMap() {
       setSelectedCity(null);
       setSelectedCulture(null);
       setSelectedSeeAndDo(null);
-      setSelectedStay(null); // Deselect stay
+      setSelectedProperty(null);
     }
   };
 
@@ -73,39 +214,88 @@ export default function InteractiveMap() {
     event.originalEvent.stopPropagation(); // Prevent map click event
     if (selectedCategory === "See And Do") {
       setSelectedSeeAndDo(spot);
+      setSelectedProperty(null);
       setSelectedCulture(null); // Deselect culture
-      setSelectedStay(null); // Deselect stay
+      resetLocations();
     } else if (selectedCategory === "Culture & Experiences") {
       setSelectedCulture(spot);
+      setSelectedProperty(null);
       setSelectedSeeAndDo(null); // Deselect see and do
-      setSelectedStay(null); // Deselect stay
+      resetLocations();
     } else if (selectedCategory === "Where to stay") {
-      setSelectedStay(spot);
+      setSelectedProperty(spot);
       setSelectedSeeAndDo(null); // Deselect see and do
       setSelectedCulture(null); // Deselect culture
+      resetLocations();
     }
   };
 
-  function ResetButton({ center, zoom }) {
+  const handleClickOutsideClose = () => {
+    if (selectedCategory === "Where to stay") {
+      setSelectedProperty(null);
+    } else if (selectedCategory === "See And Do") {
+      setSelectedSeeAndDo(null);
+    } else if (selectedCategory === "Culture & Experiences") {
+      setSelectedCulture(null);
+    }
+  };
+
+  function ResetButton({ center, zoom, selectedCategory }) {
     const map = useMap();
+    const [showInstructions, setShowInstructions] = useState(false);
+    const [openInstructions, setOpenInstructions] = useState(false);
 
     const handleReset = () => {
-      map.setView(center, zoom);
+      map.setZoom(initialZoom); // Set the desired zoom level
+      map.setView(initialCenter, initialZoom); // Recenters the view
     };
 
+    // const toggleInstructions = () => {
+    //   setShowInstructions((prev) => !prev);
+    // };
+
+    // const handleDialogOpen = () => {
+    //   setOpenInstructions(true);
+    // };
+
+    // const handleDialogClose = () => {
+    //   setOpenInstructions(false);
+    // };
+
     return (
-      <button
-        className="reset-btn"
-        onClick={handleReset}
+      <div
         style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
           position: "absolute",
-          top: "10px",
-          right: "10px",
-          zIndex: 1000,
+          top: "1%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 500,
+          backgroundColor: "transparent", // Remove white background
+          padding: "15px",
         }}
       >
-        Reset Map
-      </button>
+        <Chip
+          label="Reset Zoom"
+          onClick={handleReset}
+          icon={<RefreshIcon />}
+          style={{ margin: "5px" }}
+        />
+        <Chip
+          label="Nearby Locations"
+          onClick={myLocation}
+          icon={<MyLocationIcon />}
+          style={{ margin: "5px" }}
+        />
+        {/* <Chip
+            label="Instructions"
+            onClick={toggleInstructions}
+            icon={<HelpIcon />}
+            style={{ margin: '5px' }}
+          /> */}
+      </div>
     );
   }
 
@@ -126,6 +316,16 @@ export default function InteractiveMap() {
       popupAnchor: [0, -41],
     });
 
+  // Hover style for provinces
+  const hoverStyle = {
+    fillColor: "#FFD700", // Change to a distinct hover color
+    weight: 2,
+    opacity: 1,
+    color: "#FCB26E", // Keep border color the same or change as needed
+    dashArray: "1",
+    fillOpacity: 1,
+  };
+
   const getCityStyle = (city) => {
     const cityName = city.properties.NAME_2;
 
@@ -145,8 +345,21 @@ export default function InteractiveMap() {
   const onEachCity = (city, layer) => {
     const cityName = city.properties.NAME_2;
 
+    // Set the initial style for the layer
+    layer.setStyle(getCityStyle(city));
+
+    // Event handlers for mouse hover
     layer.on({
-      click: (event) => handleCityClick(cityName, event),
+      mouseover: () => {
+        layer.setStyle(hoverStyle); // Change style on hover
+      },
+      mouseout: () => {
+        layer.setStyle(getCityStyle(city)); // Reset style on mouse out
+      },
+      click: (event) => {
+        handleCityClick(cityName, event);
+        resetLocations();
+      },
     });
 
     layer.bindTooltip(cityName, {
@@ -155,9 +368,41 @@ export default function InteractiveMap() {
       className: "city-tooltip", // Optional: to apply custom styles
     });
   };
+  const renderPolylines = () => {
+    if (userLocation && nearbyLocations.length > 0) {
+      return nearbyLocations.map((location, index) => {
+        const distance = turf.distance(
+          turf.point(userLocation),
+          turf.point(location.coordinates),
+          { units: "kilometers" }
+        );
+        const lineCoords = [userLocation, location.coordinates];
+
+        return (
+          <Polyline
+            key={index}
+            positions={lineCoords}
+            pathOptions={{
+              color: "green",
+              weight: 4,
+              opacity: 0.7,
+              dashArray: "10, 5", // Dashed line
+              lineCap: "round",
+              lineJoin: "round",
+            }}
+          >
+            <Tooltip>Distance: {distance.toFixed(2)} km</Tooltip>
+          </Polyline>
+        );
+      });
+    }
+    return null;
+  };
+
+  console.log("nearbyLocations:", nearbyLocations);
 
   return (
-    <>
+    <div className="interactive-map ">
       <div
         style={{
           alignItems: "center",
@@ -172,6 +417,7 @@ export default function InteractiveMap() {
             marginBottom: "0.5rem",
             textAlign: "center",
             fontWeight: "bold",
+            color: "#2A2A2E",
           }}
         >
           Explore Cebu, With A Heart
@@ -190,164 +436,283 @@ export default function InteractiveMap() {
           {/* Filter buttons for categories */}
           <button
             className="map-filter-btn"
-            style={{ backgroundColor: "#16B4DD" }}
-            onClick={() => setSelectedCategory("Where to stay")}
+            style={{
+              backgroundColor: "#16B4DD",
+              display: "flex",
+              alignItems: "center",
+            }}
+            onClick={() => {
+              setSelectedCategory("Where to stay");
+              resetLocations();
+            }}
           >
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "50%",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "8px",
+              }}
+            >
+              <img
+                src="/WhereToStay.png"
+                alt="Where to stay"
+                style={{ width: "1.5rem", height: "1.5rem" }}
+              />
+            </div>
             Where to stay?
           </button>
           <button
             className="map-filter-btn"
-            style={{ backgroundColor: "#ADC939" }}
-            onClick={() => setSelectedCategory("Culture & Experiences")}
+            style={{
+              backgroundColor: "#ADC939",
+              display: "flex",
+              alignItems: "center",
+            }}
+            onClick={() => {
+              setSelectedCategory("Culture & Experiences");
+              resetLocations();
+            }}
           >
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "50%",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "8px",
+              }}
+            >
+              <img
+                src="/Culture.png"
+                alt="Culture & Experiences"
+                style={{ width: "1.5rem", height: "1.5rem" }}
+              />
+            </div>
             Culture & Experiences
           </button>
           <button
             className="map-filter-btn"
-            style={{ backgroundColor: "#F9CC41" }}
-            onClick={() => setSelectedCategory("See And Do")}
+            style={{
+              backgroundColor: "#F9CC41",
+              display: "flex",
+              alignItems: "center",
+            }}
+            onClick={() => {
+              setSelectedCategory("See And Do");
+              resetLocations();
+            }}
           >
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "50%",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "8px",
+              }}
+            >
+              <img
+                src="/See.png"
+                alt="See And Do"
+                style={{ width: "1.5rem", height: "1.5rem" }}
+              />
+            </div>
             See And Do
           </button>
-          <button
-            className="map-filter-btn"
-            style={{ backgroundColor: "#F77D1E" }}
-            onClick={() => setSelectedCategory("Hidden Jewels")}
-          >
-            Hidden Jewels
-          </button>
-          <button
-            className="map-filter-btn"
-            style={{ backgroundColor: "#EE414B" }}
-            onClick={() => setSelectedCategory("Events and Festivals")}
-          >
-            Events and Festivals
-          </button>
-          <button
-            className="map-filter-btn"
-            style={{ backgroundColor: "#A334CF" }}
-            onClick={() => setSelectedCategory("What's in Cebu")}
-          >
-            What's in Cebu?
-          </button>
+          {/* <button
+              className="map-filter-btn"
+              style={{ backgroundColor: "#F77D1E" }}
+              onClick={() => { setSelectedCategory("Hidden Jewels"); resetLocations(); }}
+            >
+              Hidden Jewels
+            </button>
+            <button
+              className="map-filter-btn"
+              style={{ backgroundColor: "#EE414B" }}
+              onClick={() => { setSelectedCategory("Events and Festivals"); resetLocations(); }}
+            >
+              Events and Festivals
+            </button>
+            <button
+              className="map-filter-btn"
+              style={{ backgroundColor: "#A334CF" }}
+              onClick={() => { setSelectedCategory("What's in Cebu"); resetLocations(); }}
+            >
+              What's in Cebu?
+            </button> */}
+          {/* <button
+              className="map-filter-btn"
+              style={{ backgroundColor: "#0C58BF" }}
+              onClick={myLocation}
+            >
+              Nearby Me
+            </button> */}
         </div>
 
         <div className="map-container" ref={mapContainerRef}>
-  <MapContainer
-    className="map"
-    center={initialCenter}
-    zoom={zoom}
-    scrollWheelZoom={false}
-    zoomControl={false}
-    touchZoom={false}
-    boxZoom={false}
-    keyboard={false}
-    minZoom={9}
-    maxZoom={11}
-    onClick={() => {
-      setSelectedCity(null); // Deselect city
-      setSelectedCulture(null); // Deselect culture
-      setSelectedSeeAndDo(null); // Deselect see and do
-      setSelectedStay(null); // Deselect stay
-    }}
-  >
-            <ResetButton center={initialCenter} zoom={initialZoom} />
-            <GeoJSON
-              data={cebuCity.features}
-              onEachFeature={onEachCity}
-              style={getCityStyle}
-            />
+          {locations.length > 0 ? (
+            <MapContainer
+              className="map"
+              center={initialCenter}
+              zoom={zoom}
+              // scrollWheelZoom={false}
+              // dragging={true}
+              // zoomControl={false}
+              doubleClickZoom={false}
+              touchZoom={false}
+              // boxZoom={false}
+              // keyboard={false}
+              minZoom={9}
+              maxZoom={11}
+              onClick={() => {
+                setSelectedCity(null); // Deselect city
+                setSelectedCulture(null); // Deselect culture
+                setSelectedSeeAndDo(null); // Deselect see and do
+              }}
+            >
+              <SetScrollWheelZoom />
+              <ResetButton center={initialCenter} zoom={initialZoom} />
 
-            {/* Culture & Experiences Markers */}
-            {selectedCategory === "Culture & Experiences" &&
-              Culture.filter(
-                (culture) =>
-                  !selectedCity || culture["city name"] === selectedCity
-              ).map((culture, index) => (
-                <Marker
-                  key={index}
-                  position={culture.coordinates}
-                  title={culture.name}
-                  icon={customIcon(culture.iconUrl)}
-                  eventHandlers={{
-                    click: (e) => handleMarkerClick(culture, e),
-                  }}
-                >
-                  <Popup>{culture.name}</Popup>
-                </Marker>
-              ))}
-
-            {/* See And Do Markers */}
-            {selectedCategory === "See And Do" &&
-              SeeAndDo.filter(
-                (spot) =>
-                  !selectedCity || spot["city name"] === selectedCity
-              ).map((spot, index) => (
-                <Marker
-                  key={index}
-                  position={spot.coordinates}
-                  title={spot.name}
-                  icon={customIcon(spot.iconUrl)}
-                  eventHandlers={{
-                    click: (e) => handleMarkerClick(spot, e),
-                  }}
-                >
-                  <Popup>{spot.name}</Popup>
-                </Marker>
-              ))}
-
-            {/* Where To Stay Markers */}
-          {/* Where To Stay Markers */}
-    {selectedCategory === "Where to stay" &&
-      WhereToStay.filter(
-        (stay) => !selectedCity || stay["city name"] === selectedCity
-      ).map((stay, index) => (
-        <Marker
-          key={index}
-          position={stay.coordinates}
-          title={stay.name}
-          icon={customIcon(stay.iconUrl)}
-          eventHandlers={{
-            click: (e) => handleMarkerClick(stay, e),
-          }}
-        >
-          <Popup>{stay.name}</Popup>
-        </Marker>
-      ))}
-          </MapContainer>
-
-          {/* See And Do Card */}
-          {selectedSeeAndDo && selectedCategory === "See And Do" && (
-            <div>
-              <SeeAndDoCard
-                spot={selectedSeeAndDo}
-                onClose={() => setSelectedSeeAndDo(null)}
+              <GeoJSON
+                data={cebuCity.features}
+                onEachFeature={onEachCity}
+                style={getCityStyle}
               />
-            </div>
+              {selectedCategory === "Where to stay" &&
+                filteredLocations.map((property, index) => {
+                  const lat = parseFloat(property.coordinates[0]); // Convert latitude to float
+                  const lng = parseFloat(property.coordinates[1]); // Convert longitude to float
+
+                  // Check for valid LatLng values before rendering
+                  if (!isNaN(lat) && !isNaN(lng)) {
+                    return (
+                      <Marker
+                        key={index}
+                        position={[lat, lng]} // Use parsed latitude and longitude
+                        title={property.property_name} // Use property name for the title
+                        icon={customIcon("/resort.png")} // Use custom icon function
+                        eventHandlers={{
+                          click: (e) => handleMarkerClick(property, e), // Handle marker click
+                        }}
+                      >
+                        <Popup>{property.name}</Popup>
+                      </Marker>
+                    );
+                  } else {
+                    console.warn(
+                      `Invalid coordinates for property ${property.property_name}: (${property.coordinates[0]}, ${property.coordinates[1]})`
+                    );
+                    return null; // Return null if coordinates are invalid
+                  }
+                })}
+
+              {selectedCategory === "Culture & Experiences" &&
+                CulturalExperiences.filter(
+                  (culture) =>
+                    !selectedCity || culture["city name"] === selectedCity
+                ).map((culture, index) => (
+                  <Marker
+                    key={index}
+                    position={culture.coordinates}
+                    title={culture.name}
+                    icon={customIcon(culture.iconUrl)}
+                    eventHandlers={{
+                      click: (e) => handleMarkerClick(culture, e),
+                    }}
+                  >
+                    <Popup>{culture.name}</Popup>
+                  </Marker>
+                ))}
+              {userLocation && (
+                <Marker
+                  position={userLocation}
+                  icon={customIcon("/userPin.png")}
+                >
+                  <Popup>You are here</Popup>
+                </Marker>
+              )}
+              {userLocation &&
+                nearbyLocations.map((location, index) => (
+                  <Marker
+                    key={index}
+                    position={location.coordinates}
+                    icon={
+                      location.category === "Property"
+                        ? L.icon({
+                            iconUrl: "/resort.png",
+                          })
+                        : customIcon(location.iconUrl)
+                    }
+                  >
+                    <Popup>{location.name}</Popup>
+                  </Marker>
+                ))}
+              {renderPolylines()}
+
+              {selectedCategory === "See And Do" &&
+                SeeAndDo.filter(
+                  (spot) => !selectedCity || spot["city name"] === selectedCity
+                ).map((spot, index) => (
+                  <Marker
+                    key={index}
+                    position={spot.coordinates}
+                    title={spot.name}
+                    icon={customIcon(spot.iconUrl)}
+                    eventHandlers={{
+                      click: (e) => handleMarkerClick(spot, e),
+                    }}
+                  >
+                    <Popup>{spot.name}</Popup>
+                  </Marker>
+                ))}
+            </MapContainer>
+          ) : (
+            <p>Loading map data...</p>
+          )}
+          {selectedProperty && selectedCategory === "Where to stay" && (
+            <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
+              <div>
+                <StayCard
+                  stay={selectedProperty}
+                  onClose={() => setSelectedProperty(null)}
+                />
+              </div>
+            </ClickOutsideComponent>
+          )}
+          {selectedSeeAndDo && selectedCategory === "See And Do" && (
+            <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
+              <div>
+                <SeeAndDoCard
+                  spot={selectedSeeAndDo}
+                  allProperties={allProperties}
+                  onClose={() => setSelectedSeeAndDo(null)}
+                />
+              </div>
+            </ClickOutsideComponent>
           )}
 
           {/* Culture Card */}
           {selectedCulture && selectedCategory === "Culture & Experiences" && (
-            <div className="culture-card-container">
-              <CultureCard
-                culture={selectedCulture}
-                onClose={() => setSelectedCulture(null)}
-              />
-            </div>
+            <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
+              <div className="culture-card-container">
+                <CultureCard
+                  culture={selectedCulture}
+                  allProperties={allProperties}
+                  onClose={() => setSelectedCulture(null)}
+                />
+              </div>
+            </ClickOutsideComponent>
           )}
-
-{selectedStay && selectedCategory === "Where to stay" && (
-    <div className="stay-card-container">
-      <StayCard
-        stay={selectedStay}
-        onClose={() => setSelectedStay(null)}
-      />
-    </div>
-  )}
-</div>
+        </div>
       </div>
-
-
-    </>
+    </div>
   );
 }

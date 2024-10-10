@@ -244,7 +244,7 @@ const MainContent = ({ selectedAmenities = [],
 
     const handleView = (e, propertyid) => {
       // alert('Propertyid: ' + propertyid);
-      navigate(`/accommodation/property/${propertyid}`);
+      navigate(`/property/${propertyid}`);
       console.log('Propertyid: ' + propertyid);
       
       //INSERT REDIRECT TO VIEW PROPERTY HERE

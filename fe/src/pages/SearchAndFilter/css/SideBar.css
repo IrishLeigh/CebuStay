@@ -1,12 +1,13 @@
 /* Sidebar.css */
 .bg-white {
     background-color: #ffffff;
-    width: 15rem;
+    width: 15.5rem;
     padding: 1rem;
     margin-top: 5px;
     border-radius: 8px;
     box-shadow: #000;
     border-color: #000;
+    height: fit-content;
 }
 
 .text-lg {
@@ -15,6 +16,7 @@
 
 .font-semibold {
     font-weight: 600;
+    font-size: medium;
 }
 
 .text-zinc-600 {
@@ -269,29 +271,43 @@ input[type='range']:hover {
 
 /* SideBar.css */
 
-/* Button styles */
+/* Button base style */
 .button {
-    background-color: #ffffff;
-    color: black;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    border: 1px solid #cbd5e0;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    font-size: .75rem;
-    /* width: fit-content; */
-    max-width: 100%;
-}
-.light-blue {
-    background-color: aqua;
+  border: 1px solid #ffffff; /* White border */
+  color: #000000; /* Black text color */
+  background-color: transparent; /* Transparent background */
+  padding: 0.25rem 0.5rem; /* Smaller padding for smaller size */
+  border-radius: 0.25rem; /* Rounded corners */
+  font-size: 0.75rem; /* Smaller font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  outline: none; /* Remove default outline */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+  margin: 0.25rem; /* Small margin for spacing */
+  white-space: nowrap; /* Prevent text from wrapping */
+  text-align: center; /* Center text inside button */
+  min-width: 3rem; /* Set a minimum width to keep button size consistent */
 }
 
+/* Button active state */
+.button.light-blue {
+  background-color: #0000ff; /* Blue background */
+  color: #ffffff; /* White text color */
+  border-color: #0000ff; /* Blue border */
+}
+
+/* Flex container style for 2-column layout */
+.button-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  gap: 0.5rem; /* Gap between buttons */
+  max-width: 100%; /* Ensure container doesn't exceed parent width */
+}
+
+
 .sidebar {
-    max-width: 20rem; /* Set maximum width for the sidebar */
+    max-width: 23rem; /* Set maximum width for the sidebar */
 }
-.button:hover {
-    background-color: aqua;
-}
+
 .flex-wrap {
     flex-wrap: wrap; /* Wrap items onto multiple lines */
 }
@@ -340,7 +356,7 @@ input[type='range']:hover {
   
   .wrap-check-51 input[type="checkbox"]:checked ~ .cbx {
     border-color: transparent;
-    background: #6871f1;
+    background: #15A1C6;
     animation: jelly-42 0.6s ease;
   }
   

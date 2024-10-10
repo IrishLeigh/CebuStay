@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/AccountBookingHistory.css';
 import { MdMenuOpen, MdSearch } from 'react-icons/md';
+import { MdMenuOpen, MdSearch } from 'react-icons/md';
 import HeaderAccountMgnt from '../../../components/Header/HeaderAccountMgnt';
 import Modal from 'react-modal';
 import { FaUserCircle } from 'react-icons/fa'; // Import a profile icon
@@ -13,6 +14,7 @@ export default function BookingHistory({ profile }) {
     const [rating, setRating] = useState(0);
 
     const [selectedButton, setSelectedButton] = useState('UPCOMING');
+    const [bookings, setBookings] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
     const [hoveredRating, setHoveredRating] = useState(0);
@@ -31,15 +33,16 @@ export default function BookingHistory({ profile }) {
     const getData = () => {
         switch (selectedButton) {
             case 'UPCOMING':
-                return upcomingData;
+                return upcomingBooking || [];
             case 'CANCELLED':
                 return []; // No data for cancelled by default
             case 'COMPLETED':
-                return completedData;
+                return completedBooking;
             default:
                 return [];
         }
     };
+    // console.log("getData():", getData());
 
     const getRibbonColor = () => {
         switch (selectedButton) {

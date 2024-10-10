@@ -8,7 +8,7 @@ import SingleBedIcon from '@mui/icons-material/SingleBed';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { Button } from '@mui/material';
+import { Button, Snackbar } from '@mui/material'; // Import Snackbar
 import { useData } from '../../../components/registration_unit/registration_location/contextAddressData';
 import '../../../components/Button/NextButton.css';
 import AnimatePage from './AnimatedPage';
@@ -17,6 +17,8 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
   const { bedroomQTY } = useData();
   const [bedrooms, setBedrooms] = useState([]);
   const [errors, setErrors] = useState({}); // Define errors state variable
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message
 
   // Initialize bedrooms based on parentBedroomDetails or bedroomQTY
   useEffect(() => {
@@ -27,8 +29,6 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
       initializeBedrooms(bedroomQTY);
     }
   }, [parentBedroomDetails, bedroomQTY]);
-
-
 
   // Initialize bedrooms array with specified number of rooms
   const initializeBedrooms = (numRooms) => {
@@ -80,8 +80,9 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
       // Proceed to the next step
       handleNext();
     } else {
-      // Alert for validation errors
-      alert('Please ensure each bedroom has at least one bed type selected.');
+      // Set Snackbar message for validation errors
+      setSnackbarMessage('Please ensure each bedroom has at least one bed type selected.');
+      setSnackbarOpen(true); // Open Snackbar
     }
   };
 
@@ -90,148 +91,139 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
     handleBack();
   };
 
+  // Close Snackbar
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <Container maxWidth="lg" >
+    <Container maxWidth="md">
       <AnimatePage>
-        <Grid container className="centered-container">
-          <Grid item xs={12} md={8} lg={6}>
-            <Box
-              
+        <Box mt={4}>
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            Bedroom Configuration
+          </Typography>
+          <Typography variant="subtitle1" color="textSecondary" mb={3}>
+            Please select the number of beds for each bedroom.
+          </Typography>
+          {bedrooms.map((bedroom, index) => (
+            <Paper
+              elevation={3}
+              sx={{
+                mb: 4,
+                p: "2rem",
+                borderRadius: '0.8rem',
+              }}
+              key={index}
             >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <Typography sx={{ fontSize: "2rem" }} fontWeight="bold">Bed Types</Typography>
-                  <Typography sx={{ fontSize: "1.5rem", width: "100%" }} mb={2}>
-                    Add here idk.
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography variant="h6" fontWeight="bold">
+                    Bedroom {index + 1}
                   </Typography>
-                </div>
-              </Box>
-              <Paper
-                elevation={3}
-                sx={{
-                  p: 2,
-                  width: '93%',
-                  maxWidth: '32rem',
-                  textAlign: 'left',
-                }}
-              >
-                {bedrooms.map((bedroom, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      marginBottom: '2rem',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                      }}
-                    >
-                      <Typography m={4} sx={{ fontSize: "1.5rem", fontWeight: 'bold', textAlign: 'left' }}>{`Bedroom ${index + 1}`}</Typography>
-                      {errors[index] && (
-                        <Typography sx={{ color: 'red', fontSize: '0.875rem' }}>
-                          {errors[index]}
-                        </Typography>
-                      )}
-                    </div>
+                  {errors[index] && (
+                    <Typography sx={{ color: 'red', fontSize: '0.875rem' }}>
+                      {errors[index]}
+                    </Typography>
+                  )}
+                </Grid>
 
-                    {/* Single Bed */}
-                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '2rem' }}>
-                      <SingleBedIcon />
-                      <Typography sx={{ fontSize: '1.125rem', mr: '4rem', ml: '2rem' }}>Single Bed</Typography>
-                      <IconButton onClick={() => incrementQuantity(index, 'singleBed')}>
-                        <AddIcon />
-                      </IconButton>
-                      <input
-                        type="text"
-                        value={bedroom.singleBed}
-                        style={{ width: '4rem', height: '2rem', border: 'none', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}
-                        readOnly
-                      />
-                      <IconButton onClick={() => decrementQuantity(index, 'singleBed')}>
-                        <RemoveIcon />
-                      </IconButton>
-                    </div>
+                {/* Single Bed */}
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <SingleBedIcon />
+                    <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
+                      Single Bed
+                    </Typography>
+                    <IconButton onClick={() => incrementQuantity(index, 'singleBed')}>
+                      <AddIcon />
+                    </IconButton>
+                    <Typography sx={{ width: '2rem', textAlign: 'center' }}>
+                      {bedroom.singleBed}
+                    </Typography>
+                    <IconButton onClick={() => decrementQuantity(index, 'singleBed')}>
+                      <RemoveIcon />
+                    </IconButton>
+                  </Box>
+                </Grid>
 
-                    {/* Double Bed */}
-                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '2rem' }}>
-                      <SingleBedIcon />
-                      <Typography sx={{ fontSize: '1.125rem', mr: '4rem', ml: '2rem' }}>Double Bed</Typography>
-                      <IconButton onClick={() => incrementQuantity(index, 'doubleBed')}>
-                        <AddIcon />
-                      </IconButton>
-                      <input
-                        type="text"
-                        value={bedroom.doubleBed}
-                        style={{ width: '4rem', height: '2rem', border: 'none', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}
-                        readOnly
-                      />
-                      <IconButton onClick={() => decrementQuantity(index, 'doubleBed')}>
-                        <RemoveIcon />
-                      </IconButton>
-                    </div>
+                {/* Double Bed */}
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <SingleBedIcon />
+                    <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
+                      Double Bed
+                    </Typography>
+                    <IconButton onClick={() => incrementQuantity(index, 'doubleBed')}>
+                      <AddIcon />
+                    </IconButton>
+                    <Typography sx={{ width: '2rem', textAlign: 'center' }}>
+                      {bedroom.doubleBed}
+                    </Typography>
+                    <IconButton onClick={() => decrementQuantity(index, 'doubleBed')}>
+                      <RemoveIcon />
+                    </IconButton>
+                  </Box>
+                </Grid>
 
-                    {/* Large Bed */}
-                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '2rem' }}>
-                      <SingleBedIcon />
-                      <Typography sx={{ fontSize: '1.125rem', mr: '4rem', ml: '2rem' }}>Large Bed</Typography>
-                      <IconButton onClick={() => incrementQuantity(index, 'largeBed')}>
-                        <AddIcon />
-                      </IconButton>
-                      <input
-                        type="text"
-                        value={bedroom.largeBed}
-                        style={{ width: '4rem', height: '2rem', border: 'none', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}
-                        readOnly
-                      />
-                      <IconButton onClick={() => decrementQuantity(index, 'largeBed')}>
-                        <RemoveIcon />
-                      </IconButton>
-                    </div>
+                {/* Large Bed */}
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <SingleBedIcon />
+                    <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
+                      Large Bed
+                    </Typography>
+                    <IconButton onClick={() => incrementQuantity(index, 'largeBed')}>
+                      <AddIcon />
+                    </IconButton>
+                    <Typography sx={{ width: '2rem', textAlign: 'center' }}>
+                      {bedroom.largeBed}
+                    </Typography>
+                    <IconButton onClick={() => decrementQuantity(index, 'largeBed')}>
+                      <RemoveIcon />
+                    </IconButton>
+                  </Box>
+                </Grid>
 
-                    {/* Super Large Bed */}
-                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '2rem' }}>
-                      <SingleBedIcon />
-                      <Typography sx={{ fontSize: '1.125rem', mr: '4rem', ml: '2rem' }}>Super Large Bed</Typography>
-                      <IconButton onClick={() => incrementQuantity(index, 'superLargeBed')}>
-                        <AddIcon />
-                      </IconButton>
-                      <input
-                        type="text"
-                        value={bedroom.superLargeBed}
-                        style={{ width: '4rem', height: '2rem', border: 'none', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}
-                        readOnly
-                      />
-                      <IconButton onClick={() => decrementQuantity(index, 'superLargeBed')}>
-                        <RemoveIcon />
-                      </IconButton>
-                    </div>
-                  </div>
-                ))}
-              </Paper>
-            
-              {/* <Box mt={4} display="flex" justifyContent="space-between">
-                <Button variant="contained" onClick={handleBackClick}>
-                  Back
-                </Button>
-                <Button variant="contained" onClick={handleNextStep}>
-                  Next
-                </Button>
-              </Box> */}
-            </Box>
-          </Grid>
-        </Grid>
+                {/* Super Large Bed */}
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <SingleBedIcon />
+                    <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
+                      Super Large Bed
+                    </Typography>
+                    <IconButton onClick={() => incrementQuantity(index, 'superLargeBed')}>
+                      <AddIcon />
+                    </IconButton>
+                    <Typography sx={{ width: '2rem', textAlign: 'center' }}>
+                      {bedroom.superLargeBed}
+                    </Typography>
+                    <IconButton onClick={() => decrementQuantity(index, 'superLargeBed')}>
+                      <RemoveIcon />
+                    </IconButton>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Paper>
+          ))}
+        </Box>
       </AnimatePage>
       <div className="stepperFooter">
-        <Button  onClick={handleBack} className="stepperPrevious">
+        <Button onClick={handleBack} className="stepperPrevious">
           Back
         </Button>
-        <Button  onClick={handleNextStep} className="stepperNext">
+        <Button onClick={handleNextStep} className="stepperNext">
           Next
         </Button>
       </div>
+
+      {/* Snackbar for error messages */}
+      <Snackbar
+        open={snackbarOpen}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+        autoHideDuration={6000}
+      />
     </Container>
   );
 }
