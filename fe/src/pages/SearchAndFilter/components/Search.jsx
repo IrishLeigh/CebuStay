@@ -30,11 +30,11 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
         onSearch({ startDate, endDate, guestCapacity: guestCapacity || null });
     };
 
-    useEffect(() => {
-        console.log('onSearch:', onSearch);
-        console.log('Suggestions:', suggestions);
-        console.log('Show Suggestions:', showSuggestions);
-    }, [query, suggestions, showSuggestions]);
+    // useEffect(() => {
+    //     console.log('onSearch:', onSearch);
+    //     console.log('Suggestions:', suggestions);
+    //     console.log('Show Suggestions:', showSuggestions);
+    // }, [query, suggestions, showSuggestions]);
 
     const fetchSuggestions = async (query) => {
         if (!query) {

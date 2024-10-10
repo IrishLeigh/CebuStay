@@ -2,6 +2,28 @@ import React, { useState } from 'react';
 import '../css/SideBar.css';
 
 const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
+  const pTypes = [
+   'Private Residential',
+    'Townhouse',
+    'Subdivision House',
+    'Condominium',
+    'Villa',
+    'Cabin',
+    'Cottage',
+    'Studio',
+    'Bungalow',
+    'Loft',
+  ];
+  const amens =[
+    'Toiletries',
+    'Air Conditioning',
+    'Wi-Fi',
+    'Mini Bar',
+    'Workspace',
+    'Television',
+    'Refrigerator',
+    'Microwave',
+  ]
   const [activeButtons, setActiveButtons] = useState([]);
   const [selectedBookingOptions, setSelectedBookingOptions] = useState([]);
   const [selectedPropertyTypes, setSelectedPropertyTypes] = useState([]);
@@ -77,228 +99,251 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
 
   const toggleAmenity = (amenity) => {
     setActiveButtons((prev) => {
-      const newActiveButtons = prev.includes(amenity)
-        ? prev.filter((a) => a !== amenity)
-        : [...prev, amenity];
-      onAmenityChange(newActiveButtons); // Notify parent component of changes
+      let newActiveButtons;
+  
+      if (amenity === 'Air Conditioning' || amenity === 'Airconditioning') {
+        const hasAirConditioning = prev.includes('Air Conditioning') || prev.includes('Airconditioning');
+  
+        if (hasAirConditioning) {
+          // Remove both variants if either exists
+          newActiveButtons = prev.filter((a) => a !== 'Air Conditioning' && a !== 'Airconditioning');
+        } else {
+          // Add 'Air Conditioning' (the canonical version)
+          newActiveButtons = [...prev, 'Air Conditioning'];
+        }
+      } else {
+        // For other amenities, retain the original behavior
+        newActiveButtons = prev.includes(amenity)
+          ? prev.filter((a) => a !== amenity)
+          : [...prev, amenity];
+      }
+  
+      // Notify parent component of changes
+      onAmenityChange(newActiveButtons);
+  
       return newActiveButtons;
     });
   };
-
-
   
+
   return (
     <div className="bg-white p-4 w-64" style={{ fontFamily: 'Poppins' }}>
-      {/* <h2 className="text-lg font-semibold" style={{ textAlign: 'left' }}>Places to Visit</h2>
-      <p className="text-zinc-600" style={{ textAlign: 'left', marginTop: '-12px' }}>50 Places Found</p> */}
-      <div className="mt-6"></div>
-
       <div className="mt-6">
-  <h3 className="font-semibold" style={{ textAlign: 'left' }}>Property Type</h3>
-  <hr className="my-2" />
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Home</span>
-    <input id="cbx-52-1" type="checkbox" checked={selectedPropertyTypes.includes('Home')} onChange={() => handlePropertyTypeChange('Home')} />
-    <label className="cbx" htmlFor="cbx-52-1"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Apartment</span>
-    <input id="cbx-52-2" type="checkbox" checked={selectedPropertyTypes.includes('Apartment')} onChange={() => handlePropertyTypeChange('Apartment')} />
-    <label className="cbx" htmlFor="cbx-52-2"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Condo</span>
-    <input id="cbx-52-3" type="checkbox" checked={selectedPropertyTypes.includes('Condo')} onChange={() => handlePropertyTypeChange('Condo')} />
-    <label className="cbx" htmlFor="cbx-52-3"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>House</span>
-    <input id="cbx-52-4" type="checkbox" checked={selectedPropertyTypes.includes('House')} onChange={() => handlePropertyTypeChange('House')} />
-    <label className="cbx" htmlFor="cbx-52-4"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Cabin</span>
-    <input id="cbx-52-5" type="checkbox" checked={selectedPropertyTypes.includes('Cabin')} onChange={() => handlePropertyTypeChange('Cabin')} />
-    <label className="cbx" htmlFor="cbx-52-5"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Loft</span>
-    <input id="cbx-52-6" type="checkbox" checked={selectedPropertyTypes.includes('Loft')} onChange={() => handlePropertyTypeChange('Loft')} />
-    <label className="cbx" htmlFor="cbx-52-6"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Cottage</span>
-    <input id="cbx-52-7" type="checkbox" checked={selectedPropertyTypes.includes('Cottage')} onChange={() => handlePropertyTypeChange('Cottage')} />
-    <label className="cbx" htmlFor="cbx-52-7"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Studio</span>
-    <input id="cbx-52-8" type="checkbox" checked={selectedPropertyTypes.includes('Studio')} onChange={() => handlePropertyTypeChange('Studio')} />
-    <label className="cbx" htmlFor="cbx-52-8"></label>
-  </div>
-  <div className="flex items-center justify-between mt-2 wrap-check-51">
-    <span>Villa</span>
-    <input id="cbx-52-9" type="checkbox" checked={selectedPropertyTypes.includes('Villa')} onChange={() => handlePropertyTypeChange('Villa')} />
-    <label className="cbx" htmlFor="cbx-52-9"></label>
-  </div>
-</div>
+        <h3 className="font-semibold" style={{ textAlign: 'left' }}>Property Type</h3>
+        <hr className="my-2" />
+        {pTypes.map((type, index) => (
+          <div key={index} className="flex items-center justify-between mt-2 wrap-check-51">
+            <span>{type}</span>
+            <input
+              id={`cbx-52-${index}`}
+              type="checkbox"
+              checked={selectedPropertyTypes.includes(type)}
+              onChange={() => handlePropertyTypeChange(type)}
+            />
+            <label className="cbx" htmlFor={`cbx-52-${index}`}></label>
+          </div>
+        ))}
+      </div>
+    
 
-      <div className="mt-6">
+      {/* <div className="mt-6">
         <h3 className="font-semibold" style={{ textAlign: 'left' }}>Amenities</h3>
         <hr className="my-2" style={{ marginTop: '-1rem' }} />
 
         <div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2, 1fr)', // 2 columns
-  gap: '0.5rem', // Gap between buttons
-  maxWidth: '100%' // Ensure container doesn't exceed parent width
-}}>
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Wi-Fi') ? '#15A1C6' : '#000000'}`, // Blue border if active, else black
-    color: activeButtons.includes('Wi-Fi') ? '#ffffff' : '#000000', // White text if active, else black
-    backgroundColor: activeButtons.includes('Wi-Fi') ? '#15A1C6' : 'transparent', // Blue background if active, else transparent
-    padding: '0.25rem 0.5rem', // Smaller padding
-    borderRadius: '0.25rem', // Rounded corners
-    fontSize: '0.75rem', // Smaller font size
-    cursor: 'pointer', // Pointer cursor
-    outline: 'none', // Remove default outline
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s', // Smooth transition
-    margin: '0.25rem', // Small margin
-    whiteSpace: 'nowrap', // Prevent text from wrapping
-    textAlign: 'center', // Center text
-    minWidth: '3rem' // Minimum width for consistency
-  }} onClick={() => toggleAmenity('Wi-Fi')}>Wi-Fi</button>
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)', // 2 columns
+          gap: '0.5rem', // Gap between buttons
+          maxWidth: '100%' // Ensure container doesn't exceed parent width
+        }}>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Wi-Fi') ? '#15A1C6' : '#000000'}`, // Blue border if active, else black
+            color: activeButtons.includes('Wi-Fi') ? '#ffffff' : '#000000', // White text if active, else black
+            backgroundColor: activeButtons.includes('Wi-Fi') ? '#15A1C6' : 'transparent', // Blue background if active, else transparent
+            padding: '0.25rem 0.5rem', // Smaller padding
+            borderRadius: '0.25rem', // Rounded corners
+            fontSize: '0.75rem', // Smaller font size
+            cursor: 'pointer', // Pointer cursor
+            outline: 'none', // Remove default outline
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s', // Smooth transition
+            margin: '0.25rem', // Small margin
+            whiteSpace: 'nowrap', // Prevent text from wrapping
+            textAlign: 'center', // Center text
+            minWidth: '3rem' // Minimum width for consistency
+          }} onClick={() => toggleAmenity('Wi-Fi')}>Wi-Fi</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Television') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Television') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Television') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Television')}>TV</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Television') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Television') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Television') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Television')}>TV</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Kitchen') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Kitchen') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Kitchen') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Kitchen')}>Kitchen</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Kitchen') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Kitchen') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Kitchen') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Kitchen')}>Kitchen</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Spa') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Spa') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Spa') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Spa')}>Spa</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Spa') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Spa') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Spa') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Spa')}>Spa</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Gym') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Gym') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Gym') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Gym')}>Gym</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Gym') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Gym') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Gym') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Gym')}>Gym</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Breakfast') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Breakfast') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Breakfast') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Breakfast')}>Breakfast</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Breakfast') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Breakfast') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Breakfast') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Breakfast')}>Breakfast</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Parking') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Parking') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Parking') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Parking')}>Parking</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Parking') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Parking') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Parking') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Parking')}>Parking</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Heating') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Heating') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Heating') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Heating')}>Heating</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Heating') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Heating') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Heating') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Heating')}>Heating</button>
 
-  <button style={{
-    border: `1px solid ${activeButtons.includes('Air Conditioning') ? '#15A1C6' : '#000000'}`,
-    color: activeButtons.includes('Air Conditioning') ? '#ffffff' : '#000000',
-    backgroundColor: activeButtons.includes('Air Conditioning') ? '#15A1C6' : 'transparent',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-    margin: '0.25rem',
-    whiteSpace: 'nowrap',
-    textAlign: 'center',
-    minWidth: '3rem'
-  }} onClick={() => toggleAmenity('Air Conditioning')}>Aircon</button>
+          <button style={{
+            border: `1px solid ${activeButtons.includes('Air Conditioning') ? '#15A1C6' : '#000000'}`,
+            color: activeButtons.includes('Air Conditioning') ? '#ffffff' : '#000000',
+            backgroundColor: activeButtons.includes('Air Conditioning') ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }} onClick={() => toggleAmenity('Air Conditioning')}>Aircon</button>
+        </div>
+
+      </div> */}
+
+<div className="mt-6">
+  <h3 className="font-semibold" style={{ textAlign: 'left' }}>Amenities</h3>
+  <hr className="my-2" style={{ marginTop: '-1rem' }} />
+
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)', // 2 columns
+    gap: '0.5rem', // Gap between buttons
+    maxWidth: '100%' // Ensure container doesn't exceed parent width
+  }}>
+    {amens.map((amenity) => {
+      const isActive = activeButtons.includes(amenity) || 
+        (amenity === 'Air Conditioning' && activeButtons.includes('Airconditioning')) || 
+        (amenity === 'Airconditioning' && activeButtons.includes('Air Conditioning'));
+
+      return (
+        <button
+          key={amenity}
+          style={{
+            border: `1px solid ${isActive ? '#15A1C6' : '#000000'}`,
+            color: isActive ? '#ffffff' : '#000000',
+            backgroundColor: isActive ? '#15A1C6' : 'transparent',
+            padding: '0.25rem 0.5rem',
+            borderRadius: '0.25rem',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            outline: 'none',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+            margin: '0.25rem',
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            minWidth: '3rem'
+          }}
+          onClick={() => toggleAmenity(amenity)}
+        >
+          {amenity === 'Air Conditioning' ? 'Aircon' : amenity}
+        </button>
+      );
+    })}
+  </div>
 </div>
-
-      </div>
 
 
 <div className="mt-6">

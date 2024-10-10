@@ -13,6 +13,18 @@ export default function FooterNew() {
     color: "#52525B",
     marginRight: "8px",
     cursor: "pointer",
+    "@media (max-width: 780px)": {
+      fontSize: "0.9rem",
+    },
+    "@media (max-width: 411px)": {
+      fontSize: "0.9rem",
+    },
+    "@media (max-width: 359px)": {
+      fontSize: "0.9rem",
+    },
+    "@media (max-width: 324px)": {
+      fontSize: "0.9rem",
+    },
   };
   const commonTypographyStyles = {
     fontFamily: "Poppins",
@@ -110,7 +122,7 @@ export default function FooterNew() {
             <div style={{ display: "flex", alignItems: "center" }}>
               <EmailIcon style={iconstyle} />
               <Typography sx={commonTypographyStyles}>
-                Email: support@bookingwebsite.com
+                Email : cebustay2024@gmail.com
               </Typography>
             </div>
 
@@ -118,7 +130,7 @@ export default function FooterNew() {
             <div style={{ display: "flex", alignItems: "center" }}>
               <PhoneAndroidIcon style={iconstyle} />
               <Typography sx={commonTypographyStyles}>
-                Phone: +123 456 7890
+                Phone : (0993) 301 3526
               </Typography>
             </div>
 
@@ -126,7 +138,7 @@ export default function FooterNew() {
             <div style={{ display: "flex", alignItems: "center" }}>
               <PlaceIcon style={iconstyle} />
               <Typography sx={commonTypographyStyles}>
-                Address here and here, Cebu City
+                Natalio B. Bacalso Ave, Cebu City
               </Typography>
             </div>
           </div>

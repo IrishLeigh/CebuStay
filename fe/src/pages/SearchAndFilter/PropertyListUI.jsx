@@ -54,7 +54,16 @@ const PropertyListUI = () => {
             if (!amenityMap.has(amenity.propertyid)) {
               amenityMap.set(amenity.propertyid, []);
             }
-            amenityMap.get(amenity.propertyid).push(amenity.amenity_name);
+            if(amenity.amenity_name === 'Airconditioning'){
+              amenityMap.get(amenity.propertyid).push('Air Conditioning');
+            } else if(amenity.amenity_name === 'Minibar'){
+              amenityMap.get(amenity.propertyid).push('Mini Bar');
+            } else if(amenity.amenity_name === 'Wi-fi'){
+              amenityMap.get(amenity.propertyid).push('Wi-Fi');
+            } else {
+              amenityMap.get(amenity.propertyid).push(amenity.amenity_name);
+            }
+            
           });
         }
 
