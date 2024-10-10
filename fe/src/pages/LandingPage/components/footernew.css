@@ -47,6 +47,10 @@
     width: 390px;
     height: 150px;
 }
+.footer-r3-right > div{
+    padding-bottom: 5px;
+ 
+}
 .footer-designer{
     width: 100%;
 }
@@ -62,6 +66,15 @@
 @media only screen and (max-width: 739px) {
     .footer-r3{
         flex-direction: column;
+    }
+    .footer-r3-right{
+        padding-bottom: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10%
     }
 
 }
