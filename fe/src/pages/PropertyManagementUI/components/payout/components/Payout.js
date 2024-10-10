@@ -21,7 +21,7 @@ const Payout = () => {
             propertyId: "001",
             propertyName: "Ocean View Apartment",
             amount: "$2,500",
-            bank: "Bank of America",
+            date: "2024-09-01",
             accountNumber: "****5678",
             status: "Completed",
         },
@@ -29,7 +29,7 @@ const Payout = () => {
             propertyId: "002",
             propertyName: "Downtown Studio",
             amount: "$1,800",
-            bank: "Chase Bank",
+            date: "2024-09-15",
             accountNumber: "****1234",
             status: "Pending",
         },
@@ -37,7 +37,7 @@ const Payout = () => {
             propertyId: "003",
             propertyName: "Suburban House",
             amount: "$3,200",
-            bank: "Wells Fargo",
+            date: "2024-09-20",
             accountNumber: "****9012",
             status: "Completed",
         },
@@ -45,7 +45,7 @@ const Payout = () => {
             propertyId: "004",
             propertyName: "Sunrise House",
             amount: "$3,200",
-            bank: "Wells Fargo",
+            date: "2024-10-01",
             accountNumber: "****9012",
             status: "Completed",
         }
@@ -134,35 +134,39 @@ const Payout = () => {
             )}
 
             {/* Payout History Title */}
-            <div className="payout-title">
-              Payout History
-            </div> {/* Title outside the container and aligned to the left */}
-            <div className="payout-history-container">
-                <table className="payout-history-table">
-                    <thead>
-                        <tr>
-                            <th>Property ID</th>
-                            <th>Property Name</th>
-                            <th>Amount</th>
-                            <th>Bank</th>
-                            <th>Account Number</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {payoutHistory.map((payout, index) => (
-                            <tr key={index}>
-                                <td className="property-id">{payout.propertyId}</td>
-                                <td>{payout.propertyName}</td>
-                                <td>{payout.amount}</td>
-                                <td>{payout.bank}</td>
-                                <td>{payout.accountNumber}</td>
-                                <td>{payout.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            {/* Payout History Title */}
+<div className="payout-title">
+  Payout History
+</div> {/* Title outside the container and aligned to the left */}
+<div className="payout-history-container">
+  <div style={{ overflowX: 'auto' }}> {/* Enable horizontal scrolling */}
+    <table className="payout-history-table">
+      <thead>
+        <tr>
+          <th>Property ID</th>
+          <th>Property Name</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Account Number</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {payoutHistory.map((payout, index) => (
+          <tr key={index}>
+            <td className="property-id">{payout.propertyId}</td>
+            <td>{payout.propertyName}</td>
+            <td>{payout.amount}</td>
+            <td>{payout.date}</td>
+            <td>{payout.accountNumber}</td>
+            <td>{payout.status}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
         </Box>
       </Box>
   );
