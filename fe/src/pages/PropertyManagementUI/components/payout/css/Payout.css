@@ -1,12 +1,8 @@
-
-
 .payout-title {
   font-size: 1.125rem; 
-  /* margin: 10px 0;  */
   color: #333; /* Title color */
   align-self: flex-start; /* Align to the left */
   text-align: left; /* Align title to the left */
-  /* margin-left: 2.7rem;  */
   font-weight: bolder;
   margin-bottom: 2rem;
 }
@@ -20,20 +16,21 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 2rem; /* Increased padding for more height */
   width: 100%; /* Full width */
-  height: 150px; /* Increased height */
+  height: auto; /* Set height to auto for flexibility */
   position: relative; /* For positioning the edit text */
   margin-bottom: 2rem;
 }
 
 .info-content {
   display: flex;
-  align-items: left;
+  align-items: center; /* Center vertically */
   flex-grow: 1;
   width: 100%; /* Ensure it uses full width */
   border: 1px solid grey; /* Add black border inside the container */
   border-radius: 4px; /* Optional: add border-radius for better appearance */
-  padding: 2px; /* Optional: add padding for spacing inside */
+  padding: 10px; /* Increased padding for better spacing */
   position: relative; /* Position relative for absolute positioning of edit text */
+  flex-wrap: wrap; /* Allow wrapping for small screens */
 }
 
 .paypal-icon {
@@ -44,6 +41,7 @@
 
 .user-info {
   flex-grow: 1;
+  min-width: 0; /* Prevent overflow from long text */
 }
 
 .user-info h2 {
@@ -54,6 +52,7 @@
 .contact-info {
   display: flex; /* Flexbox for email and phone */
   align-items: center; /* Center vertically */
+  flex-wrap: wrap; /* Allow items to wrap on small screens */
 }
 
 .email {
@@ -94,6 +93,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
+  overflow-x: auto; /* Allow horizontal scrolling if needed */
 }
 
 .payout-history-table {
@@ -101,7 +101,8 @@
   border-collapse: collapse; /* Remove space between cells */
 }
 
-.payout-history-table th, .payout-history-table td {
+.payout-history-table th,
+.payout-history-table td {
   border: none; /* Remove left and right borders */
   padding: 10px; /* Padding in cells */
   text-align: center; /* Center text in the cells */
@@ -109,7 +110,7 @@
 
 .payout-history-table th {
   background-color: #f2f2f2; /* Light grey background for header */
-  border-bottom: #333;
+  border-bottom: 1px solid #333; /* Bottom border for header */
 }
 
 .payout-history-table .property-id {
@@ -132,6 +133,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
   padding: 20px; /* Padding inside modal */
   margin-top: 20px; /* Space between modal and info container */
+  margin-bottom: 20px;
   max-width: 400px; /* Max width for the modal */
   width: 100%; /* Full width on smaller screens */
   position: relative; /* Relative positioning for internal elements */
@@ -198,7 +200,40 @@
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .payout-history-table th, .payout-history-table td {
-      font-size: 0.9rem; /* Smaller font size on mobile */
+  .payout-title {
+    font-size: 1rem; /* Smaller font size for title on mobile */
+  }
+
+  .info-container {
+    padding: 1rem; /* Reduce padding for mobile */
+  }
+
+  .info-content {
+    flex-direction: column; /* Stack elements vertically */
+    align-items: flex-start; /* Align to the left */
+  }
+
+  .contact-info {
+    flex-direction: column; /* Stack email and phone vertically */
+    align-items: flex-start; /* Align to the left */
+  }
+
+  .divider-small {
+    display: none; /* Hide divider on small screens */
+  }
+
+  .edit-text {
+    margin-top: 10px; /* Add margin above edit text */
+    position: relative; /* Reset position for smaller screens */
+  }
+
+  .payout-history-table th,
+  .payout-history-table td {
+    font-size: 0.9rem; /* Smaller font size on mobile */
+    padding: 5px; /* Reduce padding for smaller cells */
+  }
+
+  .payout-history-container {
+    overflow-x: auto; /* Enable horizontal scroll on smaller screens */
   }
 }
