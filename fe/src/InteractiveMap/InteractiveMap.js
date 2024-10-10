@@ -10,9 +10,9 @@ import {
 } from "react-leaflet";
 import * as turf from "@turf/turf";
 import axios from "axios";
-import cebuCity from "./data/Cebu.MuniCities.json";
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import cebuCity from "./data/Cebu.MuniCities.json";
 import "./InteractiveMap.css";
 import CultureCard from "./components/CultureCard"; // Import the CultureCard component
 import CulturalExperiences from "./data/CulturalExperiences.json";
@@ -28,7 +28,7 @@ import ClickOutsideComponent from "./components/ClickOutsideComponent";
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [locations, setLocations] = useState([]);
+  const [selectedStay, setSelectedStay] = useState(null);
   const [selectedCulture, setSelectedCulture] = useState(null);
   const [selectedSeeAndDo, setSelectedSeeAndDo] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -430,6 +430,7 @@ export default function InteractiveMap() {
           for you
         </div>
       </div>
+      
       <div className="map-background">
         <div className="map-filter-cntr">
           {/* Filter buttons for categories */}
@@ -697,6 +698,8 @@ export default function InteractiveMap() {
               </div>
             </ClickOutsideComponent>
           )}
+
+          {/* Culture Card */}
           {selectedCulture && selectedCategory === "Culture & Experiences" && (
             <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
               <div className="culture-card-container">
