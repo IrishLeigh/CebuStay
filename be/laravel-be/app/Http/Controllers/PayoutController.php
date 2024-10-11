@@ -75,7 +75,7 @@ class PayoutController
                 'message' => 'No payouts found for the specified user.',
                 'userPropertyIds' => $user_propertyids,
                 'userPayouts' => [],
-            ], 404);
+            ]);
         }
 
         return response()->json([
