@@ -13,6 +13,7 @@ import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import ToggleColorMode from "./components/ToggleColorMode";
 import getDashboardTheme from "./theme/getDashboardTheme";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import MenuIcon from "@mui/icons-material/Menu";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: "relative",
@@ -35,7 +36,8 @@ function TemplateFrame({
   mode,
   toggleColorMode,
   children,
-}) {
+  drawerToggle, // Add prop for controlling the drawer
+})  {
   const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleChange = (event) => {
@@ -68,18 +70,18 @@ function TemplateFrame({
               aria-label="Back to home"
               startIcon={<ArrowBackRoundedIcon />}
               onClick={handleBackToHome} // Use onClick to navigate
-              sx={{ display: { xs: "none", sm: "flex" } }}
+              sx={{ display: { xs: "flex", sm: "flex" } }}
             >
               Back to Home
             </Button>
-            <IconButton
+            {/* <IconButton
               size="small"
               aria-label="Back to home"
               onClick={handleBackToHome} // Use onClick to navigate
               sx={{ display: { xs: "auto", sm: "none" } }}
             >
               <ArrowBackRoundedIcon />
-            </IconButton>
+            </IconButton> */}
             {/* <Box sx={{ display: 'flex', gap: 1 }}>
               <FormControl variant="outlined" sx={{ minWidth: 180 }}>
                 <Select
@@ -100,6 +102,16 @@ function TemplateFrame({
                 toggleColorMode={toggleColorMode}
               />
             </Box> */}
+             <IconButton
+              size="small"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={drawerToggle} // Trigger the drawer toggle
+              sx={{  display: { xs: "block", md: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
           </Toolbar>
         </StyledAppBar>
         <Box sx={{ flex: "1 1", overflow: "auto" }}>{children}</Box>

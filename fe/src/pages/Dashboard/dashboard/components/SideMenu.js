@@ -1,11 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { styled } from '@mui/material/styles';
-import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
+import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -15,18 +14,15 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import AnalyticsRoundedIcon from '@mui/icons-material/AnalyticsRounded';
 import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
-import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import OptionsMenu from './OptionsMenu';
-import CardAlert from './CardAlert';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { Tooltip } from '@mui/material';
-import axios from 'axios';
+import { Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { drawerClasses } from '@mui/material/Drawer';
 
 const drawerWidth = 240;
 
-const Drawer = styled(MuiDrawer)({
+const Drawer = styled(MuiDrawer)(({ theme }) => ({
   width: drawerWidth,
   flexShrink: 0,
   boxSizing: 'border-box',
@@ -34,17 +30,19 @@ const Drawer = styled(MuiDrawer)({
   [`& .${drawerClasses.paper}`]: {
     width: drawerWidth,
     boxSizing: 'border-box',
+    backgroundColor: theme.palette.background.paper, // Ensure drawer uses background color from theme
   },
-});
+}));
 
-
-export default function SideMenu({onLogout }) {
+export default function SideMenu({ onLogout, open, onClose }) {
   const navigate = useNavigate(); // Initialize useNavigate
+  const theme = useTheme(); // Get the theme
   const token = localStorage.getItem("auth_token");
   const user = localStorage.getItem("userData");
-  const email =localStorage.getItem("email");
-  const firstname =localStorage.getItem("firstname") || "";
+  const email = localStorage.getItem("email");
+  const firstname = localStorage.getItem("firstname") || "";
   const lastname = localStorage.getItem("lastname") || "";
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
 
   const mainListItems = [
     { text: 'Overview', icon: <HomeRoundedIcon />, path: '/admin/overview' },
@@ -54,26 +52,19 @@ export default function SideMenu({onLogout }) {
     { text: 'Your Payouts', icon: <InfoRoundedIcon />, path: '/admin/payouts' },
   ];
 
-  const secondaryListItems = [
-    { text: 'Settings', icon: <SettingsRoundedIcon />, path: '/admin/settings' },
-    { text: 'About', icon: <InfoRoundedIcon />, path: '/admin/about' },
-    { text: 'Feedback', icon: <HelpRoundedIcon />, path: '/admin/feedback' },
-  ];
-
   const handleMenuItemClick = (path) => {
-    navigate(path); // Use navigate to change route
+    navigate(path);
+    if (isMobile) {
+      onClose(); // Close the drawer when a menu item is clicked on mobile
+    }
   };
 
-  console.log ("user", user);
   return (
     <Drawer
-      variant="permanent"
-      sx={{
-        display: { xs: 'none', md: 'block' },
-        [`& .${drawerClasses.paper}`]: {
-          backgroundColor: 'background.paper',
-        },
-      }}
+      variant={isMobile ? "temporary" : "permanent"} // Keep UI intact: temporary for mobile, permanent for desktop
+      open={isMobile ? open : true} // Always open on desktop
+      onClose={isMobile ? onClose : undefined} // Only use onClose for mobile
+      ModalProps={{ keepMounted: true }} // Better performance on mobile
     >
       <Box
         sx={{
@@ -84,8 +75,8 @@ export default function SideMenu({onLogout }) {
           alignItems: 'center',
         }}
       >
-       <img src="/logo2.png" alt="Logo" style={{  height: '3rem' }}/> 
-       <Typography
+        <img src="/logo2.png" alt="Logo" style={{ height: '3rem' }} />
+        <Typography
           noWrap
           component="a"
           href="/"
@@ -113,20 +104,7 @@ export default function SideMenu({onLogout }) {
             </ListItem>
           ))}
         </List>
-
-        {/* <List dense>
-          {secondaryListItems.map((item, index) => (
-            <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={() => handleMenuItemClick(item.path)}>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List> */}
       </Stack>
-
-      {/* <CardAlert /> */}
       <Stack
         direction="row"
         sx={{
@@ -137,60 +115,47 @@ export default function SideMenu({onLogout }) {
           borderColor: 'divider',
         }}
       >
-        {/* <Avatar
-          sizes="small"
-          alt="Riley Carter"
-          src="/static/images/avatar/7.jpg"
-          sx={{ width: 36, height: 36 }}
-        /> */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          width: '100%', 
-         
-        }}
-      >
-        {/* User information */}
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            overflow: 'hidden', // Ensures text overflow handling
-            textOverflow: 'ellipsis', 
-            whiteSpace: 'nowrap',
-            mr: 2 // Adds some margin to separate the user info and OptionsMenu
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
           }}
         >
-          <Typography 
-            variant="body2" 
-            sx={{ fontWeight: 500, lineHeight: '16px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              mr: 2,
+            }}
           >
-            {`${firstname} ${lastname}`}
-          </Typography>
-
-          {/* Tooltip to display full email on hover */}
-          <Tooltip title={user?.email}>
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                color: 'text.secondary', 
-                textOverflow: 'ellipsis', 
-                overflow: 'hidden', 
-                whiteSpace: 'nowrap',
-                maxWidth: '150px' // Adjust maxWidth based on available space
-              }}
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, lineHeight: '16px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
             >
-              {email}
+              {`${firstname} ${lastname}`}
             </Typography>
-          </Tooltip>
+            <Tooltip title={email}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  maxWidth: '150px',
+                }}
+              >
+                {email}
+              </Typography>
+            </Tooltip>
+          </Box>
+          <OptionsMenu onLogout={onLogout} />
         </Box>
-
-        {/* OptionsMenu component */}
-        <OptionsMenu onLogout={onLogout} />
-      </Box>
-
       </Stack>
     </Drawer>
   );
