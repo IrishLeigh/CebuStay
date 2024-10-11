@@ -42,7 +42,7 @@ import SuccessModal from "./modals/SuccessModal";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import ComplianceModal from "./modals/ComplianceModal";
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from "@mui/material/styles";
 import theme from "./components/theme/theme";
 import ErrorModal from "./modals/ErrorModal";
 import PropertyRulesPolicies from "./components/PropertyRulesPolicies";
@@ -119,7 +119,7 @@ QontoStepIcon.propTypes = {
   completed: PropTypes.bool,
 };
 
-export default function AccommodationRegistration( {onPropertyListedClick}) {
+export default function AccommodationRegistration({ onPropertyListedClick }) {
   const handleSubmit = async () => {
     if (isSingleUnit) {
       //For Single Unit
@@ -172,8 +172,8 @@ export default function AccommodationRegistration( {onPropertyListedClick}) {
   const contentRef = useRef(null); // Reference to the main content
 
   // Determine if the selected property type is single or multi-unit
-    // Determine if the selected property type is single or multi-unit
-    const isSingleUnit =
+  // Determine if the selected property type is single or multi-unit
+  const isSingleUnit =
     selectedPropertyType === "Private Residential" ||
     selectedPropertyType === "Condominium" ||
     selectedPropertyType === "Townhouse" ||
@@ -183,7 +183,7 @@ export default function AccommodationRegistration( {onPropertyListedClick}) {
     selectedPropertyType === "Studio" ||
     selectedPropertyType === "Villa" ||
     selectedPropertyType === "Cottage" ||
-    selectedPropertyType === "Subdivision House" ; 
+    selectedPropertyType === "Subdivision House";
   const isMultiUnit =
     selectedPropertyType === "Hotel" ||
     selectedPropertyType === "Hostel" ||
@@ -191,9 +191,9 @@ export default function AccommodationRegistration( {onPropertyListedClick}) {
     selectedPropertyType === "Motel" ||
     selectedPropertyType === "Cottage" ||
     selectedPropertyType === "Bed& Breakfast" ||
-    selectedPropertyType === "Homestay"  ||
+    selectedPropertyType === "Homestay" ||
     selectedPropertyType === "ApartmenComplex" ||
-    selectedPropertyType === "CondoComplex" ;
+    selectedPropertyType === "CondoComplex";
   //For Multi Unit Components
   const [multiRoomsAndBeds, setMultiRoomsAndBeds] = useState([]);
   const [multiUnitFacilities, setMultiUnitFacilities] = useState([]);
@@ -201,9 +201,9 @@ export default function AccommodationRegistration( {onPropertyListedClick}) {
   const [step, setStep] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   //TO DO: Uncomment this line if localstorage does not work
-    //const [user, setUser] = useState();
+  //const [user, setUser] = useState();
   const userid = localStorage.getItem("userid") || "";
-  
+
   // Define steps for flow A
   const stepsFlowA = [
     "Property",
@@ -235,18 +235,20 @@ export default function AccommodationRegistration( {onPropertyListedClick}) {
   const steps = isSingleUnit ? stepsFlowA : stepsFlowB;
   const [errorModalOpen, setErrorModalOpen] = useState(false);
 
-
-// Function to toggle the drawer
-const toggleDrawer = (open) => (event) => {
-  if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
-    return;
+  // Function to toggle the drawer
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setDrawerOpen(open);
+  };
+  function formatDate(dateString) {
+    const [month, day, year] = dateString.split("-");
+    return `${year}-${month}-${day}`;
   }
-  setDrawerOpen(open);
-};
-function formatDate(dateString) {
-  const [month, day, year] = dateString.split('-');
-  return `${year}-${month}-${day}`;
-}
   //Compliance Modal
   useEffect(() => {
     // Open the modal when the component mounts
@@ -255,10 +257,10 @@ function formatDate(dateString) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  },[step])
+  }, [step]);
   //Get the JWT token from local storage
   // useEffect(() => {
-    
+
   //   // const token = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
   //   const token = localStorage.getItem("auth_token");
 
@@ -274,11 +276,11 @@ function formatDate(dateString) {
   //       })
   //       .catch((error) => {
   //         alert("Error decoding JWT token:", error);
-         
+
   //       });
   //   } else {
   //     console.log("No token found");
-      
+
   //   }
   // }, []);
   // Modals and Loaders
@@ -291,7 +293,7 @@ function formatDate(dateString) {
   const closeSuccessModal = () => {
     setIsSuccessModalOpen(false); // Close the success modal
     onPropertyListedClick();
-    navigate('/'); // Redirect to the homepage
+    navigate("/"); // Redirect to the homepage
   };
   const handleCloseCompliance = () => {
     setOpenCompliance(false);
@@ -382,15 +384,15 @@ function formatDate(dateString) {
     setMultiUnitFacilities(facilities);
   };
   // Function to handle error submission
-const handleError = () => {
-  setErrorModalOpen(true);
-};
+  const handleError = () => {
+    setErrorModalOpen(true);
+  };
 
-// Function to retry listing
-const handleRetry = () => {
-  setErrorModalOpen(false);
-  // Logic to redo listing the property goes here
-};
+  // Function to retry listing
+  const handleRetry = () => {
+    setErrorModalOpen(false);
+    // Logic to redo listing the property goes here
+  };
 
   const handleSubmitSingle = async () => {
     //
@@ -477,7 +479,7 @@ const handleRetry = () => {
             property_type: selectedPropertyType,
             property_desc: propertyInfo.propertyDescription,
             property_directions: propertyInfo.gettingToProperty,
-            unit_type: selectedPropertyType,
+            unit_type: selectedPropertyType2,
             number_unit: propertyInfo.numberOfUnits,
           }
         );
@@ -568,7 +570,7 @@ const handleRetry = () => {
                   //ari padayun bert
                   const street = locationDetails.addressData.street;
                   const postalCode = locationDetails.addressData.postalCode;
-                  const address  = locationDetails.address;
+                  const address = locationDetails.address;
                   const pinloc = locationDetails.mapVal;
                   console.log("propertyId pinloc:", pinloc);
                   const propertyLoc = await axios.post(
@@ -654,12 +656,15 @@ const handleRetry = () => {
                     );
                     console.log("houseRules: ", houseRules);
                     if (houseRules.data) {
-                      const isCancellationPolicy = policiesData.isCancellationPolicy;
+                      const isCancellationPolicy =
+                        policiesData.isCancellationPolicy;
                       const cancellationDays = policiesData.cancellationDays;
-                      const cancellationCharge = policiesData.cancellationCharge;
+                      const cancellationCharge =
+                        policiesData.cancellationCharge;
                       const isModification = policiesData.isModification;
                       const modificationDays = policiesData.modificationDays;
-                      const modificationCharge = policiesData.modificationCharge;
+                      const modificationCharge =
+                        policiesData.modificationCharge;
                       const booking_policies = await axios.post(
                         "http://127.0.0.1:8000/api/bookingpolicy",
                         {
@@ -718,9 +723,10 @@ const handleRetry = () => {
                             {
                               userid: userid,
                               paypalmail: paymentData.paypalInfo.email || "",
-                              paypalphonenumber: paymentData.paypalInfo.mobile || "",
+                              paypalphonenumber:
+                                paymentData.paypalInfo.mobile || "",
                             }
-                          )
+                          );
                           if (paymentres.data.status === "success") {
                             console.log("paymentres: ", paymentres.data);
                             console.log("hostData: ", hostData);
@@ -734,7 +740,10 @@ const handleRetry = () => {
                                 ownershiptype: hosttype,
                               }
                             );
-                            if (ownership.data.status === "success" && hosttype === "Individual") {
+                            if (
+                              ownership.data.status === "success" &&
+                              hosttype === "Individual"
+                            ) {
                               const ownershipid =
                                 ownership.data.houseRule.propertyownershipid;
 
@@ -791,85 +800,118 @@ const handleRetry = () => {
                                 // alert("Form submitted successfully!");
                                 // alert("Form submitted successfully!");
                                 setIsLoading(false); // Hide the loading spinner
-                                setIsSuccessModalOpen(true); 
+                                setIsSuccessModalOpen(true);
                               }
-                              console.log("Ownership:", ownership.data.ownershiptype);
-                              console.log("Ownership success:", ownership.data.status);
-                            }else if (ownership.data.status === "success" && hosttype === "Company") {
+                              console.log(
+                                "Ownership:",
+                                ownership.data.ownershiptype
+                              );
+                              console.log(
+                                "Ownership success:",
+                                ownership.data.status
+                              );
+                            } else if (
+                              ownership.data.status === "success" &&
+                              hosttype === "Company"
+                            ) {
                               console.log("propertycompany success");
-                                const ownershipid =
-                                  ownership.data.houseRule.propertyownershipid;
-                                const LegalBusinessName = hostData.LegalBusinessName;
-                                const Describe = hostData.Describe;
-                                // const imageSrc = hostData.imageSrc;
-                                const street = hostData.Street;
-                                const Barangay = hostData.Barangay;
-                                const email = hostData.email;
-                                const ZipCode = hostData.ZipCode;
-                                const City = hostData.City;
-                                const legalRep = hostData.legalRepresentatives;
-                                const formData = new FormData();
-                                const file = await fetchBlobAsFile(hostData.imageSrc, "photo.jpg"); 
-                                  formData.append("file", file);
-                                  formData.append("userid", userid);
-                                  formData.append("propertyid", propertyId);
-                                const company = await axios.post(
-                                  "http://127.0.0.1:8000/api/propertycompany",
-                                  {
-                                    propertyownershipid: ownershipid,
-                                    legal_business_name: LegalBusinessName,
-                                    company_description: Describe,
-                                    // company_photo: imageSrc,
-                                    street: street,
-                                    barangay: Barangay,
-                                    city: email,
-                                    zipcode: ZipCode,
-                                    city: City,
-                                  }
-                                );
-                                const companyPhoto = await axios.post("http://127.0.0.1:8000/api/uploadcomplogo",  formData,
-                                  {
-                                    headers: { "Content-Type": "multipart/form-data" },
-                                  });
-                                console.log("Owner:", company);
-                                console.log("propertycompanyid:", company.data.propertycompanyid);
-                                if (company.data.status === "success") {
-                                for (const representative of legalRep) {
-                                  const { firstName, lastName, dob, email, phone, position } = representative;
-                                  const formattedDob = formatDate(dob);
-                                  await axios.post("http://127.0.0.1:8000/api/legalrepresentative", {
-                                    propertycompanyid: company.data.propertyCompany.propertycompanyid, // Assuming ownership ID is relevant here too
-                                    firstname: firstName,
-                                    lastname: lastName,
-                                    date_of_birth: formattedDob,
-                                    email: email,
-                                    phone_number: phone, // Concatenate country code and phone
-                                    position: position,
-                                  });
+                              const ownershipid =
+                                ownership.data.houseRule.propertyownershipid;
+                              const LegalBusinessName =
+                                hostData.LegalBusinessName;
+                              const Describe = hostData.Describe;
+                              // const imageSrc = hostData.imageSrc;
+                              const street = hostData.Street;
+                              const Barangay = hostData.Barangay;
+                              const email = hostData.email;
+                              const ZipCode = hostData.ZipCode;
+                              const City = hostData.City;
+                              const legalRep = hostData.legalRepresentatives;
+                              const formData = new FormData();
+                              const file = await fetchBlobAsFile(
+                                hostData.imageSrc,
+                                "photo.jpg"
+                              );
+                              formData.append("file", file);
+                              formData.append("userid", userid);
+                              formData.append("propertyid", propertyId);
+                              const company = await axios.post(
+                                "http://127.0.0.1:8000/api/propertycompany",
+                                {
+                                  propertyownershipid: ownershipid,
+                                  legal_business_name: LegalBusinessName,
+                                  company_description: Describe,
+                                  // company_photo: imageSrc,
+                                  street: street,
+                                  barangay: Barangay,
+                                  city: email,
+                                  zipcode: ZipCode,
+                                  city: City,
                                 }
-                              }
-                                if (company.data.status === "success") {
-                                  console.log(company.data.message);
-                                  const manager = await axios.post(
-                                    "http://127.0.0.1:8000/api/becomeManager",
+                              );
+                              const companyPhoto = await axios.post(
+                                "http://127.0.0.1:8000/api/uploadcomplogo",
+                                formData,
+                                {
+                                  headers: {
+                                    "Content-Type": "multipart/form-data",
+                                  },
+                                }
+                              );
+                              console.log("Owner:", company);
+                              console.log(
+                                "propertycompanyid:",
+                                company.data.propertycompanyid
+                              );
+                              if (company.data.status === "success") {
+                                for (const representative of legalRep) {
+                                  const {
+                                    firstName,
+                                    lastName,
+                                    dob,
+                                    email,
+                                    phone,
+                                    position,
+                                  } = representative;
+                                  const formattedDob = formatDate(dob);
+                                  await axios.post(
+                                    "http://127.0.0.1:8000/api/legalrepresentative",
                                     {
-                                      userid: userid,
+                                      propertycompanyid:
+                                        company.data.propertyCompany
+                                          .propertycompanyid, // Assuming ownership ID is relevant here too
+                                      firstname: firstName,
+                                      lastname: lastName,
+                                      date_of_birth: formattedDob,
+                                      email: email,
+                                      phone_number: phone, // Concatenate country code and phone
+                                      position: position,
                                     }
                                   );
-                                  console.log("Manager:", manager.data);
-                                  console.log("Successfully Registered");
-                                  // setModalMessage("Successfully Registered");
-  
-                                  localStorage.removeItem("postalCode");
-                                  localStorage.removeItem("street");
-                                  localStorage.removeItem("postalCode");
-                                  location2(null);
-                                  location(null);
-                                  // alert("Form submitted successfully!");
-                                  // alert("Form submitted successfully!");
-                                  setIsLoading(false); // Hide the loading spinner
-                                  setIsSuccessModalOpen(true); 
                                 }
+                              }
+                              if (company.data.status === "success") {
+                                console.log(company.data.message);
+                                const manager = await axios.post(
+                                  "http://127.0.0.1:8000/api/becomeManager",
+                                  {
+                                    userid: userid,
+                                  }
+                                );
+                                console.log("Manager:", manager.data);
+                                console.log("Successfully Registered");
+                                // setModalMessage("Successfully Registered");
+
+                                localStorage.removeItem("postalCode");
+                                localStorage.removeItem("street");
+                                localStorage.removeItem("postalCode");
+                                location2(null);
+                                location(null);
+                                // alert("Form submitted successfully!");
+                                // alert("Form submitted successfully!");
+                                setIsLoading(false); // Hide the loading spinner
+                                setIsSuccessModalOpen(true);
+                              }
                             }
                           }
                         }
@@ -890,8 +932,6 @@ const handleRetry = () => {
       } finally {
         // Hide modal and reset loading state after a delay
         setIsLoading(false); // Hide the loading spinner
-
-        
       }
     }
   };
@@ -918,7 +958,7 @@ const handleRetry = () => {
     console.log("Selected Facilities", multiUnitFacilities);
     console.log("Payment Method", paymentData);
     console.log("Host Data or Owner", hostData);
-    console.log("Selected term", selectedPropertyType2)
+    console.log("Selected term", selectedPropertyType2);
     try {
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
@@ -928,7 +968,7 @@ const handleRetry = () => {
           property_type: selectedPropertyType,
           property_desc: propertyInfo.propertyDescription,
           property_directions: propertyInfo.gettingToProperty,
-          unit_type: selectedPropertyType,
+          unit_type: selectedPropertyType2,
         }
       );
       console.log("resPropertid", resPropertid.data);
@@ -1243,7 +1283,10 @@ const handleRetry = () => {
                   ownershiptype: hosttype,
                 }
               );
-              if (ownership.data.status === "success" && hosttype === "Individual") {
+              if (
+                ownership.data.status === "success" &&
+                hosttype === "Individual"
+              ) {
                 const ownershipid =
                   ownership.data.houseRule.propertyownershipid;
 
@@ -1291,7 +1334,6 @@ const handleRetry = () => {
                   console.log("Manager:", manager.data);
                   console.log("Successfully Registered");
                   // setModalMessage("Successfully Registered");
-                
 
                   localStorage.removeItem("postalCode");
                   localStorage.removeItem("street");
@@ -1301,85 +1343,102 @@ const handleRetry = () => {
                   alert("Form submitted successfully!");
                   alert("Form submitted successfully!");
                   setIsLoading(false); // Hide the loading spinner
-                  setIsSuccessModalOpen(true); 
+                  setIsSuccessModalOpen(true);
                 }
                 console.log("Ownership:", ownership.data.ownershiptype);
                 console.log("Ownership success:", ownership.data.status);
-              }else if (ownership.data.status === "success" && hosttype === "Company") {
+              } else if (
+                ownership.data.status === "success" &&
+                hosttype === "Company"
+              ) {
                 console.log("propertycompany success");
-                  const ownershipid =
-                    ownership.data.houseRule.propertyownershipid;
-                  const LegalBusinessName = hostData.LegalBusinessName;
-                  const Describe = hostData.Describe;
-                  // const imageSrc = hostData.imageSrc;
-                  const street = hostData.Street;
-                  const Barangay = hostData.Barangay;
-                  const email = hostData.email;
-                  const ZipCode = hostData.ZipCode;
-                  const City = hostData.City;
-                  const legalRep = hostData.legalRepresentatives;
-                  const formData = new FormData();
-                  const file = await fetchBlobAsFile(hostData.imageSrc, "photo.jpg"); 
-                    formData.append("file", file);
-                    formData.append("userid", userid);
+                const ownershipid =
+                  ownership.data.houseRule.propertyownershipid;
+                const LegalBusinessName = hostData.LegalBusinessName;
+                const Describe = hostData.Describe;
+                // const imageSrc = hostData.imageSrc;
+                const street = hostData.Street;
+                const Barangay = hostData.Barangay;
+                const email = hostData.email;
+                const ZipCode = hostData.ZipCode;
+                const City = hostData.City;
+                const legalRep = hostData.legalRepresentatives;
+                const formData = new FormData();
+                const file = await fetchBlobAsFile(
+                  hostData.imageSrc,
+                  "photo.jpg"
+                );
+                formData.append("file", file);
+                formData.append("userid", userid);
 
-                  const company = await axios.post(
-                    "http://127.0.0.1:8000/api/propertycompany",
-                    {
-                      propertyownershipid: ownershipid,
-                      legal_business_name: LegalBusinessName,
-                      company_description: Describe,
-                      // company_photo: imageSrc,
-                      street: street,
-                      barangay: Barangay,
-                      city: email,
-                      zipcode: ZipCode,
-                      city: City,
-                    }
-                  );
-                  const companyPhoto = await axios.post("http://127.0.0.1:8000/api/uploadcomplogo",  formData,
-                    {
-                      headers: { "Content-Type": "multipart/form-data" },
-                    });
-                  console.log("Owner:", company);
-                  console.log("propertycompanyid:", company.data.propertycompanyid);
-                  if (company.data.status === "success") {
-                  for (const representative of legalRep) {
-                    const { firstName, lastName, dob, email, phone, position } = representative;
-                    const formattedDob = formatDate(dob);
-                    await axios.post("http://127.0.0.1:8000/api/legalrepresentative", {
-                      propertycompanyid: company.data.propertyCompany.propertycompanyid, // Assuming ownership ID is relevant here too
-                      firstname: firstName,
-                      lastname: lastName,
-                      date_of_birth: formattedDob,
-                      email: email,
-                      phone_number: phone, // Concatenate country code and phone
-                      position: position,
-                    });
+                const company = await axios.post(
+                  "http://127.0.0.1:8000/api/propertycompany",
+                  {
+                    propertyownershipid: ownershipid,
+                    legal_business_name: LegalBusinessName,
+                    company_description: Describe,
+                    // company_photo: imageSrc,
+                    street: street,
+                    barangay: Barangay,
+                    city: email,
+                    zipcode: ZipCode,
+                    city: City,
                   }
-                }
-                  if (company.data.status === "success") {
-                    console.log(company.data.message);
-                    const manager = await axios.post(
-                      "http://127.0.0.1:8000/api/becomeManager",
+                );
+                const companyPhoto = await axios.post(
+                  "http://127.0.0.1:8000/api/uploadcomplogo",
+                  formData,
+                  {
+                    headers: { "Content-Type": "multipart/form-data" },
+                  }
+                );
+                console.log("Owner:", company);
+                console.log(
+                  "propertycompanyid:",
+                  company.data.propertycompanyid
+                );
+                if (company.data.status === "success") {
+                  for (const representative of legalRep) {
+                    const { firstName, lastName, dob, email, phone, position } =
+                      representative;
+                    const formattedDob = formatDate(dob);
+                    await axios.post(
+                      "http://127.0.0.1:8000/api/legalrepresentative",
                       {
-                        userid: userid,
+                        propertycompanyid:
+                          company.data.propertyCompany.propertycompanyid, // Assuming ownership ID is relevant here too
+                        firstname: firstName,
+                        lastname: lastName,
+                        date_of_birth: formattedDob,
+                        email: email,
+                        phone_number: phone, // Concatenate country code and phone
+                        position: position,
                       }
                     );
-                    console.log("Manager:", manager.data);
-                    console.log("Successfully Registered");
-                    // setModalMessage("Successfully Registered");
-
-                    localStorage.removeItem("postalCode");
-                    localStorage.removeItem("street");
-                    localStorage.removeItem("postalCode");
-                    location2(null);
-                    location(null);
-                    // alert("Form submitted successfully!");
-                    // alert("Form submitted successfully!");
-                    setIsLoading(false); // Hide the loading spinner
-                    setIsSuccessModalOpen(true); 
                   }
+                }
+                if (company.data.status === "success") {
+                  console.log(company.data.message);
+                  const manager = await axios.post(
+                    "http://127.0.0.1:8000/api/becomeManager",
+                    {
+                      userid: userid,
+                    }
+                  );
+                  console.log("Manager:", manager.data);
+                  console.log("Successfully Registered");
+                  // setModalMessage("Successfully Registered");
+
+                  localStorage.removeItem("postalCode");
+                  localStorage.removeItem("street");
+                  localStorage.removeItem("postalCode");
+                  location2(null);
+                  location(null);
+                  // alert("Form submitted successfully!");
+                  // alert("Form submitted successfully!");
+                  setIsLoading(false); // Hide the loading spinner
+                  setIsSuccessModalOpen(true);
+                }
               }
             }
           }
@@ -1391,344 +1450,41 @@ const handleRetry = () => {
     } finally {
       setIsLoading(false);
     }
-    
+
     console.log("NICE ONE!");
   };
 
   // Scroll to the top of the main content area when the step changes
   useEffect(() => {
     if (contentRef.current) {
-      contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      contentRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [step]); // Trigger this effect when 'step' changes
   console.log("Property Information from parent", propertyInfo);
   console.log("Multi beds from parent", multiRoomsAndBeds);
   console.log("Policies from parent:", policiesData);
   console.log("House Rules from parent:", houseRulesData);
-  console.log ("USER ID FROM LOCALSTORAGE:", userid );
+  console.log("USER ID FROM LOCALSTORAGE:", userid);
 
-return (
-  <ThemeProvider theme={theme}>
-    <Box className="registration-body">
-   
-  <Grid container sx={{ height: "100vh" }}>
-    {/* Stepper on the left */}
-    <Grid
-      item
-      xs={12}
-      sm={2}
-      sx={{
-        display: { xs: "none", sm: "block" }, // Hide on small screens
-        position: "sticky", // Keep the stepper in place as you scroll
-        top: 0, // Stick to the top of the viewport
-        height: "100%", // Full height of the viewport
-        backgroundColor: "white", // Background color for the stepper area
-        padding: "2rem",
-        boxShadow: "0px 0.25em 0.625em rgba(0, 0, 0, 0.1)", // Optional shadow
-        overflowY: "auto", // Enable scrolling inside the stepper area
-        paddingBottom: "5rem",
-        
-      }}
-    >
-      <Stepper activeStep={step} orientation="vertical">
-        {steps.map((label, index) => (
-          <Step key={index}>
-            <StepButton onClick={() => setStep(index)}>
-              <StepLabel>{label}</StepLabel>
-            </StepButton>
-          </Step>
-        ))}
-      </Stepper>
-    </Grid>
-
-    {/* Main content on the right */}
-    <Grid
-      item
-      xs={12}
-      sm={10} // Main content takes 10 columns on small and up
-      sx={{
-        padding: "2rem 2rem 4rem 2rem",
-        overflowY: "auto", // Allow scrolling in main content
-        height: "100vh", // Full height of the viewport
-      }}
-    >
-          {/* Main content on the right */}
-          <Box
+  return (
+    <ThemeProvider theme={theme}>
+      <Box className="registration-body">
+        <Grid container sx={{ height: "100vh" }}>
+          {/* Stepper on the left */}
+          <Grid
+            item
+            xs={12}
+            sm={2}
             sx={{
+              display: { xs: "none", sm: "block" }, // Hide on small screens
+              position: "sticky", // Keep the stepper in place as you scroll
+              top: 0, // Stick to the top of the viewport
+              height: "100%", // Full height of the viewport
+              backgroundColor: "white", // Background color for the stepper area
               padding: "2rem",
-              overflowX: "hidden", // Prevent horizontal scrolling in main content
-              justifyContent: "center",
-              alignItems: "center",
-              
-            }}
-          >
-            {step === 0 && 
-              <PropertyType onSelectedTypeChange={handleSelectedTypeChange} handleNext={handleNext} />}
-            {/* Flow A: Single Unit Steps */}
-            {isSingleUnit && (
-              <>
-                {step === 1 && (
-
-                  <PropertyType2
-                    onSelectedPropertyTypeChange={
-                      handleSelectedPropertyTypeChange
-                    }
-                    parentSelectedPropertyType={selectedPropertyType2}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 2 && (
-                  // <PropertyInformation
-                  //   onPropertyInformationChange={
-                  //     handlePropertyInformationChange
-                  //   }
-                  //   parentPropertyInfo={propertyInfo}
-                  //   handleNext={handleNext}
-                  //   handleBack={handleBack}
-                  // />
-                  <MultiPropertyInformation
-                    onMultiPropertyInformationChange={
-                      handlePropertyInformationChange
-                    }
-                    parentMultiPropertyInfo={propertyInfo}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 3 && (
-                  <RoomDetails
-                    onRoomDetailsChange={handleRoomDetailsChange}
-                    parentUnitDetailsData={unitDetailsData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 4 && (
-                  <BedroomDetails2
-                    onBedroomDetailsChange={handleBedRoomDetailsChange}
-                    parentBedroomDetails={bedroomDetails}
-                    parentTotalQTY={totalQTY}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 5 && (
-                  <UploadPhotos
-                    onImagesChange={handleImagesChange}
-                    parentImages={selectedImages}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 6 && (
-                  <MultiPropertyLocation
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 7 && (
-                  <AmenitiesFacilitiesServices
-                    onAmenitiesChange={handleAmenitiesChange}
-                    parentAmenities={selectedAmenities}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 8 && (
-                  <PropertyRulesPolicies
-                    onPoliciesDataChange={handlePoliciesDataChange}
-                    parentPoliciesData={policiesData}
-                    onHouseRulesDataChange={handleHouseRulesDataChange}
-                    parentHouseRules={houseRulesData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 9 && (
-
-                (selectedPropertyType2.trim() === "Daily Term" ? ( // Ensure casing matches exactly
-                  <UnitPricing
-                    onUnitPricingChange={handleUnitPricing}
-                    parentUnitPricing={unitPricing}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                ) : (
-                  <UnitPricingPerMonth
-                    onUnitPricingChange={handleUnitPricing}
-                    parentUnitPricing={unitPricing}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                ))
-                  
-                  
-                )}
-                {step === 10 && (
-                  <PaymentMethods
-                    onPaymentDataChange={handlePaymentDataChange}
-                    parentPaymentData={paymentData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 11 && (
-                  <PartnerVerification
-                    onHostDataChange={handleHostDataChange}
-                    parentHostData={hostData}
-                    handleBack={handleBack}
-                    openModal={openModal}
-                  />
-                )}
-              </>
-            )}
-
-            {/* Flow B: Multi Unit Steps */}
-            {isMultiUnit && (
-              <>
-                {step === 1 && (
-                  <MultiPropertyInformation
-                    onMultiPropertyInformationChange={
-                      handlePropertyInformationChange
-                    }
-                    parentMultiPropertyInfo={propertyInfo}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 2 && (
-                  <UploadPhotos
-                    onImagesChange={handleImagesChange}
-                    parentImages={selectedImages}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 3 && (
-                  <MultiPropertyLocation
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 4 && (
-                  <MultiRoomsAndBeds
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                    onMultiRoomsAndBedsChange={handleMultiRoomsAndBedsChange}
-                    parentRoomsAndBedsData={multiRoomsAndBeds}
-                  />
-                )}
-                {step === 5 && (
-                  <MultiUnitFacilities
-                    onAmenitiesChange={handleMultiUnitFacilitiesChange}
-                    parentAmenities={multiUnitFacilities}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 6 && (
-                  <PropertyRulesPolicies
-                    onPoliciesDataChange={handlePoliciesDataChange}
-                    parentPoliciesData={policiesData}
-                    onHouseRulesDataChange={handleHouseRulesDataChange}
-                    parentHouseRules={houseRulesData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 7 && (
-                  <PaymentMethods
-                    onPaymentDataChange={handlePaymentDataChange}
-                    parentPaymentData={paymentData}
-                    handleNext={handleNext}
-                    handleBack={handleBack}
-                  />
-                )}
-                {step === 8 && (
-                  <PartnerVerification
-                    onHostDataChange={handleHostDataChange}
-                    parentHostData={hostData}
-                    handleBack={handleBack}
-                    openModal={openModal}
-                  />
-                )}
-
-                {/* Other steps for multi unit */}
-              </>
-            )}
-
-          </Box>
-          
-
-            {/* //Render circular progress indicator while loading */}
-              {isLoading && (
-                  <Backdrop
-                    open={isLoading}
-                    style={{ zIndex: 1301, color: '#fff' }} // Make sure the backdrop is visible
-                  >
-                    <CircularProgress color="inherit" />
-                    <p>Please wait...</p>
-                  </Backdrop>
-                )}
-
-              {/* Render Circular Progress while Loading */}
-              {isLoading && (
-                <Backdrop
-                  open={isLoading}
-                  style={{ zIndex: 1301, color: "#fff" }} // Make sure the backdrop is visible
-                >
-                  <CircularProgress color="inherit" />
-                  <p>Please wait...</p>
-                </Backdrop>
-              )}
-              <ConfirmationModal
-                isOpen={isModalOpen}
-                closeModal={closeModal}
-                handleSubmit={handleSubmit}
-              />
-
-              <SuccessModal isOpen={isSuccessModalOpen} onClose={closeSuccessModal}   />
-
-          {/* ComplianceModal */}
-          <ComplianceModal open={openCompliance} onClose={handleCloseCompliance} />
-          {/* Menu icon for mobile view */}
-          <IconButton
-            onClick={toggleDrawer(true)}
-            sx={{
-              display: { xs: "block", sm: "none" },
-              position: "fixed",
-              top: "1rem",
-              left: "1rem",
-              zIndex: 1000,
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          {/* Error Modal */}
-          <ErrorModal 
-            isOpen={errorModalOpen} 
-            onClose={() => setErrorModalOpen(false)} 
-            onRetry={handleRetry} 
-          />
-
-        {/* Drawer for mobile stepper */}
-        <Drawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={toggleDrawer(false)}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            position: "fixed",
-            top: "1rem",
-            left: "1rem",
-            zIndex: 1000,
-          }}
-        >
-          <Box
-            sx={{
-              width: 250,
-              padding: "2rem",
+              boxShadow: "0px 0.25em 0.625em rgba(0, 0, 0, 0.1)", // Optional shadow
+              overflowY: "auto", // Enable scrolling inside the stepper area
+              paddingBottom: "5rem",
             }}
           >
             <Stepper activeStep={step} orientation="vertical">
@@ -1740,12 +1496,314 @@ return (
                 </Step>
               ))}
             </Stepper>
-          </Box>
-        </Drawer>
-        </Grid>
-      </Grid>
-    </Box>
-  </ThemeProvider>
-  );
-};
+          </Grid>
 
+          {/* Main content on the right */}
+          <Grid
+            item
+            xs={12}
+            sm={10} // Main content takes 10 columns on small and up
+            sx={{
+              padding: "2rem 2rem 4rem 2rem",
+              overflowY: "auto", // Allow scrolling in main content
+              height: "100vh", // Full height of the viewport
+            }}
+          >
+            {/* Main content on the right */}
+            <Box
+              sx={{
+                padding: "2rem",
+                overflowX: "hidden", // Prevent horizontal scrolling in main content
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {step === 0 && (
+                <PropertyType
+                  onSelectedTypeChange={handleSelectedTypeChange}
+                  handleNext={handleNext}
+                />
+              )}
+              {/* Flow A: Single Unit Steps */}
+              {isSingleUnit && (
+                <>
+                  {step === 1 && (
+                    <PropertyType2
+                      onSelectedPropertyTypeChange={
+                        handleSelectedPropertyTypeChange
+                      }
+                      parentSelectedPropertyType={selectedPropertyType2}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 2 && (
+                    // <PropertyInformation
+                    //   onPropertyInformationChange={
+                    //     handlePropertyInformationChange
+                    //   }
+                    //   parentPropertyInfo={propertyInfo}
+                    //   handleNext={handleNext}
+                    //   handleBack={handleBack}
+                    // />
+                    <MultiPropertyInformation
+                      onMultiPropertyInformationChange={
+                        handlePropertyInformationChange
+                      }
+                      parentMultiPropertyInfo={propertyInfo}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 3 && (
+                    <RoomDetails
+                      onRoomDetailsChange={handleRoomDetailsChange}
+                      parentUnitDetailsData={unitDetailsData}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 4 && (
+                    <BedroomDetails2
+                      onBedroomDetailsChange={handleBedRoomDetailsChange}
+                      parentBedroomDetails={bedroomDetails}
+                      parentTotalQTY={totalQTY}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 5 && (
+                    <UploadPhotos
+                      onImagesChange={handleImagesChange}
+                      parentImages={selectedImages}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 6 && (
+                    <MultiPropertyLocation
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 7 && (
+                    <AmenitiesFacilitiesServices
+                      onAmenitiesChange={handleAmenitiesChange}
+                      parentAmenities={selectedAmenities}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 8 && (
+                    <PropertyRulesPolicies
+                      onPoliciesDataChange={handlePoliciesDataChange}
+                      parentPoliciesData={policiesData}
+                      onHouseRulesDataChange={handleHouseRulesDataChange}
+                      parentHouseRules={houseRulesData}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 9 &&
+                    (selectedPropertyType2.trim() === "Daily Term" ? ( // Ensure casing matches exactly
+                      <UnitPricing
+                        onUnitPricingChange={handleUnitPricing}
+                        parentUnitPricing={unitPricing}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    ) : (
+                      <UnitPricingPerMonth
+                        onUnitPricingChange={handleUnitPricing}
+                        parentUnitPricing={unitPricing}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
+                    ))}
+                  {step === 10 && (
+                    <PaymentMethods
+                      onPaymentDataChange={handlePaymentDataChange}
+                      parentPaymentData={paymentData}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 11 && (
+                    <PartnerVerification
+                      onHostDataChange={handleHostDataChange}
+                      parentHostData={hostData}
+                      handleBack={handleBack}
+                      openModal={openModal}
+                    />
+                  )}
+                </>
+              )}
+
+              {/* Flow B: Multi Unit Steps */}
+              {isMultiUnit && (
+                <>
+                  {step === 1 && (
+                    <MultiPropertyInformation
+                      onMultiPropertyInformationChange={
+                        handlePropertyInformationChange
+                      }
+                      parentMultiPropertyInfo={propertyInfo}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 2 && (
+                    <UploadPhotos
+                      onImagesChange={handleImagesChange}
+                      parentImages={selectedImages}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 3 && (
+                    <MultiPropertyLocation
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 4 && (
+                    <MultiRoomsAndBeds
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                      onMultiRoomsAndBedsChange={handleMultiRoomsAndBedsChange}
+                      parentRoomsAndBedsData={multiRoomsAndBeds}
+                    />
+                  )}
+                  {step === 5 && (
+                    <MultiUnitFacilities
+                      onAmenitiesChange={handleMultiUnitFacilitiesChange}
+                      parentAmenities={multiUnitFacilities}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 6 && (
+                    <PropertyRulesPolicies
+                      onPoliciesDataChange={handlePoliciesDataChange}
+                      parentPoliciesData={policiesData}
+                      onHouseRulesDataChange={handleHouseRulesDataChange}
+                      parentHouseRules={houseRulesData}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 7 && (
+                    <PaymentMethods
+                      onPaymentDataChange={handlePaymentDataChange}
+                      parentPaymentData={paymentData}
+                      handleNext={handleNext}
+                      handleBack={handleBack}
+                    />
+                  )}
+                  {step === 8 && (
+                    <PartnerVerification
+                      onHostDataChange={handleHostDataChange}
+                      parentHostData={hostData}
+                      handleBack={handleBack}
+                      openModal={openModal}
+                    />
+                  )}
+
+                  {/* Other steps for multi unit */}
+                </>
+              )}
+            </Box>
+
+            {/* //Render circular progress indicator while loading */}
+            {isLoading && (
+              <Backdrop
+                open={isLoading}
+                style={{ zIndex: 1301, color: "#fff" }} // Make sure the backdrop is visible
+              >
+                <CircularProgress color="inherit" />
+                <p>Please wait...</p>
+              </Backdrop>
+            )}
+
+            {/* Render Circular Progress while Loading */}
+            {isLoading && (
+              <Backdrop
+                open={isLoading}
+                style={{ zIndex: 1301, color: "#fff" }} // Make sure the backdrop is visible
+              >
+                <CircularProgress color="inherit" />
+                <p>Please wait...</p>
+              </Backdrop>
+            )}
+            <ConfirmationModal
+              isOpen={isModalOpen}
+              closeModal={closeModal}
+              handleSubmit={handleSubmit}
+            />
+
+            <SuccessModal
+              isOpen={isSuccessModalOpen}
+              onClose={closeSuccessModal}
+            />
+
+            {/* ComplianceModal */}
+            <ComplianceModal
+              open={openCompliance}
+              onClose={handleCloseCompliance}
+            />
+            {/* Menu icon for mobile view */}
+            <IconButton
+              onClick={toggleDrawer(true)}
+              sx={{
+                display: { xs: "block", sm: "none" },
+                position: "fixed",
+                top: "1rem",
+                left: "1rem",
+                zIndex: 1000,
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            {/* Error Modal */}
+            <ErrorModal
+              isOpen={errorModalOpen}
+              onClose={() => setErrorModalOpen(false)}
+              onRetry={handleRetry}
+            />
+
+            {/* Drawer for mobile stepper */}
+            <Drawer
+              anchor="left"
+              open={drawerOpen}
+              onClose={toggleDrawer(false)}
+              sx={{
+                display: { xs: "block", sm: "none" },
+                position: "fixed",
+                top: "1rem",
+                left: "1rem",
+                zIndex: 1000,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 250,
+                  padding: "2rem",
+                }}
+              >
+                <Stepper activeStep={step} orientation="vertical">
+                  {steps.map((label, index) => (
+                    <Step key={index}>
+                      <StepButton onClick={() => setStep(index)}>
+                        <StepLabel>{label}</StepLabel>
+                      </StepButton>
+                    </Step>
+                  ))}
+                </Stepper>
+              </Box>
+            </Drawer>
+          </Grid>
+        </Grid>
+      </Box>
+    </ThemeProvider>
+  );
+}

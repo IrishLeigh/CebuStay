@@ -46,7 +46,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
     setIsSorted(!isSorted); // Toggle the sort state
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("admin_token");
     navigate("/superadmin");
   };
@@ -61,7 +61,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
           >
             Hello, Admin
           </Typography>
-          <button onClick={handleLogout}>Logout</button>
+          {/* <button onClick={handleLogout}>Logout</button> */}
         </div>
         <Typography
           variant="h4"
@@ -76,7 +76,11 @@ export default function AdminContent({ payoutData, selectedTab }) {
         </Typography>
 
         {/* Toggle Sort Button */}
-        <button onClick={handleToggleSort} className="sort-button">
+        <button
+          onClick={handleToggleSort}
+          className="sort-button"
+          disabled={sortedData.length === 0}
+        >
           {isSorted ? "Reset to Default" : "Sort by Payout Eligibility"}
         </button>
 
@@ -90,6 +94,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
                 <th>Customer Name</th>
                 <th>Date Paid</th>
                 <th>Checkout Date</th>
+                <th>Payment Term</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -114,6 +119,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
                         ? "No Checkout"
                         : data.checkout_date}
                     </td>
+                    <td>{data.paymentTerm}</td>
                     <td
                       style={{
                         color: data.status === "Pending" ? "red" : "green",
@@ -132,7 +138,9 @@ export default function AdminContent({ payoutData, selectedTab }) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8">No payout data available.</td>
+                  <td colSpan="9" style={{ textAlign: "center" }}>
+                    No payout data available.
+                  </td>
                 </tr>
               )}
             </tbody>
