@@ -174,8 +174,8 @@ class PaymentController extends CORS
             ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
             ->value('property.propertyid');
-
-        $payout_record->userid = $userid;
+        $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
+        $payout_record->userid = $get_manager_userid;
         $payout_record->propertyid = $propertyid;
         $payout_record->pid = $paymentId;
         $payout_record->payout_amount = $payment->amount - $charge;

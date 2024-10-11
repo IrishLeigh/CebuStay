@@ -138,12 +138,10 @@ class RegisterUserController extends CORS
             // If the existing email is already verified, return an error
             if ($existingUser->isverified == 1) {
                 return response()->json(['message' => 'Email already in use.', 'status' => 'error']);
-            }
-            // If the existing email is not verified, update the existing user and resend verification email
-            else {
+            } else {   // If the existing email is not verified, update the existing user and resend verification email
                 $existingUser->firstname = $request->input('firstname');
                 $existingUser->lastname = $request->input('lastname');
-                $existingUser->password = $request->input('password');
+                $existingUser->password = Hash::make($request->input('password'));
                 $verify_token = $this->generateVerificationCode();
                 $existingUser->verificationtoken = $verify_token;
 
