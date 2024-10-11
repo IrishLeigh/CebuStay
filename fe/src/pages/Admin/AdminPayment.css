@@ -16,4 +16,24 @@
     background-color: #fff; /* Example background color */
     /* Add any other styles for the content area here */
   }
-  
+  .adminside-logout{
+    width: 50%;
+    border: none;
+    background-color: red;
+    border-radius: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+  }
+  .adminside-logout:hover{
+    background-color: rgb(161, 15, 15);
+    transition: 0.2s;
+  }
+  .adminside-logout:not(:hover){
+    transition: 0.2s;
+  }

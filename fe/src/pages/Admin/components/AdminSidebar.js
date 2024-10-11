@@ -5,7 +5,7 @@ import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 
-export default function AdminSidebar({ selectedTab, setSelectedTab }) {
+export default function AdminSidebar({ selectedTab, setSelectedTab, setTab }) {
   // Destructure props
   const stylee = {
     fontFamily: "Poppins",
@@ -50,7 +50,7 @@ export default function AdminSidebar({ selectedTab, setSelectedTab }) {
         <button
           style={stylee}
           className={`navvbuttonn ${isActive("settings")}`} // Change condition for settings
-          onClick={() => setSelectedTab("settings")} // Update selectedTab on click
+          onClick={() => setTab("settings")} // Update selectedTab on click
         >
           <SettingsOutlinedIcon style={{ marginRight: "8px" }} />
           Settings
