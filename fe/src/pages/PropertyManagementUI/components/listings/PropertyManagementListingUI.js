@@ -6,27 +6,32 @@ import Stack from "@mui/material/Stack";
 import getDashboardTheme from "../../../Dashboard/dashboard/theme/getDashboardTheme";
 import SideMenu from "../../../Dashboard/dashboard/components/SideMenu";
 import TemplateFrame from "../../../Dashboard/dashboard/TemplateFrame";
-
-// Additional components for different menu items
 import PropertyManagementListing from "./components/PropertyManagementListing";
+import { useMediaQuery } from "@mui/material";
 
 export default function PropertyManagementListingUI() {
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
-  const [selectedMenuItem, setSelectedMenuItem] = React.useState("mainGrid"); // Default content
+  const [openDrawer, setOpenDrawer] = React.useState(false);
 
   const dashboardTheme = createTheme(getDashboardTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
+  const isMobile = useMediaQuery(showCustomTheme ? dashboardTheme.breakpoints.down("md") : defaultTheme.breakpoints.down("md"));
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
+
+  const handleDrawerToggle = () => {
+    setOpenDrawer((prev) => !prev);
+  };
 
   React.useEffect(() => {
     const savedMode = localStorage.getItem("themeMode");
     if (savedMode) {
       setMode(savedMode);
     } else {
-      const systemPrefersDark = window.matchMedia(
-        "(prefers-color-scheme: light)"
-      ).matches;
-      setMode(systemPrefersDark ? "light" : "light");
+      setMode("light");
     }
   }, []);
 
@@ -46,12 +51,15 @@ export default function PropertyManagementListingUI() {
       showCustomTheme={showCustomTheme}
       mode={mode}
       toggleColorMode={toggleColorMode}
+      drawerToggle={handleDrawerToggle} // Pass the drawer toggle function
     >
       <ThemeProvider theme={showCustomTheme ? dashboardTheme : defaultTheme}>
         <CssBaseline enableColorScheme />
-        <Box sx={{ display: "flex" }}>
-          <SideMenu setSelectedMenuItem={setSelectedMenuItem} />{" "}
-          {/* Pass the callback */}
+        <Box sx={{ display: "flex", position: "relative" }}>
+          <SideMenu 
+            open={openDrawer} 
+            onClose={handleDrawerClose} 
+          />
           <Box
             component="main"
             sx={(theme) => ({
@@ -66,11 +74,9 @@ export default function PropertyManagementListingUI() {
                 alignItems: "center",
                 mx: 1,
                 pb: 10,
-                mt: { xs: 9, md: 0 },
+                mt: { xs: 0, md: 0 },
               }}
             >
-              {/* <Header /> */}
-              {/* {renderContent()} Render the content based on selected menu item */}
               <PropertyManagementListing />
             </Stack>
           </Box>
