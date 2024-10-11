@@ -45,7 +45,7 @@ class UserAdminAuthenticationController extends CORS
                 'nbf' => time(),
                 'exp' => time() + 86400,
                 'data' => [
-                    'userid' => $useradmin->id,
+                    'userid' => $useradmin->useradminid,
                     'username' => $useradmin->username,
                 ],
             ],
