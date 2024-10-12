@@ -364,6 +364,7 @@ const CancellationAndModification = ({
         isCancel: properties.property_bookingpolicy.isCancellationPolicy || 0,
       });
       console.log("Response:", response.data);
+      console.log("Respons statse:", response.data.status);
 
       if (response.data.status === 'success') {
         setSnackbarMessage("Successfully cancelled the booking.");
