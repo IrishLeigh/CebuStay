@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('paymentid');
             $table->string('linkid');
             $table->double('amount');
+            $table->double('refund_amount')->nullable(0);
             $table->string('description');
             $table->string('status');
             $table->timestamps();

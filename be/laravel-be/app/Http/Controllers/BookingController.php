@@ -107,6 +107,7 @@ class BookingController extends CORS
 
             // Retrieve all bookings for the given unitid
             $bookings = Booking::where('unitid', $request->input('unitid'))->get();
+            $property = Property::find($request->input('propertyid'));
 
             // Perform validation check for date conflict
             foreach ($bookings as $booking) {
@@ -130,16 +131,16 @@ class BookingController extends CORS
             $bookingType = 'reservation'; // Default type is 'reservation'
 
             // Check if there are no existing bookings for today for the same unit
-            if ($isCheckinToday) {
-                $existingBookingsToday = Booking::where('unitid', $request->input('unitid'))
-                    ->where('checkin_date', $today)
-                    ->exists();
+            // if ($isCheckinToday) {
+            //     $existingBookingsToday = Booking::where('unitid', $request->input('unitid'))
+            //         ->where('checkin_date', $today)
+            //         ->exists();
 
-                // If there are no existing bookings for today, set type to 'booking'
-                if (!$existingBookingsToday) {
-                    $bookingType = 'booking';
-                }
-            }
+            //     // If there are no existing bookings for today, set type to 'booking'
+            //     if (!$existingBookingsToday) {
+            //         $bookingType = 'booking';
+            //     }
+            // }
 
             $booking = new Booking();
             $booking->userid = $request->input('userid');
@@ -169,7 +170,13 @@ class BookingController extends CORS
             $booking->guest_count = $request->input('guest_count');
             $booking->checkin_date = $checkin;
             $booking->checkout_date = $checkout;
-            $booking->total_price = $request->input('total_price') * $request->input('stay_length');
+            if($property->unit_type === 'Monthly Term'){
+                $length = $request->input('stay_length') / 30;
+                $booking->total_price = $request->input('total_price') * $length;
+            }else{
+                $booking->total_price = $request->input('total_price') * $request->input('stay_length');
+            }
+
             $booking->special_request = $request->input('special_request');
             $booking->arrival_time = $request->input('arrival_time');
             $booking->status = $request->input('status');
@@ -638,7 +645,8 @@ class BookingController extends CORS
                 'monthly_payment.due_date',
                 'monthly_payment.status as monthly_payment_status',
                 'tbl_payment.status as payment_status',
-                'tbl_payment.amount as payment_amount'
+                'tbl_payment.amount as payment_amount',
+                'tbl_payment.refund_amount' 
             )
             ->leftJoin('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->leftJoin('monthly_payment', 'tbl_booking.bookingid', '=', 'monthly_payment.bookingid')
@@ -658,7 +666,8 @@ class BookingController extends CORS
                 'guests' => $booking->guest_count,
                 'stay_length' => $booking->stay_length,
                 'amount' => $booking->total_price,
-                'status' => $booking->type === 'booking' ? 'Checked In' : 'Booked',
+                // 'status' => $booking->type === 'booking' ? 'Checked In' : 'Booked',
+                'status' => $booking->type,
                 'isCancel' => $booking->status,
                 'checkIn' => $booking->checkin_date,
                 'checkOut' => $booking->checkout_date,
@@ -673,6 +682,7 @@ class BookingController extends CORS
                 'userid' => $booking->payment_userid ?? 0,
                 'payment_status' => $booking->payment_status ?? null,
                 'payment_amount' => $booking->payment_amount ?? 0,
+                'refund_amount' => $booking->refund_amount ?? 0,
                 'monthly_payment_status' => $booking->monthly_payment_status ?? null,
                 'amount_due' => $booking->amount_due ?? 0,
                 'due_date' => $booking->due_date ?? null,

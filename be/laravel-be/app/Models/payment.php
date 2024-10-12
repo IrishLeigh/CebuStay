@@ -18,6 +18,7 @@ class Payment extends Model
         'paymentid',
         'linkid',
         'amount',
+        'refund_amount',
         'description',
         'status',
         'bhid'
