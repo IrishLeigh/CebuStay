@@ -878,24 +878,37 @@ class PropertyController extends CORS
     public function updatePropertyPricePayment(Request $request, $propertyid)
     {
         $this->enableCors($request);
+
+        // Initialize variables to null
+        $new_pricing = null;
+        $new_payment = null;
+
         if ($request->input('unitPricing')) {
             $updated_pricing = $request->input('unitPricing');
-            $pricingid = UnitDetails::where('propertyid', $propertyid)
-                ->first();
-            $get_pricing = PropertyPricing::where('proppricingid', $pricingid->proppricingid)->first();
-            $get_pricing->min_price = $updated_pricing['min_price'];
-            $get_pricing->save();
-            $new_pricing = PropertyPricing::where('proppricingid', $pricingid->proppricingid)->first();
+            $pricingid = UnitDetails::where('propertyid', $propertyid)->first();
 
+            if ($pricingid) {
+                $get_pricing = PropertyPricing::where('proppricingid', $pricingid->proppricingid)->first();
+                if ($get_pricing) {
+                    $get_pricing->min_price = $updated_pricing['min_price'];
+                    $get_pricing->save();
+                    $new_pricing = PropertyPricing::where('proppricingid', $pricingid->proppricingid)->first();
+                }
+            }
         }
+
         if ($request->input('paymentData')) {
             $updated_payment = $request->input('paymentData');
             $get_payment = PropertyPaymentMethods::where('propertyid', $propertyid)->first();
-            $get_payment->paymentmethod = $updated_payment['paymentmethod'];
-            $get_payment->isonline = $updated_payment['isonline'];
-            $get_payment->save();
-            $new_payment = PropertyPaymentMethods::where('propertyid', $propertyid)->first();
+
+            if ($get_payment) {
+                $get_payment->paymentmethod = $updated_payment['paymentmethod'];
+                $get_payment->isonline = $updated_payment['isonline'];
+                $get_payment->save();
+                $new_payment = PropertyPaymentMethods::where('propertyid', $propertyid)->first();
+            }
         }
+
         return response()->json([
             'status' => 'success',
             'updatedPricing' => $new_pricing,
