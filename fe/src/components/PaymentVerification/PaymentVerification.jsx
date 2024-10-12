@@ -30,11 +30,11 @@ const PaymentVerification = () => {
             setLoading(true);
             try {
                 if (bookingId !== null) {
-                    await axios.put('http://localhost:8000/api/bookingStatus', {
+                    const bookstatus = await axios.put('http://localhost:8000/api/bookingStatus', {
                         bookingid: bookingId,
                         status: 'Confirmed'
                     });
-                    await axios.put('http://localhost:8000/api/update-payment-status', {
+                    const paymentstatus = await axios.put('http://localhost:8000/api/update-payment-status', {
                         bookingid: bookingId,
                         status: 'Paid'
                     });
@@ -49,8 +49,14 @@ const PaymentVerification = () => {
                     });
                     setPayment(getPayment.data);
                     setBookingDetails(getDetails.data);
+                    
+                    if(bookstatus && paymentstatus && getDetails && getPayment && getpaymentid) {
+                        console.log('update payment', paymentstatus.data);
+                        setLoading(false);
+                    }
                 }
-                setLoading(false);
+                
+                
             } catch (error) {
                 console.error(error);
                 setLoading(false);
