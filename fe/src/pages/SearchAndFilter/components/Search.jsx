@@ -7,7 +7,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BedIcon from '@mui/icons-material/Bed';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 export default function Search({ onSearch, accommodations, setAccommodationList }) {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(null);
@@ -15,6 +16,8 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [response, setResponse] = useState('');
     const navigate = useNavigate();
     const suggestionsRef = useRef(null);
     const inputRef = useRef(null); // Reference for the input field
@@ -24,7 +27,9 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
         console.log('End Date:', endDate);
         console.log('Guest Capacity:', guestCapacity);
         if (endDate === null || guestCapacity === "") {
-            alert("Please select end date and enter guest capacity");
+            setResponse("Please enter guest capacity and select end date");
+            setOpen(true);
+            // alert("Please select end date and enter guest capacity");
             return;
         }
         onSearch({ startDate, endDate, guestCapacity: guestCapacity || null });
@@ -128,9 +133,25 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                 document.body.style.overflow = ''; // Cleanup
             };
         }, [showSuggestions]);
+        const handleClose = (event, reason) => {
+            if (reason === 'clickaway') {
+              return;
+            }
         
+            setOpen(false);
+          };
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert
+                    onClose={handleClose}
+                    severity="warning"
+                    // variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {response}
+                </Alert>
+            </Snackbar>
             <div className="m" style={{ width: '100%', marginTop: '2rem' }}>
                 <div className="search-box" ref={inputRef}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
