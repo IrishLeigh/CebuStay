@@ -1083,5 +1083,21 @@ class BookingController extends CORS
         }
     }
 
+    public function getBookerAndGuest(Request $request)
+    {
+        $this->enableCors($request);
+        if ($request->input('bookingid')) {
+            $bookerid = Booking::select('bookerid')->where('bookingid', $request->input('bookingid'))->first();
+            $guestid = Booking::select('guestid')->where('bookingid', $request->input('bookingid'))->first();
+            $booker = Booker::find($bookerid->bookerid);
+            $guest = Guest::find($guestid->guestid);
+        } else if ($request->input('bhid')) {
+            $bookerid = BookingHistory::select('bookerid')->where('bhid', $request->input('bhid'))->first();
+            $guestid = BookingHistory::select('guestid')->where('bhid', $request->input('bhid'))->first();
+            $booker = Booker::find($bookerid->bookerid);
+            $guest = Guest::find($guestid->guestid);
+        }
 
+        return response()->json(['booker' => $booker, 'guest' => $guest]);
+    }
 }

@@ -209,7 +209,7 @@ route::post('/updatepropertyfiles-singleunit/{propertyid}', [FileController::cla
 route::post('/updatepropertyfiles-gallerysingleunit/{propertyid}', [FileController::class, 'updateGalleryPhotosSingle']);
 route::post('/updatepropertybenefits-single/{propertyid}', [PropertyController::class, 'updatePropertyBenefits']);
 route::post('/updatepropertyrules-single/{propertyid}', [PropertyController::class, 'updatePropertyRules']);
-
+Route::post('/updatedpropertypricingpayment-single/{propertyid}', [PropertyController::class, 'updatePropertyPricePayment']);
 route::post('/property-companies/{propertycompanyid}', [PropertyCompanyController::class, 'update']);
 route::post('/property-owners/{id}', [PropertyOwnerController::class, 'update']);
 route::post('/legal-representative/{id}', [LegalRepresentativeController::class, 'update']);
@@ -263,3 +263,6 @@ Route::post('/logoutadmin', [UserAdminAuthenticationController::class, 'logout']
 
 Route::get('/getpayouts', [PayoutController::class, 'getPayouts']);
 Route::post('/setPayout', [PayoutController::class, 'setPayout']);
+Route::get('/manager/payouts', [PayoutController::class, 'getPayoutsByManager']);
+
+Route::get('/getbookerandguest', [BookingController::class, 'getBookerAndGuest']);

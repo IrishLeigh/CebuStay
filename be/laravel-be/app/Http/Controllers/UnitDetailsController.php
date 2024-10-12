@@ -68,34 +68,52 @@ class UnitDetailsController extends CORS
         }
     }
 
-
     public function insertBedTypes(Request $request)
     {
         $this->enableCors($request);
         $unitid = $request->input('unitid');
         $bedroomDetails = $request->input('bedroomDetailsData');
-        $unitroomidref = UnitRooms::where('unitid', $unitid)
-            ->where('roomname', 'Bedroom')
-            ->first();
-        $counter = 0;
-        if (!$unitroomidref) {
-            return response()->json(["status" => 'error', "message" => "Unit room not found"]);
+
+        // Retrieve all matching rooms (both Bedroom and Bedarea)
+        $unitrooms = UnitRooms::where('unitid', $unitid)
+            ->whereIn('roomname', ['Bedroom', 'Bedarea'])
+            ->get();
+
+        // Expand the unitrooms based on the 'quantity' field
+        $expandedUnitRooms = [];
+        foreach ($unitrooms as $unitroom) {
+            for ($i = 0; $i < $unitroom->quantity; $i++) {
+                $expandedUnitRooms[] = $unitroom;  // Add each unit room as many times as its quantity
+            }
         }
-        foreach ($bedroomDetails as $bedroom) {
+
+        // Check if the number of expanded unit rooms matches the number of bedroom details
+        if (count($expandedUnitRooms) !== count($bedroomDetails)) {
+            return response()->json([
+                "status" => 'error',
+                "message" => "Mismatch between unit rooms and bedroom details",
+                "unitrooms" => $unitrooms,
+                "bedroomDetails" => $bedroomDetails
+            ]);
+        }
+
+        // Process bedroomDetails one-to-one with expandedUnitRooms
+        foreach ($expandedUnitRooms as $index => $unitroom) {
+            $bedroom = $bedroomDetails[$index];  // Map the current bedroomDetails item to the current expanded unitroom
+
             $bedtype = new BedroomType();
-            $bedtype->unitroomid = $unitroomidref->unitroomid;
-            $bedtype->bedroomnum = $counter + 1;
+            $bedtype->unitroomid = $unitroom->unitroomid;
+            $bedtype->bedroomnum = $index + 1; // Increment bedroom number
             $bedtype->singlebed = $bedroom['singleBed'];
             $bedtype->bunkbed = $bedroom['doubleBed'];
             $bedtype->largebed = $bedroom['largeBed'];
             $bedtype->superlargebed = $bedroom['superLargeBed'];
             $bedtype->save();
-
-            $counter++;
         }
 
         return response()->json(["status" => 'success', "message" => "Bedroom Details inserted successfully"]);
     }
+
 
     public function getUnitById(Request $request)
     {
@@ -271,7 +289,7 @@ class UnitDetailsController extends CORS
             foreach ($unitbeds as $bedroom) {
                 if (!isset($bedroom['bedroomid'])) {
                     $find_unitroom = UnitRooms::where('unitid', $unitid)
-                        ->where('roomname', 'Bedroom')
+                        ->whereIn('roomname', ['Bedroom', 'Bedarea'])
                         ->first();
                     if ($find_unitroom) {
                         $new_bed = new BedroomType();
@@ -295,7 +313,7 @@ class UnitDetailsController extends CORS
                     if ($bedroom_find) {
                         $beds = $bedroom['beds'];
                         $bedroom_find->singlebed = $beds['singlebed'] ?? 0;
-                        $bedroom_find->bunkbed = $beds['doublebed'] ?? 0;
+                        $bedroom_find->bunkbed = $beds['bunkbed'] ?? 0;
                         $bedroom_find->largebed = $beds['largebed'] ?? 0;
                         $bedroom_find->superlargebed = $beds['superlargebed'] ?? 0;
                         $bedroom_find->save();
@@ -305,7 +323,7 @@ class UnitDetailsController extends CORS
             }
 
             $find_bedroom = UnitRooms::where('unitid', $unitid)
-                ->where('roomname', 'Bedroom')
+                ->whereIn('roomname', ['Bedroom', 'Bedarea'])
                 ->first();
             $unitbeds = [];
             if ($find_bedroom) {
