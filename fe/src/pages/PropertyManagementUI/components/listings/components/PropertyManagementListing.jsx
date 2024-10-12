@@ -3,12 +3,18 @@ import React, { useState, useEffect } from 'react';
 import '../css/PropertyManagementListing.css';
 import { MdMenuOpen, MdSearch, MdEdit, MdDelete, MdClose} from 'react-icons/md';
 // import Sidebar from '../../PropertyManagementUI/components/sidebar';
-import {Box, Grid, Tooltip, CircularProgress } from '@mui/material';
+import {Box, Grid, Tooltip, CircularProgress, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 // import EditPropertyUI from '../../PropertyManagementUI/components/EditPropertyUI';
 import { useNavigate } from 'react-router-dom';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
+import { set } from 'date-fns';
+
 export default function PropertyManagementListing() {
+    const [open, setOpen] = React.useState(false);
+    const [messeds, setMesseds] = useState("");
+    const [sev, setSev] = useState("success");
     const [selectedButton, setSelectedButton] = useState('ALL');
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
@@ -20,11 +26,24 @@ export default function PropertyManagementListing() {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const navigate = useNavigate();
+    const [alertstyle, setAlertStyle] = useState({
+        width: '100%',
+        color: 'green',
+        backgroundColor: 'white',
+        borderColor: 'green',
+    });
+   
     //TO DO: uncomment this if local storage does not work
         // const [user, setUser] = useState(null);
     const userid = localStorage.getItem("userid");
 
+    const handleCllose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
     
+        setOpen(false);
+      };
     // useEffect(() => {
     //     const token = localStorage.getItem("auth_token");
     //     if (token) {
@@ -94,6 +113,15 @@ export default function PropertyManagementListing() {
                 }
             })
             if(res.data.status === "success"){
+                setAlertStyle({
+                    width: '100%',
+                    color: 'green',
+                    backgroundColor: 'white',
+                    borderColor: 'green',
+                })
+                setMesseds("Property activated successfully");
+                setSev("success");
+                setOpen(true);
                 // alert(res.data.message);
                 try {
                     const propertyres = await axios.get(
@@ -132,6 +160,15 @@ export default function PropertyManagementListing() {
                 }
             })
             if(res.data.status === "success"){
+                setMesseds("Property deactivated successfully");
+                setSev("success");
+                setOpen(true);
+                setAlertStyle({
+                    width: '100%',
+                    color: 'green',
+                    backgroundColor: 'white',
+                    borderColor: 'green',
+                })
                 // alert(res.data.message);
                 try {
                     const propertyres = await axios.get(
@@ -149,7 +186,16 @@ export default function PropertyManagementListing() {
                     console.error(error);
                   }
             } else if(res.data.status === "error"){
-                alert(res.data.message);
+                setAlertStyle({
+                    width: '100%',
+                    color: 'red',
+                    backgroundColor: 'white',
+                    borderColor: 'red',
+                })
+                setMesseds(res.data.message);
+                setSev("error");
+                setOpen(true);
+                // alert(res.data.message);
             }
             setLoading(false);
         } catch (error) {
@@ -206,7 +252,16 @@ export default function PropertyManagementListing() {
         //     <Grid item xs={10}>
                 // <div className="full-height bg-light">
             <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-              
+                <Snackbar open={open} autoHideDuration={3000} onClose={handleCllose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+                    <Alert
+                    onClose={handleCllose}
+                    severity={sev}
+                    // variant="filled"
+                    sx={alertstyle}
+                    >
+                    {messeds}
+                    </Alert>
+                </Snackbar>
                 <div className="full-height" style={{position: 'relative'}}>
                     <div style={{ background: 'linear-gradient(to right, #F8A640, #F89E2D, #FCCD6E)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%' }}>
                         <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>Your Properties</h1>
@@ -397,12 +452,13 @@ export default function PropertyManagementListing() {
                                                         </Tooltip>
                                                         <Tooltip title={item.status === 'Inactive' ? 'Currently Inactive' : 'Deactivate Property'}>
                                                             <span className='dajwhbdkajwbdjhab'>
-                                                                <MdDelete 
+                                                                <DoDisturbIcon 
                                                                 onClick={() => item.status === 'Active' && handleDelete(item.id)} 
                                                                 style={{ 
                                                                     cursor: item.status === 'Inactive' ? 'not-allowed' : 'pointer', 
                                                                     color: 'red', 
-                                                                    opacity: item.status === 'Inactive' ? '0.5' : '1'
+                                                                    fontSize: '1.0rem',  
+                                                                    opacity: item.status === 'Inactive' ? '0.4' : '1'
                                                                 }} 
                                                                 />
                                                             </span>
@@ -411,9 +467,9 @@ export default function PropertyManagementListing() {
                                                             <RadioButtonCheckedIcon onClick={() => item.status === "Inactive" && handleStatus(item.id)} 
                                                             style={{ 
                                                                 cursor: item.status === 'Active' ? 'not-allowed' : 'pointer', 
-                                                                color: item.status === 'Active' ? 'red' : 'green', 
+                                                                color: item.status === 'Active' ? 'green' : 'red', 
                                                                 marginLeft: '0.5rem', fontSize: '1.0rem',  
-                                                                opacity: item.status === 'Active' ? '0.5' : '1',}} 
+                                                                opacity: item.status === 'Active' ? '0.4' : '1',}} 
                                                             />
                                                         </Tooltip>
                                                     </>
