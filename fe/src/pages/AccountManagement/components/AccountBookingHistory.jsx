@@ -5,7 +5,7 @@ import HeaderAccountMgnt from '../../../components/Header/HeaderAccountMgnt';
 import Modal from 'react-modal';
 import CancellationAndModification from './CancellationAndModification'; // Import the component
 import axios from 'axios';
-import { CircularProgress, Snackbar, Alert, } from '@mui/material';
+import { CircularProgress, Snackbar, Alert, Box, Typography, Button, } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 // Set the app element for accessibility
 Modal.setAppElement('#root');
@@ -31,16 +31,19 @@ export default function BookingHistory({ profile }) {
     const [bookings, setBookings] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
+    const [selectedPaymentData, setSelectedPaymentData] = useState(null);
+    const [viewPendingData, setViewPendingData] = useState(false);
+    const [viewPendingisOpen, setViewPendingisOpen] = useState(false);
 
     const [upcomingBooking, setUpcomingBooking] = useState(null);
     const [cancelledBooking, setCancelledBooking] = useState([]);
     const [completedBooking, setCompletedBooking] = useState(null);
+    const [monthlyLoading, setMonthlyLoading] = useState(false);
+    const [singleLoading, setSingleLoading] = useState(false);
 
     const [user, setUser] = useState(null);
 
     const [loading, setLoading] = useState(true); // Initialize loading state
-
-
     const [viewReviewisOpen, setViewReviewisOpen] = useState(false);
     const [review, setReview] = useState(null);
     // console.log("selectedBooking:", selectedBooking);
@@ -123,13 +126,6 @@ export default function BookingHistory({ profile }) {
         { id: '#EJKL89', date: '19/01/2023', name: 'Beachside Inn', location: 'San Diego, CA', guest: 'Chris Evans', type: 'Single Room', amount: '$300', status: 'Completed', review: 'Not yet reviewed' },
     ]);
 
-    // useEffect(() => {
-    //     // Simulate fetching data
-    //     setTimeout(() => {
-    //         setLoading(false); // Set loading to false after data is fetched
-    //     }, 3000);
-    // }, []);
-
 
     const getCellStyle = (item) => ({
         padding: '0.5rem',
@@ -173,10 +169,6 @@ export default function BookingHistory({ profile }) {
         setCurrentBID(item.id);
         setCurrentPropertyName(item.name);
         setCurrentLocation(item.location);
-        // setRating(reviews[propertyId]?.rating || 0);
-        // setReviewText(reviews[propertyId]?.text || '');
-        // setReviewSubmitted(!!reviews[propertyId]);
-        // setSelectedPropertyName(propertyName); // Set the property name
         setModalIsOpen(true);
         console.log("Review", item)
     };
@@ -200,37 +192,16 @@ export default function BookingHistory({ profile }) {
     };
 
     const handlePayment = async (item) => {
-        console.log('Payment details:', {
-            bookingId: item.id,
-            checkInDate: formatDate(item.checkIn),
-            name: item.name,
-            location: item.location,
-            guest: item.guest,
-            type: item.type,
-            amountPaid: item.amount_paid,
-            status: item.status,
-            dueDate: formatDate(item.due_date),
-            amountDue: item.amount_due
-        });
+        setMonthlyLoading(true);
 
         try {
             const res2 = await axios.post("http://127.0.0.1:8000/api/create-payment-link", {
-                amount: item.amount_due * 100,
+                amount: item.amount_due,
+                propertyid: item.propertyid,
                 description: item.name,
                 return_url: "http://localhost:3000/paymentVerification",
                 bookingid: item.id
 
-
-                // bookingId: item.id,
-                // checkInDate: formatDate(item.checkIn),
-                // name: item.name,
-                // location: item.location,
-                // guest: item.guest,
-                // type: item.type,
-                // amountPaid: item.amount_paid,
-                // status: item.status,
-                // dueDate: formatDate(item.due_date),
-                // amountDue: item.amount_due
 
             });
             const checkoutUrl = res2.data.checkout_session_url;
@@ -238,7 +209,48 @@ export default function BookingHistory({ profile }) {
             window.location.href = checkoutUrl;
         } catch (error) {
             console.log(error);
+        }finally{
+            setMonthlyLoading(false);
         }
+    };
+
+
+    const handlePaymentSingle = async (item) => {
+        setSingleLoading(true);
+        console.log("Item:", item);
+
+        try {
+            const res2 = await axios.post("http://127.0.0.1:8000/api/create-payment-link", {
+                amount: item.amount,
+                propertyid: item.propertyid,
+                description: item.name,
+                length: item.stay_length,
+                return_url: "http://localhost:3000/paymentVerification",
+                bookingid: item.id
+
+
+            });
+            const checkoutUrl = res2.data.checkout_session_url;
+            window.location.href = checkoutUrl;
+        } catch (error) {
+            console.log(error);
+        }finally{
+            setSingleLoading(false);
+        }
+    };
+
+
+    const openModal = (item) => {
+        console.log('Payment details:', item);
+        setViewPendingisOpen(true);
+        setViewPendingData(true);
+        console.log('View Pending Data:', viewPendingData);
+        setSelectedPaymentData(item);
+        console.log('Selected Payment Data:', selectedPaymentData);
+    };
+
+    const closeModal = () => {
+        setViewPendingisOpen(false);
     };
 
 
@@ -273,11 +285,6 @@ export default function BookingHistory({ profile }) {
             setError('Please enter a review.');
         } else {
             setError('');
-            console.log('Userid', user.userid);
-            console.log("Review:", reviewText);
-            console.log("Rating:", rating);
-            console.log("PropertyId:", currentPropertyId);
-            console.log("BID:", currentBID);
             try {
                 const res = await axios.post("http://127.0.0.1:8000/api/reviewsandratings", {
                     userid: user.userid,
@@ -306,22 +313,6 @@ export default function BookingHistory({ profile }) {
             } catch (error) {
                 console.log(error)
             }
-            // setReviews((prev) => ({
-            //     ...prev,
-            //     [currentPropertyId]: {
-            //         rating,
-            //         text: reviewText,
-            //     }
-            // }));
-
-            // // Update completedData to reflect the review status
-            // setCompletedData((prev) =>
-            //     prev.map((item) =>
-            //         item.id === currentPropertyId ? { ...item, review: 'REVIEWED' } : item
-            //     )
-            // );
-
-            // setReviewSubmitted(true);
         }
     };
 
@@ -366,10 +357,6 @@ export default function BookingHistory({ profile }) {
             </div>
 
             <div className="full-width mt-4">
-
-
-
-
                 <div className="controls flex items-center mb-4">
 
                     {/* Buttons Section */}
@@ -423,41 +410,7 @@ export default function BookingHistory({ profile }) {
 
                     {/* Search Input and Dropdown */}
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem', position: 'relative' }}>
-                        {/* <div style={{ position: 'relative', width: '300px' }}>
-                            <MdSearch style={{ position: 'absolute', left: '0.5rem', color: 'grey', fontSize: '1.6rem', marginTop: '0.5rem' }} />
-                            <input
-                                type="text"
-                                placeholder="Search here"
-                                style={{
-                                    padding: '0.5rem 1rem 0.5rem 2.5rem',
-                                    borderWidth: '1px',
-                                    borderRadius: '0.5rem',
-                                    outline: 'none',
-                                    height: '2.5rem',
-                                    width: '100%',
-                                    border: '1px solid #ddd', // Border color for input
-                                }}
-                            />
-                        </div> */}
-
-                        {/* <button
-                            onClick={() => setShowDropdown(!showDropdown)}
-                            style={{
-                                padding: '0.5rem 1rem',
-                                borderWidth: '1px',
-                                borderRadius: '0.5rem',
-                                marginLeft: '0.5rem',
-                                height: '2.5rem',
-                                cursor: 'pointer',
-                                backgroundColor: 'white',
-                                border: '1px solid #ddd', // Border color for button
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                        >
-                            <MdMenuOpen style={{ height: '1.5rem' }} />
-                        </button> */}
+                        
 
                         {/* Dropdown Menu */}
                         {showDropdown && (
@@ -583,97 +536,7 @@ export default function BookingHistory({ profile }) {
 
                         </div>
                     ) : (
-                        // <table
-                        //     className="table w-full text-left"
-                        //     style={{
-                        //         borderCollapse: 'collapse',
-                        //         width: '100%',
-                        //         border: '1px solid #dee2e6',
-                        //         borderRadius: '0.5rem',
-                        //     }}
-                        // >
-                        //     <thead>
-                        //         <tr style={{ backgroundColor: '#f8f9fa' }}>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Booking ID</th>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Date</th>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Name</th>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Location</th>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Guest</th>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Type</th>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Amount</th>
-                        //             <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Status</th>
-                        //             {selectedButton === 'COMPLETED' && (
-                        //                 <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Review</th>
-                        //             )}
-                        //         </tr>
-                        //     </thead>
-
-                        //     <tbody>
-                        //         {fetched && getData().length > 0 ? (
-                        //             getData().map((item, rowIndex) => (
-                        //                 <tr key={item.id} style={{ backgroundColor: '#ffffff' }}>
-                        //                     {['id', 'checkIn', 'name', 'location', 'guest', 'type', 'amount', 'status'].map((key) => (
-                        //                         <td
-                        //                             key={key}
-                        //                             style={{
-                        //                                 ...getCellStyle(rowIndex, getData().length),
-                        //                                 // cursor: item.canBeModified ? 'pointer' : 'not-allowed',
-                        //                                 // cursor: 'pointer' ,
-                        //                                 cursor: selectedButton === 'UPCOMING' ? 'pointer' : 'default',
-                        //                             }}
-                        //                             onClick={() => {
-                        //                                 if (item.status !== 'checkout' && selectedButton === 'UPCOMING') {
-                        //                                     handleRowClick(item); // Only call if it can be modified
-                        //                                 }
-                        //                                 else if (item.isCancel !== 'Cancelled' && selectedButton === 'CANCELLED') {
-                        //                                     handleRowClick(item); // Only call if it can be modified
-                        //                                 }
-                        //                             }}
-                        //                         >
-                        //                             {/* {item[key]} */}
-                        //                             {key === 'status' && selectedButton === 'CANCELLED' ? item.isCancel : (key === 'checkIn' ? formatDate(item[key]) : item[key])}
-                        //                         </td>
-                        //                     ))}
-                        //                     {selectedButton === 'COMPLETED' && (
-                        //                         <td style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                        //                            <button
-                        //                                 onClick={() => item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item)}
-                        //                                 disabled={false}  // Remove disabling as you want different actions in both cases
-                        //                                 style={{
-                        //                                     color: item.isreview === 1 ? 'gray' : 'green',
-                        //                                     cursor: item.isreview === 1 ? 'pointer' : 'pointer',  // Both should be pointer now
-                        //                                     background: 'none',
-                        //                                     border: 'none',
-                        //                                     fontFamily: 'Poppins',
-                        //                                     outline: 'none',
-                        //                                     fontSize: '0.875rem',
-                        //                                 }}
-                        //                             >
-                        //                                 {item.isreview === 1 ? 'View Review' : 'Add A Review'}
-                        //                             </button>
-
-                        //                         </td>
-                        //                     )}
-
-                        //                 </tr>
-                        //             ))
-                        //         ) : (
-                        //             <tr>
-                        //                 <td
-                        //                     colSpan={selectedButton === 'COMPLETED' ? 9 : 8}
-                        //                     style={{
-                        //                         padding: '1rem',
-                        //                         textAlign: 'center',
-                        //                         fontSize: '0.875rem',
-                        //                         borderBottom: 'none',
-                        //                     }}
-                        //                 >
-                        //                     No data available
-                        //                 </td>
-                        //             </tr>
-                        //         )}
-                        //     </tbody>
-                        // </table>
+                       <>
                         <table
                             className="table w-full text-left"
                             style={{
@@ -691,9 +554,15 @@ export default function BookingHistory({ profile }) {
                                     <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Location</th>
                                     <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Guest</th>
                                     <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Type</th>
-                                    <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Amount Paid</th>
+                                    {selectedButton === 'CANCELLED' ? (<>
+
+                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Refund Amount</th>
+                                    </>) : (<>
+                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Amount Paid</th>
+                                    </>)}
+
                                     <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Status</th>
-                                    <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Pending Payments</th>
+                                    {selectedButton === 'UPCOMING' && <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Pending Payments</th>}
                                     {selectedButton === 'COMPLETED' && (
                                         <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Review</th>
                                     )}
@@ -727,69 +596,103 @@ export default function BookingHistory({ profile }) {
                                                             : key === 'checkIn'
                                                                 ? formatDate(item[key])
                                                                 : key === 'amount'
-                                                                    ? item.unit_type === 'Multi Unit'
-                                                                        ? item.amount_paid
-                                                                        : item.payment_status === 'Paid'
-                                                                            ? item.amount_paid
-                                                                            : '------'
+                                                                    ? selectedButton === 'CANCELLED'
+                                                                        ? item.refund_amount // Display refund amount when cancelled
+                                                                        : item.unit_type === 'Monthly Term'
+                                                                            ? item.amount_paid === 0
+                                                                                ? '------'
+                                                                                : item.amount_paid
+                                                                            : item.payment_status === 'Paid'
+                                                                                ? item.amount
+                                                                                : item.amount
                                                                     : item[key]
                                                     }
                                                 </td>
                                             ))}
-                                            <td style={{ padding: '0.75rem', borderBottom: '1px solid #dee2e6', textAlign: 'center', verticalAlign: 'middle' }}>
-                                                {item.unit_type === 'Multi Unit' && item.monthly_payment_status === 'Pending' ? (
-                                                    <>
-                                                        <div>
-                                                            <div>Due Date:</div>
-                                                            <span>{formatDate(item.due_date)}</span>
-                                                            <div>Amount Due:</div>
-                                                            <span>{item.amount_due}</span>
+                                            {(selectedButton === 'UPCOMING' || selectedButton === 'COMPLETED') && (
+                                                <td style={{ padding: '0.75rem', borderBottom: '1px solid #dee2e6', textAlign: 'center', verticalAlign: 'middle' }}>
+                                                    {selectedButton === 'UPCOMING' && (
+                                                        <>
+                                                            {item.unit_type === 'Monthly Term' && item.monthly_payment_status === 'Pending' ? (
+                                                                <div>
+                                                                    {/* <div>
+                                                                        <div>Due Date:</div>
+                                                                    <span>{formatDate(item.due_date)}</span>
+                                                                    <div>Amount Due:</div>
+                                                                    <span>{item.amount_due}</span>
+                                                                    </div> */}
+                                                                    
+
+                                                                    <button
+                                                                        style={{
+                                                                            marginTop: '0.5rem',
+                                                                            background: 'green',
+                                                                            color: 'white',
+                                                                            border: 'none',
+                                                                            borderRadius: '0.25rem',
+                                                                            padding: '0.5rem 1rem',
+                                                                        }}
+                                                                        // onClick={() => handlePayment(item)}
+                                                                        onClick={() => openModal(item)}
+                                                                    >
+                                                                        View Payment
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    {item.payment_status === 'Paid' ? (
+                                                                        <div>------</div>
+                                                                    ) : (
+                                                                        <div>
+                                                                            {/* <div>
+                                                                            <div>Amount Due:</div>
+                                                                            <span>{item.payment_amount}</span>
+                                                                            </div> */}
+                                                                            
+                                                                            <button
+                                                                                style={{
+                                                                                    marginTop: '0.5rem',
+                                                                                    background: 'green',
+                                                                                    color: 'white',
+                                                                                    border: 'none',
+                                                                                    borderRadius: '0.25rem',
+                                                                                    padding: '0.5rem 1rem',
+                                                                                }}
+                                                                                onClick={() => openModal(item)}
+                                                                            >
+                                                                                View Payment
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                    {selectedButton === 'COMPLETED' && (
+                                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle' }}>
+                                                            <button
+                                                                onClick={() =>
+                                                                    item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item)
+                                                                }
+                                                                style={{
+                                                                    color: item.isreview === 1 ? 'gray' : 'green',
+                                                                    cursor: 'pointer',
+                                                                    background: 'none',
+                                                                    border: 'none',
+                                                                    fontFamily: 'Poppins',
+                                                                    outline: 'none',
+                                                                    fontSize: '0.875rem',
+                                                                }}
+                                                            >
+                                                                {item.isreview === 1 ? 'View Review' : 'Add A Review'}
+                                                            </button>
                                                         </div>
-
-                                                        <button style={{ marginTop: '0.5rem', background: 'green', color: 'white', border: 'none', borderRadius: '0.25rem', padding: '0.5rem 1rem' }}
-                                                            onClick={() => handlePayment(item)}
-                                                        >Pay Now</button>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        {item.payment_status === 'Paid' ? (
-                                                            <>
-                                                                <div>------</div>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                            <div>
-                                                                <div>Amount Due:</div>
-                                                                <span>{item.payment_amount}</span>
-                                                            </div>
-                                                            <button style={{ marginTop: '0.5rem', background: 'green', color: 'white', border: 'none', borderRadius: '0.25rem', padding: '0.5rem 1rem' }}
-                                                            // onClick={() => handlePayment(item)}
-                                                        >Pay Now</button>
-                                                            </>
-                                                        )}
-
-                                                    </>
-
-                                                )}
-                                            </td>
-                                            {selectedButton === 'COMPLETED' && (
-                                                <td style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle' }}>
-                                                    <button
-                                                        onClick={() => item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item)}
-                                                        style={{
-                                                            color: item.isreview === 1 ? 'gray' : 'green',
-                                                            cursor: 'pointer',
-                                                            background: 'none',
-                                                            border: 'none',
-                                                            fontFamily: 'Poppins',
-                                                            outline: 'none',
-                                                            fontSize: '0.875rem',
-                                                        }}
-                                                    >
-                                                        {item.isreview === 1 ? 'View Review' : 'Add A Review'}
-                                                    </button>
+                                                    )}
                                                 </td>
                                             )}
+
+
                                         </tr>
                                     ))
                                 ) : (
@@ -810,9 +713,11 @@ export default function BookingHistory({ profile }) {
                                 )}
                             </tbody>
                         </table>
+                        
+                        
 
+                        </>
                     )}
-
 
                 </div>
             </div>
@@ -963,7 +868,8 @@ export default function BookingHistory({ profile }) {
                             borderRadius: '0.25rem',
                             cursor: 'pointer',
                             fontSize: '1rem',
-                            transition: 'background-color 0.3s'
+                            transition: 'background-color 0.3s',
+                            
                         }}
                         onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
@@ -972,6 +878,104 @@ export default function BookingHistory({ profile }) {
                     </button>
                 </div>
             </Modal>
+
+            {viewPendingData && (
+                <Modal
+                isOpen={viewPendingisOpen}
+                onClose={closeModal}
+                style={{
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        margin: '1rem',
+                    },
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        transform: 'translate(-50%, -50%)',
+                        padding: '2rem',
+                        borderRadius: '0.5rem',
+                        width: '90%',
+                        maxWidth: '500px',
+                        backgroundColor: '#fff',
+                        border: 'none',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                    },
+                }}
+            >
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                        onClick={closeModal}
+                        style={{
+                            position: 'absolute',
+                            top: '0.1rem',
+                            right: '1.8rem',
+                            width: '30px',
+                            height: '30px',
+                            border: 'none',
+                            backgroundColor: 'transparent',
+                            color: 'red',
+                            fontSize: '2rem',
+                            cursor: 'pointer',
+                            transition: 'color 0.3s ease',
+                        }}
+                        onMouseOver={(e) => (e.target.style.color = '#0056b3')}
+                        onMouseOut={(e) => (e.target.style.color = '#007bff')}
+                    >
+                        &times; {/* This renders as an 'X' */}
+                    </button>
+                </div>
+                <Typography id="payment-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
+                    Payment Details
+                </Typography>
+                {selectedPaymentData.unit_type === 'Monthly Term' ? (<>
+                    <div style={{ textAlign: 'center' }}>
+                <Typography id="payment-modal-description" sx={{ mt: 2 }}>
+                    Due Date: {formatDate(selectedPaymentData.due_date)}
+                </Typography>
+                
+                <Typography sx={{ mt: 2 }}>
+                    Amount Due: {selectedPaymentData.amount_due}
+                </Typography>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handlePayment(selectedPaymentData)}
+                    sx={{ mt: 2 }}
+                    disabled={monthlyLoading}
+                >
+                    {monthlyLoading ? <CircularProgress size={24} /> : "Pay Now"}
+                </Button>
+                </div>
+                </>):(<>
+                    <div style={{ textAlign: 'center' }}>
+                <Typography id="payment-modal-description" sx={{ mt: 2 }}>
+                    Due Date: {formatDate(selectedPaymentData.checkIn)}
+                </Typography>
+                
+                <Typography sx={{ mt: 2 }}>
+                    Amount Due: {selectedPaymentData.amount}
+                </Typography>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handlePaymentSingle(selectedPaymentData)}
+                    sx={{ mt: 2 }}
+                    disabled={singleLoading}
+                >
+                    {singleLoading ? <CircularProgress size={24} /> : "Pay Now"}
+                </Button>
+                </div>
+                </>)}
+                
+            </Modal>
+            
+            )}
 
             {/* //VIEW REVIEW */}
             {review && (
@@ -1134,11 +1138,6 @@ export default function BookingHistory({ profile }) {
                     </div>
                 </Modal>
             )}
-
-
-
-
-
 
         </div>
     );
