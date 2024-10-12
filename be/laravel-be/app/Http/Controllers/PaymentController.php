@@ -174,7 +174,28 @@ class PaymentController extends CORS
                     }else{
                         $monthlyPayment->amount_paid += $payment->amount;
                     }
+                    
                     $monthlyPayment->save();
+
+                    $charge = $booking->total_price * .15;
+                    $paymentId = $payment->pid;
+                    $payout_record = new Payout();
+                    $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                        ->join('users', 'tbl_booking.userid', '=', 'users.userid')
+                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                        ->value('users.userid');
+                    $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                        ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                        ->value('property.propertyid');
+                    $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
+                    $payout_record->userid = $get_manager_userid;
+                    $payout_record->propertyid = $propertyid;
+                    $payout_record->pid = $paymentId;
+                    $payout_record->payout_amount = $booking->total_price - $charge;
+                    $payout_record->status = "Pending";
+                    $payout_record->save();
+
                     return response()->json(['message' => 'No further payments needed, stay is completed', 'monthlyPayment' => $monthlyPayment]);
 
                 } else {
@@ -192,24 +213,7 @@ class PaymentController extends CORS
             }
         }
 
-        $charge = $payment->amount * .15;
-        $paymentId = $payment->pid;
-        $payout_record = new Payout();
-        $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-            ->join('users', 'tbl_booking.userid', '=', 'users.userid')
-            ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-            ->value('users.userid');
-        $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-            ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
-            ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-            ->value('property.propertyid');
-        $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
-        $payout_record->userid = $get_manager_userid;
-        $payout_record->propertyid = $propertyid;
-        $payout_record->pid = $paymentId;
-        $payout_record->payout_amount = $payment->amount - $charge;
-        $payout_record->status = "Pending";
-        $payout_record->save();
+
 
         return response()->json($payment);
     }
@@ -336,6 +340,30 @@ class PaymentController extends CORS
                 $booking->total_price -= $amountToRefund;
                 $booking->status = 'Cancelled';
                 $booking->save();
+
+                $charge = $booking->total_price * .15;
+                    $paymentId = $payment->pid;
+                    $payout_record = new Payout();
+                    $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                        ->join('users', 'tbl_booking.userid', '=', 'users.userid')
+                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                        ->value('users.userid');
+                    $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                        ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                        ->value('property.propertyid');
+                    $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
+                    $payout_record->userid = $get_manager_userid;
+                    $payout_record->propertyid = $propertyid;
+                    $payout_record->pid = $paymentId;
+                    if($isMonthlyPayment){
+                        $payout_record->payout_amount = $monthlyPayment->amount_paid - $charge;
+                    }else{
+                        $payout_record->payout_amount = $booking->total_price - $charge;
+                    }
+                    $payout_record->payout_amount = $booking->total_price - $charge;
+                    $payout_record->status = "Pending";
+                    $payout_record->save();
 
                 // Return the refund data
                 return response()->json([
