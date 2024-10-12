@@ -1,67 +1,74 @@
-/* loader.css */
-
+/* Base loader styles */
 .loader {
-    position: relative;
-    width: 100%;
-    max-width: 300px; /* Match the card width */
-    height: 375px; /* Match the card height */
-    margin: 0.5rem; /* Match the card margin */
-    border: 1px solid #d3d3d3;
-    padding: 15px;
-    background-color: #e3e3e3;
-    overflow: hidden;
-    border-radius: 10px;
+  width: calc(33.33% - 1rem);
+  margin: 0.5rem;
+  position: relative;
+  max-width: 300px; /* Match the card width */
+  height: 375px; /* Match the card height */
+  border: 1px solid #d3d3d3;
+  padding: 15px;
+  background-color: #e3e3e3;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* Loader animation */
+.loader:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(110deg, rgba(227, 227, 227, 0) 0%, rgba(227, 227, 227, 0) 40%, rgba(227, 227, 227, 0.5) 50%, rgba(227, 227, 227, 0) 60%, rgba(227, 227, 227, 0) 100%);
+  animation: gradient-animation_2 1.2s linear infinite;
+}
+
+/* Loader content */
+.loader .wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loader .wrapper > div {
+  background-color: #cacaca;
+}
+
+.loader .circle {
+  width: 100%;
+  height: 200px; /* Adjust to fit the loader card */
+  border-radius: 10px;
+  background-color: #cacaca;
+  margin-bottom: 1rem;
+}
+
+.loader .line-1, .loader .line-2, .loader .line-3 {
+  width: 80%;
+  height: 1rem;
+  background-color: #cacaca;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive breakpoints for loader layout */
+@media (max-width: 768px) {
+  .loader {
+    width: calc(50% - 1rem); /* Two columns on tablets */
   }
-  
-  .loader:after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: linear-gradient(110deg, rgba(227, 227, 227, 0) 0%, rgba(227, 227, 227, 0) 40%, rgba(227, 227, 227, 0.5) 50%, rgba(227, 227, 227, 0) 60%, rgba(227, 227, 227, 0) 100%);
-    animation: gradient-animation_2 1.2s linear infinite;
+}
+
+@media (max-width: 480px) {
+  .loader {
+    width: calc(100% - 1rem); /* Full width on mobile */
   }
-  
-  .loader .wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
+}
+
+/* Loader shimmer animation */
+@keyframes gradient-animation_2 {
+  0% {
+    transform: translateX(-100%);
   }
-  
-  .loader .wrapper > div {
-    background-color: #cacaca;
+  100% {
+    transform: translateX(100%);
   }
-  
-  .loader .circle {
-    width: 100%;
-    height: 200px; /* Adjust to fit the loader card */
-    border-radius: 10px;
-    background-color: #cacaca;
-    margin-bottom: 1rem;
-  }
-  
-  .loader .line-1, .loader .line-2, .loader .line-3 {
-    width: 80%;
-    height: 1rem;
-    background-color: #cacaca;
-    margin-bottom: 0.5rem;
-  }
-  
-  .loader .line-4 {
-    width: 60%;
-    height: 1rem;
-    background-color: #cacaca;
-  }
-  
-  @keyframes gradient-animation_2 {
-    0% {
-      transform: translateX(-100%);
-    }
-  
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  
+}

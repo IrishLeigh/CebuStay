@@ -74,58 +74,167 @@ const MainContent = ({
 
   
   console.log("SEARCH UPDATE FROM MAIN",searchUpdate );
+
   return (
-    <div className='all-container'>
-      <div className="content-container">
-        <div className="main-content" style={{ marginLeft: '2.3rem', display: 'flex', flexWrap: 'wrap' }}>
-        {loading ? (
-  Array(9).fill().map((_, index) => <Loader key={index} />) // Display 10 loader components
-) : filteredAccommodations.length === 0 ? (  // Check for no available accommodations
-  <div className="no-results-message">
-    <h2>No available accommodations found</h2>
-    <p>Please adjust your filters to find suitable options.</p>
-  </div>
-) : (
-  filteredAccommodations.map((accommodation, index) => (
-    <div className="card" key={index} style={{ width: 'calc(33.33% - 1rem)', margin: '0.5rem' }} onClick={(e) => handleView(e, accommodation.propertyid)}>
-      <div className="card-img">
-        <img src={accommodation.src} alt={accommodation.property_name} />
-      </div>
-      <div className="card-info">
-        <div className="card-title" style={{margin:'0px'}}>
-          <p className="text-title" style={{ fontSize: '1rem' }}>{accommodation.property_name}</p>
-          {/* Star rating (dummy) */}
-          <div className="" style={{fontSize: '0.9rem'}}>
-            <span className="">★</span>
-            <span className="">{accommodation.rating}</span>
+<div className="all-container">
+  <div className="content-container">
+    <div
+      className="main-content"
+      style={{
+        marginLeft: '2.3rem',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center', // Ensure cards are centered
+      }}
+    >
+      {loading ? (
+        Array(9)
+          .fill()
+          .map((_, index) => <Loader key={index} />)
+      ) : filteredAccommodations.length === 0 ? (
+        <div 
+          className="no-results-message" 
+          style={{ 
+            width: '100%', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            textAlign: 'center', 
+            padding: '2rem' 
+          }}
+        >
+          <h2 style={{ fontSize: '1.5rem', margin: '0.5rem 0' }}>No available accommodations found</h2>
+          <p style={{ fontSize: '1rem', margin: '0.5rem 0' }}>Please adjust your filters to find suitable options.</p>
+        </div>
+      ) : (
+      
+        filteredAccommodations.map((accommodation, index) => (
+          <div
+            className="card"
+            key={index}
+            style={{
+              width: 'calc(33.33% - 1rem)', // Default for larger screens
+              margin: '0.5rem',
+              minWidth: '250px', // Set minimum width to handle very small screens
+              boxSizing: 'border-box',
+            }}
+            onClick={(e) => handleView(e, accommodation.propertyid)}
+          >
+            <div className="card-img">
+              <img src={accommodation.src} alt={accommodation.property_name} />
+            </div>
+            <div className="card-info">
+              <div className="card-title" style={{ margin: '0px' }}>
+                <p className="text-title" style={{ fontSize: '1rem' }}>
+                  {accommodation.property_name}
+                </p>
+                {/* Star rating */}
+                <div style={{ fontSize: '0.9rem' }}>
+                  <span>★</span>
+                  <span>{accommodation.rating}</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '0px' }}>
+                <LocationOnIcon
+                  style={{
+                    marginRight: '2px',
+                    fontSize: '1rem',
+                    margin: '0px',
+                    padding: '0px',
+                    opacity: '0.9',
+                  }}
+                />
+                <p
+                  style={{
+                    fontSize: '0.8rem',
+                    margin: '0px',
+                    opacity: '0.9',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {accommodation.address}
+                </p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '0px' }}>
+                {(accommodation.property_type === 'Home' ||
+                accommodation.property_type === 'Apartment') ? (
+                  <HomeOutlinedIcon
+                    style={{
+                      marginRight: '2px',
+                      fontSize: '1rem',
+                      margin: '0px',
+                      padding: '0px',
+                      opacity: '0.9',
+                    }}
+                  />
+                ) : (
+                  <ApartmentIcon
+                    style={{
+                      marginRight: '2px',
+                      fontSize: '1rem',
+                      margin: '0px',
+                      padding: '0px',
+                      opacity: '0.9',
+                    }}
+                  />
+                )}
+                <p
+                  style={{
+                    fontSize: '0.8rem',
+                    margin: '0px',
+                    opacity: '0.9',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {accommodation.property_type}
+                </p>
+              </div>
+              <p
+                className="text-muted-foreground mb-1"
+                style={{
+                  fontSize: '0.8rem',
+                  margin: '0px',
+                  opacity: '0.6',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  fontStyle: 'italic',
+                }}
+              >
+                {accommodation.property_desc}
+              </p>
+            </div>
+            <div className="card-footerr">
+              <span
+                className="text-title"
+                style={{
+                  fontSize: '0.8rem',
+                  backgroundColor: '#A334CF',
+                  color: 'white',
+                  padding: '5px',
+                  borderRadius: '4px',
+                  marginTop: '5px',
+                }}
+              >
+                {'₱ ' + (accommodation.min_price ? accommodation.min_price : 'N/A')} night
+              </span>
+            </div>
           </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '0px' }}>
-          <LocationOnIcon style={{ marginRight: '2px', fontSize: '1rem', margin: '0px', padding: '0px', opacity: '0.9' }} />
-          <p className="" style={{ fontSize: '0.8rem', margin: '0px', opacity: '0.9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {accommodation.address}
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '0px' }}>
-          {(accommodation.property_type === 'Home' || accommodation.property_type === 'Apartment') ? 
-          <HomeOutlinedIcon style={{ marginRight: '2px', fontSize: '1rem', margin: '0px', padding: '0px', opacity: '0.9' }} /> 
-          : <ApartmentIcon style={{ marginRight: '2px', fontSize: '1rem', margin: '0px', padding: '0px', opacity: '0.9' }} />}
-          <p className="" style={{ fontSize: '0.8rem', margin: '0px', opacity: '0.9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {accommodation.property_type}
-          </p>
-        </div>
-        <p className="text-muted-foreground mb-1" style={{ fontSize: '0.9375rem', margin:'0px', opacity:'0.6', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontStyle: 'italic' }}>{accommodation.property_desc}</p>
-      </div>
-      <div className="card-footerr">
-        <span className="text-title" style={{ fontSize: '0.8rem', backgroundColor:'#A334CF', color:'white', padding:'5px', borderRadius:'4px', marginTop:'5px' }}>{"₱ " + (accommodation.min_price? accommodation.min_price : 'N/A')} night</span>
-      </div>
+        ))
+      )}
     </div>
-  ))
-)}
-        </div>
-      </div>
-    </div>
+  </div>
+</div>
+
+
+
   );
 };
 
 export default MainContent;
+
