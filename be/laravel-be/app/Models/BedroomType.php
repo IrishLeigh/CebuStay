@@ -9,7 +9,7 @@ class BedroomType extends Model
 {
     protected $table = 'bedroomtype';
     protected $primaryKey = 'bedroomid';
-    protected $guarded = ['bedroomid', 'unitroomid', 'bedroomnum', 'singlebed', 'bunkbed', 'largebed', 'superlargebed'];
+    protected $guarded = ['bedroomid', 'unitroomid', 'bedroomnum', 'singlebed', 'bunkbed', 'largebed', 'superlargebed', 'sleepingtype'];
 
     public function unitroom()
     {

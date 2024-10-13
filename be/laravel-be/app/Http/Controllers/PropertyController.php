@@ -135,9 +135,9 @@ class PropertyController extends CORS
         $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type', 'isActive')
             ->where('propertyid', $request->input('propertyid'))
             ->first();
-        if ($property_info->isActive == 0) {
-            return response()->json(['status' => 'error', 'message' => 'Property is disabled']);
-        }
+        // if ($property_info->isActive == 1) {
+        //     return response()->json(['status' => 'error', 'message' => 'Property is active']);
+        // }
         $property_address = DB::table('location')
             ->select('address', 'zipcode', 'latitude', 'longitude')
             ->where('propertyid', $request->input('propertyid'))
@@ -198,7 +198,7 @@ class PropertyController extends CORS
             $unitrooms = DB::table('unitrooms')->select('unitroomid', 'roomname', 'quantity')->where('unitid', $unitid)->get();
             $unitroomsCollection = collect($unitrooms);
             // $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
-            $unitbedroom = $unitroomsCollection->whereIn('roomname', ['Bedroom', 'Bedarea'])->first();
+            $unitbedroom = $unitroomsCollection->whereIn('roomname', ['Bedroom', 'Bedarea', 'Bedspace'])->first();
             $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
             if ($propownid->ownershiptype == 'Individual') {
                 $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
@@ -801,6 +801,10 @@ class PropertyController extends CORS
     public function updatePropertyRules(Request $request, $propertyid)
     {
         $this->enableCors($request);
+        $new_rules = null; // Initialize to prevent undefined variable error
+        $new_policies = null; // Initialize to prevent undefined variable error
+        $raw_get_updated_rules = null; // Initialize to prevent undefined variable error
+        $raw_get_updated_policies = null; // Initialize to prevent undefined variable error
         if ($request->input('updated_rules')) {
             $updated_rules = $request->input('updated_rules');
             $existing_rules = HouseRule::where('propertyid', $propertyid)->first();
@@ -850,20 +854,28 @@ class PropertyController extends CORS
         if ($request->input('updated_policies')) {
             $updated_policies = $request->input('updated_policies');
             $existing_policies = BookingPolicy::where('propertyid', $propertyid)->first();
-            $existing_policies->is_cancel_plan = $updated_policies['standardCancellation'];
-            $existing_policies->cancel_days = $updated_policies['standardCancellation'] ? $updated_policies['cancellationDays'] : null;
-            $existing_policies->non_refundable = $updated_policies['nonRefundableRate'];
-            $existing_policies->modification_plan = $updated_policies['modificationPlan'];
-            $existing_policies->offer_discount = $updated_policies['offerDiscounts'];
+            $existing_policies->isCancellationPolicy = $updated_policies['isCancellationPolicy'];
+            $existing_policies->cancellationDays = $updated_policies['isCancellationPolicy'] ? $updated_policies['cancellationDays'] : null;
+            $existing_policies->CancellationCharge = $updated_policies['isCancellationPolicy'] ? $updated_policies['cancellationCharge'] : null;
+            // $existing_policies->non_refundable = $updated_policies['nonRefundableRate'];
+            $existing_policies->isModificationPolicy = $updated_policies['isModificationPolicy'];
+            $existing_policies->modificationDays = $updated_policies['isModificationPolicy'] ? $updated_policies['modificationDays'] : null;
+            $existing_policies->modificationCharge = $updated_policies['isModificationPolicy'] ? $updated_policies['modificationCharge'] : null;
+            // $existing_policies->offer_discount = $updated_policies['offerDiscounts'];
             $existing_policies->save();
             $raw_get_updated_policies = BookingPolicy::where('propertyid', $propertyid)->first();
             $get_updated_policies = BookingPolicy::where('propertyid', $propertyid)->first();
             $new_policies = [
-                'standardCancellation' => $get_updated_policies->is_cancel_plan ? true : false,
-                'cancellationDays' => $get_updated_policies->cancel_days,
-                'nonRefundableRate' => $get_updated_policies->non_refundable ? true : false,
-                'modificationPlan' => $get_updated_policies->modification_plan ? true : false,
-                'offerDiscounts' => $get_updated_policies->offer_discount ? true : false
+                'bookingpolicyid' => $get_updated_policies->bookingpolicyid,
+                'propertyid' => $get_updated_policies->propertyid,
+                'isCancellationPolicy' => $get_updated_policies->isCancellationPolicy ? true : false,
+                'cancellationDays' => $get_updated_policies->cancellationDays,
+                'CancellationCharge' => $get_updated_policies->cancellationCharge,
+                // 'nonRefundableRate' => $get_updated_policies->non_refundable ? true : false,
+                'isModificationPolicy' => $get_updated_policies->isModificationPolicy ? true : false,
+                'modificationDays' => $get_updated_policies->modificationDays,
+                'modificationCharge' => $get_updated_policies->modificationCharge,
+                // 'offerDiscounts' => $get_updated_policies->offer_discount ? true : false
             ];
         }
         return response()->json([

@@ -76,7 +76,7 @@ class UnitDetailsController extends CORS
 
         // Retrieve all matching rooms (both Bedroom and Bedarea)
         $unitrooms = UnitRooms::where('unitid', $unitid)
-            ->whereIn('roomname', ['Bedroom', 'Bedarea'])
+            ->whereIn('roomname', ['Bedroom', 'Bedarea', 'Bedspace'])
             ->get();
 
         // Expand the unitrooms based on the 'quantity' field
@@ -108,6 +108,7 @@ class UnitDetailsController extends CORS
             $bedtype->bunkbed = $bedroom['doubleBed'];
             $bedtype->largebed = $bedroom['largeBed'];
             $bedtype->superlargebed = $bedroom['superLargeBed'];
+            $bedtype->sleepingtype = $bedroom['sleepingtype'];
             $bedtype->save();
         }
 
@@ -417,6 +418,7 @@ class UnitDetailsController extends CORS
                     $bedroom_find->bunkbed = $beds['doubleBed'] ?? 0;
                     $bedroom_find->largebed = $beds['largeBed'] ?? 0;
                     $bedroom_find->superlargebed = $beds['superLargeBed'] ?? 0;
+                    $bedroom_find->sleepingtype = $bedroom['sleepingtype'];
                     $bedroom_find->save();
                 }
             }
@@ -424,7 +426,7 @@ class UnitDetailsController extends CORS
         if ($request->has('newUnitBeds')) {
             $add_bedrooms = $request->input('newUnitBeds');
             $unitroom = UnitRooms::where('unitid', $unitid)
-                ->where('roomname', 'Bedroom')
+                ->where('roomname', 'Bedspace')
                 ->first();
             $unitroomid = $unitroom->unitroomid;
             if ($unitroom) {
@@ -437,14 +439,27 @@ class UnitDetailsController extends CORS
                     $new_bedroom->bunkbed = $beds['doubleBed'] ?? 0;
                     $new_bedroom->largebed = $beds['largeBed'] ?? 0;
                     $new_bedroom->superlargebed = $beds['superLargeBed'] ?? 0;
+                    $new_bedroom->sleepingtype = $bedroom['sleepingtype'];
                     $new_bedroom->save();
+                    $unitroom->quantity++;
+                    $unitroom->save();
                 }
             }
         }
 
         $unit->save();
-
-        return response()->json(['message' => 'Unit details updated successfully', 'status' => 'success']);
+        //get all unitdetails and unitrooms and bedtypes
+        $unitdetails = UnitDetails::where('unitid', $unitid)->first();
+        $unitrooms = UnitRooms::where('unitid', $unitid)->get();
+        $unitroom_bedroom = UnitRooms::where('unitid', $unitid)->where('roomname', 'Bedspace')->first();
+        $bedtypes = BedroomType::where('unitroomid', $unitroom_bedroom->unitroomid)->get();
+        return response()->json([
+            'message' => 'Unit details updated successfully',
+            'status' => 'success',
+            'unitDetails' => $unitdetails,
+            'unitRooms' => $unitrooms,
+            'bedTypes' => $bedtypes
+        ]);
     }
 
 
