@@ -20,5 +20,6 @@ class MonthlyPayment extends Model
         'due_date',
         'created_at',
         'updated_at',
+        'bhid',
     ];
 }

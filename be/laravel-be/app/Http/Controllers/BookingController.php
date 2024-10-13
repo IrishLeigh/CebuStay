@@ -20,6 +20,7 @@ use App\Models\BookingHistory;
 use App\Models\BookingPolicy;
 use App\Services\PayMongoService;
 use GuzzleHttp\Client;
+use App\Models\Payout;
 use App\Http\Controllers\PaymentController;
 
 class BookingController extends CORS
@@ -646,7 +647,7 @@ class BookingController extends CORS
                 'monthly_payment.status as monthly_payment_status',
                 'tbl_payment.status as payment_status',
                 'tbl_payment.amount as payment_amount',
-                'tbl_payment.refund_amount' 
+                'tbl_payment.refund_amount as refund_amount' 
             )
             ->leftJoin('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->leftJoin('monthly_payment', 'tbl_booking.bookingid', '=', 'monthly_payment.bookingid')
@@ -719,6 +720,7 @@ class BookingController extends CORS
                 'location' => $booking->property->location->address,
                 'guests' => $booking->guest_count,
                 'amount' => $booking->total_price,
+                'book_status' => $booking->status,
                 'status' => $booking->check_type,
                 'checkIn' => $booking->checkin_date,
                 'checkOut' => $booking->checkout_date,
@@ -864,13 +866,43 @@ class BookingController extends CORS
 
         // Save to BookingHistory
         $bookingHistory->save();
-        $find_payment = Payment::where('bookingid', $bookingid)->first();
-        $find_payment->bookingid = null;
-        $find_payment->bhid = $bookingHistory->bhid;
-        $find_payment->save();
-        // Delete the booking from Booking model
-        $booking->delete();
 
+
+        $charge = $booking->total_price * .15;
+        $payment = Payment::where('bookingid', $request->input('bookingid'))->latest('created_at')->first();
+        $paymentId = $payment->pid;
+
+        $payout_record = new Payout();
+                    $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                        ->join('users', 'tbl_booking.userid', '=', 'users.userid')
+                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                        ->value('users.userid');
+                    $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                        ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                        ->value('property.propertyid');
+                    $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
+                    $payout_record->userid = $get_manager_userid;
+                    $payout_record->propertyid = $propertyid;
+                    $payout_record->pid = $paymentId;
+                    $payout_record->payout_amount = $booking->total_price - $charge;
+                    $payout_record->status = "Pending";
+                    $payout_record->save();
+
+                    $find_payment = Payment::where('bookingid', $bookingid)->first();
+                    $find_payment->bookingid = null;
+                    $find_payment->bhid = $bookingHistory->bhid;
+                    $find_payment->save();
+
+                    $find_monthly_payment = MonthlyPayment::where('bookingid', $bookingid)->first();
+                    if($find_monthly_payment){
+                        $find_monthly_payment->bookingid = null;
+                        $find_monthly_payment->bhid = $bookingHistory->bhid;
+                        $find_monthly_payment->save();
+                    }
+                    
+                    // Delete the booking from Booking model
+                    $booking->delete();
 
         // Find the closest next booking by checkin_date for the same unitid
         $nextBooking = Booking::where('unitid', $booking->unitid)
