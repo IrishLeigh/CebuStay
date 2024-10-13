@@ -310,7 +310,7 @@ export default function AccommodationReservation() {
           <div className="controls flex justify-between items-center mb-4">
             <div
               className="buttons flex justify-evenly w-full"
-              style={{ width: "fit-content" }}
+              style={{ width: "fit-content", flexDirection: "row" }}
             >
               {["All", "In", "Out", "Cancelled", "Upcoming"].map((button) => (
                 <button
@@ -326,8 +326,8 @@ export default function AccommodationReservation() {
                 </button>
               ))}
             </div>
-
             <div
+              className="search-container"
               style={{
                 display: "flex",
                 alignItems: "center",

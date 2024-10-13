@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "../css/payoutSecurityDeposit.css";
@@ -7,10 +7,16 @@ const PayoutSecurityDeposit = ({
   guestName,
   propertyName,
   checkoutDate,
-  securityDeposit,
   onClose,
   onConfirm, // New prop to handle confirmation
 }) => {
+  const [securityDeposit, setSecurityDeposit] = useState("0");
+  const handleInputChange = (event) => {
+    // Ensure that only numeric values are entered
+    const value = event.target.value.replace(/[^\d]/g, "");
+    setSecurityDeposit(value);
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -52,8 +58,8 @@ const PayoutSecurityDeposit = ({
             <input
               type="text"
               value={`₱ ${securityDeposit}`}
-              readOnly
               className="text-field"
+              onChange={handleInputChange} // Update state on change
             />
           </div>
         </div>

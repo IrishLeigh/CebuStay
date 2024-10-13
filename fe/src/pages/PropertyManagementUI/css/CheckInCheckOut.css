@@ -269,3 +269,45 @@
   justify-content: flex-end; /* Align items to the right */
   gap: 2px;
 }
+
+/* General styles */
+.image-class {
+  max-width: 100%; /* Ensures the image does not overflow */
+  height: auto; /* Maintains aspect ratio */
+}
+
+.container {
+  display: flex;
+  flex-direction: column; /* Default to vertical layout */
+}
+
+.left-section,
+.right-section {
+  width: 100%; /* Full width on small screens */
+}
+
+@media (min-width: 768px) {
+  /* Adjust as needed for your design */
+  .container {
+    flex-direction: row; /* Change to horizontal layout on medium and larger screens */
+  }
+
+  .left-section {
+    margin-right: 1rem; /* Space between sections on larger screens */
+    width: 100%; /* Set width for left section */
+  }
+
+  .right-section {
+    width: 100%; /* Set width for right section */
+  }
+}
+
+/* Additional styling for scrollbar on small screens */
+.container {
+  overflow-x: auto; /* Allow horizontal scrolling if content overflows */
+}
+
+.left-section,
+.right-section {
+  min-width: 400px; /* Ensure a minimum width to prevent them from being too small */
+}

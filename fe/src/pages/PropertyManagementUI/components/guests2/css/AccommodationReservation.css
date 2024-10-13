@@ -310,3 +310,19 @@
 .items-center {
   align-items: center;
 }
+
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .controls div {
+    width: 70%;
+  }
+
+  .search-container {
+    align-items: flex-end; /* Aligns items to the right in vertical layout */
+    margin-top: 2rem; /* Reduces margin on small screens */
+  }
+}
