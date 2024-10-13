@@ -142,7 +142,7 @@ export default function PricePayment({
     };
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/updatepropertypricingpayment-single/${propertyid}`,
+        `http://127.0.0.1:8000/api/updatedpropertypricingpayment-single/${propertyid}`,
         {
           unitPricing: dataToSave.unitPricing,
           paymentData: dataToSave.paymentData,
@@ -169,6 +169,9 @@ export default function PricePayment({
       }
     } catch (error) {
       console.log("Error saving data:", error);
+      
+    }finally {
+      setIsLoading(false);
     }
     console.log("Saving data:", dataToSave);
 
@@ -233,13 +236,13 @@ export default function PricePayment({
         </Typography>
 
         <Grid container spacing={2}>
-          {isSingleUnit && (
-            <Grid item xs={12} md={6} sx={{ padding: "1rem" }}>
+         
+            <Grid item xs={12} md={12} >
               <Box className="centered-container">
                 <Paper
                   elevation={3}
                   sx={{
-                    width: "80%",
+                    width: "100%",
                     padding: 2,
                     justifyContent: "center",
                     alignItems: "center",
@@ -285,7 +288,7 @@ export default function PricePayment({
                           outline: "none",
                           textAlign: "center",
                           fontSize: "inherit",
-                          width: "35%",
+                          width: "50%",
                           input: { textAlign: "center" },
                         }}
                       />
@@ -326,9 +329,9 @@ export default function PricePayment({
                 </Paper>
               </Box>
             </Grid>
-          )}
+         
 
-          <Grid item xs={12} md={6} sx={{ padding: "1rem" }}>
+          {/* <Grid item xs={12} md={12} sx={{ padding: "1rem" }}>
             <Box
               component="form"
               autoComplete="off"
@@ -422,21 +425,10 @@ export default function PricePayment({
                 </Typography>
               </RadioGroup>
             </Box>
-            {/* {isEditing && (
-              <div style={{ marginTop: "1rem", textAlign: "right" }}>
-                <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-                  Revert Changes
-                </Button>
-                <Button
-                  variant="contained"
-                  disabled={!hasChanges}
-                  onClick={handleSave}
-                >
-                  Save All Changes
-                </Button>
-              </div>
-            )} */}
-          </Grid>
+         
+          </Grid> */}
+          
+          
         </Grid>
           <Snackbar
             open={openSnackbar}

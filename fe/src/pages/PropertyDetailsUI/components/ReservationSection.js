@@ -41,19 +41,19 @@ export default function ReservationSection({
     if (!isDaily) {
       const diffDays = checkOutDate.diff(checkInDate, "day");
 
-      if (diffDays < 30) {
-        setError("Minimum stay for monthly bookings is 30 days.");
+      if (diffDays < 31) {
+        setError("Minimum stay for monthly bookings is 31 days.");
         setSnackbarOpen(true); // Open Snackbar for error
         setNotification("");
       } else {
         setError("");
 
         // Calculate months and remaining days
-        const currentMonths = Math.floor(diffDays / 30);
-        const remainingDays = diffDays % 30;
+        const currentMonths = Math.floor(diffDays / 31);
+        const remainingDays = diffDays % 31;
 
         // Always round up for monthsToCharge
-        const monthsToCharge = Math.ceil(diffDays / 30);
+        const monthsToCharge = Math.ceil(diffDays / 31);
 
         // Build the notification message
         if (remainingDays > 0) {

@@ -11,9 +11,12 @@ import {
   Alert,
   Snackbar,
 } from "@mui/material";
+import { Container, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider } from "@mui/material";
 import axios from "axios";
 import TemplateFrameEdit from "./TemplateFrame";
 import LoadingModal from "../modal/LoadingModal";
+import { AccessAlarm, MonetizationOn } from '@mui/icons-material'; // Import icons for the new section
+
 
 export default function EditRulesPolicies({
   propertyid,
@@ -37,11 +40,12 @@ export default function EditRulesPolicies({
     customRules: "",
   });
   const [policiesData, setPoliciesData] = useState({
-    standardCancellation: false,
-    cancellationDays: "",
-    nonRefundableRate: false,
-    modificationPlan: false,
-    offerDiscounts: false,
+    isCancellationPolicy: true,  // true for standard, false for non-refundable
+    isModification: true,  // true for modification, false for fixed plan
+    cancellationDays: '',
+    cancellationCharge: '',
+    modificationDays: '',
+    modificationCharge: '',
   });
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -86,11 +90,12 @@ export default function EditRulesPolicies({
   useEffect(() => {
     if (policies) {
       const initialPoliciesData = {
-        standardCancellation: policies.is_cancel_plan === 1,
-        cancellationDays: policies.cancel_days || "",
-        nonRefundableRate: policies.non_refundable === 1,
-        modificationPlan: policies.modification_plan === 1,
-        offerDiscounts: policies.offer_discount === 1,
+        isCancellationPolicy: policies.isCancellationPolicy === 1, // Convert 1/0 to true/false
+        isModification: policies.isModificationPolicy === 1,  // Convert 1/0 to true/false
+        cancellationDays: policies.cancellationDays || '',
+        cancellationCharge: policies.cancellationCharge || '',
+        modificationDays: policies.modificationDays || '',
+        modificationCharge: policies.modificationCharge || '',
       };
       setPoliciesData(initialPoliciesData);
       setOriginalData((prevData) => ({
@@ -99,14 +104,28 @@ export default function EditRulesPolicies({
       }));
     }
   }, [policies]);
+  
 
-  // useEffect(() => {
-  //   if (isEditing) {
-  //     onHouseRulesChange(houseRulesData);
-  //     onPoliciesChange(policiesData);
-  //   }
-  // }, [houseRulesData, policiesData, isEditing, onHouseRulesChange, onPoliciesChange]);
+  const handleRadioCancellationChange = (event) => {
+    const value = event.target.value === 'standard';
+    setPoliciesData((prevData) => ({
+      ...prevData,
+      isCancellationPolicy: value
+    }));
+    setHasChanges(true); // Indicate that there are unsaved changes
+  };
+  
+  const handleModificationChange = (event) => {
+    setHasChanges(true);
+    const { value } = event.target;
 
+    setPoliciesData(prevData => ({
+      ...prevData,
+      isModification: value === "modification" ? true : false,  // true if 'modification', false if 'fixed'
+    }));
+  };
+
+  
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setPoliciesData((prevData) => ({
@@ -134,13 +153,24 @@ export default function EditRulesPolicies({
   
   
 
-  const handleDaysChange = (e) => {
+  const handleDaysChange = (event, field) => {
+    const value = event.target.value;
     setPoliciesData((prevData) => ({
       ...prevData,
-      cancellationDays: e.target.value,
+      [field]: value,
     }));
-    setHasChanges(true);
+    setHasChanges(true); // Track changes for save prompt
   };
+  
+  const handleChargeChange = (event, field) => {
+    const value = event.target.value;
+    setPoliciesData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+    setHasChanges(true); // Track changes
+  };
+  
 
   const handleCancel = () => {
     if (hasChanges) {
@@ -168,17 +198,23 @@ export default function EditRulesPolicies({
   const handleSave = async () => {
     setIsLoading(true);
     setIsEditing(false);
-    if (
-      policiesData.standardCancellation &&
-      policiesData.cancellationDays === ""
-    ) {
-      alert("Please enter cancellation days");
+  
+    // Validation before saving
+    if (policiesData.isCancellationPolicy && (policiesData.cancellationDays === "" || policiesData.cancellationCharge === "")) {
+      alert("Please enter both cancellation days and cancellation charge.");
+      setIsLoading(false);
       return;
     }
-    // onHouseRulesChange(houseRulesData);
-    // onPoliciesChange(policiesData);
+  
+    if (policiesData.isModification && (policiesData.modificationDays === "" || policiesData.modificationCharge === "")) {
+      alert("Please enter both modification days and modification charge.");
+      setIsLoading(false);
+      return;
+    }
+  
     console.log("Submitted House Rules:", houseRulesData);
     console.log("Submitted Policies:", policiesData);
+  
     try {
       const res = await axios.post(
         `http://127.0.0.1:8000/api/updatepropertyrules-single/${propertyid}`,
@@ -187,32 +223,26 @@ export default function EditRulesPolicies({
           updated_policies: policiesData,
         }
       );
-      if (res.data) {
-        console.log("Response", res.data);
-        if (res.data.status === "success") {
-          const updated_HR = res.data.updatedRules;
-          const updated_pol = res.data.updatedPolicies;
-          setHouseRulesData(updated_HR);
-          setPoliciesData(updated_pol);
-          setOriginalData((prevData) => ({
-            ...prevData,
-            houseRulesData: updated_HR,
-            policiesData: updated_pol,
-          }));
-          onHouseRulesChange(res.data.rawUpdatedRules);
-          onPoliciesChange(res.data.rawUpdatedPolicies);
-         
-          setIsEditing(false);
-          setIsLoading(false);
-          setOpenSnackbar(true);
-          onSaveStatusChange('Saved');
-        }
+  
+      if (res.data && res.data.status === "success") {
+        const updated_HR = res.data.updatedRules;
+        const updated_pol = res.data.updatedPolicies;
+        setHouseRulesData(updated_HR);
+        setPoliciesData(updated_pol);
+        setOriginalData({
+          houseRulesData: updated_HR,
+          policiesData: updated_pol,
+        });
+        onHouseRulesChange(res.data.rawUpdatedRules);
+        onPoliciesChange(res.data.rawUpdatedPolicies);
+        setOpenSnackbar(true);
+        onSaveStatusChange('Saved');
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-   
- 
   };
   const handleCloseSnackbar  = () => {
     setOpenSnackbar(false);
@@ -468,91 +498,196 @@ export default function EditRulesPolicies({
 
 
           <Grid item xs={12} sx={{ padding: "1rem" }}>
-            <div
-              style={{
-                marginBottom: "1rem",
-                padding: "0 2rem 2rem 2rem",
-                border: "1px solid #ccc",
-                borderRadius: "0.8rem",
-                paddingTop: "1rem",
-              }}
-            >
-              <h6
-                style={{
-                  marginBottom: "1rem",
-                  fontWeight: "bold",
-                  top: "-1.5rem",
-                  left: "0.1rem",
-                  position: "relative",
-                  backgroundColor: "#fff",
-                  width: "fit-content",
-                }}
-              >
-                Booking Policy
-              </h6>
-              <Box>
-                <InputLabel sx={{ marginRight: 2 }}>
-                  Cancellation and prepayment policies
-                </InputLabel>
-                <Checkbox
-                  checked={policiesData.standardCancellation}
-                  color="secondary"
-                  disabled={!isEditing}
-                  name="standardCancellation"
-                  onChange={handleCheckboxChange}
-                />
-                <TextField
-                  id="cancellation-days"
-                  label="Cancellation Days"
-                  value={policiesData.cancellationDays}
-                  disabled={!isEditing}
-                  onChange={handleDaysChange}
-                  sx={{ marginRight: 2 }}
-                />
-                <InputLabel sx={{ marginRight: 2 }}>Refundable Rates</InputLabel>
-                <Checkbox
-                  checked={policiesData.nonRefundableRate}
-                  color="secondary"
-                  disabled={!isEditing}
-                  name="nonRefundableRate"
-                  onChange={handleCheckboxChange}
-                />
-                <br />
-                <InputLabel sx={{ marginRight: 2 }}>
-                  Modification Plans
-                </InputLabel>
-                <Checkbox
-                  checked={policiesData.modificationPlan}
-                  color="secondary"
-                  disabled={!isEditing}
-                  name="modificationPlan"
-                  onChange={handleCheckboxChange}
-                />
-                <br />
-                <InputLabel sx={{ marginRight: 2 }}>Offer Discounts</InputLabel>
-                <Checkbox
-                  checked={policiesData.offerDiscounts}
-                  color="secondary"
-                  disabled={!isEditing}
-                  name="offerDiscounts"
-                  onChange={handleCheckboxChange}
-                />
-              </Box>
-            </div>
-            {/* {isEditing && (
-              <div style={{ marginTop: "1rem", textAlign: "right" }}>
-                <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-                  Revert Changes
-                </Button>
-                <Button
-                  variant="contained"
-                  disabled={!hasChanges}
-                  onClick={handleSave}
+              {/* Cancellation Policy Selection */}
+              <Grid container spacing={2} sx={{ padding: '1rem' }}>
+                <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
+                  What is your cancellation policy?
+                </Typography>
+
+                <Grid item xs={12} md={12}>
+                  <Divider sx={{ mt: 1, mb: 1, borderColor: '#6A6A6A', width: '100%' }} />
+                  <RadioGroup
+                    name="isCancellationPolicy"
+                    value={policiesData.isCancellationPolicy ? 'standard' : 'non-refundable'}
+                    onChange={handleRadioCancellationChange}
+                  
                 >
-                  Save All Changes
-                </Button>
-              </div>
-            )} */}
+                    <FormControlLabel
+                      value="standard"
+                      control={<Radio color="secondary" />}
+                      label="Standard Cancellation Plan"
+                      disabled={!isEditing}
+                    />
+                   
+                    <FormControlLabel
+                      value="non-refundable"
+                      control={<Radio color="secondary" />}
+                      label="Non-refundable Rate Plan"
+                      disabled={!isEditing}
+                    />
+                     {policiesData.isCancellationPolicy && ( // Open by default
+                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            Standard Cancellation Plan
+                          </Typography>
+                          <Box sx={{ display: 'flex' }}>
+                            <ListItemIcon>
+                              <AccessAlarm color="primary" />
+                            </ListItemIcon>
+                            <Typography>
+                              Within how many days prior to their arrival can guests cancel their booking without any charges?
+                            </Typography>
+                          </Box>
+                          <TextField
+                            label="Number of Days"
+                            value={policiesData.cancellationDays || ''}
+                            onChange={(e) => handleDaysChange(e, 'cancellationDays')}
+                            type="number"
+                            InputProps={{ 
+                              inputProps: { 
+                                min: 1, 
+                                max: 31 // Set your desired maximum value here
+                              } 
+                            }}
+                            variant="outlined"
+                            disabled={!isEditing}
+                          />
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <ListItemIcon>
+                              <MonetizationOn color="secondary" />
+                            </ListItemIcon>
+                            <Typography>
+                              How much is the charge for the guest if they cancel after the given days?
+                            </Typography>
+                          </Box>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={policiesData.cancellationCharge || ''}
+                            onChange={(e) => handleChargeChange(e, 'cancellationCharge')}
+                            displayEmpty
+                            variant="outlined"
+                            disabled={!isEditing}
+                          >
+                           
+                            <MenuItem value={10}>10%</MenuItem>
+                            <MenuItem value={20}>20%</MenuItem>
+                            <MenuItem value={30}>30%</MenuItem>
+                            <MenuItem value={40}>40%</MenuItem>
+                            <MenuItem value={50}>50%</MenuItem>
+                            <MenuItem value={60}>60%</MenuItem>
+                          </Select>
+                        </Box>
+                      </Box>
+                    )}
+                    {!policiesData.isCancellationPolicy && ( // Open if non-refundable is selected
+                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            Non-refundable Rate Plan
+                          </Typography>
+                          <Typography>
+                            No charges will be refunded if the guest cancels at any point.
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
+                  </RadioGroup>
+                </Grid>
+              </Grid>
+
+              {/* Modification Policy Selection */}
+              <Grid container spacing={2} sx={{ padding: '1rem' }}>
+                <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
+                  What is your modification policy?
+                </Typography>
+                <Grid item xs={12} md={12}>
+                  <Divider sx={{ mt: 1, mb: 1, borderColor: '#6A6A6A', width: '100%' }} />
+                  <RadioGroup
+                    name="isModification"
+                    value={policiesData.isModification ? 'modification' : 'fixed'}
+                    onChange={handleModificationChange}
+                  >
+                    <FormControlLabel
+                      value="modification"
+                      control={<Radio color="secondary" />}
+                      label="Modification Allowed"
+                      disabled={!isEditing}
+                    />
+                   
+                    <FormControlLabel
+                      value="fixed"
+                      control={<Radio color="secondary" />}
+                      label="Fixed Modification Rate Plan"
+                      disabled={!isEditing}
+                    />
+                     {policiesData.isModification && ( // Open by default
+                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            Modification Policy
+                          </Typography>
+                          <Box sx={{ display: 'flex' }}>
+                            <ListItemIcon>
+                              <AccessAlarm color="primary" />
+                            </ListItemIcon>
+                            <Typography>
+                              Within how many days prior to their arrival can guests modify their booking without any charges?
+                            </Typography>
+                          </Box>
+                          <TextField
+                            label="Number of Days"
+                            value={policiesData.modificationDays || ''}
+                            onChange={(e) => handleDaysChange(e, 'modificationDays')}
+                            type="number"
+                            InputProps={{ inputProps: { min: 1 } }}
+                            variant="outlined"
+                            disabled={!isEditing}
+                          />
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <ListItemIcon>
+                              <MonetizationOn color="secondary" />
+                            </ListItemIcon>
+                            <Typography>
+                              How much is the charge for the guest if they modify after the given days?
+                            </Typography>
+                          </Box>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={policiesData.modificationCharge || ''}
+                            onChange={(e) => handleChargeChange(e, 'modificationCharge')}
+                            displayEmpty
+                            variant="outlined"
+                            disabled={!isEditing}
+                          >
+                           
+                            <MenuItem value={10}>10%</MenuItem>
+                            <MenuItem value={20}>20%</MenuItem>
+                            <MenuItem value={30}>30%</MenuItem>
+                            <MenuItem value={40}>40%</MenuItem>
+                            <MenuItem value={50}>50%</MenuItem>
+                            <MenuItem value={60}>60%</MenuItem>
+                          </Select>
+                        </Box>
+                      </Box>
+                    )}
+                    {!policiesData.isModification && ( // Open if fixed is selected
+                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            Fixed Modification Rate Plan
+                          </Typography>
+                          <Typography>
+                            No modifications will be allowed after the guest confirms the reservation.
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
+                  </RadioGroup>
+                </Grid>
+              </Grid>
           </Grid>
         </Grid>
         <Snackbar

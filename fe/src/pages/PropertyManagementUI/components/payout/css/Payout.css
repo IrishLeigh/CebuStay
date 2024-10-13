@@ -88,7 +88,7 @@
 /* Payout History Styles */
 .payout-history-container {
   width: 100%; /* Full width */
-  max-width: 1200px; /* Same max width as info-container */
+  /* max-width: 1200px; Same max width as info-container */
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -149,6 +149,8 @@
 
 .edit-input-group {
   margin-bottom: 15px; /* Space between input groups */
+  font-family: 'Poppins', sans-serif; /* Ensure Poppins font is used */
+  
 }
 
 .edit-input-group label {
@@ -166,9 +168,17 @@
   font-family: 'Poppins', sans-serif; /* Use Poppins for input */
   font-size: 1rem; /* Font size for input text */
 }
+.edit-input-group select {
+  width: 100%; /* Full width inputs */
+  padding: 10px; /* Padding inside inputs */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 4px; /* Rounded corners */
+  font-family: 'Poppins', sans-serif; /* Use Poppins for input */
+  font-size: 1rem; /* Font size for input text */
+}
 
 .edit-input-group input:focus {
-  border-color: #007bff; /* Change border color on focus */
+  border-color: #16B4DD; /* Change border color on focus */
   outline: none; /* Remove default outline */
 }
 
@@ -179,7 +189,7 @@
 }
 
 .edit-buttons button {
-  background-color: #007bff; /* Primary button color */
+  background-color: #16B4DD; /* Primary button color */
   color: white; /* Text color */
   border: none; /* Remove border */
   border-radius: 4px; /* Rounded corners */
@@ -197,6 +207,20 @@
   background-color: #ccc; /* Grey background for disabled state */
   cursor: not-allowed; /* Not allowed cursor */
 }
+.payout-button {
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.payout-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
 
 /* Responsive Styles */
 @media (max-width: 768px) {

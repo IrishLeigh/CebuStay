@@ -141,6 +141,7 @@ export default function AccommodationRegistration( {onPropertyListedClick}) {
   const [unitDetailsData, setUnitDetailsData] = useState({
     roomDetails: [
       { roomType: "Bedroom", quantity: 0 },
+      { roomType: "Bedarea", quantity: 0 },
       { roomType: "Bathroom", quantity: 0 },
       { roomType: "Living Room", quantity: 0 },
       { roomType: "Kitchen", quantity: 0 },
