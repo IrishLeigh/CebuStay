@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef  } from "react";
-import { Box, Paper, Typography, IconButton, TextField, Button, Container, Grid } from "@mui/material";
+import { Box, Paper, Typography, IconButton, TextField, Button, Container, Grid, useTheme, useMediaQuery } from "@mui/material";
 import { AddCircle as AddCircleIcon, Add as AddIcon, Remove as RemoveIcon, Cancel as CancelIcon } from "@mui/icons-material";
 import { useData } from "../../../components/registration_unit/registration_location/contextAddressData";
 import AnimatePage from "./AnimatedPage";
@@ -21,6 +21,8 @@ export default function RoomDetails({
     guestCapacity: "",
   });
   const topRef = useRef(null); // Create a ref for scrolling to the top
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -114,7 +116,11 @@ export default function RoomDetails({
           <Grid item xs={12} md={8} lg={6}>
             <Box>
               
-              <Paper elevation={3} sx={{ padding: "2rem" , borderRadius: "0.8rem" }}  >
+              <Paper 
+                elevation={3} 
+                sx={{ 
+                  padding: isMobile ? "1rem" : "2rem", // No padding for mobile
+                  borderRadius: "0.8rem" }}  >
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                   <Typography variant="h4" fontWeight="bold">
                     Room Details
@@ -153,7 +159,7 @@ export default function RoomDetails({
                       value={room.roomType}
                       onChange={(e) => handleRoomTypeChange(index, e.target.value)}
                       placeholder="Room Type"
-                      sx={{ width: "40%" }}
+                      // sx={{ width: "40%" }}
                       disabled = {["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? true : false}
                     />
                     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -163,7 +169,7 @@ export default function RoomDetails({
                       <TextField
                         value={room.quantity}
                         onChange={(e) => handleQuantityChange(index, e.target.value)}
-                        sx={{ width: "4rem", textAlign: "center" }}
+                        sx={{ width: "3rem", textAlign: "center" }}
                       />
                       <IconButton onClick={() => decrementQuantity(index)}>
                         <RemoveIcon />

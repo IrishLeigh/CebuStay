@@ -12,6 +12,7 @@ import AnimatePage from "../AnimatedPage";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 // Custom Alert for the Snackbar
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -26,6 +27,8 @@ export default function MultiPropertyInformation({
 }) {
   const [multiPropertyData, setMultiPropertyData] = useState(parentMultiPropertyInfo);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to the top when the component mounts
@@ -77,7 +80,7 @@ export default function MultiPropertyInformation({
           <Paper
             sx={{
               width: '80vw',
-              padding: '2rem',
+              padding: isMobile ? "1rem" : "2rem", // No padding for mobile
               borderRadius: '0.8rem',
               boxShadow: 3,
             }}

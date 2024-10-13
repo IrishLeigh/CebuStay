@@ -7,6 +7,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
+import { useMediaQuery } from "@mui/material"; // Import useMediaQuery
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -63,13 +64,16 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
     }
   };
 
+  // Check if the screen size is mobile
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
   return (
     <Container maxWidth="lg">
       <Box className="centered-container">
         <Paper
           elevation={3}
           sx={{
-            width: "80%",
+            width: isMobile ? "95%" : "80%", // Responsive width
             padding: 2,
             justifyContent: "center",
             alignItems: "center",
@@ -78,10 +82,9 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
         >
           <Box
             component="form"
-            
             autoComplete="off"
             sx={{
-              width: "auto",
+              width: "100%", // Use full width
               padding: 2,
               justifyContent: "center",
               alignItems: "center",
@@ -97,7 +100,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
             <div
               style={{
                 display: "flex",
-                fontSize: "74px",
+                fontSize: isMobile ? "40px" : "74px", // Adjust font size for mobile
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -115,7 +118,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
                   outline: "none",
                   textAlign: "center",
                   fontSize: "inherit",
-                  width: "350px",
+                  width: isMobile ? "150px" : "350px", // Adjust width for mobile
                 }}
               />
             </div>
@@ -129,17 +132,15 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
                       Commission and charges from CebuStay totaling 18.00% <br />
                       This amount also covers all taxes and fees. Please set your price to maximize your profit!
                     </p>
-                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <CheckIcon />
-                      <p>
-                        Enjoy instant booking confirmations for added convenience.
-                      </p>
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <CheckIcon />
-                      <p>
-                        Let us handle guest payments, saving you time and effort.
-                      </p>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <CheckIcon />
+                        <p style={{ marginLeft: "8px" }}>Enjoy instant booking confirmations for added convenience.</p>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <CheckIcon />
+                        <p style={{ marginLeft: "8px" }}>Let us handle guest payments, saving you time and effort.</p>
+                      </div>
                     </div>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                       <h6>Your total earnings would be (including taxes)</h6>

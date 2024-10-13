@@ -10,6 +10,8 @@ import {
   Button,
   Alert,
   Snackbar,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { Container, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider } from "@mui/material";
 import axios from "axios";
@@ -53,6 +55,8 @@ export default function EditRulesPolicies({
   const [hasChanges, setHasChanges] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
 
   useEffect(() => {
     console.log("On Mount");
@@ -105,7 +109,6 @@ export default function EditRulesPolicies({
     }
   }, [policies]);
   
-
   const handleRadioCancellationChange = (event) => {
     const value = event.target.value === 'standard';
     setPoliciesData((prevData) => ({
@@ -256,7 +259,7 @@ export default function EditRulesPolicies({
       <Paper
         style={{
           width: "auto",
-          padding: "4rem",
+          padding:  isMobile ? "1rem" :"4rem",
           borderRadius: "0.8rem",
           alignItems: "center",
         }}

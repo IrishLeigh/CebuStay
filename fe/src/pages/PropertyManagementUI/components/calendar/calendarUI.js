@@ -16,10 +16,10 @@ export default function CalendarUI() {
   const [selectedMenuItem, setSelectedMenuItem] = React.useState("mainGrid");
   const [openDrawer, setOpenDrawer] = React.useState(false);
 
+
   const dashboardTheme = createTheme(getDashboardTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
   const isMobile = useMediaQuery(showCustomTheme ? dashboardTheme.breakpoints.down('md') : defaultTheme.breakpoints.down('md'));
-
   const handleDrawerClose = () => {
     setOpenDrawer(false);
   };
@@ -50,19 +50,20 @@ export default function CalendarUI() {
 
   return (
     <TemplateFrame
-      toggleCustomTheme={toggleCustomTheme}
-      showCustomTheme={showCustomTheme}
-      mode={mode}
-      toggleColorMode={toggleColorMode}
-    >
-      <ThemeProvider theme={showCustomTheme ? dashboardTheme : defaultTheme}>
-        <CssBaseline enableColorScheme />
-        <Box sx={{ display: "flex" }}>
-          <SideMenu 
-            setSelectedMenuItem={setSelectedMenuItem} 
-            open={openDrawer} 
-            onClose={handleDrawerClose} 
-          />
+    toggleCustomTheme={toggleCustomTheme}
+    showCustomTheme={showCustomTheme}
+    mode={mode}
+    toggleColorMode={toggleColorMode}
+    drawerToggle={handleDrawerToggle} // Pass the drawer toggle function
+  >
+    <ThemeProvider theme={showCustomTheme ? dashboardTheme : defaultTheme}>
+      <CssBaseline enableColorScheme />
+      <Box sx={{ display: "flex", position: "relative" }}>
+        <SideMenu 
+          open={openDrawer} 
+          onClose={handleDrawerClose} 
+
+        /> 
           <Box
             component="main"
             sx={(theme) => ({
@@ -80,11 +81,6 @@ export default function CalendarUI() {
                 mt: { xs: 0, md: 0 },
               }}
             >
-              {isMobile && (
-                <IconButton onClick={handleDrawerToggle}>
-                  <MenuIcon />
-                </IconButton>
-              )}
               <CalendarLayout />
             </Stack>
           </Box>

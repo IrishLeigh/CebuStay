@@ -89,10 +89,10 @@ const theme = createTheme({
         connector: {
           '&.MuiStepConnector-root': {
             '& .MuiStepConnector-line': {
-              borderColor: '#A334CF', // Default color for connector line
+              borderColor: '#16B4DD', // Default color for connector line
             },
             '&.Mui-active .MuiStepConnector-line': {
-              borderColor: '#A334CF', // Color for connector line when active
+              borderColor: '#16B4DD', // Color for connector line when active
             },
             '&.Mui-completed .MuiStepConnector-line': {
               borderColor: '#A334CF', // Color for connector line when completed

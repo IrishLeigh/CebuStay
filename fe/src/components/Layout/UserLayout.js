@@ -11,7 +11,7 @@ const UserLayout = ({isPropertyListed}) => {
     "/admin/calendar",
     "/admin/guests",
     "/admin/payouts",
-    "/edit-property",
+    // "/edit-property",
     "/account",
   ];
 

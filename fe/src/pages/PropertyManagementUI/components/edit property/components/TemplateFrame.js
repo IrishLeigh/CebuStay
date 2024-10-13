@@ -10,7 +10,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import getDashboardTheme from '../../../../Dashboard/dashboard/theme/getDashboardTheme';
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Typography, useMediaQuery , useTheme} from '@mui/material';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'relative',
@@ -30,6 +30,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
 
   // useEffect(() => {
   //   if (saved) {
@@ -70,8 +72,8 @@ function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
             justifyContent: 'space-between',
             width: '100%',
             p: '8px 12px',
-            pl: '3rem',
-            pr: '3rem',
+            pl: isMobile ? '1rem' : '3rem',
+            pr:  isMobile ? '1rem' : '3rem',
           }}
         >
           <Button

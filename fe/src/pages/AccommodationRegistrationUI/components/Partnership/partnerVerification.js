@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, Snackbar } from '@mui/material';
+import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, Snackbar, useTheme, useMediaQuery } from '@mui/material';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
 import AnimatePage from '../AnimatedPage';
@@ -12,6 +12,8 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   const [hostType, setHostType] = useState('Individual');
   const [individualData, setIndividualData] = useState({});
   const [companyData, setCompanyData] = useState({});
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
   
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -149,14 +151,14 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" className="centered-container">
       <AnimatePage>
-        <Grid container spacing={2} className="centered-container">
+        <Grid container spacing={2} >
           <Grid item xs={6} sx={{ textAlign: "left" }}></Grid>
           <Paper
             sx={{
-              width: '80vw',
-              padding: '2rem',
+              // width: '80vw',
+              p: isMobile ? "1rem" : "2rem",
               borderRadius: '0.8rem',
               boxShadow: 3,
             }}
@@ -164,7 +166,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
             <Box
               component="form"
               sx={{
-                '& > :not(style)': { my: 1, width: "100%" }
+                '& > :not(style)': {  width: "100%" }
               }}
               autoComplete="off"
             >

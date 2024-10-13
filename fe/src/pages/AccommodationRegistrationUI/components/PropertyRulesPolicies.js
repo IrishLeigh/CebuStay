@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useRef } from 'react';
-import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider } from "@mui/material";
+import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider, useTheme, useMediaQuery } from "@mui/material";
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import { Cancel, MoneyOff, CheckCircle } from '@mui/icons-material'; // Import Material-UI icons
@@ -29,6 +29,8 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
   const topRef = useRef(null); // Create a reference for the top of the component
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Check if the screen size is mobile
 
   useEffect(() => {
      // Scroll to the top of the component when it mounts
@@ -178,13 +180,13 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   console.log("houseRulesData", houseRulesData);
   return (
     <div ref={topRef}>
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" className="centered-container">
       <AnimatePage>
         <Box display="flex" justifyContent="center" alignItems="center">
           <Paper
             sx={{
               width: '80vw',
-              padding: '2rem',
+              padding: isMobile ? "1rem" : "2rem",
               borderRadius: '0.8rem',
               boxShadow: 3,
             }}
@@ -197,7 +199,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
             </Typography>
             <form>
               {/* Cancellation Policy Selection */}
-              <Grid container spacing={2} sx={{ padding: '1rem' }}>
+              <Grid container spacing={2} sx={{  padding: isMobile ? "0.80rem" : "1rem", }}>
                 <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
                   What is your cancellation policy?
                 </Typography>
@@ -221,15 +223,22 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       label="Non-refundable Rate Plan"
                     />
                     {policiesData.isCancellationPolicy && ( // Open by default
-                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                      <Box sx={{ border: '1px solid #6A6A6A', 
+                        p:  isMobile ? "1rem" : "1.5rem", 
+                        m:  isMobile ? "0" : "2rem", 
+                         borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Standard Cancellation Plan
                           </Typography>
                           <Box sx={{ display: 'flex' }}>
-                            <ListItemIcon>
+                            {!isMobile &&(
+                              <ListItemIcon>
                               <AccessAlarm color="primary" />
                             </ListItemIcon>
+
+                            )}
+                            
                             <Typography>
                               Within how many days prior to their arrival can guests cancel their booking without any charges?
                             </Typography>
@@ -248,9 +257,13 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             variant="outlined"
                           />
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <ListItemIcon>
+                            {!isMobile && (
+                              <ListItemIcon>
                               <MonetizationOn color="secondary" />
                             </ListItemIcon>
+                              
+                            )}
+                            
                             <Typography>
                               How much is the charge for the guest if they cancel after the given days?
                             </Typography>
@@ -275,7 +288,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       </Box>
                     )}
                     {!policiesData.isCancellationPolicy && ( // Open if non-refundable is selected
-                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                      <Box sx={{ border: '1px solid #6A6A6A', 
+                        p:  isMobile ? "1rem" : "1.5rem", 
+                        m:  isMobile ? "0" : "2rem", 
+                        borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Non-refundable Rate Plan
@@ -291,7 +307,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
               </Grid>
 
               {/* Modification Policy Selection */}
-              <Grid container spacing={2} sx={{ padding: '1rem' }}>
+              <Grid container spacing={2} sx={{ padding: isMobile ? "0.8rem" : "1rem", }}>
                 <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
                   What is your modification policy?
                 </Typography>
@@ -314,15 +330,22 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       label="Fixed Modification Rate Plan"
                     />
                      {policiesData.isModification && ( // Open by default
-                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                      <Box sx={{ border: '1px solid #6A6A6A', 
+                        p:  isMobile ? "1rem" : "1.5rem", 
+                        m:  isMobile ? "0" : "2rem", 
+                       borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Modification Policy
                           </Typography>
                           <Box sx={{ display: 'flex' }}>
-                            <ListItemIcon>
-                              <AccessAlarm color="primary" />
-                            </ListItemIcon>
+                            {!isMobile && (
+                                <ListItemIcon>
+                                <AccessAlarm color="primary" />
+                              </ListItemIcon>
+                              
+                            )}
+                            
                             <Typography>
                               Within how many days prior to their arrival can guests modify their booking without any charges?
                             </Typography>
@@ -336,9 +359,11 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             variant="outlined"
                           />
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <ListItemIcon>
-                              <MonetizationOn color="secondary" />
-                            </ListItemIcon>
+                            {!isMobile && (
+                              <ListItemIcon>
+                                <MonetizationOn color="secondary" />
+                              </ListItemIcon>
+                            )}
                             <Typography>
                               How much is the charge for the guest if they modify after the given days?
                             </Typography>
@@ -363,7 +388,11 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       </Box>
                     )}
                     {!policiesData.isModification && ( // Open if fixed is selected
-                      <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
+                      <Box sx={{ border: '1px solid #6A6A6A', 
+                      
+                       p:  isMobile ? "1rem" : "1.5rem",
+                       m:  isMobile ? "0" : "2rem", 
+                      borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Fixed Modification Rate Plan
