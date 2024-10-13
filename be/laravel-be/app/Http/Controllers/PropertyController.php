@@ -132,9 +132,12 @@ class PropertyController extends CORS
     {
         $this->enableCors($request);
 
-        $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type', 'isActive')
+        $property_info = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'property_directions', 'unit_type', 'isActive', 'isFail')
             ->where('propertyid', $request->input('propertyid'))
             ->first();
+        if ($property_info->isFail == 1) {
+            return response()->json(['status' => 'error', 'message' => 'Property is disabled']);
+        }
         // if ($property_info->isActive == 1) {
         //     return response()->json(['status' => 'error', 'message' => 'Property is active']);
         // }
