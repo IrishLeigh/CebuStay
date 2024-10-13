@@ -140,8 +140,7 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
   const [propertyInfo, setPropertyInfo] = useState({});
   const [unitDetailsData, setUnitDetailsData] = useState({
     roomDetails: [
-      { roomType: "Bedroom", quantity: 0 },
-      { roomType: "Bedarea", quantity: 0 },
+      { roomType: "Bedspace", quantity: 0 },
       { roomType: "Bathroom", quantity: 0 },
       { roomType: "Living Room", quantity: 0 },
       { roomType: "Kitchen", quantity: 0 },
@@ -702,7 +701,7 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
                             paymentData.selectedPayment === "Online"
                               ? true
                               : false;
-                          const paymentmethod = paymentData.selectedPayout;
+                          const paymentmethod = paymentData.selectedPayout || "Paypal";
                           const propertyid = resPropertid.data.propertyid;
                           console.log("nara", paymentData);
                           console.log(
@@ -899,6 +898,16 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
                                     userid: userid,
                                   }
                                 );
+                                if (manager.data) {
+                                  const res = await axios.post(
+                                    `http://127.0.0.1:8000/api/setpropertyerror/${propertyId}`,
+                                    {
+                                      button: 0 ,
+
+                                    }
+                                  )
+
+                                }
                                 console.log("Manager:", manager.data);
                                 console.log("Successfully Registered");
                                 // setModalMessage("Successfully Registered");
@@ -1461,6 +1470,36 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
       contentRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [step]); // Trigger this effect when 'step' changes
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!userid) return;
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userid}`);
+        console.log("Response Data sa PAYOUT:", response.data);
+    
+        // Assuming response.data is the actual data object containing paypalmail and paypalphonenumber
+        const { paypalmail, paypalphonenumber } = response.data;
+    
+        // Update only the email and mobile in paypalInfo
+        setPaymentData((prevData) => ({
+          ...prevData,
+          paypalInfo: {
+            ...prevData.paypalInfo,
+            email: paypalmail || "",  // Use the API response or fallback to an empty string
+            mobile: paypalphonenumber || "", // Use the API response or fallback to an empty string
+          }
+        }));
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchProfile();
+  }, [userid]);
+  
+
   console.log("Property Information from parent", propertyInfo);
   console.log("Multi beds from parent", multiRoomsAndBeds);
   console.log("Policies from parent:", policiesData);

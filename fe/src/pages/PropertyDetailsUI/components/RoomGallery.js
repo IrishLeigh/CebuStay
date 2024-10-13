@@ -36,6 +36,13 @@ export default function RoomGallery({ propertyImages, galleryImages }) {
     }
   }, [propertyImages, galleryImages]);
 
+  // Set number of columns based on screen size
+  const getCols = () => {
+    if (isMobile) return 1;  // Mobile: 1 image per row
+    if (isTablet) return 2;  // Tablet: 2 images per row
+    return 6;                // Desktop: 3 images per row
+  };
+
   const scrollGallery = (direction) => {
     galleryRef.current.scrollBy({ left: direction === 'left' ? -300 : 300, behavior: "smooth" });
   };
@@ -74,19 +81,15 @@ export default function RoomGallery({ propertyImages, galleryImages }) {
     prevArrow: <CustomArrow type="prev" />,
   };
 
-  // Set number of columns based on screen size
-  const getCols = () => {
-    if (isMobile) return 1;  // Mobile: 1 image per row
-    if (isTablet) return 2;  // Tablet: 2 images per row
-    return 3;                // Desktop: 3 images per row
-  };
+  console.log("Gallery Images:", galleryImages);
+  console.log("Property Images:", propertyImages);
 
   return (
     <Paper sx={{ borderRadius: 2, padding: 2, boxShadow: 3, mt: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <ArrowBack sx={{ color: "#16B4DD", cursor: 'pointer' }} onClick={() => scrollGallery('left')} />
         <Box sx={{ flexGrow: 1, overflowX: 'auto', width: '100%', display: 'flex', justifyContent: 'center' }} ref={galleryRef}>
-          <ImageList cols={getCols()} gap={8} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <ImageList cols={getCols()}>
             {images.map((image, index) => (
               <ImageListItem key={image.id} sx={{ width: '100%', height: 'auto', minWidth: 100, minHeight: 100 }}>
                 <img
@@ -110,60 +113,63 @@ export default function RoomGallery({ propertyImages, galleryImages }) {
       </Box>
 
       {/* Dialog for full-size image slideshow */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth={isMobile ? "xs" : "md"}
-        fullWidth
-      >
-        <DialogContent sx={{ padding: 0, position: 'relative' }}>
-          <IconButton
-            onClick={() => setOpenDialog(false)}
-            sx={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              color: 'white',
-              zIndex: 1,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
-            }}
-          >
-            <Close />
-          </IconButton>
-          <Slider {...sliderSettings}>
-            {images.map((image) => (
-              <Box key={image.id} sx={{ position: "relative", width: "100%", height: "auto" }}>
-                <img
-                  src={image.src}
-                  alt={`Gallery ${image.id}`}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    objectFit: "contain",
-                    aspectRatio: "16/9", // Maintain aspect ratio
-                    borderRadius: 8,
-                  }}
-                />
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: 16,
-                    left: 16,
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    padding: "8px 16px",
-                    borderRadius: 4,
-                    color: "white",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  {image.caption}
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Dialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          maxWidth="md"
+          fullWidth
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} // Centering dialog
+        >
+          <DialogContent sx={{ padding: 0, position: 'relative' }}>
+            <IconButton
+              onClick={() => setOpenDialog(false)}
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                color: 'white',
+                zIndex: 1,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+              }}
+            >
+              <Close />
+            </IconButton>
+            <Slider {...sliderSettings}>
+              {images.map((image) => (
+                <Box key={image.id} sx={{ position: "relative", width: "100%", height: "auto" }}>
+                  <img
+                    src={image.src}
+                    alt={`Gallery ${image.id}`}
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      objectFit: "contain",
+                      aspectRatio: "16/9", // Maintain aspect ratio
+                      borderRadius: 8,
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 16,
+                      left: 16,
+                      backgroundColor: "rgba(0, 0, 0, 0.6)",
+                      padding: "8px 16px",
+                      borderRadius: 4,
+                      color: "white",
+                      fontSize: "0.875rem",
+                    }}
+                  >
+                    {image.caption}
+                  </Box>
                 </Box>
-              </Box>
-            ))}
-          </Slider>
-        </DialogContent>
-      </Dialog>
+              ))}
+            </Slider>
+          </DialogContent>
+        </Dialog>
+      </Box>
     </Paper>
   );
 }

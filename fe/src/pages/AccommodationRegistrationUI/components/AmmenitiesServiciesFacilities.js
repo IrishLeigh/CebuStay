@@ -36,6 +36,11 @@ const data = {
     { icon: "/sports.png", text: "Sports Facilities" },
     { icon: "/parking.png", text: "Parking" },
     { icon: "/businesscenter.png", text: "Business Center" },
+    { icon: "/businesscenter.png", text: "Clubhosue" },
+    { icon: "/restaurant.png", text: "Restaurant" },
+    { icon: "/cafe.png", text: "Cafe" },
+    { icon: "/bar.png", text: "Bar" },
+    { icon: "/lounge.png", text: "Lounge Area" },
   ],
 };
 

@@ -150,12 +150,10 @@ export default function EditPropertyUI() {
     setValue(index);
   };
   
-
-  
   // console.log("Property Data TYPE?: ", propertyData.property_type);
   // console.log ("basicinfo status?: ", saveCount);
   // console.log ("Parent Partner Data: ", partnerData);
-  console.log("RoDATA FROM API: ", data);
+  // console.log("RoDATA FROM API: ", data);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>
@@ -169,7 +167,7 @@ export default function EditPropertyUI() {
           color: "#FFF",
         }}
       >
-        
+        {/* Nav Buttons */}
         <Box
           style={{
             display: "flex",
@@ -178,7 +176,7 @@ export default function EditPropertyUI() {
             alignItems: "center",
             justifyContent: "center",
             flexGrow: 1,
-            maxWidth: "lg",
+            maxWidth: "xl",
           }}
         >
           {[
@@ -231,7 +229,7 @@ export default function EditPropertyUI() {
             <Sample 
               isEditing={isEditing}
               propertyData={rooms}
-              onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
+              // onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
               onSaveStatusChange={handleSaveStatusChange}
             />
              <RoomDetailsSingleUnit 

@@ -103,6 +103,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo , galleryIma
       }
     }
   };
+  console.log("galleryImages NASAD NI SA IKA DUHA NGA PARENT:", galleryImages);
 
   return (
     <div >

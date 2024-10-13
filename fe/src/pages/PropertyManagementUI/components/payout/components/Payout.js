@@ -77,7 +77,8 @@ const Payout = () => {
   console.log("DATA PAY OUT : ", data);
 
   const handleUpdate = async () => {
-    if (isEmailValid(email) && isPhoneValid(phone)) {
+    // if (isEmailValid(email) && isPhoneValid(phone)) {
+      if (isEmailValid(email) ) {
       try {
         // Update user information via API call
         const response = await axios.put(`http://127.0.0.1:8000/api/users_update`, {
@@ -193,7 +194,7 @@ const Payout = () => {
                       <td>Php {payout.payout_amount ? payout.payout_amount.toFixed(2) : '0.00'}</td>
                       <td>{payout.customername}</td>
                       <td>{payout.payment_date}</td>
-                      <td>{payout.checkout_date}</td>
+                      <td>{payout.checkout_date || 'Not yet checked out'}</td>
                       <td>{payout.status}</td>
                     </tr>
                   ))

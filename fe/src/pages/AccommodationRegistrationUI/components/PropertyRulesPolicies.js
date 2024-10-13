@@ -30,7 +30,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
   const topRef = useRef(null); // Create a reference for the top of the component
 
-
   useEffect(() => {
      // Scroll to the top of the component when it mounts
      window.scrollTo(0, 0);
@@ -52,7 +51,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
         setPoliciesData(initialPoliciesData);
     }
 }, [parentPoliciesData]);
-
 
   const handleDaysChange = (e, key) => {
     let value = Number(e.target.value);
@@ -151,7 +149,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     // Validate check-in and check-out times
     if (
       !houseRulesData.checkInFrom ||
-      !houseRulesData.checkInUntil ||
       !houseRulesData.checkOutFrom ||
       !houseRulesData.checkOutUntil
     ) {
@@ -217,6 +214,12 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       control={<Radio color="secondary" />}
                       label="Standard Cancellation Plan"
                     />
+                    
+                    <FormControlLabel
+                      value="non-refundable"
+                      control={<Radio color="secondary" />}
+                      label="Non-refundable Rate Plan"
+                    />
                     {policiesData.isCancellationPolicy && ( // Open by default
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -271,11 +274,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                         </Box>
                       </Box>
                     )}
-                    <FormControlLabel
-                      value="non-refundable"
-                      control={<Radio color="secondary" />}
-                      label="Non-refundable Rate Plan"
-                    />
                     {!policiesData.isCancellationPolicy && ( // Open if non-refundable is selected
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -309,7 +307,13 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       control={<Radio color="secondary" />}
                       label="Modification Allowed"
                     />
-                    {policiesData.isModification && ( // Open by default
+                   
+                    <FormControlLabel
+                      value="fixed"
+                      control={<Radio color="secondary" />}
+                      label="Fixed Modification Rate Plan"
+                    />
+                     {policiesData.isModification && ( // Open by default
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -358,11 +362,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                         </Box>
                       </Box>
                     )}
-                    <FormControlLabel
-                      value="fixed"
-                      control={<Radio color="secondary" />}
-                      label="Fixed Modification Rate Plan"
-                    />
                     {!policiesData.isModification && ( // Open if fixed is selected
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -487,14 +486,14 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={6}>
                       <DatePicker
-                          title="Check-in From"
+                          title="Check-in"
                           onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInFrom: value }))}
                           value={houseRulesData.checkInFrom}
                           fullWidth
                         />
 
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      {/* <Grid item xs={12} md={6}>
                         <DatePicker
                             title="Check-in Until"
                             onChange={(value) => setHouseRulesData(prevData => ({ ...prevData, checkInUntil: value }))}
@@ -502,7 +501,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             fullWidth
                           />
                         
-                      </Grid>
+                      </Grid> */}
                       {/* <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', m: 2 }}>
                        
                       

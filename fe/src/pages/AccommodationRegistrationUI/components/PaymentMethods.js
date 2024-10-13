@@ -125,6 +125,8 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
     }
   };
 
+  console.log("Payment Data HERE:", paymentData);
+
   return (
     <Container maxWidth="lg">
       <Paper elevation={3} sx={{ p: "2rem", width: "100%", borderRadius: "0.8rem", boxShadow: 3 }}>
@@ -194,7 +196,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
           )}
           {paymentData.hasPaypal === "no" && (
             <Typography sx={{ mt: 2 }}>
-              You need to register for a PayPal account to receive payments.
+              You need to register for a PayPal account to receive payments.You can edit this part later.
             </Typography>
           )}
         </Box>
