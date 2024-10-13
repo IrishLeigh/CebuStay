@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Models\PropertyPricing;
 use App\Models\UnitDetails;
 use Illuminate\Http\Request;
+use App\Models\BookingHistory;
 use App\Models\Booking;
 use GuzzleHttp\Client;
 
@@ -44,12 +45,12 @@ class PaymentController extends CORS
 
         $totalprice = null;
         // $isMonthlyPayment = $property->unit_type === 'Monthly Term';
-        if ($property->unit_type === 'Monthly Term' ) {
+        if ($property->unit_type === 'Monthly Term') {
             $description = 'Monthly Payment';
             // $totalprice = round($monthlyAmount * 100);
-            if($monthlyAmount > 0){
+            if ($monthlyAmount > 0) {
                 $totalprice = round($monthlyAmount * 100);
-            }else{
+            } else {
                 $totalprice = $amount * 100;
             }
 
@@ -76,12 +77,18 @@ class PaymentController extends CORS
             } else {
                 // Save the payment record in the database
                 $payment = new Payment();
+                $booking = Booking::find($bookingId);
+                $monthlyPayment = MonthlyPayment::where('bookingid', $request->input('bookingid'))
+                    ->latest('created_at')
+                    ->first();
+                
                 $payment->amount = $totalprice / 100;
-                if($property->unit_type === 'Monthly Term' ){
+                if ($property->unit_type === 'Monthly Term') {
                     $unitDetails = UnitDetails::where('propertyid', $propertyId)->first();
                     $proppricing = PropertyPricing::where('proppricingid', $unitDetails->proppricingid)->first();
-                $payment->amount = $proppricing->min_price;
-                }else{
+                    // $payment->amount = $proppricing->min_price;
+                    $payment->amount = number_format($monthlyAmount, 2, '.', '');
+                } else {
                     $payment->amount = $totalprice / 100;
                 }
                 $payment->description = $description;
@@ -90,6 +97,22 @@ class PaymentController extends CORS
                 $payment->bookingid = $bookingId;
 
                 $payment->save();
+
+                // if(!$monthlyPayment){
+                    
+                //     if($monthlyAmount > 0){
+                //         $monthlyPayment = new MonthlyPayment();
+                //         $monthlyPayment->status = 'Pending';
+                //         $monthlyPayment->due_date = $booking->checkout_date;
+                //         $monthlyPayment->amount_due = $payment->amount;
+                //         $monthlyPayment->bookingid = $request->input('bookingid');
+                //         $monthlyPayment->userid = $booking->userid;
+                //         $monthlyPayment->amount_due = $payment->amount;
+                //         $monthlyPayment->amount_paid = number_format($monthlyAmount, 2, '.', '');
+                        
+                //         $monthlyPayment->save();
+                //     }
+                // }
             }
 
 
@@ -138,6 +161,8 @@ class PaymentController extends CORS
 
         $property = Property::find($booking->propertyid);
         if ($property->unit_type === 'Monthly Term') {
+            $unitDetails = UnitDetails::where('propertyid', $property->propertyid)->first();
+            $proppricing = PropertyPricing::where('proppricingid', $unitDetails->proppricingid)->first();
             if ($payment->status === 'Paid') {
                 // Retrieve the latest monthly payment or create a new one
                 $monthlyPayment = MonthlyPayment::where('bookingid', $request->input('bookingid'))
@@ -169,32 +194,16 @@ class PaymentController extends CORS
                     $monthlyPayment->bookingid = $request->input('bookingid');
                     $monthlyPayment->amount_due = 0;
                     $monthlyPayment->userid = $booking->userid;
-                    if($monthlyPayment->amount_paid <= 0){
+                    if ($monthlyPayment->amount_paid <= 0) {
                         $monthlyPayment->amount_paid = $payment->amount;
-                    }else{
+                    } else {
                         $monthlyPayment->amount_paid += $payment->amount;
                     }
-                    
+
                     $monthlyPayment->save();
 
                     $charge = $booking->total_price * .15;
                     $paymentId = $payment->pid;
-                    $payout_record = new Payout();
-                    $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                        ->join('users', 'tbl_booking.userid', '=', 'users.userid')
-                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                        ->value('users.userid');
-                    $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                        ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
-                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                        ->value('property.propertyid');
-                    $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
-                    $payout_record->userid = $get_manager_userid;
-                    $payout_record->propertyid = $propertyid;
-                    $payout_record->pid = $paymentId;
-                    $payout_record->payout_amount = $booking->total_price - $charge;
-                    $payout_record->status = "Pending";
-                    $payout_record->save();
 
                     return response()->json(['message' => 'No further payments needed, stay is completed', 'monthlyPayment' => $monthlyPayment]);
 
@@ -205,8 +214,12 @@ class PaymentController extends CORS
                 // Update or create the monthly payment
                 $monthlyPayment->bookingid = $request->input('bookingid');
                 $monthlyPayment->userid = $booking->userid;
-                $monthlyPayment->amount_due = $payment->amount;  // Assuming the amount is the same each month
-                $monthlyPayment->amount_paid += $payment->amount; // Update the amount paid
+                $monthlyPayment->amount_due =number_format($proppricing->min_price, 2, '.', ''); ; // Assuming the amount is the same each month
+                if($monthlyPayment->amount_paid <= 0){
+                    $monthlyPayment->amount_paid = $payment->amount;
+                }else{
+                    $monthlyPayment->amount_paid += $monthlyPayment->amount_due;
+                }
                 // $monthlyPayment->status = 'paid';
                 $monthlyPayment->due_date = $nextDueDate; // Set the next due date
                 $monthlyPayment->save();
@@ -267,18 +280,27 @@ class PaymentController extends CORS
         $percentage = $request->input('percentage');
         $reason = $request->input('reason', 'others'); // Default reason is 'others'
         $amountToRefund = null;
-        if($isMonthlyPayment){
+        if ($isMonthlyPayment) {
             $totalAmount = $monthlyPayment->amount_paid;
-        }else{
+        } else {
             $totalAmount = $payment->amount;
         }
-        
 
+        $sendRefund = 0;
         if ($isCancel === 1) {
             if ($dayresult === 1) {
                 $amountToRefund = round((100 / 100) * $totalAmount);
             } else {
                 $amountToRefund = round(($percentage / 100) * $totalAmount);
+            }
+            if($monthlyPayment){
+                $sendRefund = $monthlyPayment->amount_paid - $amountToRefund; // Subtract the refunded amount
+            }else{
+                if ($dayresult === 1) {
+                    $sendRefund = $amountToRefund;
+                } else {
+                    $sendRefund = $payment->amount - $amountToRefund;
+                }
             }
         } else {
             $payment->status = 'Cancelled'; // Set the status to 'cancelled'
@@ -313,7 +335,7 @@ class PaymentController extends CORS
                 'body' => json_encode([
                     'data' => [
                         'attributes' => [
-                            'amount' => $amountToRefund * 100, // Convert amount to centavos
+                            'amount' => $sendRefund * 100, // Convert amount to centavos
                             'payment_id' => $paymentId,
                             'reason' => $reason,
                         ]
@@ -332,38 +354,94 @@ class PaymentController extends CORS
             // Check if the refund was successful
             if (isset($refundData['data']['id'])) {
                 // Update the payment record in the database
-                $payment->amount -= $amountToRefund; // Subtract the refunded amount
-                $payment->refund_amount = $amountToRefund;
+                
+                if($monthlyPayment){
+                    $payment->refund_amount = $monthlyPayment->amount_paid - $amountToRefund; // Subtract the refunded amount
+                    $payment->amount = $amountToRefund;
+                }else{
+                    if ($dayresult === 1) {
+                        $payment->refund_amount = $amountToRefund;
+                        $payment->amount = 0;
+                    } else {
+                        $payment->refund_amount = $payment->amount - $amountToRefund;
+                        $payment->amount = $amountToRefund;
+                    }
+                }
+                
                 $payment->status = 'Cancelled'; // Set the status to 'cancelled'
                 $payment->save(); // Save changes to the database
+                if($monthlyPayment){
+                    $booking->total_price =$monthlyPayment->amount_paid - $amountToRefund;
 
-                $booking->total_price -= $amountToRefund;
+                    $monthlyPayment->status = 'Cancelled'; // Set the status to 'cancelled'
+                    $monthlyPayment->save();
+                }else{
+                    $booking->total_price = $amountToRefund;
+                }
+                
                 $booking->status = 'Cancelled';
                 $booking->save();
 
-                $charge = $booking->total_price * .15;
-                    $paymentId = $payment->pid;
-                    $payout_record = new Payout();
-                    $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                        ->join('users', 'tbl_booking.userid', '=', 'users.userid')
-                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                        ->value('users.userid');
-                    $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                        ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
-                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                        ->value('property.propertyid');
-                    $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
-                    $payout_record->userid = $get_manager_userid;
-                    $payout_record->propertyid = $propertyid;
-                    $payout_record->pid = $paymentId;
-                    if($isMonthlyPayment){
-                        $payout_record->payout_amount = $monthlyPayment->amount_paid - $charge;
-                    }else{
-                        $payout_record->payout_amount = $booking->total_price - $charge;
-                    }
-                    $payout_record->payout_amount = $booking->total_price - $charge;
-                    $payout_record->status = "Pending";
-                    $payout_record->save();
+                // $charge = $booking->total_price * .15;
+                
+                $paymentId = $payment->pid;
+                // $payout_record = new Payout();
+                // $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                //     ->join('users', 'tbl_booking.userid', '=', 'users.userid')
+                //     ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                //     ->value('users.userid');
+                // $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+                //     ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+                //     ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+                //     ->value('property.propertyid');
+                // $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
+                // if ($payment->amount > 0) {
+                //     $payout_record->userid = $get_manager_userid;
+                //     $payout_record->propertyid = $propertyid;
+                //     $payout_record->pid = $paymentId;
+                //     // $payout_record->payout_date = $booking->checkout_date;
+                //     $charge = $payment->amount * .15;
+                //     $payout_record->payout_amount = $payment->amount - $charge;
+                //     $payout_record->status = "Pending";
+                //     $payout_record->save();
+                // }
+
+                
+                $bookingHistory = new BookingHistory();
+                $charge = $payment->amount * .15;
+
+                $bookingHistory->userid = $booking->userid;
+                $bookingHistory->propertyid = $booking->propertyid;
+                $bookingHistory->unitid = $booking->unitid;
+                $bookingHistory->bookerid = $booking->bookerid;
+                $bookingHistory->guestid = $booking->guestid;
+                $bookingHistory->pid = $booking->pid;
+                $bookingHistory->stay_length = $booking->stay_length;
+                $bookingHistory->guest_count = $booking->guest_count;
+                $bookingHistory->checkin_date = $booking->checkin_date;
+                $bookingHistory->checkout_date = date('Y-m-d H:i:s'); // Set current date and time
+                $bookingHistory->total_price = $booking->total_price;
+                if ($isMonthlyPayment) {
+                    $bookingHistory->total_price = $monthlyPayment->amount_paid;
+                } else {
+                    $bookingHistory->total_price = $booking->total_price;
+                }
+                $bookingHistory->special_request = $booking->special_request;
+                $bookingHistory->arrival_time = $booking->arrival_time;
+                $bookingHistory->status = "Cancelled";
+                $bookingHistory->type = $booking->type;
+                $bookingHistory->check_type = "Checkout";
+                $bookingHistory->booking_date = $booking->booking_date;
+
+                // Save to BookingHistory
+                $bookingHistory->save();
+
+                $find_payment = Payment::where('bookingid', $bookingid)->first();
+
+                $find_payment->bhid = $bookingHistory->bhid;
+                $find_payment->save();
+
+
 
                 // Return the refund data
                 return response()->json([

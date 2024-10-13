@@ -19,6 +19,7 @@ return new class extends Migration
             $table->double('amount_paid');
             $table->string('status');
             $table->date('due_date');
+            $table->int('bhid')->nullable();
             $table->timestamps();
 
             $table->foreign('userid')->references('userid')->on('users');

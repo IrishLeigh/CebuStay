@@ -16,6 +16,7 @@ class PayoutController
             'property.property_name',
             'property.unit_type AS paymentTerm', // Add paymentTerm from the unit_type column in the Property model
             DB::raw("CONCAT(users.firstname, ' ', users.lastname) AS customername"),
+            'users.paypalmail', 
             DB::raw("DATE_FORMAT(tbl_payment.updated_at, '%M %d, %Y') as payment_date"), // Format the updated_at field
             DB::raw("IFNULL(DATE_FORMAT(tbl_bookinghistory.checkout_date, '%M %d, %Y'), NULL) as checkout_date") // Format the checkout_date or set it to null
         )
@@ -43,6 +44,9 @@ class PayoutController
         }
         if ($request->input('item_id')) {
             $payout_record->item_id = $request->input('item_id');
+        }
+        if ($request->input('status')) {
+            $payout_record->status = $request->input('status');
         }
         $payout_record->save();
         return response()->json(['message' => 'Payout set successfully', 'status' => 'success']);
