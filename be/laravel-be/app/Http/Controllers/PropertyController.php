@@ -376,6 +376,7 @@ class PropertyController extends CORS
         // Retrieve properties
         $properties = Property::select('propertyid', 'property_name', 'property_desc', 'property_type', 'unit_type')
             ->where('isActive', 1)
+            ->where('isFail', 0)
             ->whereIn('property_type', $singleunittype)
             ->get();
 
@@ -1209,5 +1210,17 @@ class PropertyController extends CORS
         return response()->json($finalProperties);
     }
 
-
+    public function setPropertyError(Request $request, $propertyid)
+    {
+        $this->enableCors($request);
+        $button = $request->input('button');
+        $property = Property::find($propertyid);
+        //if property not found
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
+        $property->isFail = $button == 1 ? 1 : 0;
+        $property->save();
+        return response()->json(['message' => 'Property updated successfully']);
+    }
 }

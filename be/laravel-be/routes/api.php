@@ -266,3 +266,5 @@ Route::post('/setPayout', [PayoutController::class, 'setPayout']);
 Route::get('/manager/payouts', [PayoutController::class, 'getPayoutsByManager']);
 
 Route::get('/getbookerandguest', [BookingController::class, 'getBookerAndGuest']);
+
+Route::post('/setpropertyerror/{propertyid}', [PropertyController::class, 'setPropertyError']);

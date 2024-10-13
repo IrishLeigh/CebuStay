@@ -17,7 +17,8 @@ class Property extends Model
         'property_desc',
         'property_directions',
         'unit_type',
-        'isActive'
+        'isActive',
+        'isFail'
     ];
 
     public function user()
