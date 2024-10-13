@@ -222,6 +222,7 @@ export default function BookingHistory({ profile }) {
         try {
             const res2 = await axios.post("http://127.0.0.1:8000/api/create-payment-link", {
                 amount: item.amount,
+                resubmit: true,
                 propertyid: item.propertyid,
                 description: item.name,
                 length: item.stay_length,
