@@ -190,7 +190,7 @@ class PaymentController extends CORS
                     $nextDueDate = Carbon::parse($monthlyPayment->due_date)->addMonth();
                 } else {
                     // If this is the first payment, use the check-in date as the initial due date
-                    $nextDueDate = $checkinDate->addMonth();
+                    $nextDueDate = $checkinDate->addMonths(2);
                 }
 
                 // Ensure the next due date does not exceed the checkout date
