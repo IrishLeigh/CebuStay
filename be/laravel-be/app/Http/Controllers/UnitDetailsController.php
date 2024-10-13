@@ -76,7 +76,7 @@ class UnitDetailsController extends CORS
 
         // Retrieve all matching rooms (both Bedroom and Bedarea)
         $unitrooms = UnitRooms::where('unitid', $unitid)
-            ->whereIn('roomname', ['Bedroom', 'Bedarea'])
+            ->whereIn('roomname', ['Bedroom', 'Bedarea', 'Bedspace'])
             ->get();
 
         // Expand the unitrooms based on the 'quantity' field
@@ -108,6 +108,7 @@ class UnitDetailsController extends CORS
             $bedtype->bunkbed = $bedroom['doubleBed'];
             $bedtype->largebed = $bedroom['largeBed'];
             $bedtype->superlargebed = $bedroom['superLargeBed'];
+            $bedtype->sleepingtype = $bedroom['sleepingtype'];
             $bedtype->save();
         }
 
