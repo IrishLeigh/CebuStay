@@ -95,7 +95,10 @@ class UserController extends CORS
             return response()->json(['message' => 'Unauthorized.', 'status' => 'error']);
         }
 
-        $properties = Property::select('propertyid', 'property_name', 'property_type', 'created_at', 'isActive')->where('userid', $userid)->get();
+        $properties = Property::select('propertyid', 'property_name', 'property_type', 'created_at', 'isActive')
+            ->where('userid', $userid)
+            ->where('isFail', 0)
+            ->get();
 
         $userProperties = [];
 
