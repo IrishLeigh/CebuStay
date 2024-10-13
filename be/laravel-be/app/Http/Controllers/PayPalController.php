@@ -108,4 +108,26 @@ class PayPalController extends CORS
             return response()->json(['error' => $th->getMessage()], 500);
         }
     }
+
+    public function cancelPayout($payoutItemId)
+{
+    try {
+        $accessToken = $this->getAccessToken(); // Get the PayPal access token
+
+        // Send POST request to cancel the payout
+        $response = Http::withToken($accessToken)
+            ->post("{$this->baseUrl}/v1/payments/payouts-item/{$payoutItemId}/cancel");
+
+        if ($response->successful()) {
+            // Return success response with canceled payout details
+            return response()->json(['message' => 'Payout canceled successfully', 'data' => $response->json()], 200);
+        } else {
+            // Return an error if the PayPal API call fails
+            return response()->json(['error' => $response->json()], 400);
+        }
+    } catch (\Throwable $th) {
+        // Return an exception error response
+        return response()->json(['error' => $th->getMessage()], 500);
+    }
+}
 }

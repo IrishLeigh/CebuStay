@@ -29,11 +29,13 @@ use App\Http\Controllers\PropertyOwnerController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\PayoutController;
+
 Route::post('/paypal-pay', [PayPalController::class, 'pay']);
 Route::get('/paypal/check-payout/{payoutItemId}', [PayPalController::class, 'checkPayoutStatus']);
 Route::post('/paypal/payout', [PayPalController::class, 'sendPayout']);
 Route::get('/payouts', [PayPalController::class, 'getPayouts']);
 Route::get('/payouts/batch/{batchId}', [PayPalController::class, 'getPayoutBatchDetails']);
+Route::post('/paypal/cancel-payout/{payoutItemId}', [PayPalController::class, 'cancelPayout']);
 
 
 // Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);

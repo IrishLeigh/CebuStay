@@ -39,9 +39,15 @@ class PaymentController extends CORS
         $returnUrl = $request->input('return_url');
         $bookingId = $request->input('bookingid');
         $propertyId = $request->input('propertyid');
+        $resubmit = $request->input('resubmit') ?? false;
 
         $payment = Payment::where('bookingid', $bookingId)->first();
         $property = Property::find($request->input('propertyid'));
+
+        if($resubmit) {
+            //add here for resubmitting payment
+            $payment->delete();
+        }
 
         $totalprice = null;
         // $isMonthlyPayment = $property->unit_type === 'Monthly Term';
@@ -69,7 +75,7 @@ class PaymentController extends CORS
             $checkoutUrl = $checkoutData['checkout_url'];
             $paymentId = $checkoutData['payment_id'];
 
-            if ($payment) {
+            if ($payment && !$resubmit) {
                 // if ($payment->status === 'Pending' && !$isMonthlyPayment) {
                 //     $payment->status = 'Paid';
                 //     $payment->save();

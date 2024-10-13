@@ -172,7 +172,7 @@ class BookingController extends CORS
             $booking->checkin_date = $checkin;
             $booking->checkout_date = $checkout;
             if($property->unit_type === 'Monthly Term'){
-                $length = $request->input('stay_length') / 30;
+                $length = $request->input('stay_length') / 31;
                 $booking->total_price = $request->input('total_price') * $length;
             }else{
                 $booking->total_price = $request->input('total_price') * $request->input('stay_length');
@@ -647,11 +647,14 @@ class BookingController extends CORS
                 'monthly_payment.status as monthly_payment_status',
                 'tbl_payment.status as payment_status',
                 'tbl_payment.amount as payment_amount',
-                'tbl_payment.refund_amount as refund_amount' 
+                'tbl_payment.refund_amount as refund_amount',
+                'property_pricing.min_price'
             )
             ->leftJoin('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->leftJoin('monthly_payment', 'tbl_booking.bookingid', '=', 'monthly_payment.bookingid')
             ->leftJoin('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
+            ->leftJoin('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid') 
+            ->leftJoin('property_pricing', 'unitdetails.proppricingid', '=', 'property_pricing.proppricingid') 
             ->where('tbl_booking.userid', $userid)
             ->get();
 
@@ -683,6 +686,7 @@ class BookingController extends CORS
                 'userid' => $booking->payment_userid ?? 0,
                 'payment_status' => $booking->payment_status ?? null,
                 'payment_amount' => $booking->payment_amount ?? 0,
+                'min_price' => $booking->min_price ?? 0,
                 'refund_amount' => $booking->refund_amount ?? 0,
                 'monthly_payment_status' => $booking->monthly_payment_status ?? null,
                 'amount_due' => $booking->amount_due ?? 0,
