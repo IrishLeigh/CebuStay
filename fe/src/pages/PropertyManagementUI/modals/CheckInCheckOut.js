@@ -8,9 +8,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 import "../css/CheckInCheckOut.css"; // Adjust path as necessary
-import { Typography } from "@mui/material";
+import axios from "axios";
+import { Stack, Typography, Divider } from "@mui/material";
+import PriceCheckIcon from "@mui/icons-material/PriceCheck";
+import PayoutSecurityDeposit from "../modals/PayoutSecurityDeposit";
 
 const CheckInCheckOut = ({
+  monthlyBasePrice,
+  monthlyLengthStay,
+  vatMonthly,
+  totalMonthlyPrice,
+  item,
   invoiceDetails = {
     basePrice: 0,
     extraGuestCost: 0,
@@ -20,24 +28,46 @@ const CheckInCheckOut = ({
     payableNow: 0,
   },
 }) => {
-  const {
-    basePrice,
-    extraGuestCost,
-    bookingCharge,
-    bookingAmount,
-    payableAtCheckIn,
-    payableNow,
-  } = invoiceDetails;
+  const [saving, setSaving] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [error, setError] = useState(null);
+  const [bookerDetails, setBookerDetails] = useState(null);
+  const { basePrice, extraGuestCost, bookingCharge } = invoiceDetails;
+  const [response, setResponse] = useState();
+  const [editedItem, setEditedItem] = useState({ ...item });
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isModified, setIsModified] = useState(false);
+  const [showPayoutButton, setShowPayoutButton] = useState(false);
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
 
-  const reservation = {
-    guestname: "John Doe",
-    special_request: "Late check-in",
-    booker: {
-      email: "john.doe@example.com",
-      phonenum: "+123456789",
-      country: "USA",
-      bookerid: "17",
-    },
+  const handlePayoutButtonClick = () => {
+    setShowPayoutModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowPayoutModal(false);
+  };
+
+  const handleConfirmPayout = () => {
+    // Implement payout logic here
+    console.log("Payout confirmed");
+    // Close modal after confirming
+    setShowPayoutModal(false);
+  };
+
+  const formatPrice = (value) => {
+    return new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(value);
+  };
+
+  const onCheckOut = async () => {
+    // Simulate an API call for checkout
+    const isSuccess = true; // Replace with actual success condition from your API call
+    if (isSuccess) {
+      setShowPayoutButton(true); // Show payout button after successful checkout
+    }
   };
 
   const [bookingDetails, setBookingDetails] = useState({
@@ -55,52 +85,61 @@ const CheckInCheckOut = ({
   });
 
   const [dynamicDetails, setDynamicDetails] = useState({
-    basePrice,
-    extraGuestCost,
-    bookingCharge,
-    bookingAmount,
-    payableAtCheckIn,
-    payableNow,
+    basePrice: 0,
+    extraGuestCost: 0,
+    bookingCharge: bookingCharge,
+    bookingAmount: 0,
+    payableAtCheckIn: 0,
+    payableNow: 0,
     forDetails: `For 1 night, 1 room, and 2 guests`,
     status: "Upcoming",
     paymentStatus: "Pending",
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setBookingDetails({ ...bookingDetails, [name]: value });
-  };
+  useEffect(() => {
+    const fetchBookerDetails = async () => {
+      console.log("Fetching booker and guest details...");
+      try {
+        const id = item.bookingid ? item.bookingid : item.bhid; // Use bookingid or bhid
+        let response = null;
 
-  const handleDateChange = (date, field) => {
-    setBookingDetails({ ...bookingDetails, [field]: date });
-  };
+        if (item.bookingid) {
+          response = await axios.get(
+            "http://127.0.0.1:8000/api/getbookerandguest",
+            {
+              params: { bookingid: id },
+            }
+          );
+        } else {
+          response = await axios.get(
+            "http://127.0.0.1:8000/api/getbookerandguest",
+            {
+              params: { bhid: id },
+            }
+          );
+        }
 
-  const [saving, setSaving] = useState(false);
-  const handleBlur = (field) => {
-    // Any logic you want to execute on blur, for example, validation or state updates
-    console.log(`${field} blurred`); // Just an example
-  };
+        if (response.data) {
+          console.log("Booker and guest details:", response.data); // Log the fetched data
+          setBookerDetails(response.data); // Update state with fetched data
+          setResponse(response.data); // Set the response state
+        }
+      } catch (error) {
+        console.error("Error fetching booker details:", error);
+        setError(error); // Set error state
+      }
+    };
 
-  const handleUpdateDetails = (type) => {
-    if (type === "edit") {
-      setEditableFields({
-        checkIn: true,
-        checkOut: true,
-        guests: true,
-        rooms: true,
-      });
-      return; // Exit early for editing
+    if (item.bookingid || item.bhid) {
+      fetchBookerDetails(); // Fetch the booker details when either ID exists
     }
+  }, [item.bookingid, item.bhid]); // Ensure bhid is in the dependency array
 
-    if (type === "save") {
-      setSaving(true); // Disable the save button
-    }
-
+  useEffect(() => {
     const nights = Math.ceil(
       (bookingDetails.checkOut - bookingDetails.checkIn) / (1000 * 60 * 60 * 24)
     );
-    const rooms = bookingDetails.rooms;
-    const guests = bookingDetails.guests;
+    const { rooms, guests } = bookingDetails;
 
     const updatedBasePrice = basePrice * nights * rooms;
     const updatedExtraGuestCost =
@@ -110,31 +149,18 @@ const CheckInCheckOut = ({
     const updatedPayableAtCheckIn = updatedBookingAmount;
     const updatedPayableNow = bookingCharge;
 
-    setDynamicDetails({
-      ...dynamicDetails,
+    setDynamicDetails((prevDetails) => ({
+      ...prevDetails,
       basePrice: updatedBasePrice,
       extraGuestCost: updatedExtraGuestCost,
-      bookingCharge,
       bookingAmount: updatedBookingAmount,
       payableAtCheckIn: updatedPayableAtCheckIn,
       payableNow: updatedPayableNow,
       forDetails: `For ${nights} night${nights > 1 ? "s" : ""}, ${rooms} room${
         rooms > 1 ? "s" : ""
       }, and ${guests} guest${guests > 1 ? "s" : ""}`,
-    });
-
-    if (type === "save") {
-      setEditableFields({
-        checkIn: false,
-        checkOut: false,
-        guests: false,
-        rooms: false,
-      });
-      setTimeout(() => {
-        setSaving(false); // Enable the button again after save
-      }, 2000); // Set a delay of 2 seconds, for example
-    }
-  };
+    }));
+  }, [bookingDetails, basePrice, extraGuestCost, bookingCharge]);
 
   useEffect(() => {
     const now = new Date();
@@ -143,10 +169,7 @@ const CheckInCheckOut = ({
 
     if (now > bookingDetails.checkOut) {
       status = "Checked Out";
-    } else if (
-      now >= bookingDetails.checkIn &&
-      now <= bookingDetails.checkOut
-    ) {
+    } else if (now >= bookingDetails.checkIn) {
       status = "Checked In";
     }
 
@@ -161,13 +184,50 @@ const CheckInCheckOut = ({
     }));
   }, [bookingDetails, dynamicDetails.payableNow]);
 
+  const handleUpdateDetails = (action) => {
+    if (action === "edit") {
+      setIsEditMode(true);
+    } else if (action === "save") {
+      setSaving(true);
+      // Simulate saving data to an API
+      setTimeout(() => {
+        setSaving(false);
+        setIsEditMode(false);
+        console.log("Saved data:", editedItem);
+        setIsModified(false); // Reset modification state after saving
+      }, 2000);
+    } else if (action === "checkIn" || action === "checkOut") {
+      console.log(`${action} clicked`);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditedItem({ ...item }); // Reset to original item
+    setIsEditMode(false); // Exit edit mode
+    setIsModified(false); // Reset modification state
+  };
+
+  const handleCellClick = (field) => {
+    if (isEditMode) {
+      const input = document.getElementById(field);
+      if (input) {
+        input.focus();
+      }
+    }
+  };
+
+  const handleChange = (e, field) => {
+    setEditedItem({ ...editedItem, [field]: e.target.value });
+    setIsModified(true); // Mark as modified
+  };
+
   return (
     <div className="outer-container" style={{ height: "100vh" }}>
       <div className="container flex-row">
         <div className="left-section flex-col p-6 bg-background rounded-lg shadow-md mr-4">
           <div className="flex-row items-center mb-4">
             <img
-              src={dynamicDetails?.roomImageUrl || "./image1.png"}
+              src={dynamicDetails?.roomImageUrl || "/image1.png"}
               alt="Room"
               className="image-class mr-4"
             />
@@ -195,7 +255,7 @@ const CheckInCheckOut = ({
                   <span className="icon" style={{ fontSize: "0.75rem" }}>
                     <FontAwesomeIcon icon={faUsers} />
                   </span>
-                  <span>{dynamicDetails?.guests || "2"} Guests</span>
+                  <span>{item.guest_count} Guests</span>
                 </div>
                 <div className="booking-id-container">
                   <span className="icon" style={{ fontSize: "0.75rem" }}>
@@ -204,7 +264,7 @@ const CheckInCheckOut = ({
                       icon={faHashtag}
                       style={{ marginRight: "4px" }}
                     />
-                    {reservation.booker.bookerid}
+                    {item.bookingid ? item.bookingid : item.bhid}
                   </span>
                 </div>
               </div>
@@ -212,150 +272,127 @@ const CheckInCheckOut = ({
           </div>
 
           <div className="booking-details mb-4">
-            <div className="booking-details-table">
-              <table className="table-horizontal editable-table">
-                <thead>
-                  <tr>
-                    <th>Check In</th>
-                    <th>Check Out</th>
-                    <th>Guests</th>
-                    <th>Rooms</th>
-                    <th>Status</th>
-                    <th>Payment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      {editableFields.checkIn ? (
-                        <DatePicker
-                          selected={bookingDetails.checkIn}
-                          onChange={(date) => handleDateChange(date, "checkIn")}
-                          dateFormat="MMM d, yyyy"
-                          className="table-input"
-                          onBlur={() => handleBlur("checkIn")}
-                        />
-                      ) : (
-                        <span>
-                          {bookingDetails.checkIn.toLocaleDateString()}
-                        </span>
-                      )}
-                    </td>
-
-                    <td>
-                      {editableFields.checkOut ? (
-                        <DatePicker
-                          selected={bookingDetails.checkOut}
-                          onChange={(date) =>
-                            handleDateChange(date, "checkOut")
-                          }
-                          dateFormat="MMM d, yyyy"
-                          className="table-input"
-                          onBlur={() => handleBlur("checkOut")}
-                        />
-                      ) : (
-                        <span>
-                          {bookingDetails.checkOut.toLocaleDateString()}
-                        </span>
-                      )}
-                    </td>
-
-                    <td>
-                      {editableFields.guests ? (
-                        <select
-                          name="guests"
-                          value={bookingDetails.guests}
-                          onChange={handleInputChange}
-                          className="table-input"
-                          onBlur={() => handleBlur("guests")}
-                        >
-                          {[1, 2, 3, 4, 5, 6].map((num) => (
-                            <option key={num} value={num}>
-                              {num}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <span>{bookingDetails.guests}</span>
-                      )}
-                    </td>
-
-                    <td>
-                      {editableFields.rooms ? (
-                        <select
-                          name="rooms"
-                          value={bookingDetails.rooms}
-                          onChange={handleInputChange}
-                          className="table-input"
-                          onBlur={() => handleBlur("rooms")}
-                        >
-                          {[1, 2, 3, 4].map((num) => (
-                            <option key={num} value={num}>
-                              {num}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <span>{bookingDetails.rooms}</span>
-                      )}
-                    </td>
-                    <td>{dynamicDetails.status}</td>
-                    <td>{dynamicDetails.paymentStatus}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div className="update-details-container">
-                <button
-                  className="btn-edit"
-                  onClick={() => handleUpdateDetails("edit")}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn-save"
-                  onClick={() => handleUpdateDetails("save")}
-                  disabled={saving} // Disable when saving
-                >
-                  {saving ? "Saving..." : "Save"} {/* Show feedback */}
-                </button>
-
-                <button
-                  className="btn-check-in"
-                  onClick={() => handleUpdateDetails("checkIn")}
-                >
-                  Check In
-                </button>
-                <button
-                  className="btn-check-out"
-                  onClick={() => handleUpdateDetails("checkOut")}
-                >
-                  Check Out
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="description mt-4">
-            <Typography sx={{ mt: 2, fontSize: "1.25rem", fontWeight: "bold" }}>
-              Booker
-            </Typography>
             <table className="table-horizontal editable-table">
               <thead>
                 <tr>
-                  <th>Full Name</th>
-                  <th>Email</th>
-                  <th>Phone No.</th>
-                  <th>Country</th>
-                  <th>Special Instructions</th>
+                  <th style={{ fontSize: "0.9rem" }}>Check In</th>
+                  <th style={{ fontSize: "0.9rem" }}>Check Out</th>
+                  <th style={{ fontSize: "0.9rem" }}>Guests</th>
+                  <th style={{ fontSize: "0.9rem" }}>Status</th>
+                  <th style={{ fontSize: "0.9rem" }}>Payment</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{reservation.guestname}</td>
-                  <td>{reservation.booker.email}</td>
-                  <td>{reservation.booker.phonenum}</td>
-                  <td>{reservation.booker.country}</td>
-                  <td>{reservation.special_request}</td>
+                  <td
+                    style={{ fontSize: "0.8rem" }}
+                    onClick={() => handleCellClick("checkin_date")}
+                  >
+                    {isEditMode ? (
+                      <input
+                        type="date"
+                        id="checkin_date"
+                        value={editedItem.checkin_date}
+                        onChange={(e) => handleChange(e, "checkin_date")}
+                      />
+                    ) : (
+                      editedItem.checkin_date
+                    )}
+                  </td>
+                  <td
+                    style={{ fontSize: "0.8rem" }}
+                    onClick={() => handleCellClick("checkout_date")}
+                  >
+                    {isEditMode ? (
+                      <input
+                        type="date"
+                        id="checkout_date"
+                        value={editedItem.checkout_date}
+                        onChange={(e) => handleChange(e, "checkout_date")}
+                      />
+                    ) : (
+                      editedItem.checkout_date
+                    )}
+                  </td>
+                  <td style={{ fontSize: "0.8rem" }}>
+                    {editedItem.guest_count}
+                  </td>
+                  <td style={{ fontSize: "0.8rem" }}>{editedItem.status}</td>
+                  <td style={{ fontSize: "0.8rem" }}>
+                    {editedItem.total_price}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="update-details-container">
+              <button
+                className="btn-edit"
+                onClick={() => handleUpdateDetails("edit")}
+              >
+                Edit
+              </button>
+
+              <button
+                className={`btn-save ${
+                  isEditMode && isModified && !saving ? "active" : "disabled"
+                }`}
+                onClick={() => handleUpdateDetails("save")}
+                disabled={!isEditMode || saving}
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+
+              <button
+                className="btn-cancel"
+                onClick={handleCancelEdit}
+                disabled={!isEditMode}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="btn-check-in"
+                onClick={() => handleUpdateDetails("checkIn")}
+              >
+                Check In
+              </button>
+
+              <button className="btn-check-out" onClick={onCheckOut}>
+                Check Out
+              </button>
+            </div>
+          </div>
+
+          <div className="description mt-4">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                fontSize: "1.25rem",
+                fontWeight: "bold",
+                padding: "15px 0",
+              }}
+            >
+              Booker
+            </div>
+            <table className="table-horizontal editable-table">
+              <thead>
+                <tr>
+                  <th style={{ fontSize: "0.9rem" }}>Full Name</th>
+                  <th style={{ fontSize: "0.9rem" }}>Email</th>
+                  <th style={{ fontSize: "0.9rem" }}>Phone No.</th>
+                  <th style={{ fontSize: "0.9rem" }}>Country</th>
+                  <th style={{ fontSize: "0.9rem" }}>Special Instructions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ fontSize: "0.8rem" }}>{item.guestname}</td>
+                  <td style={{ fontSize: "0.8rem" }}>{item.booker.email}</td>
+                  <td style={{ fontSize: "0.8rem" }}>{item.booker.phonenum}</td>
+                  <td style={{ fontSize: "0.8rem" }}>{item.booker.country}</td>
+                  <td style={{ fontSize: "0.8rem" }}>{item.special_request}</td>
                 </tr>
               </tbody>
             </table>
@@ -363,42 +400,110 @@ const CheckInCheckOut = ({
         </div>
 
         <div className="right-section flex-col p-6 bg-background rounded-lg shadow-md">
-          <h4>Price Details</h4>
-          <div className="flex-row items-center justify-between">
-            <p>{dynamicDetails.forDetails}</p>
-            <p>
-              <span>Base Price: </span>
-              <span>₱ {dynamicDetails.basePrice.toFixed(2)}</span>
-            </p>
+          <div>
+            <Typography variant="h6" color="primary" ml={1} pt={0.5}>
+              <PriceCheckIcon sx={{ color: "primary.main", mr: 1 }} />
+              Invoice Summary:
+            </Typography>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" color="textSecondary">
+                Base Price Per Month
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(monthlyBasePrice) || "N/A"}
+              </Typography>
+            </Stack>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" color="textSecondary">
+                {monthlyLengthStay === 1
+                  ? "X 1 month advance ="
+                  : "X 2 months advance ="}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(
+                  monthlyLengthStay === 1
+                    ? monthlyBasePrice
+                    : monthlyBasePrice * 2
+                ) || "N/A"}
+              </Typography>
+            </Stack>
+            {/* Conditional rendering for Security Deposit */}
+            {monthlyLengthStay !== 1 && (
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                m={1}
+              >
+                <Typography variant="body1" color="textSecondary">
+                  Security Deposit
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  +{formatPrice(monthlyBasePrice) || "N/A"}
+                </Typography>
+              </Stack>
+            )}
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" color="textSecondary">
+                VAT (12%)
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(vatMonthly) || "N/A"}
+              </Typography>
+            </Stack>
+            <Divider sx={{ my: 1 }} />
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" fontWeight="bold">
+                Total Amount
+              </Typography>
+              <Typography variant="body1" fontWeight="bold">
+                {formatPrice(totalMonthlyPrice)}
+              </Typography>
+            </Stack>
           </div>
-          <div className="flex-row items-center justify-between">
-            <p>Extra Guest Cost:</p>
-            <p>₱ {dynamicDetails.extraGuestCost.toFixed(2)}</p>
-          </div>
-          <div className="flex-row items-center justify-between">
-            <p>Booking Charge:</p>
-            <p>₱ {dynamicDetails.bookingCharge.toFixed(2)}</p>
-          </div>
-          <div className="flex-row items-center justify-between">
-            <p>Total Amount:</p>
-            <p>₱ {dynamicDetails.bookingAmount.toFixed(2)}</p>
-          </div>
-          <div className="flex-row items-center justify-between">
-            <p>Payable Now:</p>
-            <p>₱ {dynamicDetails.payableNow.toFixed(2)}</p>
-          </div>
-          <div className="flex-row items-center justify-between">
-            <p>Payable at Check In:</p>
-            <p>₱ {dynamicDetails.payableAtCheckIn.toFixed(2)}</p>
-          </div>
-          <div className="detail-item flex-row justify-between mb-2">
-            <span className="detail-label">Payable at Check In</span>
-            <span className="detail-price">
-              USD ${dynamicDetails?.payableAtCheckIn?.toFixed(2) ?? "0.00"}
-            </span>
+          <div>
+            {showPayoutButton && (
+              <button className="payout-btn" onClick={handlePayoutButtonClick}>
+                Payout Security Deposit
+              </button>
+            )}
+
+            {showPayoutModal && (
+              <PayoutSecurityDeposit
+                guestName="John Doe" // Replace with actual data
+                propertyName="Cozy Apartment" // Replace with actual data
+                checkoutDate="2024-10-15" // Replace with actual data
+                securityDeposit={1000} // Replace with actual data
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmPayout}
+              />
+            )}
           </div>
 
-          <button className="cancel-booking-btn w-full mt-4">
+          <button
+            className="cancel-booking-btn w-full mt-4"
+            onClick={() => setIsSuccess(true)}
+          >
             Cancel Booking
           </button>
         </div>

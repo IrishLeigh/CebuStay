@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 // import Sidebar from "../../components/Sidebar";
 // import Sidebar from "../../../sidebar";
-import EditReservationModal from "../../../modals/EditReservationModal";
+// import EditReservationModal from "../../../modals/EditReservationModal";
 import CheckInCheckOut from "../../../modals/CheckInCheckOut";
 import axios from "axios";
 // import Grid from "@mui/material/Grid";
@@ -14,6 +14,13 @@ import {
 } from "react-icons/md";
 import "../css/AccommodationReservation.css";
 import { Box, CircularProgress } from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 export default function AccommodationReservation() {
   const [selectedButton, setSelectedButton] = useState("all");
@@ -303,7 +310,7 @@ export default function AccommodationReservation() {
           <div className="controls flex justify-between items-center mb-4">
             <div
               className="buttons flex justify-evenly w-full"
-              style={{ width: "fit-content", gap: "1rem" }}
+              style={{ width: "fit-content" }}
             >
               {["All", "In", "Out", "Cancelled", "Upcoming"].map((button) => (
                 <button
@@ -477,127 +484,132 @@ export default function AccommodationReservation() {
                 >
                   <MdClose />
                 </button>
-                <CheckInCheckOut item={selectedItem} onClose={closeModal} />
+                <CheckInCheckOut
+                  item={selectedReservation}
+                  onClose={closeModal}
+                />
               </div>
             )}
 
             {/* Render the table only if the modal is not open */}
             {!editModalOpen && (
-              <table style={{ width: "100%", textAlign: "center" }}>
-                <thead className="table-header">
-                  <tr>
-                    <th>Booking ID</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Email</th>
-                    <th>Property Name</th>
-                    <th>Type</th>
-                    <th>Address</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {loading ? (
-                    <tr>
-                      <td
-                        colSpan="10"
-                        style={{ padding: "1rem 0", textAlign: "center" }}
-                      >
-                        <div
-                          className="loading-container"
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            margin: "2rem",
-                            height: "100%",
-                          }}
+              <TableContainer
+                component={Paper}
+                style={{ maxHeight: "400px", overflowY: "auto" }}
+              >
+                <Table stickyHeader aria-label="property table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">Booking ID</TableCell>
+                      <TableCell align="center">Firstname</TableCell>
+                      <TableCell align="center">Lastname</TableCell>
+                      <TableCell align="center">Email</TableCell>
+                      <TableCell align="center">Property Name</TableCell>
+                      <TableCell align="center">Type</TableCell>
+                      <TableCell align="center">Address</TableCell>
+                      <TableCell align="center">Date</TableCell>
+                      <TableCell align="center">Price</TableCell>
+                      <TableCell align="center">Status</TableCell>
+                      <TableCell align="center">Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={11} style={{ textAlign: "center" }}>
+                          <div
+                            className="loading-container"
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              margin: "2rem",
+                              height: "100%",
+                            }}
+                          >
+                            <CircularProgress />
+                            <p>Retrieving Data...</p>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : filteredPropertyData.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={11}
+                          style={{ textAlign: "center", color: "gray" }}
                         >
-                          <CircularProgress />
-                          <p>Retrieving Data...</p>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : filteredPropertyData.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan="10"
-                        style={{
-                          padding: "1rem 0",
-                          color: "gray",
-                          textAlign: "center",
-                        }}
-                      >
-                        No data available
-                      </td>
-                    </tr>
-                  ) : (
-                    <>
-                      {filteredPropertyData.map((item) => (
-                        <tr
+                          No data available
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredPropertyData.map((item) => (
+                        <TableRow
                           key={item.id}
                           style={{ borderBottom: "1px solid #e0e0e0" }}
                         >
-                          <td
-                            className="px-4 py-2"
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.bookingid ? item.bookingid : item.bhid}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.booker.firstname}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.booker.lastname}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.booker.email}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.property_name}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.property_type}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.property_address}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
                             onClick={() => handleEdit(item)}
+                            align="center"
+                          >
+                            {item.booking_date}
+                          </TableCell>
+                          <TableCell
+                            onClick={() => handleEdit(item)}
+                            align="center"
                           >
                             {item.total_price}
-                          </td>
-                          <td
-                            className="px-4 py-2"
+                          </TableCell>
+                          <TableCell
+                            onClick={() => handleEdit(item)}
+                            align="center"
                             style={{
                               color: item.status === "Active" ? "green" : "red",
                             }}
-                            onClick={() => handleEdit(item)}
                           >
                             {item.status}
-                          </td>
-                          <td className="px-4 py-2">
+                          </TableCell>
+                          <TableCell align="center">
                             <MdEdit
                               onClick={(e) => {
                                 e.stopPropagation(); // Prevent row click event
@@ -605,8 +617,8 @@ export default function AccommodationReservation() {
                               }}
                               style={{
                                 cursor: "pointer",
-                                marginRight: "0.5rem", // Space between icons
-                                color: "blue", // You can change the color as needed
+                                marginRight: "0.5rem",
+                                color: "blue",
                               }}
                             />
                             <MdWarning
@@ -614,31 +626,19 @@ export default function AccommodationReservation() {
                                 e.stopPropagation(); // Prevent row click event
                                 handleDelete(item.id);
                               }}
-                              style={{
-                                cursor: "pointer",
-                                color: "red",
-                              }}
+                              style={{ cursor: "pointer", color: "red" }}
                             />
-                          </td>
-                        </tr>
-                      ))}
-                    </>
-                  )}
-                </tbody>
-              </table>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             )}
           </div>
         </div>
       </div>
-      {/* </Grid>
-      </Grid> */}
-      {/* <EditReservationModal
-        open={editModalOpen}
-        reservation={selectedReservation}
-        onSave={handleSave}
-        onCancel={handleCancelEdit}
-        onClose={handleClose} // Pass handleClose to the modal
-      /> */}
       {modalOpen && (
         <div
           style={{
