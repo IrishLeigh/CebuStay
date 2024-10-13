@@ -15,6 +15,19 @@
   width: 100%;
 }
 
+.price-details-header {
+  display: flex;
+  align-items: center; /* Vertically center items */
+  justify-content: space-between; /* Space items evenly */
+  margin-bottom: 20px; /* Space below the header */
+}
+
+.price-details-header h4 {
+  margin: 0; /* Remove default margin */
+  font-size: 1.5rem; /* Adjust font size as needed */
+  font-weight: 600; /* Bold weight for emphasis */
+}
+
 .left-section,
 .right-section {
   padding: 24px;
@@ -174,6 +187,7 @@
 
 .btn-check-in,
 .btn-check-out,
+.btn-cancel,
 .btn-edit,
 .btn-save {
   border-radius: 10px;
@@ -186,6 +200,29 @@
   margin-bottom: 20px;
   font-size: 16px;
   transition: background-color 0.3s ease, transform 0.2s ease; /* Add smooth transition */
+}
+
+.btn-cancel {
+  background-color: #16b4dd;
+}
+
+.btn-cancel:hover {
+  transform: scale(1.05); /* Slightly enlarge the button */
+}
+
+.btn-save.active {
+  background-color: #16b4dd;
+  color: white;
+}
+
+.btn-save.disabled {
+  background-color: gray; /* Disabled color */
+  cursor: not-allowed; /* Change cursor when disabled */
+}
+
+.btn-save.disabled:hover {
+  background-color: gray; /* Keep the same color on hover */
+  transform: none; /* Prevent scaling effect on hover */
 }
 
 .btn-check-in {
@@ -231,4 +268,46 @@
   display: flex;
   justify-content: flex-end; /* Align items to the right */
   gap: 2px;
+}
+
+/* General styles */
+.image-class {
+  max-width: 100%; /* Ensures the image does not overflow */
+  height: auto; /* Maintains aspect ratio */
+}
+
+.container {
+  display: flex;
+  flex-direction: column; /* Default to vertical layout */
+}
+
+.left-section,
+.right-section {
+  width: 100%; /* Full width on small screens */
+}
+
+@media (min-width: 768px) {
+  /* Adjust as needed for your design */
+  .container {
+    flex-direction: row; /* Change to horizontal layout on medium and larger screens */
+  }
+
+  .left-section {
+    margin-right: 1rem; /* Space between sections on larger screens */
+    width: 100%; /* Set width for left section */
+  }
+
+  .right-section {
+    width: 100%; /* Set width for right section */
+  }
+}
+
+/* Additional styling for scrollbar on small screens */
+.container {
+  overflow-x: auto; /* Allow horizontal scrolling if content overflows */
+}
+
+.left-section,
+.right-section {
+  min-width: 400px; /* Ensure a minimum width to prevent them from being too small */
 }
