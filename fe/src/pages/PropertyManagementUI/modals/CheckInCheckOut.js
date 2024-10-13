@@ -62,11 +62,13 @@ const CheckInCheckOut = ({
     }).format(value);
   };
 
-  const onCheckOut = async () => {
-    // Simulate an API call for checkout
-    const isSuccess = true; // Replace with actual success condition from your API call
-    if (isSuccess) {
-      setShowPayoutButton(true); // Show payout button after successful checkout
+  const onCheckOut = () => {
+    if (editedItem.status === "Confirmed") {
+      // Update the status to Checked Out
+      setEditedItem((prev) => ({ ...prev, status: "Checked Out" }));
+      setShowPayoutButton(true); // Show the payout button
+    } else {
+      alert("You must confirm the booking before checking out.");
     }
   };
 
@@ -217,8 +219,11 @@ const CheckInCheckOut = ({
   };
 
   const handleChange = (e, field) => {
-    setEditedItem({ ...editedItem, [field]: e.target.value });
-    setIsModified(true); // Mark as modified
+    // Logic for handling input changes
+    setEditedItem((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
   };
 
   return (
@@ -324,44 +329,23 @@ const CheckInCheckOut = ({
                 </tr>
               </tbody>
             </table>
+          </div>
 
-            <div className="update-details-container">
-              <button
-                className="btn-edit"
-                onClick={() => handleUpdateDetails("edit")}
-              >
-                Edit
-              </button>
+          <div className="update-details-container">
+            <button
+              className="btn-check-in"
+              onClick={() => handleUpdateDetails("checkIn")}
+            >
+              Check In
+            </button>
 
-              <button
-                className={`btn-save ${
-                  isEditMode && isModified && !saving ? "active" : "disabled"
-                }`}
-                onClick={() => handleUpdateDetails("save")}
-                disabled={!isEditMode || saving}
-              >
-                {saving ? "Saving..." : "Save"}
-              </button>
-
-              <button
-                className="btn-cancel"
-                onClick={handleCancelEdit}
-                disabled={!isEditMode}
-              >
-                Cancel
-              </button>
-
-              <button
-                className="btn-check-in"
-                onClick={() => handleUpdateDetails("checkIn")}
-              >
-                Check In
-              </button>
-
-              <button className="btn-check-out" onClick={onCheckOut}>
-                Check Out
-              </button>
-            </div>
+            <button
+              className="btn-check-out"
+              onClick={onCheckOut}
+              disabled={editedItem.status !== "Confirmed"} // Disable if status is not confirmed
+            >
+              Check Out
+            </button>
           </div>
 
           <div className="description mt-4">
@@ -490,9 +474,9 @@ const CheckInCheckOut = ({
 
             {showPayoutModal && (
               <PayoutSecurityDeposit
-                guestName="John Doe" // Replace with actual data
-                propertyName="Cozy Apartment" // Replace with actual data
-                checkoutDate="2024-10-15" // Replace with actual data
+                guestName={item.guestname} // Using dynamic data
+                propertyName={item.property_name} // Using dynamic data
+                checkoutDate={item.checkout_date} // Using dynamic data
                 securityDeposit={1000} // Replace with actual data
                 onClose={handleCloseModal}
                 onConfirm={handleConfirmPayout}
@@ -500,12 +484,15 @@ const CheckInCheckOut = ({
             )}
           </div>
 
-          <button
-            className="cancel-booking-btn w-full mt-4"
-            onClick={() => setIsSuccess(true)}
-          >
-            Cancel Booking
-          </button>
+          {/* This button is hidden when Payout Button is shown */}
+          {!showPayoutButton && (
+            <button
+              className="cancel-booking-btn w-full mt-4"
+              onClick={() => setIsSuccess(true)}
+            >
+              Cancel Booking
+            </button>
+          )}
         </div>
       </div>
     </div>
