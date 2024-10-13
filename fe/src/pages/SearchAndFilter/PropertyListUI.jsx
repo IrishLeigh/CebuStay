@@ -4,8 +4,10 @@ import SideBar from './components/SideBar';
 import MainContent from './components/MainContent';
 import axios from 'axios';
 import { Container } from '@mui/material';
-import SortMenu from './components/SortMenu';
 import BannerOffers from './components/BannerOffers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faChevronLeft } from '@fortawesome/free-solid-svg-icons'; // Bars for opening, Chevron for closing
+import MenuIcon from '@mui/icons-material/Menu'; // Icon for the toggle button
 
 const PropertyListUI = () => {
   const [filters, setFilters] = useState({
@@ -27,11 +29,31 @@ const PropertyListUI = () => {
   const [accommodationList, setAccommodationList] = useState([]);
   const [originalAccommodationList, setOriginalAccommodationList] = useState([]);
   const [pricingList, setPricingList] = useState([]);
+  const [isSidebarOpen, setSidebarOpen] = useState(false); // Define state here
+
   const [searchUpdateData, setSearchUpdateData] = useState({
     checkin_date: null,
     checkout_date: null,
     guestCapacity: null,
-  })
+  });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Detect mobile
+
+  // Sidebar toggle function
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
+
+  // Handle mobile screen detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setSidebarOpen(window.innerWidth >= 768); // Show sidebar on larger screens
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -87,7 +109,6 @@ const PropertyListUI = () => {
         }
 
         // Update properties with images, amenities, min_price, and address
-       
         const updatedList = properties.map(property => {
           // Initialize an empty array for booking options
           const bookingOptionsArray = [];
@@ -154,37 +175,40 @@ const PropertyListUI = () => {
   const handleAmenityChange = (amenities) => {
     setSelectedAmenities(amenities);
   };
+
   const handleSearchUpdate = ({ guestCapacity, checkin_date, checkout_date }) => {
     setSearchUpdateData({ guestCapacity, checkin_date, checkout_date });
-    // You can do other things here based on the search updates
     console.log("Guest Capacity FROM PROPERTY LIST:", guestCapacity);
     console.log("Checkin Date  PROPERTY LIST:", checkin_date);
     console.log("Checkout Date  PROPERTY LIST:", checkout_date);
-
   };
 
-  console.log("Search UPDATE FROM PORPERTY LIST:", searchUpdateData);
-
   return (
-    // <div style ={{ overflowY: "scroll", width : "100%"}}>
-      <Container maxWidth="lg">
-        <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList}  onSearchUpdate={handleSearchUpdate} originalAccommodationList={originalAccommodationList}/>
-        {/* <SortMenu /> */}
-        <div className="content-layout">
-          <SideBar onAmenityChange={handleAmenityChange} onFilterChange={handleFilterChange} filters={filters} />
-          <MainContent
-            selectedAmenities={selectedAmenities}
-            accommodations={accommodationList}
-            filters={filters}
-            searchData={searchData}
-            setSearchData={setSearchData}
-            searchUpdate = {searchUpdateData}
-          />
-        </div>
-      </Container>
-    // </div>
+    <Container maxWidth="lg">
+      <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList}  onSearchUpdate={handleSearchUpdate} originalAccommodationList={originalAccommodationList}/>
+
+      <div className="content-layout">
+        {/* Sidebar with toggle state */}
+        <SideBar 
+        isSidebarOpen={isSidebarOpen} 
+        toggleSidebar={toggleSidebar} 
+          onAmenityChange={handleAmenityChange} 
+          onFilterChange={handleFilterChange} 
+          filters={filters} 
+        />
+
+        {/* Main content */}
+        <MainContent
+          selectedAmenities={selectedAmenities}
+          accommodations={accommodationList}
+          filters={filters}
+          searchData={searchData}
+          setSearchData={setSearchData}
+          searchUpdate = {searchUpdateData}
+        />
+      </div>
+    </Container>
   );
 };
 
 export default PropertyListUI;
-

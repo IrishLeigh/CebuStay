@@ -304,9 +304,169 @@ input[type='range']:hover {
 }
 
 
-.sidebar {
-    max-width: 23rem; /* Set maximum width for the sidebar */
+
+
+
+
+
+/* Sidebar container to wrap the sidebar and toggle button */
+.sidebar-container {
+  display: flex;
+  flex-direction: column; /* Stack sidebar and toggle vertically */
+  height: 100vh; /* Full height of the viewport */
+  position: relative; /* Position relative to handle absolute/fixed elements inside */
 }
+
+@media (min-width: 769px) {
+  .sidebar-container {
+    flex-direction: row; /* Sidebar and content side by side on larger screens */
+  }
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed; /* Fixed so it stays on top */
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%; /* Full viewport height */
+  background-color: white;
+  padding: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  transform: translateX(-100%); /* Hidden by default */
+  z-index: 9999; /* High z-index so it's on top */
+  overflow-y: auto; /* Enable scrolling */
+}
+
+.sidebar.open {
+  transform: translateX(0); /* Show sidebar when open */
+}
+
+.sidebar-toggle-btn {
+  position: fixed;
+  left: 0; /* Stick it to the left side */
+  top: 50%; /* Center it vertically */
+  transform: translateY(-50%);
+  background-color: #15A1C6; /* Button color */
+  color: white; /* Text color */
+  border: none; /* No border */
+  padding: 0.5rem; /* Padding */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Animation */
+  z-index: 1000; /* Make sure it's above other elements */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
+}
+
+.sidebar-toggle-btn.open {
+  background-color: #0d6efd; /* Darker color when open */
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #0a5db0; /* Slightly darker on hover */
+}
+
+.sidebar-toggle-btn svg {
+  width: 1.25rem; /* Icon size */
+  height: 1.25rem; /* Icon size */
+  transition: transform 0.3s ease; /* Animation for icon */
+}
+
+.sidebar.open .sidebar-toggle-btn svg {
+  transform: rotate(180deg); /* Rotate icon when open */
+}
+
+/* Close button inside the sidebar (hidden by default) */
+.sidebar-close-btn {
+  display: none;
+  background-color: transparent;
+  color: #000;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%); /* Sidebar hidden by default */
+  }
+
+  .sidebar.open {
+    transform: translateX(0); /* Sidebar shown when open */
+  }
+
+  .sidebar {
+    overflow-y: auto; /* Enable scrolling */
+  }
+
+  .sidebar-toggle-btn {
+    display: block;
+  }
+
+  .sidebar.open .sidebar-close-btn {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    transform: none;
+    position: relative;
+    width: 250px;
+    height: 100vh; /* Full height of viewport */
+  }
+
+  .sidebar {
+    overflow: visible; /* Fit content without scrolling */
+  }
+
+  .sidebar-toggle-btn {
+    display: none;
+  }
+
+  .sidebar-close-btn {
+    display: none;
+  }
+}
+
+
+
+/* Menu button for mobile */
+.menu-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+
+/* Media queries for larger screens */
+@media (min-width: 769px) {
+  /* On larger screens, sidebar is always visible */
+  .sidebar {
+    position: static;
+    transform: none; /* No sliding effect */
+    width: 16rem;
+    box-shadow: none;
+  }
+
+  /* Hide the toggle button on larger screens */
+  .menu-button {
+    display: none;
+  }
+}
+
+
+
+
+
+
+
 
 .flex-wrap {
     flex-wrap: wrap; /* Wrap items onto multiple lines */

@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/SideBar.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faChevronLeft } from '@fortawesome/free-solid-svg-icons'; // Bars for opening, Chevron for closing
+
+
 
 const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   const pTypes = [
@@ -27,7 +31,28 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   const [activeButtons, setActiveButtons] = useState([]);
   const [selectedBookingOptions, setSelectedBookingOptions] = useState([]);
   const [selectedPropertyTypes, setSelectedPropertyTypes] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // For sidebar toggle
+  const [isMobile, setIsMobile] = useState(false); // To detect mobile screen size
 
+  
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+  
+  // Function to check if the screen is mobile size
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 768); // 768px is the breakpoint for mobile, adjust if needed
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set the initial state
+    return () => {
+      window.removeEventListener('resize', handleResize); // Clean up
+    };
+  }, []);
+  
+  
   const handleMinPriceChange = (e) => {
     const value = e.target.value;
     // Allow only digits or empty input
@@ -127,7 +152,21 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
   
 
   return (
-    <div className="bg-white p-4 w-64" style={{ fontFamily: 'Poppins' }}>
+
+    
+<div
+  className="sidebar-container"
+  style={{
+    display: 'flex',
+    flexDirection: 'column',  /* Stack vertically by default (for mobile) */
+    height: '100%',         /* Full height of the viewport */
+    position: 'relative',    /* Relative to handle fixed elements */
+  }}
+>
+      {/* Button to toggle sidebar visibility on mobile */}
+      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`} >
+        <button className="sidebar-close-btn" onClick={toggleSidebar}>X</button>
+
       <div className="mt-6">
         <h3 className="font-semibold" style={{ textAlign: 'left' }}>Property Type</h3>
         <hr className="my-2" />
@@ -145,164 +184,6 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
         ))}
       </div>
     
-
-      {/* <div className="mt-6">
-        <h3 className="font-semibold" style={{ textAlign: 'left' }}>Amenities</h3>
-        <hr className="my-2" style={{ marginTop: '-1rem' }} />
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)', // 2 columns
-          gap: '0.5rem', // Gap between buttons
-          maxWidth: '100%' // Ensure container doesn't exceed parent width
-        }}>
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Wi-Fi') ? '#15A1C6' : '#000000'}`, // Blue border if active, else black
-            color: activeButtons.includes('Wi-Fi') ? '#ffffff' : '#000000', // White text if active, else black
-            backgroundColor: activeButtons.includes('Wi-Fi') ? '#15A1C6' : 'transparent', // Blue background if active, else transparent
-            padding: '0.25rem 0.5rem', // Smaller padding
-            borderRadius: '0.25rem', // Rounded corners
-            fontSize: '0.75rem', // Smaller font size
-            cursor: 'pointer', // Pointer cursor
-            outline: 'none', // Remove default outline
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s', // Smooth transition
-            margin: '0.25rem', // Small margin
-            whiteSpace: 'nowrap', // Prevent text from wrapping
-            textAlign: 'center', // Center text
-            minWidth: '3rem' // Minimum width for consistency
-          }} onClick={() => toggleAmenity('Wi-Fi')}>Wi-Fi</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Television') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Television') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Television') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Television')}>TV</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Kitchen') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Kitchen') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Kitchen') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Kitchen')}>Kitchen</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Spa') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Spa') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Spa') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Spa')}>Spa</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Gym') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Gym') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Gym') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Gym')}>Gym</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Breakfast') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Breakfast') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Breakfast') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Breakfast')}>Breakfast</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Parking') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Parking') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Parking') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Parking')}>Parking</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Heating') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Heating') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Heating') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Heating')}>Heating</button>
-
-          <button style={{
-            border: `1px solid ${activeButtons.includes('Air Conditioning') ? '#15A1C6' : '#000000'}`,
-            color: activeButtons.includes('Air Conditioning') ? '#ffffff' : '#000000',
-            backgroundColor: activeButtons.includes('Air Conditioning') ? '#15A1C6' : 'transparent',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
-            margin: '0.25rem',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '3rem'
-          }} onClick={() => toggleAmenity('Air Conditioning')}>Aircon</button>
-        </div>
-
-      </div> */}
-
 <div className="mt-6">
   <h3 className="font-semibold" style={{ textAlign: 'left' }}>Amenities</h3>
   <hr className="my-2" style={{ marginTop: '-1rem' }} />
@@ -319,6 +200,8 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
         (amenity === 'Airconditioning' && activeButtons.includes('Air Conditioning'));
 
       return (
+
+
         <button
           key={amenity}
           style={{
@@ -346,7 +229,7 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
 </div>
 
 
-<div className="mt-6">
+<div className="mt-6" >
   <h3 className="font-semibold" style={{ textAlign: 'left' }}>Price Range</h3>
   <hr className="my-2" />
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1px' }}>
@@ -525,20 +408,25 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
           <input id="cbx-51-5" type="checkbox" checked={selectedBookingOptions.includes('Cancellation Plan')} onChange={() => handleBookingOptionChange('Cancellation Plan')} />
           <label className="cbx" htmlFor="cbx-51-5"></label>
         </div>
-        {/* <div className="flex items-center justify-between mt-2 wrap-check-51">
-          <span>No Refund Policy</span>
-          <input id="cbx-51-6" type="checkbox" checked={selectedBookingOptions.includes('Non-Refundable')} onChange={() => handleBookingOptionChange('Non-Refundable')} />
-          <label className="cbx" htmlFor="cbx-51-6"></label>
-        </div> */}
+      
         <div className="flex items-center justify-between mt-2 wrap-check-51">
           <span>Modification Plan</span>
           <input id="cbx-51-7" type="checkbox" checked={selectedBookingOptions.includes('Modification Plan')} onChange={() => handleBookingOptionChange('Modification Plan')} />
           <label className="cbx" htmlFor="cbx-51-7"></label>
         </div>
       </div>
+</div>
 
+      <button 
+        className={`sidebar-toggle-btn ${isSidebarOpen ? 'open' : ''}`} 
+        onClick={toggleSidebar}
+        aria-label={isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
+      >
+        <FontAwesomeIcon icon={isSidebarOpen ? faChevronLeft : faBars} />
+      </button>
 
-    </div>
+</div>
+
   );
 };
 
