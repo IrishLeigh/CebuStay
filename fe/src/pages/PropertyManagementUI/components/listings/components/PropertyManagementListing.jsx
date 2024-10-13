@@ -445,9 +445,16 @@ export default function PropertyManagementListing() {
                                                     </div>
                                                 ) : (
                                                     <>
-                                                        <Tooltip title="Edit Property">
+                                                        <Tooltip title={item.status === 'Active' ? 'Edit Disabled' : 'Edit Property'}>
                                                             <span className='dajwhbdkajwbdjhab'>
-                                                                <MdEdit onClick={() => handleEdit(item.id)} style={{ cursor: 'pointer', marginRight: '0.5rem', color: 'blue' }} />
+                                                                <MdEdit onClick={() => item.status === 'Inactive' && handleEdit(item.id)} 
+                                                                style={{ 
+                                                                    cursor: item.status === 'Active' ? 'not-allowed' : 'pointer', 
+                                                                    marginRight: '0.5rem', 
+                                                                    color: 'blue' ,
+                                                                    opacity: item.status === 'Active' ? '0.4' : '1'
+                                                                    }} 
+                                                                />
                                                             </span>
                                                         </Tooltip>
                                                         <Tooltip title={item.status === 'Inactive' ? 'Currently Inactive' : 'Deactivate Property'}>
