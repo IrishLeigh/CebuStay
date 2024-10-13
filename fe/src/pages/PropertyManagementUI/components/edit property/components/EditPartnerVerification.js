@@ -82,8 +82,8 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
     const fieldLabels = {
       firstName: "First Name",
       lastName: "Last Name",
-      email: "Email Address",
-      phoneNumber: "Phone Number",
+      Email: "Email Address",
+      PhoneNumber: "Phone Number",
       DateOfBirth: "Date of Birth",
       DisplayName: "Display Name",
       // Add more fields as necessary
@@ -117,7 +117,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   
     // Validate phone number and email for both types
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
-    const phoneWithCountryCode = `${individualData.countryCode}${individualData.phoneNumber || companyData.phoneNumber}`;
+    const phoneWithCountryCode = `${individualData.countryCode}${individualData.PhoneNumber || companyData.PhoneNumber}`;
     
     // Define phone number patterns based on country code
     const phonePatterns = {
@@ -130,7 +130,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
     const pattern = phonePatterns[individualData.countryCode] || /^\+[1-9]\d{1,14}$/;  // Default for other countries
   
     // Check email validity
-    if (!emailPattern.test(individualData.email || companyData.email)) {
+    if (!emailPattern.test(individualData.Email || companyData.email)) {
       alert('Invalid email address. Please enter a valid email.');
       return;
     }
@@ -171,7 +171,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
           displayname: dataToSend.DisplayName,
           dateofbirth: dataToSend.DateOfBirth,
           email: dataToSend.Email,
-          contactnumber: dataToSend.PhoneNumber,
+          contactnumber: dataToSend.phoneNumber,
           street: dataToSend.Street,
           barangay: dataToSend.Barangay,
           city : dataToSend.City,

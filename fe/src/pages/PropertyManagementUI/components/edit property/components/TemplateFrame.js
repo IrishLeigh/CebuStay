@@ -85,7 +85,7 @@ function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
             Property Management / Edit Property
           </Button>
 
-          <Typography>{isEditing ? 'Edit Form' : 'View Form'}</Typography>
+          
 
           <IconButton
             size="small"

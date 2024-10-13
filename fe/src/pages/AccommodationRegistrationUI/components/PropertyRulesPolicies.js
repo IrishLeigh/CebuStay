@@ -14,6 +14,7 @@ import AnimatePage from './AnimatedPage';
 import { AccessAlarm, MonetizationOn } from '@mui/icons-material'; // Import icons for the new section
 import DatePicker from '../../../components/time';
 
+
 export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoliciesData, onHouseRulesDataChange, parentHouseRules, handleNext, handleBack }) {
   const initialPoliciesData = {
     isCancellationPolicy: true,  // true for standard, false for non-refundable

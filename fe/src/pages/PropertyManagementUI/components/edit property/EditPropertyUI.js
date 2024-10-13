@@ -20,6 +20,7 @@ import EditRoomDetailsMultipleUnit from "./components/EditRoomDetailsMultipleUni
 import EditPhotos from "./components/EditPhotos";
 import { Box } from "@mui/material";
 import EditRulesPolicies from "./components/EditRulesPolicies";
+import Sample from "./components/Sample";
 
 
 function CustomTabPanel(props) {
@@ -69,6 +70,7 @@ export default function EditPropertyUI() {
   const [isSingleUnit, setIsSingleUnit] = useState(false);
   const [basicInfoStatus, setBasicInfoStatus] = useState("");
   const [saveCount, setSaveCount] = useState(0); // Add save count state  
+  
 
   useEffect(() => {
     if (!id) return;
@@ -123,7 +125,7 @@ export default function EditPropertyUI() {
           setGalleryImg(res_img2.data.img);
         }
         // // Determine if the property is a single unit type
-        const singleUnitTypes = ["Home", "Apartment", "Condominium"];
+        const singleUnitTypes = ["Private Residential", "Condominium", "Townhouse, Cabin , Loft, Bungalow, Studio, Villa, Cottage,Subdivision House"];
         setIsSingleUnit(
           singleUnitTypes.includes(data.property_details.property_type)
         );
@@ -151,8 +153,9 @@ export default function EditPropertyUI() {
 
   
   // console.log("Property Data TYPE?: ", propertyData.property_type);
-  console.log ("basicinfo status?: ", saveCount);
-  console.log ("Parent Partner Data: ", partnerData);
+  // console.log ("basicinfo status?: ", saveCount);
+  // console.log ("Parent Partner Data: ", partnerData);
+  console.log("RoDATA FROM API: ", data);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>
@@ -224,16 +227,22 @@ export default function EditPropertyUI() {
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          {isSingleUnit ? (
-            <RoomDetailsSingleUnit
+          {/* {isSingleUnit ? ( */}
+            <Sample 
               isEditing={isEditing}
               propertyData={rooms}
               onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
               onSaveStatusChange={handleSaveStatusChange}
             />
-          ) : (
+             <RoomDetailsSingleUnit 
+              isEditing={isEditing}
+              propertyData={rooms}
+              onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
+              onSaveStatusChange={handleSaveStatusChange}
+            />
+          {/* ) : (
             <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms}  onSaveStatusChange={handleSaveStatusChange}/>
-          )}
+          )} */}
         </CustomTabPanel>
 
         <CustomTabPanel value={value} index={2}>

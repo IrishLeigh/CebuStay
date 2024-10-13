@@ -210,7 +210,7 @@ export default function EditAmenities({
 
         <Grid container spacing={2}>
           {/* Amenities Section */}
-          {isSingleUnit && (
+         
             <Grid item xs={12}>
               <div
                 style={{
@@ -270,10 +270,9 @@ export default function EditAmenities({
                 </Grid>
               </div>
             </Grid>
-          )}
-
+    
           {/* Facilities Section */}
-          {isSingleUnit && (
+        
             <Grid item xs={12}>
               <div
                 style={{
@@ -332,7 +331,7 @@ export default function EditAmenities({
                 </Grid>
               </div>
             </Grid>
-          )}
+      
 
           {/* Services Section */}
           <Grid item xs={12}>

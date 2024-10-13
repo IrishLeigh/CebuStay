@@ -304,11 +304,6 @@ export default function RoomDetailsSingleUnit({
   };
 
   const handleSave = async () => {
-    console.log("Unit Id", unitid);
-    // console.log("Room Details:", propertyData);
-    console.log("Existing Unit Beds:", unitBeds);
-    // console.log("New Unit Rooms:", newUnitRooms);
-    // console.log("Exisitng ROoms:", unitRooms);
     setIsLoading(true);
     setIsEditing(false);
 

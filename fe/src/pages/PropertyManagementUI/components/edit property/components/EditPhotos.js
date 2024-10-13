@@ -20,6 +20,7 @@ import {
   InputLabel,
   Snackbar,
   Alert,
+  useMediaQuery,
 } from "@mui/material";
 import {
   ArrowBack,
@@ -40,7 +41,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LoadingModal from "../modal/LoadingModal";
-
+import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
 
 export default function EditPhotos({
   isSingleUnit,
@@ -72,6 +73,24 @@ export default function EditPhotos({
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const theme = createTheme({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+      },
+    },
+  });
+  
+  const isSmallScreen =  useMediaQuery(theme.breakpoints.down('sm'));
+  const isMediumScreen =  useMediaQuery(theme.breakpoints.down('md'));;
+
+  
+  // Determine the number of columns based on screen size
+  const cols = isSmallScreen ? 1 : isMediumScreen ? 2 : 5;
   
     // Initialize originalData and sync with props
     useEffect(() => {
@@ -400,7 +419,7 @@ export default function EditPhotos({
   // );
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
     <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
       <Paper
         style={{
@@ -441,42 +460,142 @@ export default function EditPhotos({
         </Typography>
 
         <Grid container spacing={2}>
-          {/* Cover Photos */}
-          <Grid item xs={12} sx={{ padding: "1rem" }}>
-            <div
-              className="info-title-cntr"
-              onClick={() => handlePhotoTypeChange("coverPhotos")}
+      {/* Cover Photos */}
+      <Grid item xs={12} sx={{ padding: '1rem' }}>
+        <div
+          className="info-title-cntr"
+          onClick={() => handlePhotoTypeChange('coverPhotos')}
+        >
+          <ArrowRight sx={{ color: '#16B4DD' }} />
+          <div style={{ fontSize: '1.125rem' }}>Cover Photos</div>
+        </div>
+        <Divider sx={{ width: '100%', color: '#ccc' }} />
+        <ImageList variant="masonry" cols={cols} gap={5}>
+          {coverPhotos.map((image, index) => (
+            <ImageListItem
+              key={image.id}
+              onClick={() => handleClickOpen(index, 'coverPhotos')}
+              style={{ position: 'relative', cursor: 'pointer' }}
             >
-              <ArrowRight sx={{ color: "#16B4DD" }} />
-              <div style={{ fontSize: "1.125rem" }}>Cover Photos</div>
-            </div>
-            <Divider sx={{ width: "100%", color: "#ccc" }} />
-            <ImageList variant="masonry" cols={5} gap={5}>
-              {coverPhotos.map((image, index) => (
+              <img
+                src={image.src}
+                alt={`Cover ${image.id}`}
+                style={{ objectFit: 'cover', height: '200px' }}
+              />
+              {isEditing && (
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
+                    handleDeleteCoverPhoto(index, image);
+                  }}
+                  sx={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    color: 'white',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    },
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+              )}
+              <ImageListItemBar title={image.caption} position="below" />
+            </ImageListItem>
+          ))}
+        </ImageList>
+        {isEditing && (
+          <div style={{ marginTop: '1rem' }}>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="upload-cover-button"
+              multiple
+              type="file"
+              onChange={(e) => handleAddPhotos(e, 'coverPhotos')}
+            />
+            <label htmlFor="upload-cover-button">
+              <Button
+                variant="contained"
+                color="primary"
+                component="span"
+                startIcon={<AddAPhoto />}
+              >
+                Add Cover Photos
+              </Button>
+            </label>
+          </div>
+        )}
+      </Grid>
+
+      
+      <Grid item xs={12} sx={{ padding: '1rem' }}>
+        <div
+          className="info-title-cntr"
+          onClick={() => handlePhotoTypeChange('galleryPhotos')}
+        >
+          <ArrowRight sx={{ color: '#16B4DD' }} />
+          <div>Gallery Photos</div>
+        </div>
+        <Divider sx={{ width: '100%', color: '#ccc', marginBottom: '1rem' }} />
+
+        {galleryPhotos.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#888', border: '1px solid #ccc', height: 'fit-content', borderRadius: '0.8rem' }}>
+            No Photos Added, Please Add Photos
+            {isEditing && (
+              <div style={{ marginTop: '1rem' }}>
+                <input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="upload-gallery-button"
+                  multiple
+                  type="file"
+                  onChange={(e) => handleAddPhotos(e, 'galleryPhotos')}
+                />
+                <label htmlFor="upload-gallery-button">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    component="span"
+                    fullWidth
+                    startIcon={<AddAPhoto />}
+                  >
+                    Add Gallery Photos
+                  </Button>
+                </label>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <ImageList variant="masonry" cols={cols} gap={5}>
+              {galleryPhotos.map((image, index) => (
                 <ImageListItem
                   key={image.id}
-                  onClick={() => handleClickOpen(index, "coverPhotos")}
-                  style={{ position: "relative", cursor: "pointer" }}
+                  onClick={() => handleClickOpen(index, 'galleryPhotos')}
+                  style={{ position: 'relative', cursor: 'pointer' }}
                 >
                   <img
                     src={image.src}
-                    alt={`Cover ${image.id}`}
-                    style={{ objectFit: "cover", height: "200px" }}
+                    alt={`Gallery ${image.id}`}
+                    style={{ objectFit: 'cover', height: '200px' }}
                   />
                   {isEditing && (
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
-                        handleDeleteCoverPhoto(index, image);
+                        handleDeleteGalleryPhoto(index, image);
                       }}
                       sx={{
-                        position: "absolute",
+                        position: 'absolute',
                         top: 8,
                         right: 8,
-                        color: "white",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        "&:hover": {
-                          backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        color: 'white',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(0, 0, 0, 0.7)',
                         },
                       }}
                     >
@@ -488,133 +607,32 @@ export default function EditPhotos({
               ))}
             </ImageList>
             {isEditing && (
-              <div style={{ marginTop: "1rem" }}>
+              <div style={{ marginTop: '1rem' }}>
                 <input
                   accept="image/*"
-                  style={{ display: "none" }}
-                  id="upload-cover-button"
+                  style={{ display: 'none' }}
+                  id="upload-gallery-button"
                   multiple
                   type="file"
-                  onChange={(e) => handleAddPhotos(e, "coverPhotos")}
+                  onChange={(e) => handleAddPhotos(e, 'galleryPhotos')}
                 />
-                <label htmlFor="upload-cover-button">
+                <label htmlFor="upload-gallery-button">
                   <Button
                     variant="contained"
                     color="primary"
                     component="span"
                     startIcon={<AddAPhoto />}
                   >
-                    Add Cover Photos
+                    Add Gallery Photos
                   </Button>
                 </label>
               </div>
             )}
-          </Grid>
-          {isSingleUnit && (
-            <Grid item xs={12} sx={{ padding: "1rem" }}>
-              <div
-                className="info-title-cntr"
-                onClick={() => handlePhotoTypeChange("galleryPhotos")}
-              >
-                <ArrowRight sx={{ color: "#16B4DD" }} />
-                <div>Gallery Photos</div>
-              </div>
-              <Divider sx={{ width: "100%", color: "#ccc" , marginBottom : "1rem"}} />
-
-              {galleryPhotos.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "2rem", color: "#888" ,border : "1px solid #ccc", height : "fit-content", borderRadius : "0.8rem"}}>
-                  No Photos Added, Please Add Photos
-                  {isEditing && (
-                    <div style={{ marginTop: "1rem" }}>
-                      <input
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        id="upload-gallery-button"
-                        multiple
-                        type="file"
-                        onChange={(e) => handleAddPhotos(e, "galleryPhotos")}
-                      />
-                      <label htmlFor="upload-gallery-button">
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          fullWidth
-                          startIcon={<AddAPhoto />}
-                        >
-                          Add Gallery Photos
-                        </Button>
-                      </label>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <ImageList variant="masonry" cols={5} gap={5}>
-                    {galleryPhotos.map((image, index) => (
-                      <ImageListItem
-                        key={image.id}
-                        onClick={() => handleClickOpen(index, "galleryPhotos")}
-                        style={{ position: "relative", cursor: "pointer" }}
-                      >
-                        <img
-                          src={image.src}
-                          alt={`Gallery ${image.id}`}
-                          style={{ objectFit: "cover", height: "200px" }}
-                        />
-                        {isEditing && (
-                          <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
-                              handleDeleteGalleryPhoto(index, image);
-                            }}
-                            sx={{
-                              position: "absolute",
-                              top: 8,
-                              right: 8,
-                              color: "white",
-                              backgroundColor: "rgba(0, 0, 0, 0.5)",
-                              "&:hover": {
-                                backgroundColor: "rgba(0, 0, 0, 0.7)",
-                              },
-                            }}
-                          >
-                            <Delete />
-                          </IconButton>
-                        )}
-                        <ImageListItemBar title={image.caption} position="below" />
-                      </ImageListItem>
-                    ))}
-                  </ImageList>
-                  {isEditing && (
-                    <div style={{ marginTop: "1rem" }}>
-                      <input
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        id="upload-gallery-button"
-                        multiple
-                        type="file"
-                        onChange={(e) => handleAddPhotos(e, "galleryPhotos")}
-                      />
-                      <label htmlFor="upload-gallery-button">
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          startIcon={<AddAPhoto />}
-                        >
-                          Add Gallery Photos
-                        </Button>
-                      </label>
-                    </div>
-                  )}
-                </>
-              )}
-            </Grid>
-          )}
-
-
-        </Grid>
+          </>
+        )}
+      </Grid>
+      
+    </Grid>
 
         {/* Cover Photo Dialog */}
 
@@ -882,22 +900,6 @@ export default function EditPhotos({
         </DialogActions>
       </Dialog>
 
-        {/* {isEditing && (
-          <div style={{ marginTop: "1rem" }}>
-            <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-              Revert Changes
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              disabled={!hasChanges}
-              startIcon={<Save />}
-            >
-              Save Changes
-            </Button>
-          </div>
-        )} */}
       </Paper>
       <Snackbar
           open={openSnackbar}
@@ -913,6 +915,6 @@ export default function EditPhotos({
           </Alert>
         </Snackbar>
       <LoadingModal open={isLoading} />
-    </>
+    </ThemeProvider>
   );
 }

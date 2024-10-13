@@ -9,6 +9,7 @@ import InfoIcon from '@mui/icons-material/Info'; // Icon for property type
 import BookingDetailsTheme from './theme/theme';
 import { Hotel } from '@mui/icons-material';
 import { set } from 'date-fns';
+import { yellow } from '@mui/material/colors'; // Import yellow color
 
 function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity, checkin_date, checkout_date, address , details, facilities, houseRules}) {
   const [price, setPrice] = useState(0);
@@ -49,21 +50,22 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
         const monthlyPrice = unitData.unitpricing.min_price; // With VAT
         const baseMonthlyPrice = monthlyPrice / 1.12; // Base price excluding VAT
         const calculateMonths = Math.ceil(lengthStay / 31); // Calculate number of months
-        console.log("calcualted months: ",calculateMonths);
+        console.log("calculated months: ", calculateMonths);
 
         let securityDeposit = 0; // Initialize security deposit
         let monthsAdvance = 0; // Initialize advance payment
 
         // Determine security deposit and advance payment based on months
-        if (calculateMonths === 2) {
+        if (calculateMonths === 1) {
           securityDeposit = baseMonthlyPrice; // Security deposit equals one month base price
-        } else if (calculateMonths > 2) {
+          monthsAdvance = baseMonthlyPrice; // Advance payment equals one month base price
+        } else if (calculateMonths >= 2) {
           securityDeposit = baseMonthlyPrice; // Security deposit equals one month base price
-          monthsAdvance = baseMonthlyPrice; // Two months advance payment
+          monthsAdvance = baseMonthlyPrice * 2; // Two months advance payment
         }
 
         // Total monthly price without VAT
-        const totalMonthlyWithoutVAT = parseFloat(baseMonthlyPrice) + parseFloat(securityDeposit) + parseFloat(monthsAdvance);
+        const totalMonthlyWithoutVAT = parseFloat(securityDeposit) + parseFloat(monthsAdvance);
         const calculatedTotalMonthlyVat = (totalMonthlyWithoutVAT * 0.12).toFixed(2); // Calculate VAT
         const totalMonthlyPriceWithService = totalMonthlyWithoutVAT + parseFloat(calculatedTotalMonthlyVat); // Total with VAT
 
@@ -72,11 +74,13 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
         setVatMonthly(calculatedTotalMonthlyVat);
         setTotalMonthlyPrice(totalMonthlyPriceWithService.toFixed(2)); // Add VAT to total monthly price
         setMonthlyLengthStay(calculateMonths);
+
         // When not daily, set total monthly price with service
         onPriceChange(totalMonthlyPriceWithService);
-      }
+        }
     }
   }, [unitData, onPriceChange, lengthStay, isDaily]);
+
 
   
   
@@ -194,7 +198,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
             </Stack>
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" color="textSecondary">
-                X {lengthStay || 'N/A'} =
+                X {lengthStay || 'N/A'} nights =
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 {formatPrice(price) || 'N/A'}
@@ -224,6 +228,8 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
               <PriceCheckIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
               Invoice Summary:
             </Typography>
+
+            {/* Total Amount to Pay Section */}
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" color="textSecondary">
                 Base Price Per Month
@@ -232,25 +238,64 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
                 {formatPrice(monthlyBasePrice) || 'N/A'}
               </Typography>
             </Stack>
+            
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" color="textSecondary">
-                {monthlyLengthStay == 1 ? "X 1 month advance =" : "X 2 months advance ="}
+                X {monthlyLengthStay} total months booked
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(monthlyLengthStay == 1 ? monthlyBasePrice  : monthlyBasePrice * 2) || 'N/A'}
+                {formatPrice(monthlyLengthStay * monthlyBasePrice) || 'N/A'}
               </Typography>
             </Stack>
-           {/* Conditional rendering for Security Deposit */}
-            {monthlyLengthStay !== 1 && (
-              <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
-                <Typography variant="body1" color="textSecondary">
-                  Security Deposit
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  +{formatPrice(monthlyBasePrice) || 'N/A'}
-                </Typography>
-              </Stack>
-            )}
+
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" color="textSecondary">
+                VAT (12%)
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice((monthlyLengthStay * monthlyBasePrice) * 0.12) || 'N/A'}
+              </Typography>
+            </Stack>
+            
+            <Divider sx={{ my: 1 }} />
+            
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" fontWeight="bold">
+                Total Amount
+              </Typography>
+              <Typography variant="body1" fontWeight="bold">
+                {formatPrice((monthlyLengthStay * monthlyBasePrice) * 1.12)}
+              </Typography>
+            </Stack>
+            
+            {/* Down Payment Section */}
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1} mt={4}>
+              <Typography variant="body1" fontWeight="bold">
+                For Downpayment to pay now
+              </Typography>
+              {/* <Typography variant="body1" color="textSecondary">
+                {formatPrice(monthlyBasePrice) || 'N/A'}
+              </Typography> */}
+            </Stack>
+            
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" color="textSecondary">
+                {monthlyLengthStay === 1 ? "X 1 month advance =" : "X 2 months advance ="}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(monthlyLengthStay === 1 ? monthlyBasePrice : monthlyBasePrice * 2) || 'N/A'}
+              </Typography>
+            </Stack>
+            
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" color="textSecondary">
+                Security Deposit
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                + {formatPrice(monthlyBasePrice) || 'N/A'}
+              </Typography>
+            </Stack>
+
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" color="textSecondary">
                 VAT (12%)
@@ -259,16 +304,27 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
                 {formatPrice(vatMonthly) || 'N/A'}
               </Typography>
             </Stack>
+            
             <Divider sx={{ my: 1 }} />
+            {/* Security Deposit Information */}
+            <Stack direction="row" alignItems="center" m={1}>
+              <InfoIcon sx={{ color: 'info.main', mr: 1 }} style={{ color: yellow[600] }} /> {/* Info Icon */}
+              <Typography variant="body2" >
+                The security deposit is refundable at the end of the rental period, subject to conditions.
+              </Typography>
+            </Stack>
+            
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" fontWeight="bold">
-                Total Amount
+                Downpayment Amount 
               </Typography>
               <Typography variant="body1" fontWeight="bold">
                 {formatPrice(totalMonthlyPrice)}
               </Typography>
             </Stack>
+
           </Card>
+
         )}
 
         <Card sx={{ p: 3, mt: 3 }}>
