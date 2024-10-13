@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { Paper, Typography, IconButton, Button, Box, Grid, Container, Card, CardMedia, Snackbar, Alert } from "@mui/material";
+import { Paper, Typography, IconButton, Button, Box, Grid, Container, Card, CardMedia, Snackbar, Alert, useTheme, useMediaQuery } from "@mui/material";
 import { Delete as DeleteIcon, Image as ImageIcon } from "@mui/icons-material";
 import AnimatePage from "./AnimatedPage";
 
@@ -9,6 +9,8 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
   const [errors, setErrors] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -117,7 +119,7 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
   };
 
   return (
-    <Box>
+    <Box >
       <Container maxWidth="lg">
         <AnimatePage>
           <Grid container spacing={2} justifyContent="center">
@@ -133,17 +135,29 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
                 <Paper
                   elevation={3}
                   sx={{
-                    padding: "2rem",
+                    padding: isMobile ? "1rem" : "2rem", // No padding for mobile
                     width: "100%",
                     borderRadius: "0.8rem",
+                    mb: "rem",
                   }}
                 >
                   <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "1rem" }}>
                     Upload Up to 5 Stunning Cover Photos
                   </Typography>
-                  <Typography sx={{ marginBottom: "1rem", color: '#333', lineHeight: 1.5, fontFamily: "Poppins, sans-serif", fontSize: "1.125rem" }}>
-                    Showcase the best features of your property with high-quality images. These photos will be the first thing guests see, so make sure they highlight what makes your place special. You can always add more room photos later. Let your property shine and attract guests with captivating visuals!
-                  </Typography>
+                  {/* Conditionally render Typography based on isMobile */}
+                  {!isMobile && (
+                    <Typography
+                      sx={{
+                        marginBottom: "1rem",
+                        color: '#333',
+                        lineHeight: 1.5,
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "1.125rem"
+                      }}
+                    >
+                      Showcase the best features of your property with high-quality images. These photos will be the first thing guests see, so make sure they highlight what makes your place special. You can always add more room photos later. Let your property shine and attract guests with captivating visuals!
+                    </Typography>
+                  )}
                   <div
                     {...getRootProps()}
                     style={{

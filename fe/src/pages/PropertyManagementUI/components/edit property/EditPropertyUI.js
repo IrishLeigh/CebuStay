@@ -18,9 +18,11 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import RoomDetailsSingleUnit from "./components/EditRoomDetailsSingleUnit";
 import EditRoomDetailsMultipleUnit from "./components/EditRoomDetailsMultipleUnit";
 import EditPhotos from "./components/EditPhotos";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import EditRulesPolicies from "./components/EditRulesPolicies";
 import Sample from "./components/Sample";
+import { isCellExitEditModeKeys } from "@mui/x-data-grid/utils/keyboardUtils";
+import Tooltip from '@mui/material/Tooltip';
 
 
 function CustomTabPanel(props) {
@@ -70,6 +72,8 @@ export default function EditPropertyUI() {
   const [isSingleUnit, setIsSingleUnit] = useState(false);
   const [basicInfoStatus, setBasicInfoStatus] = useState("");
   const [saveCount, setSaveCount] = useState(0); // Add save count state  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
   
 
   useEffect(() => {
@@ -150,10 +154,12 @@ export default function EditPropertyUI() {
     setValue(index);
   };
   
+
+  
   // console.log("Property Data TYPE?: ", propertyData.property_type);
   // console.log ("basicinfo status?: ", saveCount);
   // console.log ("Parent Partner Data: ", partnerData);
-  // console.log("RoDATA FROM API: ", data);
+  console.log("RoDATA FROM API: ", data);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>
@@ -167,7 +173,55 @@ export default function EditPropertyUI() {
           color: "#FFF",
         }}
       >
-        {/* Nav Buttons */}
+        {!isMobile ? (
+           <Box
+           style={{
+             display: "flex",
+             gap: "0.5rem",
+             flexWrap: "wrap",
+             alignItems: "center",
+             justifyContent: "center",
+             flexGrow: 1,
+             maxWidth: "lg",
+           }}
+         >
+           {[
+             { label: "Basic Info", icon: <InfoIcon /> },
+             { label: "Room & Details", icon: <BedroomIcon /> },
+             { label: "Photos", icon: <PhotoIcon /> },
+             { label: "Shared Amenities", icon: <AmenitiesIcon /> },
+             { label: "Rules", icon: <GavelIcon /> },
+             { label: "Pricing & Methods", icon: <PricingIcon /> },
+             { label: "Partner Verification", icon: <VerifiedIcon /> },
+           ].map((item, index) => (
+             <div
+               key={index}
+               style={{
+                 display: "flex",
+                 flexDirection: "column",
+                 alignItems: "center",
+                 padding: "0.75rem 1.5rem",
+                 background: value === index ? "#16B4DD" : "transparent",
+                 color: value === index ? "#FFF" : "#DDD",
+                 border: "none",
+                 cursor: "pointer",
+                 fontWeight: value === index ? "bold" : "normal",
+                 transition: "background 0.3s, color 0.3s",
+                 borderRadius: "4px",
+                 textTransform: "uppercase",
+               }}
+               onClick={() => handleChange(index)}
+             >
+               <div style={{ fontSize: "1rem", margin: "0.5rem" }}>
+                 {item.icon}
+               </div>
+               <div>{item.label}</div>
+             </div>
+           ))}
+         </Box>
+          
+        ):
+        // Mobile Nav
         <Box
           style={{
             display: "flex",
@@ -176,7 +230,7 @@ export default function EditPropertyUI() {
             alignItems: "center",
             justifyContent: "center",
             flexGrow: 1,
-            maxWidth: "xl",
+            maxWidth: "lg",
           }}
         >
           {[
@@ -188,31 +242,34 @@ export default function EditPropertyUI() {
             { label: "Pricing & Methods", icon: <PricingIcon /> },
             { label: "Partner Verification", icon: <VerifiedIcon /> },
           ].map((item, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                padding: "0.75rem 1.5rem",
-                background: value === index ? "#16B4DD" : "transparent",
-                color: value === index ? "#FFF" : "#DDD",
-                border: "none",
-                cursor: "pointer",
-                fontWeight: value === index ? "bold" : "normal",
-                transition: "background 0.3s, color 0.3s",
-                borderRadius: "4px",
-                textTransform: "uppercase",
-              }}
-              onClick={() => handleChange(index)}
-            >
-              <div style={{ fontSize: "1rem", margin: "0.5rem" }}>
-                {item.icon}
+            <Tooltip title={item.label} arrow key={index}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  padding: "0.1rem",
+                  background: value === index ? "#16B4DD" : "transparent",
+                  color: value === index ? "#FFF" : "#DDD",
+                  border: "none",
+                  cursor: "pointer",
+                  fontWeight: value === index ? "bold" : "normal",
+                  transition: "background 0.3s, color 0.3s",
+                  borderRadius: "4px",
+                  textTransform: "uppercase",
+                }}
+                onClick={() => handleChange(index)}
+              >
+                <div style={{ fontSize: "0.8rem", margin: "0.2rem" }}>
+                  {item.icon}
+                </div>
               </div>
-              <div>{item.label}</div>
-            </div>
+            </Tooltip>
           ))}
         </Box>
+        }
+       
+        
       </div>
 
       <Box style={{ background: "#F4F7FA" }}>
@@ -226,21 +283,13 @@ export default function EditPropertyUI() {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           {/* {isSingleUnit ? ( */}
-            <Sample 
-              isEditing={isEditing}
-              propertyData={rooms}
-              // onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
-              onSaveStatusChange={handleSaveStatusChange}
-            />
-             <RoomDetailsSingleUnit 
+            <Sample
               isEditing={isEditing}
               propertyData={rooms}
               onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
               onSaveStatusChange={handleSaveStatusChange}
             />
-          {/* ) : (
-            <EditRoomDetailsMultipleUnit parentRoomsAndBedsData={rooms}  onSaveStatusChange={handleSaveStatusChange}/>
-          )} */}
+       =
         </CustomTabPanel>
 
         <CustomTabPanel value={value} index={2}>

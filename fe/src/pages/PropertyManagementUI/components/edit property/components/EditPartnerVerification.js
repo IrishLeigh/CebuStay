@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button } from '@mui/material';
+import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, useTheme, useMediaQuery } from '@mui/material';
 
 import { Crop } from '@mui/icons-material';
 import { Last } from 'react-bootstrap/esm/PageItem';
@@ -21,6 +21,8 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   const [ isSaved, setIsSaved] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
 
   const [isCancelled, setIsCancelled] = useState(false);
 
@@ -324,7 +326,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
       <Paper
         style={{
           width: "auto",
-          padding: "4rem",
+          padding:isMobile ? "1rem" : "4rem",
           borderRadius: "0.8rem",
           alignItems: "center",
         }}

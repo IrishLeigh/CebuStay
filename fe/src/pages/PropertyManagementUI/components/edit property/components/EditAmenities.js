@@ -11,6 +11,8 @@ import {
   Button,
   Snackbar,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import TemplateFrameEdit from "./TemplateFrame";
 import LoadingModal from "../modal/LoadingModal";
@@ -35,6 +37,8 @@ export default function EditAmenities({
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [ isSaved, setIsSaved ] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
 
   useEffect(() => {
     // setSelectedAmenities(amenities || []);
@@ -158,7 +162,7 @@ export default function EditAmenities({
       <Paper
         style={{
           width: "auto",
-          padding: "4rem",
+          padding: isMobile ? "1rem" : "4rem",
           borderRadius: "0.8rem",
           alignItems: "center",
         }}

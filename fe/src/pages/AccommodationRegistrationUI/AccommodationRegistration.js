@@ -17,6 +17,8 @@ import {
   IconButton,
   Box,
   Grid,
+  useMediaQuery,
+  createTheme,
 } from "@mui/material";
 import PropertyType from "./components/PropertyType";
 import PropertyType2 from "./components/PropertyType2";
@@ -47,6 +49,9 @@ import theme from "./components/theme/theme";
 import ErrorModal from "./modals/ErrorModal";
 import PropertyRulesPolicies from "./components/PropertyRulesPolicies";
 import UnitPricingPerMonth from "./components/PropertyPricingPerMonth";
+import { useTheme } from "@emotion/react";
+
+
 
 // Customized Stepper
 const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
@@ -134,6 +139,9 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
     const blob = await response.blob();
     return new File([blob], fileName, { type: blob.type });
   }
+
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
   //For Single Unit
   const [selectedPropertyType, setSelectedPropertyType] = useState("");
   const [selectedPropertyType2, setSelectedPropertyType2] = useState("");
@@ -1544,7 +1552,7 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
             xs={12}
             sm={10} // Main content takes 10 columns on small and up
             sx={{
-              padding: "2rem 2rem 4rem 2rem",
+              padding: isMobile ? "0" : "2rem 2rem 4rem 2rem", // No padding for mobile
               overflowY: "auto", // Allow scrolling in main content
               height: "100vh", // Full height of the viewport
             }}
@@ -1552,7 +1560,7 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
             {/* Main content on the right */}
             <Box
               sx={{
-                padding: "2rem",
+                padding: isMobile ? "0" : "2rem", // No padding for mobile
                 overflowX: "hidden", // Prevent horizontal scrolling in main content
                 justifyContent: "center",
                 alignItems: "center",

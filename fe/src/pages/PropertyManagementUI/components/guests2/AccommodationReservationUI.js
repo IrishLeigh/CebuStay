@@ -15,6 +15,7 @@ export default function AccommodationReservationUI() {
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const [selectedMenuItem, setSelectedMenuItem] = React.useState("mainGrid"); // Default content
+  const [openDrawer, setOpenDrawer] = React.useState(false);
 
   const dashboardTheme = createTheme(getDashboardTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
@@ -30,6 +31,14 @@ export default function AccommodationReservationUI() {
       setMode("light");
     }
   }, []);
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
+
+  const handleDrawerToggle = () => {
+    setOpenDrawer((prev) => !prev);
+  };
+
 
   const toggleColorMode = () => {
     const newMode = "light";
@@ -47,11 +56,15 @@ export default function AccommodationReservationUI() {
       showCustomTheme={showCustomTheme}
       mode={mode}
       toggleColorMode={toggleColorMode}
+      drawerToggle={handleDrawerToggle} // Pass the drawer toggle function
     >
       <ThemeProvider theme={showCustomTheme ? dashboardTheme : defaultTheme}>
         <CssBaseline enableColorScheme />
-        <Box sx={{ display: "flex" }}>
-          <SideMenu setSelectedMenuItem={setSelectedMenuItem} />{" "}
+        <Box sx={{ display: "flex", position: "relative" }}>
+          <SideMenu 
+            open={openDrawer} 
+            onClose={handleDrawerClose} 
+          />
           {/* Pass the callback */}
           <Box
             component="main"
@@ -67,7 +80,7 @@ export default function AccommodationReservationUI() {
                 alignItems: "center",
                 mx: 1,
                 pb: 10,
-                mt: { xs: 9, md: 0 },
+                mt: { xs: 0, md: 0 },
               }}
             >
               {/* <Header /> */}

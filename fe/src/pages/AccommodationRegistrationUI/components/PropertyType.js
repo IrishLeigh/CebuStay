@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Box, Typography, Grid } from "@mui/material";
+import { Button, Container, Box, Typography, Grid, useTheme, useMediaQuery } from "@mui/material";
 import AnimatePage from "./AnimatedPage";
 import AccommodationOtherButton from "../../../components/Button/AccommodationOtherButton"; // Ensure correct import
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Ensure the import for back icon
@@ -51,6 +51,8 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
   const [showOthers, setShowOthers] = useState(false);
   const [selectedButton, setSelectedButton] = useState(null); // Store a single button
   const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const handleResize = () => {

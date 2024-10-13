@@ -13,6 +13,8 @@ import {
   Button,
   Snackbar,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
@@ -44,6 +46,8 @@ export default function PricePayment({
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
 
 
   useEffect(() => {
@@ -185,7 +189,7 @@ export default function PricePayment({
       <Paper
         style={{
           width: "auto",
-          padding: "4rem",
+          padding: isMobile ? "1rem" : "4rem",
           borderRadius: "0.8rem",
           alignItems: "center",
         }}
@@ -262,7 +266,7 @@ export default function PricePayment({
                     }}
                   >
                     <Typography variant="h6" gutterBottom>
-                      Set your price per night!
+                      Set your price here!
                     </Typography>
                     <Typography variant="body2" gutterBottom>
                       Including taxes, commission, and charges

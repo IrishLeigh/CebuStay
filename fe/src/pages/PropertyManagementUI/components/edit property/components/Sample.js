@@ -14,6 +14,8 @@ import {
   Divider,
   Snackbar,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,6 +34,8 @@ export default function Sample({ propertyData, onSaveStatusChange }) {
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({}); // Define errors state variable
   const [unitid, setUnitid] = useState(0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
   const [unitBeds, setUnitBeds] = useState([
     {
       bedroom : 1,
@@ -571,7 +575,7 @@ const removeNewUnitBed = (bedroomIndex) => {
         <Paper
           style={{
             width: "auto",
-            padding: "4rem",
+            padding: isMobile ? "1rem" : "4rem",
             borderRadius: "0.8rem",
             alignItems: "center",
           }}

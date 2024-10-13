@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { Alert, Box, Snackbar } from "@mui/material";
+import { Alert, Box, Snackbar, useMediaQuery, useTheme } from "@mui/material";
 import { useData } from "../../../../components/registration_unit/registration_location/contextAddressData";
 import { Button } from "@mui/material";
 import AnimatePage from "../AnimatedPage";
@@ -34,8 +34,8 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
   // Error states for form validation
   const [streetError, setStreetError] = useState(false);
   const [postalCodeError, setPostalCodeError] = useState(false);
-
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -222,7 +222,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
             <Paper
               sx={{
                 width: "80vw",
-                padding: "2rem",
+                padding: isMobile ? "1rem" : "2rem", // No padding for mobile
                 borderRadius: "0.8rem",
                 boxShadow: 3,
               }}
@@ -292,14 +292,14 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
                     {/* <Typography sx={{ fontSize: "1rem", textAlign: "left", fontFamily: "Poppins" }} fontWeight="bold">
                       Pin your exact location here:
                     </Typography> */}
-                    <Paper
+                    {/* <Paper
                       elevation={3}
                       sx={{
                         borderRadius: ".5rem",
                         padding: "1rem",
                         width: "100%",
                       }}
-                    >
+                    > */}
                       <Map
                         google={google}
                         zoom={14}
@@ -349,7 +349,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
             >
               Save Location
             </Button> */}
-                    </Paper>
+                    {/* </Paper> */}
                   </Box>
                 </Grid>
               </Grid>

@@ -114,3 +114,14 @@ html, body {
   }
 
 }
+
+@media (max-width: 425px) {
+  .centered-container {
+   
+     padding: 1rem 0;
+
+  
+    margin-bottom: 5rem;
+  }
+
+}

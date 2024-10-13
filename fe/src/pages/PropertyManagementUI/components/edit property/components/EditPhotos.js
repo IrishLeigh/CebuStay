@@ -424,7 +424,7 @@ export default function EditPhotos({
       <Paper
         style={{
           width: "auto",
-          padding: "4rem",
+          padding: isSmallScreen ? "1rem" : "4rem",
           borderRadius: "0.8rem",
           alignItems: "center",
         }}

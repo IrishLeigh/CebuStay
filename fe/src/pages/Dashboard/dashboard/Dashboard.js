@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [openSnackbar, setOpenSnackbar] = React.useState(false); // Snackbar state
   const [user, setUser] = React.useState(null);
   const navigate = useNavigate();
+  const [openDrawer, setOpenDrawer] = React.useState(false);
   
 
   React.useEffect(() => {
@@ -42,6 +43,14 @@ export default function Dashboard() {
     }
   }, []);
 
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
+
+  const handleDrawerToggle = () => {
+    setOpenDrawer((prev) => !prev);
+  };
 
   const toggleColorMode = () => {
     const newMode = mode === "light" ? "light" : "light";
@@ -104,12 +113,14 @@ export default function Dashboard() {
       showCustomTheme={showCustomTheme}
       mode={mode}
       toggleColorMode={toggleColorMode}
+      drawerToggle={handleDrawerToggle} // Pass the drawer toggle function
     >
       <ThemeProvider theme={showCustomTheme ? dashboardTheme : defaultTheme}>
         <CssBaseline enableColorScheme />
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", position: "relative" }}>
           <SideMenu 
-            setSelectedMenuItem={setSelectedMenuItem}
+            open={openDrawer} 
+            onClose={handleDrawerClose} 
             onLogout={handleLogout} // Pass the logout handler
             user={user}
           /> 
@@ -127,7 +138,7 @@ export default function Dashboard() {
                 alignItems: "center",
                 mx: 1,
                 pb: 10,
-                mt: { xs: 9, md: 0 },
+                mt: { xs: 0, md: 0 },
               }}
             >
               <MainGrid />

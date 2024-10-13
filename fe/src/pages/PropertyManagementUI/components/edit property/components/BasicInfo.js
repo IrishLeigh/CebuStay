@@ -18,6 +18,8 @@ import {
   Snackbar,
   Alert,
   Box,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import axios from "axios";
 import TemplateFrameEdit from "./TemplateFrame";
@@ -60,6 +62,8 @@ const [isInCebu, setIsInCebu] = useState(false);
 const [position, setPosition] = useState(addPin);
 const [mapPos, setMapPos] = useState(addPin);
 const { location2 } = useData();
+const theme = useTheme();
+const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
   
 
   useEffect(() => {
@@ -287,7 +291,7 @@ console.log ("BASIC INFO NA TRANSFER BA", propertyData);
     <Paper
       style={{
         width: "auto",
-        padding: "4rem",
+        padding: isMobile ? "1rem" : "4rem",
         borderRadius: "0.8rem",
         alignItems: "center",
       }}

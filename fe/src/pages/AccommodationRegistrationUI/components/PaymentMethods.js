@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { RadioGroup, TextField } from '@mui/material';
+import { RadioGroup, TextField, useMediaQuery, useTheme } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
@@ -29,6 +29,8 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
     }
   });
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('error');
@@ -128,8 +130,13 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
   console.log("Payment Data HERE:", paymentData);
 
   return (
-    <Container maxWidth="lg">
-      <Paper elevation={3} sx={{ p: "2rem", width: "100%", borderRadius: "0.8rem", boxShadow: 3 }}>
+    <Container maxWidth="lg"  className='centered-container'>
+      <Paper elevation={3} 
+        sx={{ 
+            p: isMobile ? "1rem" : "2rem", // No padding for mobile
+            width: "100%", 
+            borderRadius: "0.8rem", 
+            boxShadow: 3 }}>
         <Box component="form" sx={{ '& > :not(style)': { my: 1, width: "100%" } }} autoComplete="off">
           <Typography sx={{ fontSize: "2rem", fontFamily: "Poppins, sans-serif", mb: 2 }} fontWeight="bold">
             Payment Methods

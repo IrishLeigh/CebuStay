@@ -8,7 +8,7 @@ import SingleBedIcon from '@mui/icons-material/SingleBed';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { Button, RadioGroup, FormControlLabel, Radio, Snackbar, Divider } from '@mui/material'; // Added necessary imports
+import { Button, RadioGroup, FormControlLabel, Radio, Snackbar, Divider, useTheme, useMediaQuery } from '@mui/material'; // Added necessary imports
 import { useData } from '../../../components/registration_unit/registration_location/contextAddressData';
 import '../../../components/Button/NextButton.css';
 import AnimatePage from './AnimatedPage';
@@ -19,6 +19,8 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
   const [errors, setErrors] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Check if the screen size is mobile
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -111,8 +113,8 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
             <Paper
               elevation={3}
               sx={{
-                mb: 4,
-                p: "2rem",
+                mb: 10,
+                padding: isMobile ? "1rem" : "2rem", // No padding for mobile
                 borderRadius: '0.8rem',
               }}
               key={index}

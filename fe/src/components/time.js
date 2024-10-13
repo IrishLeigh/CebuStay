@@ -21,7 +21,7 @@ export default function DatePicker({ title, onChange, value }) {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Stack spacing={2} sx={{ width: "245px", mr: 1 }}>
+      <Stack spacing={2} sx={{ width: "auto" }}>
         <Typography>{title}</Typography>
         <TimePicker
           value={selectedTime}

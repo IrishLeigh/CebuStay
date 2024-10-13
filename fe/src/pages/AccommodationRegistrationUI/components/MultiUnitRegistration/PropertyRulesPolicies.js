@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider } from "@mui/material";
+import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider, useMediaQuery } from "@mui/material";
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import { Cancel, MoneyOff, CheckCircle } from '@mui/icons-material'; // Import Material-UI icons
@@ -31,6 +31,9 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
   const topRef = useRef(null); // Create a ref for scrolling to the top
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
+
   useEffect(() => {
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll to the top of the component smoothly
@@ -163,13 +166,13 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
 
   return (
     <div ref={topRef} > 
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" centered-container>
         <AnimatePage>
           <Box display="flex" justifyContent="center" alignItems="center">
             <Paper
               sx={{
                 width: '80vw',
-                padding: '2rem',
+                padding: isMobile ? '1rem' : '2rem',
                 borderRadius: '0.8rem',
                 boxShadow: 3,
               }}
@@ -182,7 +185,8 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
               </Typography>
               <form>
                 {/* Cancellation Policy Selection */}
-                <Grid container spacing={2} sx={{ padding: '2rem' }}>
+                <Grid container spacing={2} sx={{ 
+                  adding: isMobile ? '1rem' : '2rem', }}>
                   <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
                     What is your cancellation policy?
                   </Typography>
@@ -276,7 +280,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                 </Grid>
 
                 {/* Modification Policy Selection */}
-                <Grid container spacing={2} sx={{ padding: '2rem' }}>
+                <Grid container spacing={2} sx={{ padding: isMobile ? '1rem' : '2rem', }}>
                   <Typography sx={{ fontFamily: 'Poppins', fontSize: '1rem', fontWeight: 'bold' }}>
                     What is your modification policy?
                   </Typography>
