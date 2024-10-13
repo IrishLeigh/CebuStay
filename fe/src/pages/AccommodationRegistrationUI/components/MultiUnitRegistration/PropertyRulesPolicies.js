@@ -199,7 +199,13 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                         control={<Radio color="secondary" />}
                         label="Standard Cancellation Plan"
                       />
-                      {policiesData.isCancellationPolicy && ( // Open by default
+                     
+                      <FormControlLabel
+                        value="non-refundable"
+                        control={<Radio color="secondary" />}
+                        label="Non-refundable Rate Plan"
+                      />
+                       {policiesData.isCancellationPolicy && ( // Open by default
                         <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -253,11 +259,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                           </Box>
                         </Box>
                       )}
-                      <FormControlLabel
-                        value="non-refundable"
-                        control={<Radio color="secondary" />}
-                        label="Non-refundable Rate Plan"
-                      />
                       {!policiesData.isCancellationPolicy && ( // Open if non-refundable is selected
                         <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -291,7 +292,13 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                         control={<Radio color="secondary" />}
                         label="Modification Allowed"
                       />
-                      {policiesData.isModification && ( // Open by default
+                     
+                      <FormControlLabel
+                        value="fixed"
+                        control={<Radio color="secondary" />}
+                        label="Fixed Modification Rate Plan"
+                      />
+                       {policiesData.isModification && ( // Open by default
                         <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -340,11 +347,6 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                           </Box>
                         </Box>
                       )}
-                      <FormControlLabel
-                        value="fixed"
-                        control={<Radio color="secondary" />}
-                        label="Fixed Modification Rate Plan"
-                      />
                       {!policiesData.isModification && ( // Open if fixed is selected
                         <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

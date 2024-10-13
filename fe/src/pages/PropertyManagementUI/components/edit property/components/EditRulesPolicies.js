@@ -91,9 +91,9 @@ export default function EditRulesPolicies({
     if (policies) {
       const initialPoliciesData = {
         isCancellationPolicy: policies.isCancellationPolicy === 1, // Convert 1/0 to true/false
-        isModification: policies.isModificationPolicy === 1,  // Convert 1/0 to true/false
+        isModificationPolicy: policies.isModificationPolicy === 1,  // Convert 1/0 to true/false
         cancellationDays: policies.cancellationDays || '',
-        cancellationCharge: policies.cancellationCharge || '',
+        cancellationCharge: policies.CancellationCharge || '',
         modificationDays: policies.modificationDays || '',
         modificationCharge: policies.modificationCharge || '',
       };
@@ -198,7 +198,8 @@ export default function EditRulesPolicies({
   const handleSave = async () => {
     setIsLoading(true);
     setIsEditing(false);
-  
+  console.log("Saved House Rules:", houseRulesData);
+  console.log("Saved Policies:", policiesData);
     // Validation before saving
     if (policiesData.isCancellationPolicy && (policiesData.cancellationDays === "" || policiesData.cancellationCharge === "")) {
       alert("Please enter both cancellation days and cancellation charge.");
@@ -238,6 +239,7 @@ export default function EditRulesPolicies({
         setOpenSnackbar(true);
         onSaveStatusChange('Saved');
       }
+      console.log("RETURN NI SHA SA POLICIES", res.data);
     } catch (error) {
       console.error(error);
     } finally {

@@ -138,17 +138,20 @@ export default function SinglePropertyUI({ propertyid }) {
         `http://127.0.0.1:8000/api/getgalleryimg/${propertyId}`
       );
       if (res.data) {
-        const gallery = res.data.map((image) => ({
+        const gallery = res.data.galleryPhotos.map((image) => ({
           id: image.id,
           caption: image.caption,
           src: image.src,
         }));
         setGalleryImages(gallery);
+        console.log("gallery NI SYA SA RES", res.data);
       }
     } catch (err) {
       console.log(err);
     }
   };
+
+  
 
   // Fetch data when property ID changes or on mount
   useEffect(() => {
@@ -176,7 +179,7 @@ export default function SinglePropertyUI({ propertyid }) {
     <div>
       <div style={{ paddingBottom: "2rem" }}>
         <ImageGallery images={propertyImages} />
-        <ImageGallery images={galleryImages} /> {/* Render gallery images */}
+        {/* <ImageGallery images={galleryImages} /> Render gallery images */}
         <div
           style={{
             height: "clamp(2rem, 5vw, 2rem)",

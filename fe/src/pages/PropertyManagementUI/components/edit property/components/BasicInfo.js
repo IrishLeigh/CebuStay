@@ -67,7 +67,7 @@ const { location2 } = useData();
       setLocalState((prevState) => ({
         ...prevState,
         propertyName: propertyData.property_name || "",
-        propertyType: propertyData.property_type || "",
+        propertyType: propertyData.property_type|| "",
         unitType: propertyData.unit_type || "",
         description: propertyData.property_desc || "",
         directions: propertyData.property_directions || "",
@@ -79,15 +79,6 @@ const { location2 } = useData();
       setPostalCode(  propertyAddress.zipcode || "");
     }
   }, [propertyData, propertyAddress]);
-
-  useEffect(() => {
-    // Save input data to localStorage whenever street or postalCode changes
-    if (street !== propertyAddress?.address || postalCode !== propertyAddress?.zipcode) {
-      setHasChanges(true); // Enable "Pin Your Location" button if changes
-    }
-    localStorage.setItem("street", street);
-    localStorage.setItem("postalCode", postalCode);
-  }, [street, postalCode, propertyAddress]);
 
 const handleAddressChange = (newAddress) => {
   const [streetPart, postalCodePart] = newAddress.split(", ");
@@ -289,6 +280,7 @@ const fetchAddress = async (latLng) => {
   }
 //  console.log ("saveCount", saveCount);
 console.log ("address basic info", propertyAddress);
+console.log ("BASIC INFO NA TRANSFER BA", propertyData);
   return (
     <div>
        <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
@@ -371,8 +363,8 @@ console.log ("address basic info", propertyAddress);
               id="property-type-select"
               value={localState.propertyType}
               onChange={(e) => handleChange("propertyType", e.target.value)}
-              disabled= "true"
-              helperText="You cannot edit this field"
+              disabled= {!isEditing}
+              // helperText="You cannot edit this field"
             >
               <MenuItem value=" Private Residential" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Private Residential
@@ -509,7 +501,7 @@ console.log ("address basic info", propertyAddress);
             <InputLabel
               variant="standard"
               htmlFor="street-address"
-              sx={{ fontFamily: "Poppins, sans-serif" }}
+              sx={{ fontFamily: "Poppins, sans-serif" , marginBottom: "1rem" }}
             >
               Address
             </InputLabel>
@@ -520,7 +512,7 @@ console.log ("address basic info", propertyAddress);
               onChange={(e) => handleAddressChange(`${e.target.value}, ${postalCode}`)} // Update the street while keeping the postal code
               helperText="Enter your street address"
               fullWidth
-              disabled={!isEditing}
+              disabled
               sx={{ fontFamily: "Poppins, sans-serif" }}
             />
           </div>
@@ -530,95 +522,12 @@ console.log ("address basic info", propertyAddress);
             onChange={(e) => handleAddressChange(`${street}, ${e.target.value}`)} // Update the postal code while keeping the street
             helperText="Enter your postal or ZIP code"
             fullWidth
-            disabled={!isEditing}
+            disabled
             sx={{ fontFamily: "Poppins, sans-serif" }}
           />
-           <Box mt={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSetPin}
-                disabled={!isChangesAddress || !isEditing}
-              >
-                Pin Your Location
-              </Button>
-            </Box>
-            <Box className={addPin ? "active" : "greyed-out"}>
-              <Paper
-                elevation={3}
-                sx={{
-                  borderRadius: ".5rem",
-                  padding: "1rem",
-                  width: "100%",
-                }}
-              >
-                <Map
-                  google={google}
-                  zoom={14}
-                  containerStyle={{
-                    width: "100%",
-                    height: "25rem",
-                    position: "relative",
-                    borderRadius: "0.8rem",
-                  }}
-                  initialCenter={{
-                    lat: addPin ? addPin.lat : 0,
-                    lng: addPin ? addPin.lng : 0,
-                  }}
-                  onClick={onMapClick}
-                  mapTypeId={"terrain"}
-                  ref={mapRef}
-                >
-                  {position && (
-                    <Marker
-                      position={position}
-                      draggable={true}
-                      onDragend={(t, map, coords) =>{
-                        const newPosition = { lat: coords.latLng.lat(), lng: coords.latLng.lng() };
-              setPosition(newPosition);
-              fetchAddress(newPosition); 
-                    } }
-                    />
-                  )}
-                </Map>
-                {!isInCebu && position && (
-        <Typography color="error" sx={{ marginTop: "1rem" }}>
-          The location you selected is outside Cebu.
-        </Typography>
-      )}
-      <Button
-        variant="contained"
-        onClick={resetPosition}
-        style={{ fontSize: "1rem", marginTop: "1rem" }}
-      >
-        Reset
-      </Button>
-      {/* <Button
-        variant="contained"
-        onClick={saveLocation}
-        style={{ fontSize: "1rem", marginTop: "1rem" }}
-        disabled={!isInCebu}
-      >
-        Save Location
-      </Button> */}
-              </Paper>
-            </Box>
         </Grid>
       </Grid>
-      {/* {isEditing && (
-        <div style={{ marginTop: "1rem", textAlign: "right" }}>
-          <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-            Revert Changes
-          </Button>
-          <Button
-            variant="contained"
-            disabled={!hasChanges}
-            onClick={handleSave}
-          >
-            Save Changes
-          </Button>
-        </div>
-      )} */}
+
         <Snackbar
           open={openSnackbar}
           autoHideDuration={6000}

@@ -51,16 +51,29 @@ export default function RoomDetailsSingleUnit({
 
   useEffect(() => {
     if (propertyData && propertyData.length > 0) {
-      console.log("Room Details JUD:", propertyData);
       const data = propertyData[0];
       setUnitid(data.unitid);
       setGuestCapacity(data.guest_capacity || "");
       setUnitRooms(data.unitrooms || []);
-      setUnitBeds(data.unitbeds || []);
+      
+      const mappedUnitBeds = (data.unitbeds || []).map(bed => ({
+        bedroomid: bed.bedroomid,
+        bedroomnum: bed.bedroomnum || 0,
+        sleepingtype: bed.sleepingtype || 'room',
+        beds: {
+          singleBed: bed.beds?.singlebed || 0,
+          doubleBed: bed.beds?.doublebed || 0,
+          largeBed: bed.beds?.largebed || 0,
+          superLargeBed: bed.beds?.superlargebed || 0,
+        }
+      }));
+      setUnitBeds(mappedUnitBeds);
+
+      // Store original data to revert later if necessary
       setOriginalData({
+        unitRooms: data.unitrooms,
+        unitBeds: mappedUnitBeds,
         guestCapacity: data.guest_capacity || "",
-        unitRooms: data.unitrooms || [],
-        unitBeds: data.unitbeds || [],
       });
     }
   }, [propertyData]);
@@ -297,13 +310,18 @@ export default function RoomDetailsSingleUnit({
     }
     setIsEditing(false);
     // Revert changes by resetting state to original data
-    setGuestCapacity(originalData.guestCapacity);
     setUnitRooms(originalData.unitRooms);
     setUnitBeds(originalData.unitBeds);
-    setHasChanges(false); // Ensure hasChanges is reset
+    setGuestCapacity(originalData.guestCapacity);
+    setHasChanges(false);
   };
 
   const handleSave = async () => {
+    console.log("Unit Id", unitid);
+    // console.log("Room Details:", propertyData);
+    console.log("Existing Unit Beds:", unitBeds);
+    // console.log("New Unit Rooms:", newUnitRooms);
+    // console.log("Exisitng ROoms:", unitRooms);
     setIsLoading(true);
     setIsEditing(false);
 

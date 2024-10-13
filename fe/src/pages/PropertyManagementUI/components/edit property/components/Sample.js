@@ -11,6 +11,9 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -48,12 +51,9 @@ const [newUnitRooms, setNewUnitRooms] = useState([]);
 const [newRoomName, setNewRoomName] = useState(""); // State for new room name
 const [newRoomQuantity, setNewRoomQuantity] = useState(0); // State for new room quantity
 const [newUnitBeds, setNewUnitBeds] = useState([]);
-const [newBedType, setNewBedType] = useState("");
-const [newBedQuantity, setNewBedQuantity] = useState();
-
   // Initializing unitRooms state with default rooms
     const [unitRooms, setUnitRooms] = useState([
-      { unitroomid: 1, roomname: "Bedroom", quantity: 0 },
+      { unitroomid: 1, roomname: "Bedspace", quantity: 0 },
       { unitroomid: 3,  roomname: "Bathroom", quantity: 0 },
       { unitroomid: 4,  roomname: "Living Room", quantity: 0 },
       { unitroomid: 5,  roomname: "Kitchen", quantity: 0 },
@@ -63,6 +63,8 @@ const [newBedQuantity, setNewBedQuantity] = useState();
   const [bedAreaQTY, setBedAreaQTY] = useState(0);
   const [guestCapacity, setGuestCapacity] = useState(0);
   const [sleepingTypes, setSleepingTypes] = useState(newUnitRooms.map(() => 'room')); // Initialize with default values
+  const [originalData, setOriginalData] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
  
   useEffect(() => {
@@ -75,6 +77,7 @@ const [newBedQuantity, setNewBedQuantity] = useState();
       // Safely map unitbeds, ensuring beds object has default values for missing properties
       const mappedUnitBeds = (data.unitbeds || []).map(bed => ({
         bedroomid: bed.bedroomid,
+        sleepingtype: bed.sleepingtype || 'room',
         bedroomnum: bed.bedroomnum || 0, // Ensure bedroomnum exists
         beds: {
           singleBed: bed.beds?.singlebed ?? 0,   // Default to 0 if singlebed is undefined
@@ -88,11 +91,9 @@ const [newBedQuantity, setNewBedQuantity] = useState();
     }
   }, [propertyData]);
   
-  
-
   // Effect to calculate bedroom and bed area quantities
   useEffect(() => {
-    const bedrooms = unitRooms.find(room => room.roomname === "Bedroom");
+    const bedrooms = unitRooms.find(room => room.roomname === "Bedspace");
     const bedAreas = unitRooms.find(room => room.roomname === "Bed Area");
 
     setBedroomQTY(bedrooms ? bedrooms.quantity : 0);
@@ -116,6 +117,7 @@ const [newBedQuantity, setNewBedQuantity] = useState();
 
   // Add a new room
   const addOldRoom = () => {
+    setHasChanges(true);
     setUnitRooms((prevRooms) => [
       ...prevRooms,
       { roomname: "", quantity: 0 },
@@ -134,6 +136,7 @@ const [newBedQuantity, setNewBedQuantity] = useState();
 const handleNewRoomTypeChange = (index, value) => {
   const updatedRooms = [...newUnitRooms]; // Update newUnitRooms instead of unitRooms
   updatedRooms[index].roomname = value;
+  setHasChanges(true);
   setNewUnitRooms(updatedRooms);
 };
 
@@ -141,13 +144,14 @@ const handleNewRoomTypeChange = (index, value) => {
 const handleNewQuantityChange = (index, value) => {
   const updatedRooms = [...newUnitRooms]; // Update newUnitRooms instead of unitRooms
   updatedRooms[index].quantity = value;
+  setHasChanges(true);
   setNewUnitRooms(updatedRooms);
 };
-
 // Remove new room
 const removeNewRoom = (index) => {
   const updatedRooms = [...newUnitRooms]; // Update newUnitRooms instead of unitRooms
   updatedRooms.splice(index, 1);
+  setHasChanges(true);
   setNewUnitRooms(updatedRooms);
 };
   // Handle room type change
@@ -161,6 +165,7 @@ const removeNewRoom = (index) => {
   const handleQuantityChange = (index, value) => {
     const updatedRooms = [...unitRooms];
     updatedRooms[index].quantity = value;
+    setHasChanges(true);
     setUnitRooms(updatedRooms);
   };
 
@@ -168,6 +173,7 @@ const removeNewRoom = (index) => {
   const incrementQuantity = (index) => {
     const updatedRooms = [...unitRooms];
     updatedRooms[index].quantity += 1;
+    setHasChanges(true);
     setUnitRooms(updatedRooms);
   };
 
@@ -177,6 +183,7 @@ const removeNewRoom = (index) => {
     if (updatedRooms[index].quantity > 0) {
       updatedRooms[index].quantity -= 1;
     }
+    setHasChanges(true);
     setUnitRooms(updatedRooms);
   };
 
@@ -184,6 +191,7 @@ const removeNewRoom = (index) => {
 const incrementNewQuantity = (index) => {
   const updatedRooms = [...newUnitRooms]; // Use newUnitRooms for updating
   updatedRooms[index].quantity += 1; // Increase the quantity by 1
+  setHasChanges(true);
   setNewUnitRooms(updatedRooms); // Update the state with the new rooms
 };
 
@@ -193,6 +201,7 @@ const decrementNewQuantity = (index) => {
   if (updatedRooms[index].quantity > 0) { // Ensure quantity doesn't go below 0
     updatedRooms[index].quantity -= 1; // Decrease the quantity by 1
   }
+  setHasChanges(true);
   setNewUnitRooms(updatedRooms); // Update the state with the new rooms
 };
 
@@ -237,15 +246,15 @@ if (newUnitBeds.length > 0) {
   setSleepingTypes((prevSleepingTypes) => [...prevSleepingTypes, 'room']); // Add default sleeping type for the new bedroom
 
   // 6. Increment the quantity in unitRooms for the "Bedroom"
-  setUnitRooms((prevUnitRooms) =>
-    prevUnitRooms.map((room) => {
-      // Increment the quantity if the roomname is "Bedroom"
-      if (room.roomname === "Bedroom") {
-        return { ...room, quantity: room.quantity + 1 }; // Increment the room quantity
-      }
-      return room; // Return unchanged room
-    })
-  );
+  // setUnitRooms((prevUnitRooms) =>
+  //   prevUnitRooms.map((room) => {
+  //     // Increment the quantity if the roomname is "Bedroom"
+  //     if (room.roomname === "Bedspace") {
+  //       return { ...room, quantity: room.quantity + 1 }; // Increment the room quantity
+  //     }
+  //     return room; // Return unchanged room
+  //   })
+  // );
 
   // 7. Mark changes as true
   setHasChanges(true);
@@ -265,6 +274,7 @@ const handleSleepingTypeChangeUnitBeds = (index, value) => {
       idx === index ? { ...bedroom, sleepingtype: value } : bedroom
     )
   );
+  setHasChanges(true);
 };
 // Handle sleeping type change for newUnitBeds
 const handleSleepingTypeChangeNewUnitBeds = (index, value) => {
@@ -273,6 +283,7 @@ const handleSleepingTypeChangeNewUnitBeds = (index, value) => {
       idx === index ? { ...bedroom, sleepingtype: value } : bedroom
     )
   );
+  setHasChanges(true);
 };
 // Decrement quantity of specified bed type in a specific bedroom, ensuring non-negative values
 const decrementBedQuantity = (index, type) => {
@@ -286,6 +297,7 @@ const decrementBedQuantity = (index, type) => {
         : bedroom
     )
   );
+  setHasChanges(true);
 };
 // Increment quantity of specified bed type in a specific bedroom
 const incrementBedQuantity = (index, type) => {
@@ -296,6 +308,7 @@ const incrementBedQuantity = (index, type) => {
         : bedroom
     )
   );
+  setHasChanges(true);
 };
 const incrementNewBedQuantity = (index, bedType) => {
   setNewUnitBeds(prevBeds =>
@@ -314,6 +327,7 @@ const decrementNewBedQuantity = (index, bedType) => {
         : bedroom
     )
   );
+  setHasChanges(true);
 };
 // Remove unitbedroom
 // Function to remove a unit bedroom and update the bedroom quantity
@@ -353,28 +367,27 @@ const removeUnitBed = async (index) => {
       }
 
       if (res.data.status === "success") {
-        alert("Bedroom deleted successfully");
+        alert("Bedspace deleted successfully");
         setHasChanges(true); // Mark changes as true if deletion is successful
       }
     } catch (error) {
       console.log("Error deleting bedroom:", error);
     }
 
-    // Decrement the quantity in unitRooms for the corresponding bedroom
-    setUnitRooms((prevUnitRooms) =>
-      prevUnitRooms.map((room, idx) =>
-        room.roomname === "Bedroom" // Find the room by name
-          ? { ...room, quantity: Math.max(0, room.quantity - 1) } // Decrement bedroom quantity
-          : room
-      )
-    );
+    // // Decrement the quantity in unitRooms for the corresponding bedroom
+    // setUnitRooms((prevUnitRooms) =>
+    //   prevUnitRooms.map((room, idx) =>
+    //     room.roomname === "Bedspace" // Find the room by name
+    //       ? { ...room, quantity: Math.max(0, room.quantity - 1) } // Decrement bedroom quantity
+    //       : room
+    //   )
+    // );
   }
 
   updatedBeds.splice(index, 1); // Remove the bed at the specified index
   setUnitBeds(updatedBeds); // Update the state with the new list
   setHasChanges(true); // Mark changes as true after updating unitBeds
 };
-
 //remove new unit bedrom
 // Function to remove a bed and decrement the bedroom quantity
 const removeNewUnitBed = (bedroomIndex) => {
@@ -391,50 +404,161 @@ const removeNewUnitBed = (bedroomIndex) => {
       }
     }
 
-    // Decrement the quantity in unitRooms for the corresponding bedroom
-    setUnitRooms((prevUnitRooms) =>
-      prevUnitRooms.map((room, idx) =>
-        idx === bedroomIndex
-          ? { ...room, quantity: Math.max(0, room.quantity - 1) } // Decrement bedroom quantity
-          : room
-      )
-    );
+    // // Decrement the quantity in unitRooms for the corresponding bedroom
+    // setUnitRooms((prevUnitRooms) =>
+    //   prevUnitRooms.map((room, idx) =>
+    //     idx === bedroomIndex
+    //       ? { ...room, quantity: Math.max(0, room.quantity - 1) } // Decrement bedroom quantity
+    //       : room
+    //   )
+    // );
   }
 
   updatedNewBeds.splice(bedroomIndex, 1); // Remove the new bed at the specified index
   setNewUnitBeds(updatedNewBeds); // Update the state with the new list
 };
   // Remove room
-  const removeRoom = (index) => {
-    const updatedRooms = [...unitRooms];
-    updatedRooms.splice(index, 1);
-    setUnitRooms(updatedRooms);
+  const removeRoom = async (index, unitroomid) => {
+    const updatedRooms = [...unitRooms]; // Clone the current unitRooms array
+  
+    try {
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/deleteunitroom-singleunit/${unitid}`, // Use the correct API URL
+        {
+          unitroomid: unitroomid, // Send the correct unitroomid in the request body
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      console.log(res.data);
+  
+      if (res.data.status === "success") {
+        alert("Room deleted successfully");
+  
+        // Remove the room from the local state after a successful response
+        updatedRooms.splice(index, 1);
+        setUnitRooms(updatedRooms); // Update the state with the updated rooms array
+        setHasChanges(true); // Indicate that there are changes
+      } else {
+        console.log('Failed to delete room', res.data);
+      }
+  
+    } catch (error) {
+      console.error("Error deleting room:", error);
+    }
+    setHasChanges(true);
   };
+  
 
   // Handle save
   const handleSave = async () => {
+
+    console.log("SENT Unit Id", unitid);
+    console.log("SENT Guest Capacity:", guestCapacity);
+    console.log("SENT Unit Rooms:", unitRooms);
+    console.log("SENTUnit Beds:", unitBeds);
+    console.log("SENT New Unit Rooms:", newUnitRooms);
+    console.log("SENT New Unit Beds:", newUnitBeds);
+  
+
     setIsLoading(true);
     setIsEditing(false);
-
-    // Your API call logic goes here
-
-    setIsLoading(false);
-    setIsSaved(true);
-    onSaveStatusChange("Saved");
-  };
-
-  const handleCancel = () => {
-    // Handle cancel logic
-    setHasChanges(false);
-    setIsEditing(false);
+  
+    // Check if there are any changes by comparing current data with the original data
+    const hasChanges =
+      JSON.stringify({
+        guestCapacity,
+        unitRooms,
+        unitBeds,
+      }) !== JSON.stringify(originalData);
+  
+    if (hasChanges) {
+      try {
+        // Simulate an API call to save the data
+        const res_data = await axios.put(
+          `http://127.0.0.1:8000/api/updateunitinfo/${unitid}`,
+          {
+            guest_capacity: guestCapacity,
+            unitRooms: unitRooms,
+            newUnitRooms: newUnitRooms,
+            unitBeds: unitBeds,
+            newUnitBeds: newUnitBeds,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        if (res_data.data.status === "success") {
+          // Update the room and bed data based on the response
+          if (res_data.data.unitRooms) {
+            setUnitRooms(res_data.data.unitRooms);
+            setNewUnitRooms([]); // Clear newly added rooms after save
+          }
+          if (res_data.data.unitBeds) {
+            setUnitBeds(res_data.data.unitBeds);
+            setNewUnitBeds([]); // Clear newly added beds after save
+          }
+  
+          // Log response data
+          console.log("RETURN NI HA",res_data.data);
+  
+          // Update original data to reflect the saved state
+          setOriginalData({
+            guestCapacity,
+            unitRooms,
+            unitBeds,
+          });
+  
+          // Set status indicators for the user
+          setIsEditing(false);
+          setOpenSnackbar(true); // This assumes you have a Snackbar to show feedback
+          onSaveStatusChange('Saved'); // Custom callback or action to indicate the save status
+  
+          alert("Successfully saved!"); // Replace with a user-friendly notification method
+        }
+      } catch (err) {
+        console.error("Error saving data:", err);
+      } finally {
+        setIsLoading(false); // Stop the loading spinner, even if there's an error
+      }
+    } else {
+      // If no changes, still update the save status but skip the API call
+      onSaveStatusChange('Saved');
+      setIsSaved(true); // If you are tracking the saved state
+      setIsLoading(false); // Stop the loading spinner
+    }
+    setNewUnitRooms([]); // Clear newly added rooms after save
+    setNewUnitBeds([]); // Clear newly added beds after save
+    setHasChanges(true);
   };
   
-  console.log("EDIT ROOM GUEST", guestCapacity);
-  console.log("EDIT ROOMS TO BE SENT", unitRooms);
-  console.log("EDIT NEW ROOMS TO BE SENT", newUnitRooms);
-  console.log("EDIT BEDS TO BE SENT", unitBeds);
-  console.log("EDIT NEW BEDS TO BE SENT", newUnitBeds);
-  console.log("PROPERTY DATA IN SAMPLE", propertyData);
+  const handleCancel = () => {
+    if (hasChanges) {
+      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      if (!confirmDiscard) {
+        return; // Exit the function if the user cancels the discard action
+      }
+    }
+        // Revert changes by resetting state to original data
+    setUnitRooms(originalData.unitRooms);
+    setUnitBeds(originalData.unitBeds);
+    setGuestCapacity(originalData.guestCapacity);
+    setHasChanges(false);
+  };
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+  
+
+  console.log("PROPERTY DTA FROM PARENT", propertyData);
+
   return (
     <>
       <TemplateFrameEdit
@@ -518,30 +642,31 @@ const removeNewUnitBed = (bedroomIndex) => {
                 onChange={(e) => handleRoomTypeChange(index, e.target.value)}
                 placeholder="Room Type"
                 sx={{ width: "40%" }}
-                disabled={["Bedroom","Bed Area", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname)}
+                disabled={["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname) && !isEditing}
                 helperText=""
               />
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton onClick={() => incrementQuantity(index)} disabled={["Bedroom"].includes(room.roomname)}  >
+                <IconButton onClick={() => incrementQuantity(index)} disabled={["Bedspace"].includes(room.roomname) || !isEditing}  >
                   <AddIcon />
                 </IconButton>
                 <TextField
                   value={room.quantity}
                   onChange={(e) => handleQuantityChange(index, e.target.value)}
                   sx={{ width: "4rem", textAlign: "center" ,}}
-                  disabled={["Bedroom"].includes(room.roomname)}
+                  disabled={["Bedspace"].includes(room.roomname) || !isEditing}
                 />
-                <IconButton onClick={() => decrementQuantity(index) } disabled={["Bedroom"].includes(room.roomname)}>
+                <IconButton onClick={() => decrementQuantity(index) } disabled={["Bedspace"].includes(room.roomname) || !isEditing} >
                   <RemoveIcon />
                 </IconButton>
               </Box>
               <IconButton
-                onClick={() => removeRoom(index)}
+                onClick={() => removeRoom(index, room.unitroomid)}
                 sx={{
-                  visibility: ["Bedroom","Bed Area", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname)
+                  visibility: ["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname)
                     ? "hidden"
                     : "visible",
                 }}
+                disabled={!isEditing}
               >
                 <CancelIcon color="error" />
               </IconButton>
@@ -563,30 +688,31 @@ const removeNewUnitBed = (bedroomIndex) => {
                 onChange={(e) =>  handleNewRoomTypeChange(index, e.target.value)} 
                 placeholder="Room Type"
                 sx={{ width: "40%" }}
-                disabled={["Bedroom","Bed Area", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname)}
+                disabled={["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname) || !isEditing}
                 helperText=""
               />
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton onClick={() => incrementNewQuantity(index)} disabled={["Bedroom"].includes(room.roomname)}  >
+                <IconButton onClick={() => incrementNewQuantity(index)} disabled={["Bedspace"].includes(room.roomname) || !isEditing}  >
                   <AddIcon />
                 </IconButton>
                 <TextField
                   value={room.quantity}
                   onChange={(e) => handleNewQuantityChange(index, Number(e.target.value) || 0)}
                   sx={{ width: "4rem", textAlign: "center" ,}}
-                  disabled={["Bedroom"].includes(room.roomname)}
+                  disabled={["Bedspace"].includes(room.roomname) || !isEditing}
                 />
-                <IconButton onClick={() => decrementNewQuantity(index) } disabled={["Bedroom"].includes(room.roomname)}>
+                <IconButton onClick={() => decrementNewQuantity(index) } disabled={["Bedspace"].includes(room.roomname) || !isEditing}>
                   <RemoveIcon />
                 </IconButton>
               </Box>
               <IconButton
                 onClick={() => removeNewRoom(index)}
                 sx={{
-                  visibility: ["Bedroom","Bed Area", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname)
+                  visibility: ["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname)
                     ? "hidden"
                     : "visible",
                 }}
+                disabled={!isEditing}
               >
                 <CancelIcon color="error" />
               </IconButton>
@@ -595,6 +721,7 @@ const removeNewUnitBed = (bedroomIndex) => {
           <Button
             startIcon={<AddCircleIcon />}
             onClick={addNewRoom}
+            disabled={!isEditing}
             sx={{
               color: "grey",
               backgroundColor: "transparent",
@@ -628,6 +755,7 @@ const removeNewUnitBed = (bedroomIndex) => {
                 },
                 mb: 3,
               }}
+              disabled={!isEditing}
             >
               Add Sleeping Area
             </Button>
@@ -647,30 +775,45 @@ const removeNewUnitBed = (bedroomIndex) => {
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <Typography variant="h6" fontWeight="bold">
-                      Bedroom {bedroom.bedroomnum}
+                      Bedspace {bedroom.bedroomnum}
                     </Typography>
                     <IconButton onClick={() => removeUnitBed(index)} color="error"
-                      sx ={{ position: 'absolute', top: 20, right: 20 , visibility: index  === 0 ? 'hidden' : 'visible'}}>
+                      sx ={{ position: 'absolute', top: 20, right: 20 , visibility: index  === 0 ? 'hidden' : 'visible'}}
+                      disabled={!isEditing}
+                      >
                       <DeleteIcon />
                     </IconButton>
                     
                     
                     <RadioGroup
-                      row
                       value={bedroom.sleepingtype}
                       onChange={(e) => handleSleepingTypeChangeUnitBeds(index, e.target.value)}
+                      
                     >
                       <FormControlLabel
-                        value="room"
-                        control={<Radio />}
-                        label="Room"
-                      />
+                      disabled={!isEditing}
+                      value="room"
+                      control={<Radio />}
+                      label={
+                        <Box>
+                          <Typography variant="body1" fontWeight="bold">Room</Typography>
+                          <Typography variant="caption">An enclosed bedroom with walls and a door.</Typography>
+                        </Box>
+                      }
+                    />
                       <FormControlLabel
-                        value="bedArea"
+                      disabled={!isEditing}
+                        value="bedarea"
                         control={<Radio />}
-                        label="Bed Area"
+                        label={
+                          <Box>
+                            <Typography variant="body1" fontWeight="bold">Bed Area</Typography>
+                            <Typography variant="caption">An open space with beds but no walls or doors separating it.</Typography>
+                          </Box>
+                        }
                       />
                     </RadioGroup>
+                    <Divider sx={{ my: 1 , color: "#6A6A6A" }} />
                   </Grid>
 
                   {/* Single Bed */}
@@ -680,13 +823,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Single Bed
                       </Typography>
-                      <IconButton onClick={() => incrementBedQuantity(index, 'singleBed')}>
+                      <IconButton onClick={() => incrementBedQuantity(index, 'singleBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.singleBed || 0} {/* Safely access beds */}{/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementBedQuantity(index, 'singleBed')}>
+                      <IconButton onClick={() => decrementBedQuantity(index, 'singleBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -699,13 +842,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Double Bed
                       </Typography>
-                      <IconButton onClick={() => incrementBedQuantity(index, 'doubleBed')}>
+                      <IconButton onClick={() => incrementBedQuantity(index, 'doubleBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.doubleBed || 0}  {/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementBedQuantity(index, 'doubleBed')}>
+                      <IconButton onClick={() => decrementBedQuantity(index, 'doubleBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -718,13 +861,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Large Bed
                       </Typography>
-                      <IconButton onClick={() => incrementBedQuantity(index, 'largeBed')}>
+                      <IconButton onClick={() => incrementBedQuantity(index, 'largeBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.largeBed || 0}  {/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementBedQuantity(index, 'largeBed')}>
+                      <IconButton onClick={() => decrementBedQuantity(index, 'largeBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -737,13 +880,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Super Large Bed
                       </Typography>
-                      <IconButton onClick={() => incrementBedQuantity(index, 'superLargeBed')}>
+                      <IconButton onClick={() => incrementBedQuantity(index, 'superLargeBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.superLargeBed || 0}  {/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementBedQuantity(index, 'superLargeBed')}>
+                      <IconButton onClick={() => decrementBedQuantity(index, 'superLargeBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -766,27 +909,40 @@ const removeNewUnitBed = (bedroomIndex) => {
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <Typography variant="h6" fontWeight="bold">
-                      Bedroom {bedroom.bedroomnum}
+                      Bedspace {bedroom.bedroomnum}
                     </Typography>
-                    <IconButton onClick={() => removeNewUnitBed(index)} color="error">
+                    <IconButton onClick={() => removeNewUnitBed(index)} color="error" disabled={!isEditing}>
                       <DeleteIcon />
                     </IconButton>
+                    
                     <RadioGroup
-                      row
                       value={bedroom.sleepingtype}
                       onChange={(e) => handleSleepingTypeChangeNewUnitBeds(index, e.target.value)}
                     >
                       <FormControlLabel
-                        value="room"
-                        control={<Radio />}
-                        label="Room"
-                      />
+                      disabled={!isEditing}
+                      value="room"
+                      control={<Radio />}
+                      label={
+                        <Box>
+                          <Typography variant="body1" fontWeight="bold">Room</Typography>
+                          <Typography variant="caption">An enclosed bedroom with walls and a door.</Typography>
+                        </Box>
+                      }
+                    />
                       <FormControlLabel
-                        value="bedArea"
+                      disabled={!isEditing}
+                        value="bedarea"
                         control={<Radio />}
-                        label="Bed Area"
+                        label={
+                          <Box>
+                            <Typography variant="body1" fontWeight="bold">Bed Area</Typography>
+                            <Typography variant="caption">An open space with beds but no walls or doors separating it.</Typography>
+                          </Box>
+                        }
                       />
                     </RadioGroup>
+                    <Divider sx={{ my: 1 , color: "#6A6A6A" }} />
                   </Grid>
 
                   {/* Single Bed */}
@@ -796,13 +952,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Single Bed
                       </Typography>
-                      <IconButton onClick={() => incrementNewBedQuantity(index, 'singleBed')}>
+                      <IconButton onClick={() => incrementNewBedQuantity(index, 'singleBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.singleBed || 0} {/* Safely access beds */}{/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementNewBedQuantity(index, 'singleBed')}>
+                      <IconButton onClick={() => decrementNewBedQuantity(index, 'singleBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -815,13 +971,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Double Bed
                       </Typography>
-                      <IconButton onClick={() => incrementNewBedQuantity(index, 'doubleBed')}>
+                      <IconButton onClick={() => incrementNewBedQuantity(index, 'doubleBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.doubleBed || 0}  {/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementNewBedQuantity(index, 'doubleBed')}>
+                      <IconButton onClick={() => decrementNewBedQuantity(index, 'doubleBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -834,13 +990,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Large Bed
                       </Typography>
-                      <IconButton onClick={() => incrementNewBedQuantity(index, 'largeBed')}>
+                      <IconButton onClick={() => incrementNewBedQuantity(index, 'largeBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.largeBed || 0}  {/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementNewBedQuantity(index, 'largeBed')}>
+                      <IconButton onClick={() => decrementNewBedQuantity(index, 'largeBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -853,13 +1009,13 @@ const removeNewUnitBed = (bedroomIndex) => {
                       <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                         Super Large Bed
                       </Typography>
-                      <IconButton onClick={() => incrementNewBedQuantity(index, 'superLargeBed')}>
+                      <IconButton onClick={() => incrementNewBedQuantity(index, 'superLargeBed')} disabled={!isEditing}>
                         <AddIcon />
                       </IconButton>
                       <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.beds?.superLargeBed || 0}  {/* Correctly access the beds object */}
                       </Typography>
-                      <IconButton onClick={() => decrementNewBedQuantity(index, 'superLargeBed')}>
+                      <IconButton onClick={() => decrementNewBedQuantity(index, 'superLargeBed')} disabled={!isEditing}>
                         <RemoveIcon />
                       </IconButton>
                     </Box>
@@ -869,6 +1025,20 @@ const removeNewUnitBed = (bedroomIndex) => {
             ))}
 
           </Box>
+           {/* Snackbar */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Room details saved successfully!
+          </Alert>
+        </Snackbar>
         </Paper>
       <LoadingModal open={isLoading} />
     </>
