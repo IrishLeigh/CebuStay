@@ -194,7 +194,7 @@ class PaymentController extends CORS
                 }
 
                 // Ensure the next due date does not exceed the checkout date
-                if ($nextDueDate->greaterThan($checkoutDate)) {
+                if ($nextDueDate->addMonth()->greaterThan($checkoutDate)) {
                     $monthlyPayment->status = 'Paid';
                     $monthlyPayment->due_date = $checkoutDate; // Set the final due date to the checkout date
                     $monthlyPayment->bookingid = $request->input('bookingid');
@@ -203,7 +203,7 @@ class PaymentController extends CORS
                     if ($monthlyPayment->amount_paid <= 0) {
                         $monthlyPayment->amount_paid = $payment->amount;
                     } else {
-                        $monthlyPayment->amount_paid += $payment->amount;
+                        $monthlyPayment->amount_paid += $monthlyPayment->amount_due;
                     }
 
                     $monthlyPayment->save();
