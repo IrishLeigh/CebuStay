@@ -242,7 +242,8 @@ class PropertyController extends CORS
                     $unitbeds[] = [
                         'bedroomid' => $bedroom->bedroomid,
                         'bedroomnum' => $bedroom->bedroomnum,
-                        'beds' => $beds
+                        'beds' => $beds,
+                        'sleepingtype' => $bedroom->sleepingtype
                     ];
                 }
             }
