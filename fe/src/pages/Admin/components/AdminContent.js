@@ -3,6 +3,7 @@ import axios from "axios";
 import "./AdminContent.css";
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { OtherHouses } from "@mui/icons-material";
 
 // Function to check if the checkout date is today or earlier
 const canPayout = (checkoutDate) => {
@@ -16,6 +17,12 @@ export default function AdminContent({ payoutData, selectedTab }) {
   const navigate = useNavigate();
   const [isSorted, setIsSorted] = useState(false);
   const [sortedData, setSortedData] = useState(payoutData);
+  
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A'; // Handle cases where date is not available
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateStr).toLocaleDateString('en-US', options);
+};
 
   useEffect(() => {
     if (selectedTab === "payments") {
@@ -51,17 +58,18 @@ export default function AdminContent({ payoutData, selectedTab }) {
     navigate("/superadmin");
   };
 
-  const handlePayout = async () => {
+  const handlePayout = async (item) => {
+    console.log('item',item);
     try {
       const payoutData = {
         items: [
           {
             recipient_type: "EMAIL",
             amount: {
-              value: "10000",
+              value: item.payout_amount,
               currency: "PHP"
             },
-            receiver: "amabarobert@gmail.com"
+            receiver: item.paypalmail
           }
         ]
       };
@@ -81,7 +89,15 @@ export default function AdminContent({ payoutData, selectedTab }) {
             if(resStatus.data.message === "Payout item details retrieved successfully"){
               console.log("Payout item details retrieved successfully");
             }
+            const sendPayout = await axios.post(`http://127.0.0.1:8000/api/setPayout`,{
+              payout_id: item.payout_id,
+              batch_id: response.data.data.batch_header.payout_batch_id,
+              item_id: resCheck.data.data.items[0].payout_item_id,
+              status: resStatus.data.data.transaction_status
+            });
+            console.log('Result',resStatus.data.data.errors.message);
           }
+          
         }
     } catch (error) {
       console.error("Error sending payout:", error);  // Handle error
@@ -167,6 +183,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
                     <td>
                       <button
                         disabled={!canPayout(data.checkout_date)} // Disable if cannot payout
+                        onClick={() => handlePayout(data)}
                       >
                         Payout
                       </button>
