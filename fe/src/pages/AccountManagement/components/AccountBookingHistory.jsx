@@ -91,14 +91,14 @@ export default function BookingHistory({ profile }) {
                 const upcomingBooking = bookings
                     .filter(booking => booking.checkIn >= today && booking.isCancel !== 'Cancelled')
                     .sort((a, b) => new Date(a.checkIn) - new Date(b.checkIn));
-                // const completedBooking = resHistory.data.filter(booking => booking.checkOut < today && booking.status !== 'Cancelled');
+                const completedBooking = resHistory.data.filter(booking => booking.book_status !== 'Cancelled');
                 // const completedBooking = resHistory.data;
                 const cancelledBooking = bookings.filter(booking => booking.isCancel === 'Cancelled');
 
                 // Set state variables
                 setUpcomingBooking(upcomingBooking);
                 setCancelledBooking(cancelledBooking);
-                setCompletedBooking(resHistory.data);
+                setCompletedBooking(completedBooking);
                 setFetched(true);
                 setBookings(response.data);
                 setLoading(false);
