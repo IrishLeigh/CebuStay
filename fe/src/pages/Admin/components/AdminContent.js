@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./AdminContent.css";
-import { Typography } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { OtherHouses } from "@mui/icons-material";
 
@@ -17,6 +17,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
   const navigate = useNavigate();
   const [isSorted, setIsSorted] = useState(false);
   const [sortedData, setSortedData] = useState(payoutData);
+  const [loading, setLoading] = useState(false);
   
   const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A'; // Handle cases where date is not available
@@ -33,7 +34,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
       setSortedData(filteredData);
     } else if (selectedTab === "payouts") {
       const filteredData = payoutData.filter(
-        (data) => data.status === "Completed"
+        (data) => data.status !== "Pending"
       );
       setSortedData(filteredData);
     }
@@ -59,6 +60,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
   };
 
   const handlePayout = async (item) => {
+    setLoading(true);
     console.log('item',item);
     try {
       const payoutData = {
@@ -89,20 +91,41 @@ export default function AdminContent({ payoutData, selectedTab }) {
             if(resStatus.data.message === "Payout item details retrieved successfully"){
               console.log("Payout item details retrieved successfully");
             }
-            const sendPayout = await axios.post(`http://127.0.0.1:8000/api/setPayout`,{
-              payout_id: item.payout_id,
-              batch_id: response.data.data.batch_header.payout_batch_id,
-              item_id: resCheck.data.data.items[0].payout_item_id,
-              status: resStatus.data.data.transaction_status
-            });
-            console.log('Result',resStatus.data.data.errors.message);
+            if(resStatus.data.data.transaction_status === "SUCCESS" || resStatus.data.data.transaction_status === "ONHOLD"){
+              const sendPayout = await axios.post(`http://127.0.0.1:8000/api/setPayout`,{
+                payout_id: item.payout_id,
+                batch_id: response.data.data.batch_header.payout_batch_id,
+                item_id: resCheck.data.data.items[0].payout_item_id,
+                status: resStatus.data.data.transaction_status
+              });
+              if(sendPayout.data){
+                window.location.reload();
+              }
+              
+            }else{
+              await axios.post(`http://127.0.0.1:8000/api/paypal/cancel-payout/${resCheck.data.data.items[0].payout_item_id}`)
+              console.log('Result',resStatus.data.data.errors.message);
+            }
+            
           }
           
         }
     } catch (error) {
       console.error("Error sending payout:", error);  // Handle error
+    }finally {
+      setLoading(false);
+      // window.location.reload();
     }
   };
+
+  const handleCheckPayout = async (item) => {
+    try{
+      const res = await axios.get(`http://127.0.0.1:8000/api/paypal/check-payout/${item.payout_id}`);
+      console.log('resdata',res.data);
+    }catch(error){
+      console.log(error);
+    }
+  }
 
   return (
     <>
@@ -182,10 +205,14 @@ export default function AdminContent({ payoutData, selectedTab }) {
                     </td>
                     <td>
                       <button
-                        disabled={!canPayout(data.checkout_date)} // Disable if cannot payout
+                        disabled={!canPayout(data.checkout_date) || loading || data.status !== "Pending" || data.paypalmail === null} // Disable if cannot payout
                         onClick={() => handlePayout(data)}
                       >
-                        Payout
+                        {loading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  "Payout"
+                )}
                       </button>
                     </td>
                   </tr>

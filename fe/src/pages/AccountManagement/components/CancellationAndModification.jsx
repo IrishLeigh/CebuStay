@@ -612,8 +612,62 @@ const CancellationAndModification = ({
         <div className="right-section flex-col p-6 bg-background rounded-lg shadow-md ml-4">
           <h2 className="text-lg mb-4 font-bold">Invoice Summary</h2>
 
-          {/* Invoice Details */}
-          <div className="invoice-details">
+          {bookings && bookings.length > 0 && (<>
+          {bookings[0].unit_type === "Monthly Term" ? 
+        (<>
+        {/* Invoice Details */}
+        <div className="invoice-details">
+            {/* Base Price */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label font-bold" style={{ fontSize: '1rem' }}>Total Amount</span>
+              <span className="detail-price font-bold">PHP ₱{bookings && bookings.length > 0 ? bookings[0].amount.toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '16px' }}>
+              <p>For {bookings[0].stay_length/31} months and {bookings && bookings.length > 0 ? bookings[0].guests : ''} guests</p>
+            </div>
+            <hr className="divider" />
+
+            {/* Base Price Per Month */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label">Base Price Per Month</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (bookings[0].min_price / 1.12).toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
+              Price before tax
+            </div>
+
+            {/* Total Months*/}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label">X {bookings[0].stay_length/31} total months booked</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? ((bookings[0].min_price / 1.12) * (bookings[0].stay_length/31)).toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
+              Total months of stay
+            </div>
+
+            {/* VAT */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label">VAT (12%)</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (( (bookings[0].min_price / 1.12) * (bookings[0].stay_length/31) * 0.12)).toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
+              VAT charges applied
+            </div>
+
+            <hr className="divider" />
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label" style={{ fontSize: '1rem' }}>Security Deposit</span>
+              <span className="detail-price font-bold">PHP ₱{bookings && bookings.length > 0 ? (bookings[0].min_price).toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
+              Refundable at the end of rental period
+            </div>
+
+          </div>
+
+        </>):(<>
+{/* Invoice Details */}
+<div className="invoice-details">
             {/* Base Price */}
             <div className="detail-item flex-row justify-between mb-1">
               <span className="detail-label font-bold" style={{ fontSize: '1rem' }}>Total Amount</span>
@@ -624,26 +678,41 @@ const CancellationAndModification = ({
             </div>
             <hr className="divider" />
 
-            {/* Extra Guest Cost */}
+            {/* Base Price Per Month */}
             <div className="detail-item flex-row justify-between mb-1">
-              <span className="detail-label">Base Price</span>
-              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (bookings[0].amount / 1.18).toFixed(2) : '0.00'}</span>
+              <span className="detail-label">Base Price Per Day</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (bookings[0].min_price / 1.12).toFixed(2) : '0.00'}</span>
             </div>
             <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
               Price before tax
             </div>
 
-            {/* Booking Charge */}
+            {/* Total Months*/}
             <div className="detail-item flex-row justify-between mb-1">
-              <span className="detail-label">Tax Price</span>
-              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (bookings[0].amount - (bookings[0].amount / 1.18)).toFixed(2) : '0.00'}</span>
+              <span className="detail-label">X {bookings[0].stay_length} total days booked</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? ((bookings[0].min_price / 1.12) * (bookings[0].stay_length)).toFixed(2) : '0.00'}</span>
             </div>
             <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
-              Tax fees applied
+              Total days of stay
             </div>
 
+            {/* VAT */}
+            <div className="detail-item flex-row justify-between mb-1">
+              <span className="detail-label">VAT (12%)</span>
+              <span className="detail-price">PHP ₱{bookings && bookings.length > 0 ? (( (bookings[0].min_price / 1.12) * (bookings[0].stay_length) * 0.12)).toFixed(2) : '0.00'}</span>
+            </div>
+            <div className="detail-info" style={{ fontSize: '0.75rem', color: 'grey', marginBottom: '8px' }}>
+              VAT charges applied
+            </div>
+
+            
 
           </div>
+        </>)  
+        }
+          </>)}
+
+          
 
           {/* Cancel Booking Button */}
           <div className="cancel-booking-container mt-4">
