@@ -198,13 +198,13 @@ class PaymentController extends CORS
                     $monthlyPayment->status = 'Paid';
                     $monthlyPayment->due_date = $checkoutDate; // Set the final due date to the checkout date
                     $monthlyPayment->bookingid = $request->input('bookingid');
-                    $monthlyPayment->amount_due = 0;
                     $monthlyPayment->userid = $booking->userid;
                     if ($monthlyPayment->amount_paid <= 0) {
                         $monthlyPayment->amount_paid = $payment->amount;
                     } else {
                         $monthlyPayment->amount_paid += $monthlyPayment->amount_due;
                     }
+                    $monthlyPayment->amount_due = 0;
 
                     $monthlyPayment->save();
 

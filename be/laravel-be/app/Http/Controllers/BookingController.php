@@ -833,8 +833,8 @@ class BookingController extends CORS
     {
         $bookingid = $request->input('bookingid');
         $booking = Booking::find($bookingid);
-
-        $booking->type = 'booking';
+        $booking->status = 'Checked in';
+        // $booking->type = 'booking';
         $booking->save();
 
         return response()->json(['message' => 'Booking checked in successfully', 'status' => 'success']);
@@ -1013,11 +1013,24 @@ class BookingController extends CORS
             'property.property_desc', // Select property_desc from property table
             'property.unit_type', // Select unit_type from property table
             'tbl_guest.guestname', // Select guestname from tbl_guest table
-            'location.address as property_address' // Select address from location table
+            'location.address as property_address', // Select address from location table
+            'monthly_payment.amount_paid',
+                'monthly_payment.userid as payment_userid',
+                'monthly_payment.amount_due',
+                'monthly_payment.due_date',
+                'monthly_payment.status as monthly_payment_status',
+                'tbl_payment.status as payment_status',
+                'tbl_payment.amount as payment_amount',
+                'tbl_payment.refund_amount as refund_amount',
+                'property_pricing.min_price'
         )
             ->join('property', 'tbl_bookinghistory.propertyid', '=', 'property.propertyid')
             ->join('tbl_guest', 'tbl_bookinghistory.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
             ->join('location', 'tbl_bookinghistory.propertyid', '=', 'location.propertyid') // Join location table using propertyid
+            ->leftJoin('monthly_payment', 'tbl_bookinghistory.bhid', '=', 'monthly_payment.bhid')
+            ->leftJoin('tbl_payment', 'tbl_bookinghistory.bhid', '=', 'tbl_payment.bhid')
+            ->leftJoin('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid') 
+            ->leftJoin('property_pricing', 'unitdetails.proppricingid', '=', 'property_pricing.proppricingid') 
             ->where('property.userid', $userId)
             ->get();
 
@@ -1047,6 +1060,9 @@ class BookingController extends CORS
                 'check_type' => $booking->check_type,
                 'booker' => $booker, // Add booker details
                 'property_address' => $booking->property_address, // Add property_address from location
+                'amount_paid' => $booking->amount_paid ?? 0,
+                'amount_due' => $booking->amount_due ?? 0,
+                'min_price' => $booking->min_price ?? 0,
             ];
         });
 
