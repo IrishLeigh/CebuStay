@@ -63,6 +63,12 @@ const CheckInCheckOut = ({
     }).format(value);
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A'; // Handle cases where date is not available
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateStr).toLocaleDateString('en-US', options);
+};
+
   const onCheckOut = () => {
     if (editedItem.status === "Confirmed") {
       // Update the status to Checked Out
@@ -219,6 +225,23 @@ const CheckInCheckOut = ({
     }
   };
 
+  const handleSecurityDeposit = async (item) => {
+    console.log("Checking in: ", item);
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/refundsecurity", {
+        bhid: item.bhid
+      }
+      );
+      console.log('Response:', response.data);
+      if(response.data.status === 'success') {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleCheckOut = async (item) => {
     console.log("Checking out: ", item);
     try {
@@ -318,6 +341,7 @@ const CheckInCheckOut = ({
                   <th style={{ fontSize: "0.9rem" }}>Guests</th>
                   <th style={{ fontSize: "0.9rem" }}>Status</th>
                   <th style={{ fontSize: "0.9rem" }}>Payment</th>
+                  {item.unit_type === 'Monthly Term' && <th style={{ fontSize: "0.9rem" }}>Due Date</th>}
                 </tr>
               </thead>
               <tbody>
@@ -334,7 +358,7 @@ const CheckInCheckOut = ({
                         onChange={(e) => handleChange(e, "checkin_date")}
                       />
                     ) : (
-                      editedItem.checkin_date
+                      formatDate(editedItem.checkin_date)
                     )}
                   </td>
                   <td
@@ -349,7 +373,7 @@ const CheckInCheckOut = ({
                         onChange={(e) => handleChange(e, "checkout_date")}
                       />
                     ) : (
-                      editedItem.checkout_date
+                      formatDate(editedItem.checkout_date)
                     )}
                   </td>
                   <td style={{ fontSize: "0.8rem" }}>
@@ -359,6 +383,7 @@ const CheckInCheckOut = ({
                   <td style={{ fontSize: "0.8rem" }}>
                     {editedItem.total_price}
                   </td>
+                  {item.unit_type === 'Monthly Term' && <td style={{ fontSize: "0.8rem" }}>{formatDate(editedItem.due_date)}</td>}
                 </tr>
               </tbody>
             </table>
@@ -434,7 +459,7 @@ const CheckInCheckOut = ({
                 Base price per month
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(monthlyBasePrice) || "N/A"}
+                {formatPrice(item.min_price / 1.12) || "N/A"}
               </Typography>
             </Stack>
             <Stack
@@ -444,14 +469,10 @@ const CheckInCheckOut = ({
               m={1}
             >
               <Typography variant="body1" color="textSecondary">
-              X 2 total months booked
+              X {item.stay_length / 31} total months booked
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(
-                  monthlyLengthStay === 1
-                    ? monthlyBasePrice
-                    : monthlyBasePrice * 2
-                ) || "N/A"}
+                {formatPrice((item.stay_length / 31) * (item.min_price / 1.12)) || "N/A"}
               </Typography>
             </Stack>
             {/* Conditional rendering for Security Deposit */}
@@ -466,7 +487,7 @@ const CheckInCheckOut = ({
                 VAT (12%)
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(vatMonthly) || "N/A"}
+                {formatPrice(item.total_price * 0.12) || "N/A"}
               </Typography>
             </Stack>
             {monthlyLengthStay !== 1 && (
@@ -476,12 +497,22 @@ const CheckInCheckOut = ({
                 alignItems="center"
                 m={1}
               >
+                {item.securityDeposit === 0 ? (<>
+                  <Typography variant="body1" color="textSecondary">
+                  Security Deposit
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {formatPrice(item.min_price) || "N/A"}
+                </Typography></>
+                 
+                ):(<>
                 <Typography variant="body1" color="textSecondary">
                   Security Deposit
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  +{formatPrice(monthlyBasePrice) || "N/A"}
-                </Typography>
+                  {0}
+                </Typography></>)}
+                
               </Stack>
             )}
             <Divider sx={{ my: 1 }} />
@@ -495,22 +526,28 @@ const CheckInCheckOut = ({
                 Total Amount
               </Typography>
               <Typography variant="body1" fontWeight="bold">
-                {formatPrice(totalMonthlyPrice)}
+                {formatPrice(item.total_price) || "N/A"}
               </Typography>
             </Stack>
           </div>
           <div>
-          <button className="payout-btn" onClick={handlePayoutButtonClick}>
-                Payout Security Deposit
-              </button>
+            {item.status === "Checked out" && item.securityDeposit === 0 && (
+              <button className="payout-btn" 
+              // onClick={() => handleSecurityDeposit(item)}>
+              onClick={handlePayoutButtonClick} >
+              Payout Security Deposit
+            </button>
+            )}
+          
             {showPayoutModal && (
               <PayoutSecurityDeposit
-                guestName={item.guestname} // Using dynamic data
-                propertyName={item.property_name} // Using dynamic data
-                checkoutDate={item.checkout_date} // Using dynamic data
-                securityDeposit={1000} // Replace with actual data
-                onClose={handleCloseModal}
-                onConfirm={handleConfirmPayout}
+              bookhistoryid={item?.bhid || 0}
+              guestName={item?.guestname || 'Guest Name'} // Default value in case of null/undefined
+              propertyName={item?.property_name || 'Property Name'}
+              checkoutDate={item?.checkout_date || 'Date'}
+              securityDepo={item?.min_price || 0}
+              onClose={handleCloseModal}
+              onConfirm={handleConfirmPayout}
               />
             )}
           </div>
@@ -531,7 +568,7 @@ const CheckInCheckOut = ({
                 Base price per day
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(monthlyBasePrice) || "N/A"}
+                {formatPrice(item.min_price / 1.12) || "N/A"}
               </Typography>
             </Stack>
             <Stack
@@ -541,14 +578,10 @@ const CheckInCheckOut = ({
               m={1}
             >
               <Typography variant="body1" color="textSecondary">
-                X 2 total days booked
+                X {item.stay_length} total days booked
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(
-                  monthlyLengthStay === 1
-                    ? monthlyBasePrice
-                    : monthlyBasePrice * 2
-                ) || "N/A"}
+                {formatPrice((item.stay_length) * (item.min_price / 1.12)) || "N/A"}
               </Typography>
             </Stack>
             {/* Conditional rendering for Security Deposit */}
@@ -563,7 +596,7 @@ const CheckInCheckOut = ({
                 VAT (12%)
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                {formatPrice(vatMonthly) || "N/A"}
+                {formatPrice(item.total_price * 0.12) || "N/A"}
               </Typography>
             </Stack>
             {monthlyLengthStay !== 1 && (
@@ -577,7 +610,7 @@ const CheckInCheckOut = ({
                   Security Deposit
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
-                  +{formatPrice(monthlyBasePrice) || "N/A"}
+                  +{formatPrice(item.min_price) || "N/A"}
                 </Typography>
               </Stack>
             )}
@@ -592,7 +625,7 @@ const CheckInCheckOut = ({
                 Total Amount
               </Typography>
               <Typography variant="body1" fontWeight="bold">
-                {formatPrice(totalMonthlyPrice)}
+                {formatPrice(item.total_price)}
               </Typography>
             </Stack>
             {/* {!showPayoutButton && (
