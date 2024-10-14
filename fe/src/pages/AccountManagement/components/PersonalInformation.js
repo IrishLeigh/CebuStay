@@ -291,9 +291,9 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
             maxLength: 11, // Limit input to 11 digits (excluding the prefix)
           }}
           helperText={
-            phone && phone.length !== 11 ? "Phone number must be 11 digits" : ""
+            phone && phone.length !== 10 ? "Phone number must be 10 digits" : ""
           }
-          error={phone && phone.length > 0 && phone.length !== 11}
+          error={phone && phone.length > 0 && phone.length !== 10}
         />
 
           <div >

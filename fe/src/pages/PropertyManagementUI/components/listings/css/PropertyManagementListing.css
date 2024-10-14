@@ -10,6 +10,24 @@
 .bg-light {
   background-color: #f8f9fa;
 }
+* Search Input */ .search-container {
+  position: relative;
+  margin-left: 1rem;
+}
+
+.search-container input {
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+  height: 3rem;
+  width: 100%;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+.search-container input:focus {
+  border-color: #5e5e5e;
+}
 
 .title {
   font-size: 1.875rem;
@@ -271,4 +289,57 @@
   font-size: 0.875rem;
   text-align: center;
   border-bottom: 1px solid #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .controls div {
+    width: 70%;
+  }
+
+  .search-container {
+    align-items: flex-end; /* Aligns items to the right in vertical layout */
+    margin-top: 2rem; /* Reduces margin on small screens */
+  }
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap; /* Allows buttons to wrap into multiple lines */
+  justify-content: flex-start; /* Align buttons to the left on larger screens */
+  padding: 1rem; /* Add padding for touch devices */
+}
+
+.btn {
+  padding: 0.5rem 1rem; /* Add some padding to buttons */
+  font-size: 1rem; /* Base font size */
+  border: none; /* Remove default button border */
+  border-radius: 4px; /* Add border radius for rounded corners */
+  background-color: #007bff; /* Primary button color */
+  color: white; /* Text color */
+  cursor: pointer; /* Change cursor on hover */
+  transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+/* Change button color on hover */
+.btn:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .buttons {
+    justify-content: center; /* Center the buttons on small screens */
+  }
+
+  .btn {
+    flex: 1 1 100%; /* Make buttons take up the full width on small screens */
+    margin: 0.5rem 0; /* Add vertical margin between buttons */
+    font-size: 1.2rem; /* Increase font size for better readability */
+    justify-content: center; /* Center the buttons on small screens */
+    padding: 0.75rem; /* Increase padding for touch targets */
+  }
 }

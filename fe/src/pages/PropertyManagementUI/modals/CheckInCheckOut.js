@@ -12,6 +12,7 @@ import axios from "axios";
 import { Stack, Typography, Divider } from "@mui/material";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import PayoutSecurityDeposit from "../modals/PayoutSecurityDeposit";
+import { InsertEmoticon } from "@mui/icons-material";
 
 const CheckInCheckOut = ({
   monthlyBasePrice,
@@ -158,9 +159,8 @@ const CheckInCheckOut = ({
       bookingAmount: updatedBookingAmount,
       payableAtCheckIn: updatedPayableAtCheckIn,
       payableNow: updatedPayableNow,
-      forDetails: `For ${nights} night${nights > 1 ? "s" : ""}, ${rooms} room${
-        rooms > 1 ? "s" : ""
-      }, and ${guests} guest${guests > 1 ? "s" : ""}`,
+      forDetails: `For ${nights} night${nights > 1 ? "s" : ""}, ${rooms} room${rooms > 1 ? "s" : ""
+        }, and ${guests} guest${guests > 1 ? "s" : ""}`,
     }));
   }, [bookingDetails, basePrice, extraGuestCost, bookingCharge]);
 
@@ -203,6 +203,38 @@ const CheckInCheckOut = ({
     }
   };
 
+  console.log("Saved data:", editedItem);
+  const handleCheckIn = async (item) => {
+    console.log("Checking in: ", item);
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/setcheckin", {
+        bookingid: item.bookingid
+      }
+      );
+      console.log('Response:', response.data);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCheckOut = async (item) => {
+    console.log("Checking out: ", item);
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/setcheckout", {
+        bookingid: item.bookingid
+      }
+      );
+      console.log('Response:', response.data);
+      window.location.reload();
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleCancelEdit = () => {
     setEditedItem({ ...item }); // Reset to original item
     setIsEditMode(false); // Exit edit mode
@@ -226,6 +258,7 @@ const CheckInCheckOut = ({
     }));
   };
 
+  console.log("items:", item);
   return (
     <div className="outer-container" style={{ height: "100vh" }}>
       <div className="container flex-row">
@@ -334,15 +367,16 @@ const CheckInCheckOut = ({
           <div className="update-details-container">
             <button
               className="btn-check-in"
-              onClick={() => handleUpdateDetails("checkIn")}
+              onClick={() => handleCheckIn(item)}
+              disabled={editedItem.status === "Checked in"} // Disable if status is not confirmed
             >
               Check In
             </button>
 
             <button
               className="btn-check-out"
-              onClick={onCheckOut}
-              disabled={editedItem.status !== "Confirmed"} // Disable if status is not confirmed
+              onClick={() => handleCheckOut(item)}
+              disabled={editedItem.status !== "Checked in"} // Disable if status is not confirmed
             >
               Check Out
             </button>
@@ -384,6 +418,7 @@ const CheckInCheckOut = ({
         </div>
 
         <div className="right-section flex-col p-6 bg-background rounded-lg shadow-md">
+        {item.unit_type === 'Monthly Term' ? (<>
           <div>
             <Typography variant="h6" color="primary" ml={1} pt={0.5}>
               <PriceCheckIcon sx={{ color: "primary.main", mr: 1 }} />
@@ -396,7 +431,7 @@ const CheckInCheckOut = ({
               m={1}
             >
               <Typography variant="body1" color="textSecondary">
-                Base Price Per Month
+                Base price per month
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 {formatPrice(monthlyBasePrice) || "N/A"}
@@ -409,9 +444,7 @@ const CheckInCheckOut = ({
               m={1}
             >
               <Typography variant="body1" color="textSecondary">
-                {monthlyLengthStay === 1
-                  ? "X 1 month advance ="
-                  : "X 2 months advance ="}
+              X 2 total months booked
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 {formatPrice(
@@ -422,6 +455,20 @@ const CheckInCheckOut = ({
               </Typography>
             </Stack>
             {/* Conditional rendering for Security Deposit */}
+
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" color="textSecondary">
+                VAT (12%)
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(vatMonthly) || "N/A"}
+              </Typography>
+            </Stack>
             {monthlyLengthStay !== 1 && (
               <Stack
                 direction="row"
@@ -437,19 +484,6 @@ const CheckInCheckOut = ({
                 </Typography>
               </Stack>
             )}
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" color="textSecondary">
-                VAT (12%)
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {formatPrice(vatMonthly) || "N/A"}
-              </Typography>
-            </Stack>
             <Divider sx={{ my: 1 }} />
             <Stack
               direction="row"
@@ -466,12 +500,9 @@ const CheckInCheckOut = ({
             </Stack>
           </div>
           <div>
-            {showPayoutButton && (
-              <button className="payout-btn" onClick={handlePayoutButtonClick}>
+          <button className="payout-btn" onClick={handlePayoutButtonClick}>
                 Payout Security Deposit
               </button>
-            )}
-
             {showPayoutModal && (
               <PayoutSecurityDeposit
                 guestName={item.guestname} // Using dynamic data
@@ -484,15 +515,98 @@ const CheckInCheckOut = ({
             )}
           </div>
 
-          {/* This button is hidden when Payout Button is shown */}
-          {!showPayoutButton && (
+        </>):(<>
+          <div>
+            <Typography variant="h6" color="primary" ml={1} pt={0.5}>
+              <PriceCheckIcon sx={{ color: "primary.main", mr: 1 }} />
+              Invoice Summary:
+            </Typography>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" color="textSecondary">
+                Base price per day
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(monthlyBasePrice) || "N/A"}
+              </Typography>
+            </Stack>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" color="textSecondary">
+                X 2 total days booked
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(
+                  monthlyLengthStay === 1
+                    ? monthlyBasePrice
+                    : monthlyBasePrice * 2
+                ) || "N/A"}
+              </Typography>
+            </Stack>
+            {/* Conditional rendering for Security Deposit */}
+
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" color="textSecondary">
+                VAT (12%)
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {formatPrice(vatMonthly) || "N/A"}
+              </Typography>
+            </Stack>
+            {monthlyLengthStay !== 1 && (
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                m={1}
+              >
+                <Typography variant="body1" color="textSecondary">
+                  Security Deposit
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  +{formatPrice(monthlyBasePrice) || "N/A"}
+                </Typography>
+              </Stack>
+            )}
+            <Divider sx={{ my: 1 }} />
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              m={1}
+            >
+              <Typography variant="body1" fontWeight="bold">
+                Total Amount
+              </Typography>
+              <Typography variant="body1" fontWeight="bold">
+                {formatPrice(totalMonthlyPrice)}
+              </Typography>
+            </Stack>
+            {/* {!showPayoutButton && (
             <button
               className="cancel-booking-btn w-full mt-4"
               onClick={() => setIsSuccess(true)}
             >
               Cancel Booking
             </button>
-          )}
+          )} */}
+          </div>
+          
+        </>)}
+          
         </div>
       </div>
     </div>
