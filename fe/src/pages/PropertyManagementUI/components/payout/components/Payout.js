@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import '../css/Payout.css';
-import { FaPaypal } from 'react-icons/fa'; // Importing PayPal icon from react-icons
-import { Box } from '@mui/material';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import "../css/Payout.css";
+import { FaPaypal } from "react-icons/fa"; // Importing PayPal icon from react-icons
+import { Box } from "@mui/material";
+import axios from "axios";
 
 const Payout = () => {
   const [data, setData] = useState([]); // Initialize as empty array to hold payout data
   const [user, setUser] = useState({
-    firstname: '',
-    lastname: '',
+    firstname: "",
+    lastname: "",
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [email, setEmail] = useState(''); // State for email input
-  const [phone, setPhone] = useState(''); // State for phone input
+  const [email, setEmail] = useState(""); // State for email input
+  const [phone, setPhone] = useState(""); // State for phone input
   const [updateFlag, setUpdateFlag] = useState(false); // State to track updates
 
   const userid = localStorage.getItem("userid") || null;
@@ -22,7 +22,9 @@ const Payout = () => {
       if (!userid) return;
 
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/manager/payouts?userid=${userid}`);
+        const res = await axios.get(
+          `https://whitesmoke-shark-473197.hostingersite.com/api/manager/payouts?userid=${userid}`
+        );
         if (res.data.userPayouts) {
           setData(res.data.userPayouts);
         } else {
@@ -37,11 +39,13 @@ const Payout = () => {
     const fetchProfile = async () => {
       if (!userid) return;
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userid}`);
+        const response = await axios.get(
+          `https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${userid}`
+        );
         console.log("Response Data:", response.data);
         setUser(response.data);
-        setEmail(response.data.paypalmail || ''); // Update to correct key
-        setPhone(response.data.paypalphonenumber || ''); // Update to correct key
+        setEmail(response.data.paypalmail || ""); // Update to correct key
+        setPhone(response.data.paypalphonenumber || ""); // Update to correct key
       } catch (error) {
         console.error(error);
       }
@@ -49,12 +53,11 @@ const Payout = () => {
 
     fetchData();
     fetchProfile();
-    
+
     // Reset update flag after fetching
     if (updateFlag) {
       setUpdateFlag(false);
     }
-
   }, [userid, updateFlag]); // Add updateFlag to dependencies
 
   const handleEditClick = () => {
@@ -66,7 +69,7 @@ const Payout = () => {
   };
 
   const isEmailValid = (email) => {
-    return email.endsWith('@gmail.com');
+    return email.endsWith("@gmail.com");
   };
 
   const isPhoneValid = (phone) => {
@@ -78,26 +81,29 @@ const Payout = () => {
 
   const handleUpdate = async () => {
     // if (isEmailValid(email) && isPhoneValid(phone)) {
-      if (isEmailValid(email) ) {
+    if (isEmailValid(email)) {
       try {
         // Update user information via API call
-        const response = await axios.put(`http://127.0.0.1:8000/api/users_update`, {
-          userid: userid,
-          paypalmail: email,
-          paypalphonenumber: phone,
-        });
+        const response = await axios.put(
+          `https://whitesmoke-shark-473197.hostingersite.com/api/users_update`,
+          {
+            userid: userid,
+            paypalmail: email,
+            paypalphonenumber: phone,
+          }
+        );
         if (response.status === 200) {
           setUser({ ...user, email, phone }); // Update user state
           setIsEditing(false); // Hide the modal after saving changes
           setUpdateFlag(true); // Set update flag to true to re-fetch data
-          alert('User information updated successfully!'); // Notify success
+          alert("User information updated successfully!"); // Notify success
         }
       } catch (error) {
         console.error("Error updating user data:", error);
-        alert('Failed to update user information. Please try again.'); // Notify error
+        alert("Failed to update user information. Please try again."); // Notify error
       }
     } else {
-      alert('Please enter a valid email and phone number.');
+      alert("Please enter a valid email and phone number.");
     }
   };
 
@@ -107,16 +113,36 @@ const Payout = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      <div style={{ background: 'linear-gradient(to right, #ADC939, #ADC939, #DEFB68)', padding: '1.5rem', color: '#ffffff', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', width: '100%' }}>
-        <h1 className="title" style={{ fontSize: '1.875rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white', font: 'poppins', textAlign: 'left' }}>
+    <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
+      <div
+        style={{
+          background: "linear-gradient(to right, #ADC939, #ADC939, #DEFB68)",
+          padding: "1.5rem",
+          color: "#ffffff",
+          borderBottomLeftRadius: "0.5rem",
+          borderBottomRightRadius: "0.5rem",
+          width: "100%",
+        }}
+      >
+        <h1
+          className="title"
+          style={{
+            fontSize: "1.875rem",
+            fontWeight: "700",
+            marginBottom: "0.5rem",
+            color: "white",
+            font: "poppins",
+            textAlign: "left",
+          }}
+        >
           Your Payouts
         </h1>
-        <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>
-          Property Payout, where you can easily view and manage all property payments from your account.
+        <p style={{ fontSize: "0.875rem", textAlign: "left" }}>
+          Property Payout, where you can easily view and manage all property
+          payments from your account.
         </p>
       </div>
-      <Box sx={{ padding: '1rem' }}>
+      <Box sx={{ padding: "1rem" }}>
         <div className="payout-title">Current Payout Account</div>
         <div className="info-container">
           <div className="info-content">
@@ -130,18 +156,29 @@ const Payout = () => {
                   <p className="phone">{phone}</p>
                 </div>
               ) : (
-                <p>No PayPal account yet, <span onClick={handleEditClick} style={{ color: '#007bff', cursor: 'pointer' }}>Add now</span> to payout your profit.</p>
+                <p>
+                  No PayPal account yet,{" "}
+                  <span
+                    onClick={handleEditClick}
+                    style={{ color: "#007bff", cursor: "pointer" }}
+                  >
+                    Add now
+                  </span>{" "}
+                  to payout your profit.
+                </p>
               )}
             </div>
-            <span className="edit-text" onClick={handleEditClick}>Edit</span>
+            <span className="edit-text" onClick={handleEditClick}>
+              Edit
+            </span>
           </div>
         </div>
 
         {isEditing && ( // Conditional rendering of the modal
           <div className="edit-modal">
-            <h3 style={{ fontWeight: '500' }}>Edit Contact Information</h3>
+            <h3 style={{ fontWeight: "500" }}>Edit Contact Information</h3>
             <div className="edit-input-group">
-              <label style={{ textAlign: 'left' }}>Email:</label>
+              <label style={{ textAlign: "left" }}>Email:</label>
               <input
                 type="email"
                 value={email}
@@ -149,26 +186,36 @@ const Payout = () => {
               />
             </div>
             <div className="edit-input-group">
-              <label style={{ textAlign: 'left' }}>Phone:</label>
+              <label style={{ textAlign: "left" }}>Phone:</label>
               <input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
             </div>
-            <div className="edit-buttons" >
-              <button onClick={handleCancel} style={{backgroundColor: '#EE414B'}}>Cancel</button>
-              <button onClick={handleUpdate} disabled={email === user.email && phone === user.phone}>Update</button>
+            <div className="edit-buttons">
+              <button
+                onClick={handleCancel}
+                style={{ backgroundColor: "#EE414B" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdate}
+                disabled={email === user.email && phone === user.phone}
+              >
+                Update
+              </button>
             </div>
           </div>
         )}
 
         {/* Payout History */}
-        <div className="payout-title">
-          Payout History
-        </div>
+        <div className="payout-title">Payout History</div>
         <div className="payout-history-container">
-          <div style={{ overflowX: 'auto' }}> {/* Enable horizontal scrolling */}
+          <div style={{ overflowX: "auto" }}>
+            {" "}
+            {/* Enable horizontal scrolling */}
             <table className="payout-history-table">
               <thead>
                 <tr>
@@ -184,17 +231,24 @@ const Payout = () => {
               <tbody>
                 {data.length === 0 ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: 'center' }}>No Data Available</td>
+                    <td colSpan="7" style={{ textAlign: "center" }}>
+                      No Data Available
+                    </td>
                   </tr>
                 ) : (
                   data.map((payout, index) => (
                     <tr key={index}>
                       <td>{payout.propertyid}</td>
                       <td>{payout.property_name}</td>
-                      <td>Php {payout.payout_amount ? payout.payout_amount.toFixed(2) : '0.00'}</td>
+                      <td>
+                        Php{" "}
+                        {payout.payout_amount
+                          ? payout.payout_amount.toFixed(2)
+                          : "0.00"}
+                      </td>
                       <td>{payout.customername}</td>
                       <td>{payout.payment_date}</td>
-                      <td>{payout.checkout_date || 'Not yet checked out'}</td>
+                      <td>{payout.checkout_date || "Not yet checked out"}</td>
                       <td>{payout.status}</td>
                     </tr>
                   ))

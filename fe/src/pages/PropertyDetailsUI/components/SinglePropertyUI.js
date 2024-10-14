@@ -68,12 +68,15 @@ export default function SinglePropertyUI({ propertyid }) {
     }).toString();
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
-        checkin_date: checkInDate.format("YYYY-MM-DD"),
-        checkout_date: checkOutDate.format("YYYY-MM-DD"),
-        guest_count: guestCount,
-        propertyid: propertyid,
-      });
+      const res = await axios.post(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/checkbooking",
+        {
+          checkin_date: checkInDate.format("YYYY-MM-DD"),
+          checkout_date: checkOutDate.format("YYYY-MM-DD"),
+          guest_count: guestCount,
+          propertyid: propertyid,
+        }
+      );
 
       if (res.data) {
         console.log("Response", res.data);
@@ -102,7 +105,7 @@ export default function SinglePropertyUI({ propertyid }) {
     const propertyId = propertyid; // Use the property ID passed as a prop
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/getfiles/${propertyId}`
+        `https://whitesmoke-shark-473197.hostingersite.com/api/getfiles/${propertyId}`
       );
       if (res.data) {
         const images = res.data.img.map((image, index) => ({
@@ -114,11 +117,14 @@ export default function SinglePropertyUI({ propertyid }) {
         }));
         setPropertyImages(images);
 
-        const res2 = await axios.get("http://127.0.0.1:8000/api/getproperty", {
-          params: {
-            propertyid: propertyId,
-          },
-        });
+        const res2 = await axios.get(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getproperty",
+          {
+            params: {
+              propertyid: propertyId,
+            },
+          }
+        );
         if (res2.data) {
           setPropertyInfo(res2.data);
         }
@@ -135,7 +141,7 @@ export default function SinglePropertyUI({ propertyid }) {
     const propertyId = propertyid;
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/getgalleryimg/${propertyId}`
+        `https://whitesmoke-shark-473197.hostingersite.com/api/getgalleryimg/${propertyId}`
       );
       if (res.data) {
         const gallery = res.data.galleryPhotos.map((image) => ({
@@ -150,8 +156,6 @@ export default function SinglePropertyUI({ propertyid }) {
       console.log(err);
     }
   };
-
-  
 
   // Fetch data when property ID changes or on mount
   useEffect(() => {

@@ -33,45 +33,44 @@ export default function BasicInfo({
   propertyData,
   propertyAddress,
   onBasicInfoChange,
-  onSaveStatusChange, 
-  google
+  onSaveStatusChange,
+  google,
 }) {
   const { location, fullAddress } = useData();
-const [isEditing, setIsEditing] = useState(false);
-const [localState, setLocalState] = useState({
-  propertyName: "",
-  propertyType: "",
-  unitType: "",
-  description: "",
-  directions: "",
-});
-const [street, setStreet] = useState("");
-const [address, setAddress] = useState("");
-const [postalCode, setPostalCode] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [localState, setLocalState] = useState({
+    propertyName: "",
+    propertyType: "",
+    unitType: "",
+    description: "",
+    directions: "",
+  });
+  const [street, setStreet] = useState("");
+  const [address, setAddress] = useState("");
+  const [postalCode, setPostalCode] = useState("");
 
-const [hasChanges, setHasChanges] = useState(false); // Track changes
-const [saveCount, setSaveCount] = useState(0);
-const [openSnackbar, setOpenSnackbar] = useState(false);
-const [isSaved, setIsSaved] = useState(false);
-const [isLoading, setIsLoading] = useState(false);
-const [addPin, setAddPin] = useState(null);
-const [isChangesAddress, setIsChangesAddress] = useState(false);
-const [mapVal, setMapVal] = useState(null);
-const mapRef = useRef(null);
-const [isInCebu, setIsInCebu] = useState(false);
-const [position, setPosition] = useState(addPin);
-const [mapPos, setMapPos] = useState(addPin);
-const { location2 } = useData();
-const theme = useTheme();
-const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
-  
+  const [hasChanges, setHasChanges] = useState(false); // Track changes
+  const [saveCount, setSaveCount] = useState(0);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [addPin, setAddPin] = useState(null);
+  const [isChangesAddress, setIsChangesAddress] = useState(false);
+  const [mapVal, setMapVal] = useState(null);
+  const mapRef = useRef(null);
+  const [isInCebu, setIsInCebu] = useState(false);
+  const [position, setPosition] = useState(addPin);
+  const [mapPos, setMapPos] = useState(addPin);
+  const { location2 } = useData();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     if (propertyData) {
       setLocalState((prevState) => ({
         ...prevState,
         propertyName: propertyData.property_name || "",
-        propertyType: propertyData.property_type|| "",
+        propertyType: propertyData.property_type || "",
         unitType: propertyData.unit_type || "",
         description: propertyData.property_desc || "",
         directions: propertyData.property_directions || "",
@@ -80,44 +79,44 @@ const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     if (propertyAddress) {
       setAddress(propertyAddress.address || "");
       setStreet(propertyAddress.address || "");
-      setPostalCode(  propertyAddress.zipcode || "");
+      setPostalCode(propertyAddress.zipcode || "");
     }
   }, [propertyData, propertyAddress]);
 
-const handleAddressChange = (newAddress) => {
-  const [streetPart, postalCodePart] = newAddress.split(", ");
-  setStreet(streetPart || newAddress);
-  setPostalCode(postalCodePart || "");
-  setAddress(newAddress);
-  setIsChangesAddress(true);
-};
+  const handleAddressChange = (newAddress) => {
+    const [streetPart, postalCodePart] = newAddress.split(", ");
+    setStreet(streetPart || newAddress);
+    setPostalCode(postalCodePart || "");
+    setAddress(newAddress);
+    setIsChangesAddress(true);
+  };
 
-const fetchAddress = async (latLng) => {
-  if (!latLng) {
-    console.warn("latLng is null or undefined. Exiting fetchAddress.");
-    return;
-  }
-  const { lat, lng } = latLng;
-  try {
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyCekj_gI-EaiGAORCqQlLwvxrgvfgULaMM`
-    );
-    const data = await response.json();
-    if (data.results.length > 0) {
-      const formattedAddress = data.results[0].formatted_address;
-      setAddress(formattedAddress);
-      handleAddressChange(formattedAddress);
-
-      const point = turf.point([lng, lat]);
-      const isInCebuArea = CebuGeoJson.features.some((feature) =>
-        turf.booleanPointInPolygon(point, feature)
-      );
-      setIsInCebu(isInCebuArea);
+  const fetchAddress = async (latLng) => {
+    if (!latLng) {
+      console.warn("latLng is null or undefined. Exiting fetchAddress.");
+      return;
     }
-  } catch (error) {
-    console.error("Error fetching address data:", error);
-  }
-};
+    const { lat, lng } = latLng;
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyCekj_gI-EaiGAORCqQlLwvxrgvfgULaMM`
+      );
+      const data = await response.json();
+      if (data.results.length > 0) {
+        const formattedAddress = data.results[0].formatted_address;
+        setAddress(formattedAddress);
+        handleAddressChange(formattedAddress);
+
+        const point = turf.point([lng, lat]);
+        const isInCebuArea = CebuGeoJson.features.some((feature) =>
+          turf.booleanPointInPolygon(point, feature)
+        );
+        setIsInCebu(isInCebuArea);
+      }
+    } catch (error) {
+      console.error("Error fetching address data:", error);
+    }
+  };
 
   useEffect(() => {
     // Save input data to localStorage whenever it changes
@@ -156,7 +155,7 @@ const fetchAddress = async (latLng) => {
       console.error("Error fetching geolocation data:", error);
     }
   };
-  
+
   const onMapClick = (mapProps, map, clickEvent) => {
     const { latLng } = clickEvent;
     const latitude = latLng.lat();
@@ -196,16 +195,14 @@ const fetchAddress = async (latLng) => {
     }));
     setHasChanges(true);
   };
-  
-  
+
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
@@ -213,15 +210,15 @@ const fetchAddress = async (latLng) => {
     console.log("Object propertyData:", localState);
     console.log("Property data:", propertyData);
     setIsLoading(true);
-    
+
     setIsEditing(false);
-    
+
     setSaveCount((prevCount) => prevCount + 1);
 
     try {
       // Use the correct route with propertyid from propertyData
       const save_response = await axios.put(
-        `http://127.0.0.1:8000/api/updatepropertyinfo/${propertyData.propertyid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertyinfo/${propertyData.propertyid}`,
         {
           property_name: localState.propertyName,
           property_type: localState.propertyType,
@@ -245,9 +242,9 @@ const fetchAddress = async (latLng) => {
         setIsSaved(true);
         setIsEditing(false);
         setOpenSnackbar(true);
-        onSaveStatusChange('Saved');
+        onSaveStatusChange("Saved");
         setIsLoading(false);
-        
+
         console.log(save_response.data);
       } else {
         alert("Failed to save Basic Info");
@@ -260,12 +257,14 @@ const fetchAddress = async (latLng) => {
 
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
     }
-  
+
     setIsEditing(false);
     setLocalState({
       propertyName: propertyData.property_name || "",
@@ -278,43 +277,49 @@ const fetchAddress = async (latLng) => {
     });
     setHasChanges(false); // Reset changes flag after canceling
   };
-  
-  const handleCloseSnackbar  = () => {
+
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
-//  console.log ("saveCount", saveCount);
-console.log ("address basic info", propertyAddress);
-console.log ("BASIC INFO NA TRANSFER BA", propertyData);
+  };
+  //  console.log ("saveCount", saveCount);
+  console.log("address basic info", propertyAddress);
+  console.log("BASIC INFO NA TRANSFER BA", propertyData);
   return (
     <div>
-       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
-    <Paper
-      style={{
-        width: "auto",
-        padding: isMobile ? "1rem" : "4rem",
-        borderRadius: "0.8rem",
-        alignItems: "center",
-      }}
-    >
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "1rem",
-            }}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "1.125rem",
-                fontWeight: "bold",
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        saved={isSaved}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+      />
+      <Paper
+        style={{
+          width: "auto",
+          padding: isMobile ? "1rem" : "4rem",
+          borderRadius: "0.8rem",
+          alignItems: "center",
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "1rem",
               }}
             >
-              Basic Information Of The Property
-            </Typography>
-            {/* <div>
+              <Typography
+                sx={{
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "1.125rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Basic Information Of The Property
+              </Typography>
+              {/* <div>
               {!isEditing && (
                 <Button
                   onClick={() => setIsEditing(true)}
@@ -329,208 +334,216 @@ console.log ("BASIC INFO NA TRANSFER BA", propertyData);
                 </Button>
               )}
             </div> */}
-          </div>
-          <Typography
-            sx={{
-              fontFamily: "Poppins, sans-serif",
-              fontSize: "0.875rem",
-              color: "#6b7280",
-              marginBottom: "2rem",
-            }}
-          >
-            This section allows you to review and edit the basic details of your
-            property. You can update the name, type, description, directions,
-            and address of the property to ensure all information is accurate.
-          </Typography>
+            </div>
+            <Typography
+              sx={{
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "0.875rem",
+                color: "#6b7280",
+                marginBottom: "2rem",
+              }}
+            >
+              This section allows you to review and edit the basic details of
+              your property. You can update the name, type, description,
+              directions, and address of the property to ensure all information
+              is accurate.
+            </Typography>
 
-          <div style={{ marginBottom: "1rem" }}>
-            <div style={{ marginBottom: "0.5rem" }}>Property Name</div>
-            <TextField
-              id="property-name"
-              variant="outlined"
-              sx={{ width: "100%" }}
-              value={localState.propertyName}
-              onChange={(e) => handleChange("propertyName", e.target.value)}
-              disabled={!isEditing}
-            />
-          </div>
-          <div style={{ marginBottom: "1rem" }}>
-            <InputLabel
-              variant="standard"
-              htmlFor="property-type-select"
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              Property Type
-            </InputLabel>
-            <Select
-              sx={{ fontFamily: "Poppins, sans-serif", width: "100%" }}
-              id="property-type-select"
-              value={localState.propertyType}
-              onChange={(e) => handleChange("propertyType", e.target.value)}
-              disabled= {!isEditing}
-              // helperText="You cannot edit this field"
-            >
-              <MenuItem value="Private Residential" sx={{ fontFamily: "Poppins, sans-serif" }}>
-              Private Residential
-              </MenuItem>
-              <MenuItem
-                value="Condominium"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Condominium
-              </MenuItem>
-              <MenuItem
-                value="Townhouse"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Townhouse
-              </MenuItem>
-              <MenuItem
-                value="Cabin"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Cabin
-              </MenuItem>
-              <MenuItem
-                value="Loft"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Loft
-              </MenuItem>
-              <MenuItem
-                value="Bungalow"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Bungalow
-              </MenuItem>
-              <MenuItem
-                value="Studio"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Studio
-              </MenuItem>
-              <MenuItem
-                value="Villa"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Villa
-              </MenuItem>
-              <MenuItem
-                value="Cottage"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Cottage
-              </MenuItem>
-              <MenuItem
-                value="Subdivision House"
-                sx={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Subdivision House
-              </MenuItem>
-            </Select>
-          </div>
-          <FormControl component="fieldset">
-            <FormLabel
-              component="legend"
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              Property Term
-            </FormLabel>
-            <RadioGroup
-              row
-              aria-label="unit type"
-              name="unit-type-group"
-              value={localState.unitType}
-              onChange={(e) => handleChange("unitType", e.target.value)}
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              <FormControlLabel
-                value="Daily Term"
-                control={<Radio />}
-                label="Daily Term"
+            <div style={{ marginBottom: "1rem" }}>
+              <div style={{ marginBottom: "0.5rem" }}>Property Name</div>
+              <TextField
+                id="property-name"
+                variant="outlined"
+                sx={{ width: "100%" }}
+                value={localState.propertyName}
+                onChange={(e) => handleChange("propertyName", e.target.value)}
                 disabled={!isEditing}
-                sx={{ fontFamily: "Poppins, sans-serif" }}
               />
-              <FormControlLabel
-                value="Monthly Term"
-                control={<Radio />}
-                label="Monthly Term"
+            </div>
+            <div style={{ marginBottom: "1rem" }}>
+              <InputLabel
+                variant="standard"
+                htmlFor="property-type-select"
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Property Type
+              </InputLabel>
+              <Select
+                sx={{ fontFamily: "Poppins, sans-serif", width: "100%" }}
+                id="property-type-select"
+                value={localState.propertyType}
+                onChange={(e) => handleChange("propertyType", e.target.value)}
                 disabled={!isEditing}
+                // helperText="You cannot edit this field"
+              >
+                <MenuItem
+                  value="Private Residential"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Private Residential
+                </MenuItem>
+                <MenuItem
+                  value="Condominium"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Condominium
+                </MenuItem>
+                <MenuItem
+                  value="Townhouse"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Townhouse
+                </MenuItem>
+                <MenuItem
+                  value="Cabin"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Cabin
+                </MenuItem>
+                <MenuItem
+                  value="Loft"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Loft
+                </MenuItem>
+                <MenuItem
+                  value="Bungalow"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Bungalow
+                </MenuItem>
+                <MenuItem
+                  value="Studio"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Studio
+                </MenuItem>
+                <MenuItem
+                  value="Villa"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Villa
+                </MenuItem>
+                <MenuItem
+                  value="Cottage"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Cottage
+                </MenuItem>
+                <MenuItem
+                  value="Subdivision House"
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  Subdivision House
+                </MenuItem>
+              </Select>
+            </div>
+            <FormControl component="fieldset">
+              <FormLabel
+                component="legend"
                 sx={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Property Term
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-label="unit type"
+                name="unit-type-group"
+                value={localState.unitType}
+                onChange={(e) => handleChange("unitType", e.target.value)}
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                <FormControlLabel
+                  value="Daily Term"
+                  control={<Radio />}
+                  label="Daily Term"
+                  disabled={!isEditing}
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                />
+                <FormControlLabel
+                  value="Monthly Term"
+                  control={<Radio />}
+                  label="Monthly Term"
+                  disabled={!isEditing}
+                  sx={{ fontFamily: "Poppins, sans-serif" }}
+                />
+              </RadioGroup>
+            </FormControl>
+            <div style={{ marginTop: "1rem" }}>
+              <InputLabel
+                variant="standard"
+                htmlFor="property-description"
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Description
+              </InputLabel>
+              <TextField
+                id="property-description"
+                multiline
+                maxRows={4}
+                rows={4}
+                sx={{ width: "100%", fontFamily: "Poppins, sans-serif" }}
+                value={localState.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                disabled={!isEditing}
               />
-            </RadioGroup>
-          </FormControl>
-          <div style={{ marginTop: "1rem" }}>
-            <InputLabel
-              variant="standard"
-              htmlFor="property-description"
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              Description
-            </InputLabel>
-            <TextField
-              id="property-description"
-              multiline
-              maxRows={4}
-              rows={4}
-              sx={{ width: "100%", fontFamily: "Poppins, sans-serif" }}
-              value={localState.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-              disabled={!isEditing}
-            />
-          </div>
-          <div style={{ marginTop: "1rem" }}>
-            <InputLabel
-              variant="standard"
-              htmlFor="property-directions"
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              Directions
-            </InputLabel>
-            <TextField
-              id="property-directions"
-              multiline
-              maxRows={4}
-              rows={4}
-              sx={{ width: "100%", fontFamily: "Poppins, sans-serif" }}
-              value={localState.directions}
-              onChange={(e) => handleChange("directions", e.target.value)}
-              disabled={!isEditing}
-            />
-          </div>
-          {/* </Grid>
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+              <InputLabel
+                variant="standard"
+                htmlFor="property-directions"
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Directions
+              </InputLabel>
+              <TextField
+                id="property-directions"
+                multiline
+                maxRows={4}
+                rows={4}
+                sx={{ width: "100%", fontFamily: "Poppins, sans-serif" }}
+                value={localState.directions}
+                onChange={(e) => handleChange("directions", e.target.value)}
+                disabled={!isEditing}
+              />
+            </div>
+            {/* </Grid>
         <Grid item xs={6} sx={{ padding: "1rem" }}> */}
 
-          <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-            <InputLabel
-              variant="standard"
-              htmlFor="street-address"
-              sx={{ fontFamily: "Poppins, sans-serif" , marginBottom: "1rem" }}
-            >
-              Address
-            </InputLabel>
+            <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+              <InputLabel
+                variant="standard"
+                htmlFor="street-address"
+                sx={{ fontFamily: "Poppins, sans-serif", marginBottom: "1rem" }}
+              >
+                Address
+              </InputLabel>
+              <TextField
+                id="street-address"
+                label="Street Address"
+                value={street}
+                onChange={(e) =>
+                  handleAddressChange(`${e.target.value}, ${postalCode}`)
+                } // Update the street while keeping the postal code
+                helperText="Enter your street address"
+                fullWidth
+                disabled
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+              />
+            </div>
             <TextField
-              id="street-address"
-              label="Street Address"
-              value={street}
-              onChange={(e) => handleAddressChange(`${e.target.value}, ${postalCode}`)} // Update the street while keeping the postal code
-              helperText="Enter your street address"
+              label="Postal/ZIP Code"
+              value={postalCode}
+              onChange={(e) =>
+                handleAddressChange(`${street}, ${e.target.value}`)
+              } // Update the postal code while keeping the street
+              helperText="Enter your postal or ZIP code"
               fullWidth
               disabled
               sx={{ fontFamily: "Poppins, sans-serif" }}
             />
-          </div>
-          <TextField
-            label="Postal/ZIP Code"
-            value={postalCode}
-            onChange={(e) => handleAddressChange(`${street}, ${e.target.value}`)} // Update the postal code while keeping the street
-            helperText="Enter your postal or ZIP code"
-            fullWidth
-            disabled
-            sx={{ fontFamily: "Poppins, sans-serif" }}
-          />
+          </Grid>
         </Grid>
-      </Grid>
 
         <Snackbar
           open={openSnackbar}
@@ -542,11 +555,11 @@ console.log ("BASIC INFO NA TRANSFER BA", propertyData);
             severity="success"
             sx={{ width: "100%" }}
           >
-          Basic Info saved successfully!
+            Basic Info saved successfully!
           </Alert>
         </Snackbar>
-    </Paper>
-    <LoadingModal open={isLoading} />
+      </Paper>
+      <LoadingModal open={isLoading} />
     </div>
   );
 }
@@ -556,4 +569,3 @@ BasicInfo.propTypes = {
   propertyAddress: PropTypes.object.isRequired,
   onBasicInfoChange: PropTypes.func.isRequired,
 };
-
