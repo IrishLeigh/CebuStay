@@ -68,7 +68,6 @@ export default function EditRoomAccordion({
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  
   // Effect to handle reset and initialization
   useEffect(() => {
     if (roomData && !isInitialized) {
@@ -76,34 +75,33 @@ export default function EditRoomAccordion({
       setIsInitialized(true);
     }
   }, [roomData, isInitialized]);
-  
 
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
     }
-    
+
     // Reset the room data to the original data
     initializeRoomData(originalData);
- 
+
     setIsCanceled(true);
     setIsEditing(false);
     setHasChanges(false);
   };
-  
+
   const handleEdit = (event) => {
-    
     setIsEditing(true);
     setExpanded(true);
-   
-};
+  };
 
-  const handleCloseSnackbar  = () => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
 
   const initializeRoomData = (data) => {
     console.log("Room data", data);
@@ -232,7 +230,7 @@ export default function EditRoomAccordion({
     const updatedServices = checked
       ? [...selectedServices, name]
       : selectedServices.filter((item) => item !== name);
-    
+
     setSelectedServices(updatedServices);
     setHasChanges(true);
   };
@@ -447,14 +445,14 @@ export default function EditRoomAccordion({
       alert("No changes to save.");
       return;
     }
-  
+
     if (!validate()) {
       alert("Please fill in all required fields.");
       return;
     }
-  
+
     setIsLoading(true);
-    
+
     const roomData = {
       roomName,
       roomQuantity,
@@ -469,7 +467,7 @@ export default function EditRoomAccordion({
       selectedServices,
       photos,
     };
-  
+
     console.log("UNITNAME: ", roomData.roomName);
     console.log("GUEST CAPACITY: ", roomData.guestCapacity);
     console.log("UNIT QUANTITY: ", roomData.roomQuantity);
@@ -482,10 +480,10 @@ export default function EditRoomAccordion({
     console.log("Selectect Services:", selectedServices);
     console.log("To be delete PHOTOS: ", toDeleteUP);
     console.log("To be uploaded PHOTOS:", toUploadUp);
-  
+
     try {
       const response = await axios.post(
-        `http://127.0.0.1:8000/api/updateunit-multiunit/${unitId}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateunit-multiunit/${unitId}`,
         {
           unitname: roomData.roomName,
           guest_capacity: roomData.guestCapacity,
@@ -498,19 +496,19 @@ export default function EditRoomAccordion({
           updated_services: selectedServices,
         }
       );
-  
+
       if (response.data.status === "success") {
         console.log(response.data);
-  
+
         const formData = new FormData();
         formData.append("toDelete", JSON.stringify(toDeleteUP)); // Keep this as JSON
         for (const item of toUploadUp) {
           const file = await fetchBlobAsFile(item.src, "photo.jpg");
           formData.append("files[]", file);
         }
-  
+
         const res2 = await axios.post(
-          `http://127.0.0.1:8000/api/updatemultiunit-img/${unitId}`,
+          `https://whitesmoke-shark-473197.hostingersite.com/api/updatemultiunit-img/${unitId}`,
           formData,
           {
             headers: {
@@ -518,7 +516,7 @@ export default function EditRoomAccordion({
             },
           }
         );
-  
+
         if (res2.data.status === "success") {
           console.log(res2.data);
         }
@@ -529,7 +527,7 @@ export default function EditRoomAccordion({
       setIsEditing(false);
       setIsLoading(false);
       setOpenSnackbar(true);
-      onSaveStatusChange('Saved');
+      onSaveStatusChange("Saved");
       console.log("Onsave", onSaveStatusChange);
       setExpanded(false);
     }
@@ -552,7 +550,7 @@ export default function EditRoomAccordion({
     }
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/deleteunitroom-singleunit/${unitId}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/deleteunitroom-singleunit/${unitId}`,
         {
           unitroomid: unitroomid,
         }
@@ -569,562 +567,578 @@ export default function EditRoomAccordion({
 
   return (
     <>
-    <Accordion
-      expanded={expanded === "panel1"}
-      onChange={handleAccordionChange("panel1")}
-      sx={{ border: expanded === "panel1" ? "2px solid blue" : "none" }}
-    >
-      <AccordionSummary
-        // expandIcon={<ArrowDownwardIcon />}
-        aria-controls="panel1-content"
-        id="panel1-header"
-        fullWidth
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }} // Ensure proper spacing and alignment
+      <Accordion
+        expanded={expanded === "panel1"}
+        onChange={handleAccordionChange("panel1")}
+        sx={{ border: expanded === "panel1" ? "2px solid blue" : "none" }}
       >
-        <Typography
+        <AccordionSummary
+          // expandIcon={<ArrowDownwardIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+          fullWidth
           sx={{
-            fontSize: "1.125rem",
-            fontWeight: "bold",
-            fontFamily: "Poppins, sans-serif",
-          }}
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }} // Ensure proper spacing and alignment
         >
-          Unit Type {index + 1} :{" "}
-          <span style={{ color: "#ccc", fontStyle: "italic" }}>{roomName}</span>
-        </Typography>
+          <Typography
+            sx={{
+              fontSize: "1.125rem",
+              fontWeight: "bold",
+              fontFamily: "Poppins, sans-serif",
+            }}
+          >
+            Unit Type {index + 1} :{" "}
+            <span style={{ color: "#ccc", fontStyle: "italic" }}>
+              {roomName}
+            </span>
+          </Typography>
 
-       
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: "auto" }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", gap: 1, ml: "auto" }}
+          >
             {!isEditing ? (
               <Button variant="outlined" color="primary" onClick={handleEdit}>
                 Edit
               </Button>
             ) : (
               <>
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSubmit}
+                >
                   Update
                 </Button>
-                <Button variant="contained" color="primary" onClick={handleCancel}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCancel}
+                >
                   Cancel Changes
                 </Button>
                 {index !== 0 && (
-                  <Button variant="outlined" color="secondary" onClick={handleDelete}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleDelete}
+                  >
                     Delete
                   </Button>
                 )}
               </>
             )}
           </Box>
-      
-
-      </AccordionSummary>
-      <AccordionDetails>
-        {/* Basic Room Information */}
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={8}>
-            <TextField
-              label="Room Name"
-              value={roomName}
-              name="roomName"
-              onChange={handleChange}
-              fullWidth
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-              helperText="Enter the name of the room e.g. Deluxe Room or Suite Room"
-              disabled={!isEditing}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <TextField
-              label="Room Quantity"
-              type="number"
-              value={roomQuantity}
-              name="roomQuantity"
-              onChange={handleChange}
-              fullWidth
-              helperText="Total rooms available for this type"
-              disabled={!isEditing}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <TextField
-              label="Guest Capacity"
-              type="number"
-              value={guestCapacity}
-              name="guestCapacity"
-              onChange={handleChange}
-              fullWidth
-              helperText="Max guests per room"
-              disabled={!isEditing}
-            />
-          </Grid>
-        </Grid>
-        {/* Description and Base Price */}
-        <Grid container spacing={2} mt={1}>
-          <Grid item xs={12} md={5}>
-            <TextField
-              label="Description"
-              value={description}
-              name="description"
-              onChange={handleChange}
-              fullWidth
-              multiline
-              rows={5}
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-              helperText="Describe the room type"
-              disabled={!isEditing}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Base Price"
-              type="number"
-              value={basePrice}
-              name="basePrice"
-              onChange={handleChange}
-              sx={{ fontFamily: "Poppins, sans-serif", mb: 1 }}
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">₱</InputAdornment>
-                ),
-                style: { fontSize: "0.875rem" }, // Adjust text size
-              }}
-              helperText="Minimum price for this room"
-              disabled={!isEditing}
-            />
-            <TextField
-              label="Max Price"
-              type="number"
-              value={maxPrice}
-              name="maxPrice"
-              onChange={handleChange}
-              fullWidth
-              sx={{ fontFamily: "Poppins, sans-serif" }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">₱</InputAdornment>
-                ),
-                style: { fontSize: "0.875rem" }, // Adjust text size
-              }}
-              helperText="Maximum price for this room"
-              disabled={!isEditing}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box>
-              <div style={{ fontSize: "0.8rem", fontWeight: "bold", mb: 1 }}>
-                Additional Information
-              </div>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <CheckIcon sx={{ color: "green" }} />
-                <div style={{ fontSize: "0.8rem", ml: 1 }}>
-                  Enjoy instant booking confirmations for added convenience.
-                </div>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <CheckIcon sx={{ color: "green" }} />
-                <div style={{ fontSize: "0.8rem", ml: 1 }}>
-                  Let us handle guest payments, saving you time and effort.
-                </div>
-              </Box>
-              <div style={{ fontSize: "0.8rem", ml: 1 }}>
-                Your total earnings would be (excluding taxes):
-                <br />
-                <strong style={{ fontSize: "1rem" }}>
-                  {`₱ ${profit}`}{" "}
-                  {/* Assuming peso sign and profit value are provided */}
-                </strong>
-              </div>
-            </Box>
-          </Grid>
-        </Grid>
-        {/* Rooms and Configuration */}
-        <Grid container spacing={2} sx={{ mt: 1 }}>
-          {/* Header for Other Rooms Available */}
-          <Grid
-            item
-            xs={12}
-            md={8}
-            sx={{ border: "1px solid #ccc", borderRadius: "0.5rem" }}
-          >
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                mb: 2,
-                fontFamily: "Poppins, sans-serif",
-              }}
-            >
-              Other Rooms Available
-            </Typography>
-            {/* Grid for Room Details */}
-            <Grid
-              container
-              spacing={1}
-              sx={{ mb: 2, fontFamily: "Poppins, sans-serif" }}
-            >
-              {columns.map((column, columnIndex) => (
-                <Grid item xs={12} md={6} key={columnIndex}>
-                  {column.map((room, roomIndex) => (
-                    <Box
-                      key={roomIndex}
-                      sx={{
-                        p: 1,
-                        borderRadius: "0.75rem",
-                        position: "relative",
-
-                        mb: 1,
-                      }}
-                    >
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} md={7}>
-                          <TextField
-                            value={room.roomname}
-                            onChange={(e) =>
-                              handleRoomTypeChange(
-                                columnIndex * roomsPerColumn + roomIndex,
-                                e.target.value
-                              )
-                            }
-                            fullWidth
-                            disabled={[
-                              "Bathroom",
-                              "Kitchen",
-                              "Dining",
-                              "Living Room",
-                              "Bedroom",
-                            ].includes(room.roomname)}
-                            size="small"
-                            // label={!["Bathroom", "Kitchen", "Dining", "Living Room"].includes(room.roomType) && "Room Type"}
-                            label="Room Type"
-                            sx={{ fontFamily: "Poppins, sans-serif" }}
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <TextField
-                            type="number"
-                            value={room.quantity}
-                            label="Quantity"
-                            onChange={(e) =>
-                              handleQuantityChange(
-                                columnIndex * roomsPerColumn + roomIndex,
-                                e.target.value
-                              )
-                            }
-                            fullWidth
-                            size="small"
-                            sx={{ fontFamily: "Poppins, sans-serif" }}
-                            disabled={!isEditing}
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={1}>
-                          {/* Remove Button */}
-                          {![
-                            "Bathroom",
-                            "Living Room",
-                            "Kitchen",
-                            "Dining",
-                          ].includes(room.roomname) && (
-                            <IconButton
-                              onClick={() => {
-                                handleDeleteUnitRoom(
-                                  room.unitroomid,
-                                  room.roomname
-                                );
-                                // alert(room.unitroomid);
-                              }}
-                              sx={{
-                                position: "absolute",
-                                right: 0,
-                                color: "error.main",
-                              }}
-                              disabled={!isEditing}
-                            >
-                              <RemoveCircleIcon />
-                            </IconButton>
-                          )}
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  ))}
-                </Grid>
-              ))}
-              <Button
-                variant="outlined"
-                startIcon={<AddIcon />}
-                onClick={addRoom}
-                sx={{ ml: 1, mt: 1, fontFamily: "Poppins" }}
+        </AccordionSummary>
+        <AccordionDetails>
+          {/* Basic Room Information */}
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={8}>
+              <TextField
+                label="Room Name"
+                value={roomName}
+                name="roomName"
+                onChange={handleChange}
+                fullWidth
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+                helperText="Enter the name of the room e.g. Deluxe Room or Suite Room"
                 disabled={!isEditing}
-              >
-                Add New Room
-              </Button>
+              />
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <TextField
+                label="Room Quantity"
+                type="number"
+                value={roomQuantity}
+                name="roomQuantity"
+                onChange={handleChange}
+                fullWidth
+                helperText="Total rooms available for this type"
+                disabled={!isEditing}
+              />
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <TextField
+                label="Guest Capacity"
+                type="number"
+                value={guestCapacity}
+                name="guestCapacity"
+                onChange={handleChange}
+                fullWidth
+                helperText="Max guests per room"
+                disabled={!isEditing}
+              />
             </Grid>
           </Grid>
-          {/* Bed Details */}
-          <Grid
-            item
-            xs={12}
-            md={4}
-            sx={{
-              p: 2,
-              border: "1px solid #ccc",
-              borderRadius: "0.5rem",
-              pl: 3,
-            }}
-          >
-            <Typography
+          {/* Description and Base Price */}
+          <Grid container spacing={2} mt={1}>
+            <Grid item xs={12} md={5}>
+              <TextField
+                label="Description"
+                value={description}
+                name="description"
+                onChange={handleChange}
+                fullWidth
+                multiline
+                rows={5}
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+                helperText="Describe the room type"
+                disabled={!isEditing}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Base Price"
+                type="number"
+                value={basePrice}
+                name="basePrice"
+                onChange={handleChange}
+                sx={{ fontFamily: "Poppins, sans-serif", mb: 1 }}
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">₱</InputAdornment>
+                  ),
+                  style: { fontSize: "0.875rem" }, // Adjust text size
+                }}
+                helperText="Minimum price for this room"
+                disabled={!isEditing}
+              />
+              <TextField
+                label="Max Price"
+                type="number"
+                value={maxPrice}
+                name="maxPrice"
+                onChange={handleChange}
+                fullWidth
+                sx={{ fontFamily: "Poppins, sans-serif" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">₱</InputAdornment>
+                  ),
+                  style: { fontSize: "0.875rem" }, // Adjust text size
+                }}
+                helperText="Maximum price for this room"
+                disabled={!isEditing}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Box>
+                <div style={{ fontSize: "0.8rem", fontWeight: "bold", mb: 1 }}>
+                  Additional Information
+                </div>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CheckIcon sx={{ color: "green" }} />
+                  <div style={{ fontSize: "0.8rem", ml: 1 }}>
+                    Enjoy instant booking confirmations for added convenience.
+                  </div>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CheckIcon sx={{ color: "green" }} />
+                  <div style={{ fontSize: "0.8rem", ml: 1 }}>
+                    Let us handle guest payments, saving you time and effort.
+                  </div>
+                </Box>
+                <div style={{ fontSize: "0.8rem", ml: 1 }}>
+                  Your total earnings would be (excluding taxes):
+                  <br />
+                  <strong style={{ fontSize: "1rem" }}>
+                    {`₱ ${profit}`}{" "}
+                    {/* Assuming peso sign and profit value are provided */}
+                  </strong>
+                </div>
+              </Box>
+            </Grid>
+          </Grid>
+          {/* Rooms and Configuration */}
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            {/* Header for Other Rooms Available */}
+            <Grid
+              item
+              xs={12}
+              md={8}
+              sx={{ border: "1px solid #ccc", borderRadius: "0.5rem" }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  mb: 2,
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                Other Rooms Available
+              </Typography>
+              {/* Grid for Room Details */}
+              <Grid
+                container
+                spacing={1}
+                sx={{ mb: 2, fontFamily: "Poppins, sans-serif" }}
+              >
+                {columns.map((column, columnIndex) => (
+                  <Grid item xs={12} md={6} key={columnIndex}>
+                    {column.map((room, roomIndex) => (
+                      <Box
+                        key={roomIndex}
+                        sx={{
+                          p: 1,
+                          borderRadius: "0.75rem",
+                          position: "relative",
+
+                          mb: 1,
+                        }}
+                      >
+                        <Grid container spacing={1}>
+                          <Grid item xs={12} md={7}>
+                            <TextField
+                              value={room.roomname}
+                              onChange={(e) =>
+                                handleRoomTypeChange(
+                                  columnIndex * roomsPerColumn + roomIndex,
+                                  e.target.value
+                                )
+                              }
+                              fullWidth
+                              disabled={[
+                                "Bathroom",
+                                "Kitchen",
+                                "Dining",
+                                "Living Room",
+                                "Bedroom",
+                              ].includes(room.roomname)}
+                              size="small"
+                              // label={!["Bathroom", "Kitchen", "Dining", "Living Room"].includes(room.roomType) && "Room Type"}
+                              label="Room Type"
+                              sx={{ fontFamily: "Poppins, sans-serif" }}
+                            />
+                          </Grid>
+                          <Grid item xs={12} md={4}>
+                            <TextField
+                              type="number"
+                              value={room.quantity}
+                              label="Quantity"
+                              onChange={(e) =>
+                                handleQuantityChange(
+                                  columnIndex * roomsPerColumn + roomIndex,
+                                  e.target.value
+                                )
+                              }
+                              fullWidth
+                              size="small"
+                              sx={{ fontFamily: "Poppins, sans-serif" }}
+                              disabled={!isEditing}
+                            />
+                          </Grid>
+                          <Grid item xs={12} md={1}>
+                            {/* Remove Button */}
+                            {![
+                              "Bathroom",
+                              "Living Room",
+                              "Kitchen",
+                              "Dining",
+                            ].includes(room.roomname) && (
+                              <IconButton
+                                onClick={() => {
+                                  handleDeleteUnitRoom(
+                                    room.unitroomid,
+                                    room.roomname
+                                  );
+                                  // alert(room.unitroomid);
+                                }}
+                                sx={{
+                                  position: "absolute",
+                                  right: 0,
+                                  color: "error.main",
+                                }}
+                                disabled={!isEditing}
+                              >
+                                <RemoveCircleIcon />
+                              </IconButton>
+                            )}
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    ))}
+                  </Grid>
+                ))}
+                <Button
+                  variant="outlined"
+                  startIcon={<AddIcon />}
+                  onClick={addRoom}
+                  sx={{ ml: 1, mt: 1, fontFamily: "Poppins" }}
+                  disabled={!isEditing}
+                >
+                  Add New Room
+                </Button>
+              </Grid>
+            </Grid>
+            {/* Bed Details */}
+            <Grid
+              item
+              xs={12}
+              md={4}
               sx={{
-                fontWeight: "bold",
-                mb: 2,
-                fontFamily: "Poppins, sans-serif",
+                p: 2,
+                border: "1px solid #ccc",
+                borderRadius: "0.5rem",
+                pl: 3,
               }}
             >
-              Bed Details
-            </Typography>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-              }}
-            >
-              {["singleBed", "bunkBed", "largeBed", "superLargeBed"].map(
-                (bedType) => (
-                  <div
-                    key={bedType}
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      paddingBottom: "1rem",
-                    }}
-                  >
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  mb: 2,
+                  fontFamily: "Poppins, sans-serif",
+                }}
+              >
+                Bed Details
+              </Typography>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                }}
+              >
+                {["singleBed", "bunkBed", "largeBed", "superLargeBed"].map(
+                  (bedType) => (
+                    <div
+                      key={bedType}
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingBottom: "1rem",
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={bedDetails[bedType]?.selected || false}
+                            onChange={handleBedCheckboxChange(bedType)}
+                            disabled={!isEditing}
+                          />
+                        }
+                        label={bedType
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (str) => str.toUpperCase())}
+                      />
+                      {bedDetails[bedType]?.selected && (
+                        <TextField
+                          type="number"
+                          value={bedDetails[bedType]?.quantity || 0}
+                          onChange={handleBedQuantityChange(bedType)}
+                          style={{ width: "30%" }}
+                          placeholder={`${bedType
+                            .replace(/([A-Z])/g, " $1")
+                            .replace(/^./, (str) =>
+                              str.toUpperCase()
+                            )} Quantity`}
+                          size="small"
+                          disabled={!isEditing}
+                        />
+                      )}
+                    </div>
+                  )
+                )}
+              </div>
+            </Grid>
+          </Grid>
+          {/* Amenities */}
+          <Grid container sx={{ mt: 2 }}>
+            <Grid item xs={12}>
+              <Typography
+                variant="standard"
+                htmlFor="amenities"
+                sx={{
+                  fontFamily: "Poppins, sans-serif",
+                  marginBottom: "1rem",
+                  fontWeight: "bold",
+                }}
+              >
+                In-Room Amenities
+              </Typography>
+              <Grid container spacing={1}>
+                {[
+                  "Toiletries",
+                  "Mini Bar",
+                  "Refrigerator",
+                  "Airconditioning",
+                  "Workspace",
+                  "Microwave",
+                  "Wifi",
+                  "Television",
+                ].map((amenity, index) => (
+                  <Grid item xs={6} md={3} key={index}>
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={bedDetails[bedType]?.selected || false}
-                          onChange={handleBedCheckboxChange(bedType)}
+                          checked={selectedAmenities.includes(amenity)}
+                          onChange={handleAmenityChange}
+                          name={amenity}
+                          sx={{
+                            fontFamily: "Poppins, sans-serif",
+                            margin: "0",
+                          }}
                           disabled={!isEditing}
                         />
                       }
-                      label={bedType
-                        .replace(/([A-Z])/g, " $1")
-                        .replace(/^./, (str) => str.toUpperCase())}
+                      label={amenity}
+                      sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
                     />
-                    {bedDetails[bedType]?.selected && (
-                      <TextField
-                        type="number"
-                        value={bedDetails[bedType]?.quantity || 0}
-                        onChange={handleBedQuantityChange(bedType)}
-                        style={{ width: "30%" }}
-                        placeholder={`${bedType
-                          .replace(/([A-Z])/g, " $1")
-                          .replace(/^./, (str) => str.toUpperCase())} Quantity`}
-                        size="small"
-                        disabled={!isEditing}
-                      />
-                    )}
-                  </div>
-                )
-              )}
-            </div>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
-        {/* Amenities */}
-        <Grid container sx={{ mt: 2 }}>
+          {/* Services Section */}
           <Grid item xs={12}>
             <Typography
               variant="standard"
-              htmlFor="amenities"
+              htmlFor="services"
               sx={{
                 fontFamily: "Poppins, sans-serif",
-                marginBottom: "1rem",
+                marginBottom: "2rem",
                 fontWeight: "bold",
               }}
             >
-              In-Room Amenities
+              In-Room Services
             </Typography>
             <Grid container spacing={1}>
               {[
-                "Toiletries",
-                "Mini Bar",
-                "Refrigerator",
-                "Airconditioning",
-                "Workspace",
-                "Microwave",
-                "Wifi",
-                "Television",
-              ].map((amenity, index) => (
+                "Housekeeping",
+                "Car Rental",
+                "Laundry",
+                "Breakfast",
+                "24 Hours Front Desk",
+                "Pet Friendly",
+                "Shuttle Service",
+                "Concierge Service",
+                "Room Service",
+              ].map((service, index) => (
                 <Grid item xs={6} md={3} key={index}>
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={selectedAmenities.includes(amenity)}
-                        onChange={handleAmenityChange}
-                        name={amenity}
-                        sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
+                        checked={selectedServices.includes(service)}
+                        onChange={handleServiceChange}
+                        name={service}
                         disabled={!isEditing}
                       />
                     }
-                    label={amenity}
+                    label={service}
                     sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
                   />
                 </Grid>
               ))}
             </Grid>
-          </Grid>
-        </Grid>
-        {/* Services Section */}
-        <Grid item xs={12}>
-          <Typography
-            variant="standard"
-            htmlFor="services"
-            sx={{
-              fontFamily: "Poppins, sans-serif",
-              marginBottom: "2rem",
-              fontWeight: "bold",
-            }}
-          >
-            In-Room Services
-          </Typography>
-          <Grid container spacing={1}>
-            {[
-              "Housekeeping",
-              "Car Rental",
-              "Laundry",
-              "Breakfast",
-              "24 Hours Front Desk",
-              "Pet Friendly",
-              "Shuttle Service",
-              "Concierge Service",
-              "Room Service",
-            ].map((service, index) => (
-              <Grid item xs={6} md={3} key={index}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selectedServices.includes(service)}
-                      onChange={handleServiceChange}
-                      name={service}
-                      disabled={!isEditing}
-                    />
-                  }
-                  label={service}
-                  sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
-                />
-              </Grid>
-            ))}
-          </Grid>
-          {/* Photo Upload Section */}
-          <Box
-            mt={3}
-            sx={{
-              border: "1px solid #ccc",
-              padding: "1rem",
-              borderRadius: "0.8rem",
-            }}
-          >
-            <Typography
-              sx={{ fontFamily: "Poppins, sans-serif", fontWeight: "bold" }}
+            {/* Photo Upload Section */}
+            <Box
+              mt={3}
+              sx={{
+                border: "1px solid #ccc",
+                padding: "1rem",
+                borderRadius: "0.8rem",
+              }}
             >
-              Room Photos
-            </Typography>
-            <input
-              accept="image/*"
-              id="photo-upload"
-              type="file"
-              multiple
-              onChange={handlePhotoUpload}
-              style={{ display: "none" }}
-              disabled={!isEditing}
-            />
-            <label htmlFor="photo-upload">
-              <Button
-                variant="outlined"
-                component="span"
-                sx={{ mt: 2 }}
-                disabled={!isEditing}
+              <Typography
+                sx={{ fontFamily: "Poppins, sans-serif", fontWeight: "bold" }}
               >
-                Upload Photos
-              </Button>
-            </label>
+                Room Photos
+              </Typography>
+              <input
+                accept="image/*"
+                id="photo-upload"
+                type="file"
+                multiple
+                onChange={handlePhotoUpload}
+                style={{ display: "none" }}
+                disabled={!isEditing}
+              />
+              <label htmlFor="photo-upload">
+                <Button
+                  variant="outlined"
+                  component="span"
+                  sx={{ mt: 2 }}
+                  disabled={!isEditing}
+                >
+                  Upload Photos
+                </Button>
+              </label>
 
-            <Grid container spacing={2} mt={2}>
-              {photos.map((photoUrl, idx) => {
-                // console.log("Photo URL:", photos); // Verify each URL
-                return (
-                  <Grid item xs={6} sm={4} md={3} key={idx}>
-                    <Card sx={{ position: "relative" }}>
-                      <CardMedia
-                        component="img"
-                        alt={`Room Photo ${idx + 1}`}
-                        height="140"
-                        image={photoUrl.src}
-                      />
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handlePhotoDelete(idx, photoUrl.id)}
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          color: "red",
-                          backgroundColor: "rgba(255, 255, 255, 0.7)",
-                        }}
-                        disabled={!isEditing}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Card>
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Box>
-        </Grid>
+              <Grid container spacing={2} mt={2}>
+                {photos.map((photoUrl, idx) => {
+                  // console.log("Photo URL:", photos); // Verify each URL
+                  return (
+                    <Grid item xs={6} sm={4} md={3} key={idx}>
+                      <Card sx={{ position: "relative" }}>
+                        <CardMedia
+                          component="img"
+                          alt={`Room Photo ${idx + 1}`}
+                          height="140"
+                          image={photoUrl.src}
+                        />
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handlePhotoDelete(idx, photoUrl.id)}
+                          sx={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            color: "red",
+                            backgroundColor: "rgba(255, 255, 255, 0.7)",
+                          }}
+                          disabled={!isEditing}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Card>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </Box>
+          </Grid>
 
-        <Button
-          onClick={handleSubmit}
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, fontFamily: "Poppins, sans-serif" }}
-        >
-          Update Room
-        </Button>
-      </AccordionDetails>
-      
-    
-    <LoadingModal open={isLoading} />
-    </Accordion>
-    <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity="success"
-            sx={{ width: "100%" }}
+          <Button
+            onClick={handleSubmit}
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, fontFamily: "Poppins, sans-serif" }}
           >
+            Update Room
+          </Button>
+        </AccordionDetails>
+
+        <LoadingModal open={isLoading} />
+      </Accordion>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           Basic Info saved successfully!
-          </Alert>
-        </Snackbar>
+        </Alert>
+      </Snackbar>
     </>
-    
   );
 }

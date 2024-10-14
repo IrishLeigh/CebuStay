@@ -148,7 +148,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     try {
       const formattedDate = selectedDate.toISOString().split("T")[0];
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           birthday: formattedDate || null,
@@ -190,154 +190,158 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <div className="account-id-cntr">
             <div className="account-id-title">Personal Information</div>
             <div className="account-id-desc">
-              Your email address is essential for managing your Cebustay account. It
-              enables you to access your profile, receive booking confirmations, and
-              stay informed with the latest updates and offers. Keeping your email
-              current ensures you don't miss any important communications.
+              Your email address is essential for managing your Cebustay
+              account. It enables you to access your profile, receive booking
+              confirmations, and stay informed with the latest updates and
+              offers. Keeping your email current ensures you don't miss any
+              important communications.
             </div>
           </div>
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ width: "100%", p: "2rem" }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Birthday"
-              value={birthday ? dayjs(birthday) : null}
-              onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  required
-                  sx={{
-                    mb: 2, // This sets the bottom margin to 2
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  
-                  }}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: !isMobile && (
-                      <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                        <CalendarToday />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              )}
-              maxDate={dayjs().subtract(18, "year")}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Birthday"
+                value={birthday ? dayjs(birthday) : null}
+                onChange={(date) =>
+                  setBirthday(date ? date.format("YYYY-MM-DD") : "")
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    required
+                    sx={{
+                      mb: 2, // This sets the bottom margin to 2
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "8px",
+                      },
+                    }}
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: !isMobile && (
+                        <InputAdornment
+                          position="start"
+                          sx={{ marginRight: "1rem" }}
+                        >
+                          <CalendarToday />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+                maxDate={dayjs().subtract(18, "year")}
+              />
+            </LocalizationProvider>
+
+            <TextField
+              required
+              id="outlined-required-country"
+              select
+              label="Country"
+              value={country}
+              onChange={handleCountryChange}
+              fullWidth
+              sx={{
+                mt: 2,
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                },
+              }}
+              InputProps={{
+                startAdornment: !isMobile && (
+                  <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                    <Public />
+                  </InputAdornment>
+                ),
+              }}
+            >
+              {countries.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              required
+              id="outlined-required-phone"
+              label="Phone Number"
+              value={phone}
+              onChange={handlePhoneChange}
+              fullWidth
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                },
+              }}
+              InputProps={{
+                startAdornment: !isMobile && (
+                  <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                    <Phone sx={{ marginRight: "0.5rem" }} />
+                    {phoneNumberPrefix}{" "}
+                    {/* Displays the country code (+63) next to the icon */}
+                  </InputAdornment>
+                ),
+              }}
+              inputProps={{
+                maxLength: 11, // Limit input to 11 digits (excluding the prefix)
+              }}
+              helperText={
+                phone && phone.length !== 10
+                  ? "Phone number must be 10 digits"
+                  : ""
+              }
+              error={phone && phone.length > 0 && phone.length !== 10}
             />
-          </LocalizationProvider>
 
-
-        <TextField
-          required
-          id="outlined-required-country"
-          select
-          label="Country"
-          value={country}
-          onChange={handleCountryChange}
-          fullWidth
-          sx={{
-            mt:2,
-            mb: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-            },
-          }}
-          InputProps={{
-            startAdornment: !isMobile && (
-              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <Public />
-              </InputAdornment>
-            ),
-          }}
-        >
-          {countries.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <TextField
-          required
-          id="outlined-required-phone"
-          label="Phone Number"
-          value={phone}
-          onChange={handlePhoneChange}
-          fullWidth
-          sx={{
-            mb: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-            },
-          }}
-          InputProps={{
-            startAdornment: !isMobile && (
-              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <Phone sx={{ marginRight: "0.5rem" }} />
-                {phoneNumberPrefix}{" "}
-                {/* Displays the country code (+63) next to the icon */}
-              </InputAdornment>
-            ),
-          }}
-          inputProps={{
-            maxLength: 11, // Limit input to 11 digits (excluding the prefix)
-          }}
-          helperText={
-            phone && phone.length !== 10 ? "Phone number must be 10 digits" : ""
-          }
-          error={phone && phone.length > 0 && phone.length !== 10}
-        />
-
-          <div >
-            <button
-              className={`save-btn ${
-                isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
-              }`}
-              onClick={handleSaveInfo}
-              disabled={!isChanged}
-            >
-              Save
-            </button>
-            <button
-              className={`cancel-btn ${
-                isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
-              }`}
-              onClick={handleCancel}
-              disabled={!isChanged}
-            >
-              Cancel
-            </button>
-          </div>
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={3000}
-            onClose={handleCloseSnackbar}
-          >
-            <Alert
+            <div>
+              <button
+                className={`save-btn ${
+                  isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+                }`}
+                onClick={handleSaveInfo}
+                disabled={!isChanged}
+              >
+                Save
+              </button>
+              <button
+                className={`cancel-btn ${
+                  isChanged
+                    ? "cancel-btn-withChanges"
+                    : "cancel-btn-withoutChanges"
+                }`}
+                onClick={handleCancel}
+                disabled={!isChanged}
+              >
+                Cancel
+              </button>
+            </div>
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={3000}
               onClose={handleCloseSnackbar}
-              severity={snackbarSeverity}
-              sx={{ width: "100%" }}
             >
-              {snackbarMessage}
-            </Alert>
-          </Snackbar>
- 
+              <Alert
+                onClose={handleCloseSnackbar}
+                severity={snackbarSeverity}
+                sx={{ width: "100%" }}
+              >
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
           </Box>
-      
         </Grid>
       </Grid>
 
-
       {/* Email, Birthday, Country, and Phone Number */}
-    
     </Paper>
   );
 }

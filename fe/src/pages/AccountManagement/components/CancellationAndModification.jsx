@@ -65,10 +65,10 @@ const CancellationAndModification = ({
       if (!selectedBooking) return;
       console.log("Selected Booking:", selectedBooking);
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getproperty`, {
+        const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getproperty`, {
           params: { propertyid: selectedBooking.propertyid },
         });
-        const resall = await axios.get(`http://127.0.0.1:8000/api/property/bookinglist`, {
+        const resall = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/property/bookinglist`, {
           params: { propertyid: selectedBooking.propertyid },
         });
         setProperties(response.data);
@@ -269,7 +269,7 @@ const CancellationAndModification = ({
 
     if (properties.property_bookingpolicy.isModificationPolicy === 1) {
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
+        const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/checkbooking", {
           checkin_date: formatDate(checkInDate),  // Format check-in date
           checkout_date: formatDate(checkOutDate), // Format check-out date
           guest_count: selectedBooking.guests,
@@ -285,7 +285,7 @@ const CancellationAndModification = ({
             const stayLength = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
             console.log("Stay Length sample");
             console.log("Stay Length: ", stayLength);
-            const response = await axios.put(`http://127.0.0.1:8000/api/updatebooking`, {
+            const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updatebooking`, {
               bookingid: selectedBooking.id,
               checkin_date: bookingDetails.checkIn.toISOString().split('T')[0],
               checkout_date: bookingDetails.checkOut.toISOString().split('T')[0],
@@ -356,7 +356,7 @@ const CancellationAndModification = ({
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/refund-payment', {
+      const response = await axios.post('https://whitesmoke-shark-473197.hostingersite.com/api/refund-payment', {
         bookingid: selectedBooking.id,
         // percentage: properties.property_bookingpolicy.cancellationCharge ? properties.property_bookingpolicy.CancellationCharge : 100,
         percentage: properties.property_bookingpolicy.CancellationCharge || 100,

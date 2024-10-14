@@ -59,7 +59,7 @@ export default function AccountID({ profile, onUpdateProfile }) {
 
     try {
       await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           firstname: firstName,
@@ -121,10 +121,7 @@ export default function AccountID({ profile, onUpdateProfile }) {
               }}
               InputProps={{
                 startAdornment: !isMobile && (
-                  <InputAdornment
-                    position="start"
-                    sx={{ marginRight: "1rem" }}
-                  >
+                  <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
                     <AccountCircle />
                   </InputAdornment>
                 ),
@@ -144,10 +141,7 @@ export default function AccountID({ profile, onUpdateProfile }) {
               }}
               InputProps={{
                 startAdornment: !isMobile && (
-                  <InputAdornment
-                    position="start"
-                    sx={{ marginRight: "1rem" }}
-                  >
+                  <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
                     <AccountCircle />
                   </InputAdornment>
                 ),

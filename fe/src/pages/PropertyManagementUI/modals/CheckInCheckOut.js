@@ -64,10 +64,10 @@ const CheckInCheckOut = ({
   };
 
   const formatDate = (dateStr) => {
-    if (!dateStr) return 'N/A'; // Handle cases where date is not available
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateStr).toLocaleDateString('en-US', options);
-};
+    if (!dateStr) return "N/A"; // Handle cases where date is not available
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateStr).toLocaleDateString("en-US", options);
+  };
 
   const onCheckOut = () => {
     if (editedItem.status === "Confirmed") {
@@ -114,14 +114,14 @@ const CheckInCheckOut = ({
 
         if (item.bookingid) {
           response = await axios.get(
-            "http://127.0.0.1:8000/api/getbookerandguest",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/getbookerandguest",
             {
               params: { bookingid: id },
             }
           );
         } else {
           response = await axios.get(
-            "http://127.0.0.1:8000/api/getbookerandguest",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/getbookerandguest",
             {
               params: { bhid: id },
             }
@@ -165,8 +165,9 @@ const CheckInCheckOut = ({
       bookingAmount: updatedBookingAmount,
       payableAtCheckIn: updatedPayableAtCheckIn,
       payableNow: updatedPayableNow,
-      forDetails: `For ${nights} night${nights > 1 ? "s" : ""}, ${rooms} room${rooms > 1 ? "s" : ""
-        }, and ${guests} guest${guests > 1 ? "s" : ""}`,
+      forDetails: `For ${nights} night${nights > 1 ? "s" : ""}, ${rooms} room${
+        rooms > 1 ? "s" : ""
+      }, and ${guests} guest${guests > 1 ? "s" : ""}`,
     }));
   }, [bookingDetails, basePrice, extraGuestCost, bookingCharge]);
 
@@ -214,11 +215,12 @@ const CheckInCheckOut = ({
     console.log("Checking in: ", item);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/setcheckin", {
-        bookingid: item.bookingid
-      }
+        "https://whitesmoke-shark-473197.hostingersite.com/api/setcheckin",
+        {
+          bookingid: item.bookingid,
+        }
       );
-      console.log('Response:', response.data);
+      console.log("Response:", response.data);
       window.location.reload();
     } catch (error) {
       console.log(error);
@@ -229,12 +231,13 @@ const CheckInCheckOut = ({
     console.log("Checking in: ", item);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/refundsecurity", {
-        bhid: item.bhid
-      }
+        "https://whitesmoke-shark-473197.hostingersite.com/api/refundsecurity",
+        {
+          bhid: item.bhid,
+        }
       );
-      console.log('Response:', response.data);
-      if(response.data.status === 'success') {
+      console.log("Response:", response.data);
+      if (response.data.status === "success") {
         window.location.reload();
       }
     } catch (error) {
@@ -246,13 +249,13 @@ const CheckInCheckOut = ({
     console.log("Checking out: ", item);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/setcheckout", {
-        bookingid: item.bookingid
-      }
+        "https://whitesmoke-shark-473197.hostingersite.com/api/setcheckout",
+        {
+          bookingid: item.bookingid,
+        }
       );
-      console.log('Response:', response.data);
+      console.log("Response:", response.data);
       window.location.reload();
-
     } catch (error) {
       console.log(error);
     }
@@ -341,7 +344,9 @@ const CheckInCheckOut = ({
                   <th style={{ fontSize: "0.9rem" }}>Guests</th>
                   <th style={{ fontSize: "0.9rem" }}>Status</th>
                   <th style={{ fontSize: "0.9rem" }}>Payment</th>
-                  {item.unit_type === 'Monthly Term' && <th style={{ fontSize: "0.9rem" }}>Due Date</th>}
+                  {item.unit_type === "Monthly Term" && (
+                    <th style={{ fontSize: "0.9rem" }}>Due Date</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -383,7 +388,11 @@ const CheckInCheckOut = ({
                   <td style={{ fontSize: "0.8rem" }}>
                     {editedItem.total_price}
                   </td>
-                  {item.unit_type === 'Monthly Term' && <td style={{ fontSize: "0.8rem" }}>{formatDate(editedItem.due_date)}</td>}
+                  {item.unit_type === "Monthly Term" && (
+                    <td style={{ fontSize: "0.8rem" }}>
+                      {formatDate(editedItem.due_date)}
+                    </td>
+                  )}
                 </tr>
               </tbody>
             </table>
@@ -443,192 +452,203 @@ const CheckInCheckOut = ({
         </div>
 
         <div className="right-section flex-col p-6 bg-background rounded-lg shadow-md">
-        {item.unit_type === 'Monthly Term' ? (<>
-          <div>
-            <Typography variant="h6" color="primary" ml={1} pt={0.5}>
-              <PriceCheckIcon sx={{ color: "primary.main", mr: 1 }} />
-              Invoice Summary:
-            </Typography>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" color="textSecondary">
-                Base price per month
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {formatPrice(item.min_price / 1.12) || "N/A"}
-              </Typography>
-            </Stack>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" color="textSecondary">
-              X {item.stay_length / 31} total months booked
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {formatPrice((item.stay_length / 31) * (item.min_price / 1.12)) || "N/A"}
-              </Typography>
-            </Stack>
-            {/* Conditional rendering for Security Deposit */}
-
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" color="textSecondary">
-                VAT (12%)
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {formatPrice(item.total_price * 0.12) || "N/A"}
-              </Typography>
-            </Stack>
-            {monthlyLengthStay !== 1 && (
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                m={1}
-              >
-                {item.securityDeposit === 0 ? (<>
+          {item.unit_type === "Monthly Term" ? (
+            <>
+              <div>
+                <Typography variant="h6" color="primary" ml={1} pt={0.5}>
+                  <PriceCheckIcon sx={{ color: "primary.main", mr: 1 }} />
+                  Invoice Summary:
+                </Typography>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
                   <Typography variant="body1" color="textSecondary">
-                  Security Deposit
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  {formatPrice(item.min_price) || "N/A"}
-                </Typography></>
-                 
-                ):(<>
-                <Typography variant="body1" color="textSecondary">
-                  Security Deposit
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  {0}
-                </Typography></>)}
-                
-              </Stack>
-            )}
-            <Divider sx={{ my: 1 }} />
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" fontWeight="bold">
-                Total Amount
-              </Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {formatPrice(item.total_price) || "N/A"}
-              </Typography>
-            </Stack>
-          </div>
-          <div>
-            {item.status === "Checked out" && item.securityDeposit === 0 && (
-              <button className="payout-btn" 
-              // onClick={() => handleSecurityDeposit(item)}>
-              onClick={handlePayoutButtonClick} >
-              Payout Security Deposit
-            </button>
-            )}
-          
-            {showPayoutModal && (
-              <PayoutSecurityDeposit
-              bookhistoryid={item?.bhid || 0}
-              guestName={item?.guestname || 'Guest Name'} // Default value in case of null/undefined
-              propertyName={item?.property_name || 'Property Name'}
-              checkoutDate={item?.checkout_date || 'Date'}
-              securityDepo={item?.min_price || 0}
-              onClose={handleCloseModal}
-              onConfirm={handleConfirmPayout}
-              />
-            )}
-          </div>
+                    Base price per month
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {formatPrice(item.min_price / 1.12) || "N/A"}
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
+                  <Typography variant="body1" color="textSecondary">
+                    X {item.stay_length / 31} total months booked
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {formatPrice(
+                      (item.stay_length / 31) * (item.min_price / 1.12)
+                    ) || "N/A"}
+                  </Typography>
+                </Stack>
+                {/* Conditional rendering for Security Deposit */}
 
-        </>):(<>
-          <div>
-            <Typography variant="h6" color="primary" ml={1} pt={0.5}>
-              <PriceCheckIcon sx={{ color: "primary.main", mr: 1 }} />
-              Invoice Summary:
-            </Typography>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" color="textSecondary">
-                Base price per day
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {formatPrice(item.min_price / 1.12) || "N/A"}
-              </Typography>
-            </Stack>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" color="textSecondary">
-                X {item.stay_length} total days booked
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {formatPrice((item.stay_length) * (item.min_price / 1.12)) || "N/A"}
-              </Typography>
-            </Stack>
-            {/* Conditional rendering for Security Deposit */}
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
+                  <Typography variant="body1" color="textSecondary">
+                    VAT (12%)
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {formatPrice(item.total_price * 0.12) || "N/A"}
+                  </Typography>
+                </Stack>
+                {monthlyLengthStay !== 1 && (
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    m={1}
+                  >
+                    {item.securityDeposit === 0 ? (
+                      <>
+                        <Typography variant="body1" color="textSecondary">
+                          Security Deposit
+                        </Typography>
+                        <Typography variant="body1" color="textSecondary">
+                          {formatPrice(item.min_price) || "N/A"}
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="body1" color="textSecondary">
+                          Security Deposit
+                        </Typography>
+                        <Typography variant="body1" color="textSecondary">
+                          {0}
+                        </Typography>
+                      </>
+                    )}
+                  </Stack>
+                )}
+                <Divider sx={{ my: 1 }} />
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
+                  <Typography variant="body1" fontWeight="bold">
+                    Total Amount
+                  </Typography>
+                  <Typography variant="body1" fontWeight="bold">
+                    {formatPrice(item.total_price) || "N/A"}
+                  </Typography>
+                </Stack>
+              </div>
+              <div>
+                {item.status === "Checked out" &&
+                  item.securityDeposit === 0 && (
+                    <button
+                      className="payout-btn"
+                      // onClick={() => handleSecurityDeposit(item)}>
+                      onClick={handlePayoutButtonClick}
+                    >
+                      Payout Security Deposit
+                    </button>
+                  )}
 
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" color="textSecondary">
-                VAT (12%)
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {formatPrice(item.total_price * 0.12) || "N/A"}
-              </Typography>
-            </Stack>
-            {monthlyLengthStay !== 1 && (
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                m={1}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Security Deposit
+                {showPayoutModal && (
+                  <PayoutSecurityDeposit
+                    bookhistoryid={item?.bhid || 0}
+                    guestName={item?.guestname || "Guest Name"} // Default value in case of null/undefined
+                    propertyName={item?.property_name || "Property Name"}
+                    checkoutDate={item?.checkout_date || "Date"}
+                    securityDepo={item?.min_price || 0}
+                    onClose={handleCloseModal}
+                    onConfirm={handleConfirmPayout}
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <Typography variant="h6" color="primary" ml={1} pt={0.5}>
+                  <PriceCheckIcon sx={{ color: "primary.main", mr: 1 }} />
+                  Invoice Summary:
                 </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  +{formatPrice(item.min_price) || "N/A"}
-                </Typography>
-              </Stack>
-            )}
-            <Divider sx={{ my: 1 }} />
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              m={1}
-            >
-              <Typography variant="body1" fontWeight="bold">
-                Total Amount
-              </Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {formatPrice(item.total_price)}
-              </Typography>
-            </Stack>
-            {/* {!showPayoutButton && (
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
+                  <Typography variant="body1" color="textSecondary">
+                    Base price per day
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {formatPrice(item.min_price / 1.12) || "N/A"}
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
+                  <Typography variant="body1" color="textSecondary">
+                    X {item.stay_length} total days booked
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {formatPrice(item.stay_length * (item.min_price / 1.12)) ||
+                      "N/A"}
+                  </Typography>
+                </Stack>
+                {/* Conditional rendering for Security Deposit */}
+
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
+                  <Typography variant="body1" color="textSecondary">
+                    VAT (12%)
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {formatPrice(item.total_price * 0.12) || "N/A"}
+                  </Typography>
+                </Stack>
+                {monthlyLengthStay !== 1 && (
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    m={1}
+                  >
+                    <Typography variant="body1" color="textSecondary">
+                      Security Deposit
+                    </Typography>
+                    <Typography variant="body1" color="textSecondary">
+                      +{formatPrice(item.min_price) || "N/A"}
+                    </Typography>
+                  </Stack>
+                )}
+                <Divider sx={{ my: 1 }} />
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  m={1}
+                >
+                  <Typography variant="body1" fontWeight="bold">
+                    Total Amount
+                  </Typography>
+                  <Typography variant="body1" fontWeight="bold">
+                    {formatPrice(item.total_price)}
+                  </Typography>
+                </Stack>
+                {/* {!showPayoutButton && (
             <button
               className="cancel-booking-btn w-full mt-4"
               onClick={() => setIsSuccess(true)}
@@ -636,10 +656,9 @@ const CheckInCheckOut = ({
               Cancel Booking
             </button>
           )} */}
-          </div>
-          
-        </>)}
-          
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
