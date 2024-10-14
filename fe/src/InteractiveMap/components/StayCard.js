@@ -18,7 +18,7 @@ export default function StayCard({ stay, onClose }) {
     console.log("Query Params:", queryParams);
   
     // Navigate to the property page with query parameters
-    navigate(`/property/${propertyid}?${queryParams}`);
+    navigate(`/accommodation/property/${propertyid}?${queryParams}`);
   };
 
   const handleTabChange = (tab) => {

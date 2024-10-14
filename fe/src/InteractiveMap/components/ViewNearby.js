@@ -135,7 +135,7 @@ console.log("Nearby Locations:", nearbyLocations);
                   width: 250, // Fixed width for cards
                 }}
               >
-                <PropertyCard nearbyLocation={[nearbyLocation]} />
+                <PropertyCard nearbyLocation={[nearbyLocation]}  />
               </Box>
             ))}
           </Box>
