@@ -938,6 +938,12 @@ export default function AccommodationRegistration({
                                 setIsSuccessModalOpen(true);
                               }
                             }
+                            const res = await axios.post(
+                              `https://whitesmoke-shark-473197.hostingersite.com/api/setpropertyerror/${propertyId}`,
+                              {
+                                button: 0,
+                              }
+                            );
                           }
                         }
                       }
