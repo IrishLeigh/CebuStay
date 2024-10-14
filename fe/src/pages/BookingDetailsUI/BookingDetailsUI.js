@@ -69,8 +69,6 @@ function BookingDetailsUI() {
   }
 }, []);
 
-
-
   // Fetch property and user data
   useEffect(() => {
     const fetchPropertyData = async () => {
@@ -101,7 +99,6 @@ function BookingDetailsUI() {
       }
     };
 
- 
 
     fetchPropertyData();
 

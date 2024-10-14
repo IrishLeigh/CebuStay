@@ -73,8 +73,11 @@ function App() {
             console.log ("Expired token. Automatic Logout");
           }else {
             setUser(res.data);
-            //local storage here
-            
+            localStorage.setItem("email", res.data.data.email);
+            localStorage.setItem("userid", res.data.data.userid);
+            localStorage.setItem("firstname", res.data.data.firstname);
+            localStorage.setItem("lastname", res.data.data.lastname);
+            localStorage.setItem("role", res.data.data.role)
           }
           
         })
@@ -172,6 +175,7 @@ function App() {
           localStorage.removeItem("firsname");
           localStorage.removeItem("lastname");
           localStorage.removeItem("userid");
+          localStorage.removeItem("role");
           setUser(null);
           
           // Optionally, reset any user-related state here if applicable
@@ -191,6 +195,7 @@ function App() {
           localStorage.removeItem("firsname");
           localStorage.removeItem("lastname");
           localStorage.removeItem("userid");
+
           setUser(null);
           
           // Optionally, reset any user-related state here if applicable
@@ -235,14 +240,14 @@ console.log("IsPropertyListed", isPropertyListed);
             <Route path="forgot-password/otp" element={<OTP />} />
             <Route path="forgot-password" element={<ForgotPass />} />
             <Route path="accommodation" element={<PropertyListUI />} />
-            <Route path="property/:propertyid" element={<ViewPropertyUI />} />
+            <Route path="accommodation/property/:propertyid" element={<ViewPropertyUI />} />
 
             {/* Private Routes */}
             <Route element={<PrivateRoutes />}>
               <Route path="account" element={<AccountManagement />} />
               <Route
                 path="list-property/create-listing"
-                element={<AccommodationRegistration  onPropertyListedClick={handleListProperty}/>}
+                element={<AccommodationRegistration  onPropertyListedClick={handleListProperty} handleLogout={handleLogout}/>}
               />
               <Route
                 path="list-property"

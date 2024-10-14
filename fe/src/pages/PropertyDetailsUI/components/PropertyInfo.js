@@ -9,15 +9,14 @@ import PropertyViewServices from "./PropertyViewServices";
 import PropertyHouseRules from "./PropertyHouseRules";
 import PropertyCancellation from "./Cancellation";
 
-export default function PropertyInfo({ propertyImages, propertyInfo , galleryImages}) {
+export default function PropertyInfo({ propertyImages, propertyInfo, galleryImages }) {
   const [propertyImg, setPropertyImg] = useState([]);
   const [rooms, setTransformedRooms] = useState([]);
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    if (propertyImages, galleryImages && propertyInfo && propertyInfo.property_unitdetails) {
-      setPropertyImg(propertyImages );
-
+    if (propertyImages && galleryImages && propertyInfo && propertyInfo.property_unitdetails) {
+      setPropertyImg(propertyImages);
 
       const allRooms = [];
 
@@ -26,13 +25,11 @@ export default function PropertyInfo({ propertyImages, propertyInfo , galleryIma
         const unitbeds = unit.unitbeds || [];
 
         const detailedRooms = unitbeds.map((bedroom, index) => {
-          const bedTypes = Object.entries(bedroom.beds || {}).map(
-            ([type, count]) => (
-              <div key={type}>
-                {count} {type}
-              </div>
-            )
-          );
+          const bedTypes = Object.entries(bedroom.beds || {}).map(([type, count]) => (
+            <div key={type}>
+              {count} {type}
+            </div>
+          ));
           const name = `Bedroom #${index + 1}`;
           return { name, details: bedTypes };
         });
@@ -53,12 +50,9 @@ export default function PropertyInfo({ propertyImages, propertyInfo , galleryIma
     }
   }, [propertyImages, propertyInfo]);
 
-  const isSingleUnit =
-    propertyInfo?.property_unitdetails &&
-    propertyInfo.property_unitdetails.length === 1;
+  const isSingleUnit = propertyInfo?.property_unitdetails && propertyInfo.property_unitdetails.length === 1;
 
   useEffect(() => {
-    // Set the default section based on the property type
     if (isSingleUnit) {
       setActiveSection("gallery");
     } else {
@@ -103,59 +97,188 @@ export default function PropertyInfo({ propertyImages, propertyInfo , galleryIma
       }
     }
   };
-  console.log("galleryImages NASAD NI SA IKA DUHA NGA PARENT:", galleryImages);
 
   return (
-    <div >
-      <Box className="sort-menu">
-        <button className="sort-btn">View As</button>
-        {isSingleUnit && (
-          <>
-            <button
-              className="sort-btn"
-              onClick={() => setActiveSection("gallery")}
-            >
-              Gallery
-            </button>
-            <button
-              className="sort-btn"
-              onClick={() => setActiveSection("details")}
-            >
-              Room Details
-            </button>
-          </>
-        )}
+    <div>
+      <div className="map-filter-cntr">
+        {/* Filter buttons for categories */}
         <button
-          className="sort-btn"
+          className="map-filter-btn"
+          style={{
+            backgroundColor: "#16B4DD",
+            display: "flex",
+            alignItems: "center",
+          }}
+          onClick={() => setActiveSection("gallery")}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "50%",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: "8px",
+            }}
+          >
+            {/* Removed Image */}
+          </div>
+          Gallery
+        </button>
+        
+        {isSingleUnit && (
+          <button
+            className="map-filter-btn"
+            style={{
+              backgroundColor: "#ADC939",
+              display: "flex",
+              alignItems: "center",
+            }}
+            onClick={() => setActiveSection("details")}
+          >
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "50%",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "8px",
+              }}
+            >
+              {/* Removed Image */}
+            </div>
+            Room Details
+          </button>
+        )}
+
+        <button
+          className="map-filter-btn"
+          style={{
+            backgroundColor: "#F9CC41",
+            display: "flex",
+            alignItems: "center",
+          }}
           onClick={() => setActiveSection("amenities")}
         >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "50%",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: "8px",
+            }}
+          >
+            {/* Removed Image */}
+          </div>
           Property Amenities
         </button>
+        
         <button
-          className="sort-btn"
+          className="map-filter-btn"
+          style={{
+            backgroundColor: "#F77D1E",
+            display: "flex",
+            alignItems: "center",
+          }}
           onClick={() => setActiveSection("facilities")}
         >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "50%",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: "8px",
+            }}
+          >
+            {/* Removed Image */}
+          </div>
           Property Facilities
         </button>
+
         <button
-          className="sort-btn"
+          className="map-filter-btn"
+          style={{
+            backgroundColor: "#EE414B",
+            display: "flex",
+            alignItems: "center",
+          }}
           onClick={() => setActiveSection("services")}
         >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "50%",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: "8px",
+            }}
+          >
+            {/* Removed Image */}
+          </div>
           Property Services
         </button>
+
         <button
-          className="sort-btn"
+          className="map-filter-btn"
+          style={{
+            backgroundColor: "#A334CF",
+            display: "flex",
+            alignItems: "center",
+          }}
           onClick={() => setActiveSection("houseRules")}
         >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "50%",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: "8px",
+            }}
+          >
+            {/* Removed Image */}
+          </div>
           Property Rules
         </button>
+
         <button
-          className="sort-btn"
+          className="map-filter-btn"
+          style={{
+            backgroundColor: "#0C58BF",
+            display: "flex",
+            alignItems: "center",
+          }}
           onClick={() => setActiveSection("cancellation")}
         >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "50%",
+              padding: "4px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: "8px",
+            }}
+          >
+            {/* Removed Image */}
+          </div>
           Cancellation
         </button>
-      </Box>
+      </div>
 
       {renderSection()}
     </div>

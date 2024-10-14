@@ -124,7 +124,7 @@ QontoStepIcon.propTypes = {
   completed: PropTypes.bool,
 };
 
-export default function AccommodationRegistration({ onPropertyListedClick }) {
+export default function AccommodationRegistration({ onPropertyListedClick , handleLogout}) {
   const handleSubmit = async () => {
     if (isSingleUnit) {
       //For Single Unit
@@ -211,6 +211,7 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
   //TO DO: Uncomment this line if localstorage does not work
   //const [user, setUser] = useState();
   const userid = localStorage.getItem("userid") || "";
+  const role = localStorage.getItem("role") || "";
 
   // Define steps for flow A
   const stepsFlowA = [
@@ -299,9 +300,19 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
     setIsConfirmationModalOpen(false); // Close the confirmation modal
   };
   const closeSuccessModal = () => {
-    setIsSuccessModalOpen(false); // Close the success modal
-    onPropertyListedClick();
-    navigate("/"); // Redirect to the homepage
+    if(role == "tourist"){
+      setIsSuccessModalOpen(false); // Close the success modal
+      onPropertyListedClick();
+      navigate("/"); // Redirect to the homepage
+      handleLogout();
+
+    }else{
+      setIsSuccessModalOpen(false); // Close the success modal
+      onPropertyListedClick();
+      navigate("/admin/listings"); // Redirect to the homepage
+      
+    }
+    
   };
   const handleCloseCompliance = () => {
     setOpenCompliance(false);
@@ -1443,8 +1454,17 @@ export default function AccommodationRegistration({ onPropertyListedClick }) {
                       userid: userid,
                     }
                   );
-                  console.log("Manager:", manager.data);
-                  console.log("Successfully Registered");
+                  if(manager.data){
+                    console.log("Manager:", manager.data);
+                    console.log("Successfully Registered");
+                    const reserror = await axios.post(
+                      `http://127.0.0.1:8000/api/setpropertyerror/${propertyid}`,
+                      {
+                        button: 0,
+                      }
+                    )
+                  }
+                  
                   // setModalMessage("Successfully Registered");
 
                   localStorage.removeItem("postalCode");

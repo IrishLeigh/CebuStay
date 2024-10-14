@@ -65,9 +65,9 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
         }
 
         // Total monthly price without VAT
-        const totalMonthlyWithoutVAT = parseFloat(securityDeposit) + parseFloat(monthsAdvance);
+        const totalMonthlyWithoutVAT = parseFloat(monthsAdvance) ;
         const calculatedTotalMonthlyVat = (totalMonthlyWithoutVAT * 0.12).toFixed(2); // Calculate VAT
-        const totalMonthlyPriceWithService = totalMonthlyWithoutVAT + parseFloat(calculatedTotalMonthlyVat); // Total with VAT
+        const totalMonthlyPriceWithService = totalMonthlyWithoutVAT + parseFloat(calculatedTotalMonthlyVat) + monthlyPrice; // Total with VAT
 
         // Set state with calculated values
         setMonthlyBasePrice(baseMonthlyPrice.toFixed(2));
@@ -287,14 +287,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
               </Typography>
             </Stack>
             
-            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
-              <Typography variant="body1" color="textSecondary">
-                Security Deposit
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                + {formatPrice(monthlyBasePrice) || 'N/A'}
-              </Typography>
-            </Stack>
+           
 
             <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
               <Typography variant="body1" color="textSecondary">
@@ -302,6 +295,14 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
               </Typography>
               <Typography variant="body1" color="textSecondary">
                 {formatPrice(vatMonthly) || 'N/A'}
+              </Typography>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" m={1}>
+              <Typography variant="body1" color="textSecondary">
+                Security Deposit
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                + {formatPrice(unitData?.unitpricing?.min_price) || 'N/A'}
               </Typography>
             </Stack>
             

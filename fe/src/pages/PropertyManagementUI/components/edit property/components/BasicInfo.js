@@ -370,7 +370,7 @@ console.log ("BASIC INFO NA TRANSFER BA", propertyData);
               disabled= {!isEditing}
               // helperText="You cannot edit this field"
             >
-              <MenuItem value=" Private Residential" sx={{ fontFamily: "Poppins, sans-serif" }}>
+              <MenuItem value="Private Residential" sx={{ fontFamily: "Poppins, sans-serif" }}>
               Private Residential
               </MenuItem>
               <MenuItem
