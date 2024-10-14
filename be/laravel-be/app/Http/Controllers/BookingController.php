@@ -42,6 +42,10 @@ class BookingController extends CORS
         $bookingId = $request->input('bookingId');
         $get_property = Property::where('propertyid', $request->input('propertyid'))->first();
         $get_unit = UnitDetails::where('propertyid', $get_property->propertyid)->first();
+        $g_count = $request->input('guest_count');
+        if ($g_count > $get_unit->guest_capacity) {
+            return response()->json(['message' => 'Guest count exceeds capacity', 'status' => 'error']);
+        }
         $unitid = $get_unit->unitid;
         if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
             return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
@@ -171,10 +175,10 @@ class BookingController extends CORS
             $booking->guest_count = $request->input('guest_count');
             $booking->checkin_date = $checkin;
             $booking->checkout_date = $checkout;
-            if($property->unit_type === 'Monthly Term'){
+            if ($property->unit_type === 'Monthly Term') {
                 $length = $request->input('stay_length') / 31;
                 $booking->total_price = $request->input('total_price') * $length;
-            }else{
+            } else {
                 $booking->total_price = $request->input('total_price') * $request->input('stay_length');
             }
 
@@ -660,8 +664,8 @@ class BookingController extends CORS
             ->leftJoin('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
             ->leftJoin('monthly_payment', 'tbl_booking.bookingid', '=', 'monthly_payment.bookingid')
             ->leftJoin('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-            ->leftJoin('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid') 
-            ->leftJoin('property_pricing', 'unitdetails.proppricingid', '=', 'property_pricing.proppricingid') 
+            ->leftJoin('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid')
+            ->leftJoin('property_pricing', 'unitdetails.proppricingid', '=', 'property_pricing.proppricingid')
             ->where('tbl_booking.userid', $userid)
             ->get();
 
@@ -902,36 +906,36 @@ class BookingController extends CORS
         $paymentId = $payment->pid;
 
         $payout_record = new Payout();
-                    $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                        ->join('users', 'tbl_booking.userid', '=', 'users.userid')
-                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                        ->value('users.userid');
-                    $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                        ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
-                        ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                        ->value('property.propertyid');
-                    $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
-                    $payout_record->userid = $get_manager_userid;
-                    $payout_record->propertyid = $propertyid;
-                    $payout_record->pid = $paymentId;
-                    $payout_record->payout_amount = $booking->total_price - $charge;
-                    $payout_record->status = "Pending";
-                    $payout_record->save();
+        $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+            ->join('users', 'tbl_booking.userid', '=', 'users.userid')
+            ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+            ->value('users.userid');
+        $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
+            ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+            ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
+            ->value('property.propertyid');
+        $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
+        $payout_record->userid = $get_manager_userid;
+        $payout_record->propertyid = $propertyid;
+        $payout_record->pid = $paymentId;
+        $payout_record->payout_amount = $booking->total_price - $charge;
+        $payout_record->status = "Pending";
+        $payout_record->save();
 
-                    $find_payment = Payment::where('bookingid', $bookingid)->first();
-                    $find_payment->bookingid = null;
-                    $find_payment->bhid = $bookingHistory->bhid;
-                    $find_payment->save();
+        $find_payment = Payment::where('bookingid', $bookingid)->first();
+        $find_payment->bookingid = null;
+        $find_payment->bhid = $bookingHistory->bhid;
+        $find_payment->save();
 
-                    $find_monthly_payment = MonthlyPayment::where('bookingid', $bookingid)->first();
-                    if($find_monthly_payment){
-                        $find_monthly_payment->bookingid = null;
-                        $find_monthly_payment->bhid = $bookingHistory->bhid;
-                        $find_monthly_payment->save();
-                    }
-                    
-                    // Delete the booking from Booking model
-                    $booking->delete();
+        $find_monthly_payment = MonthlyPayment::where('bookingid', $bookingid)->first();
+        if ($find_monthly_payment) {
+            $find_monthly_payment->bookingid = null;
+            $find_monthly_payment->bhid = $bookingHistory->bhid;
+            $find_monthly_payment->save();
+        }
+
+        // Delete the booking from Booking model
+        $booking->delete();
 
         // Find the closest next booking by checkin_date for the same unitid
         $nextBooking = Booking::where('unitid', $booking->unitid)
@@ -1041,22 +1045,22 @@ class BookingController extends CORS
             'tbl_guest.guestname', // Select guestname from tbl_guest table
             'location.address as property_address', // Select address from location table
             'monthly_payment.amount_paid',
-                'monthly_payment.userid as payment_userid',
-                'monthly_payment.amount_due',
-                'monthly_payment.due_date',
-                'monthly_payment.status as monthly_payment_status',
-                'tbl_payment.status as payment_status',
-                'tbl_payment.amount as payment_amount',
-                'tbl_payment.refund_amount as refund_amount',
-                'property_pricing.min_price'
+            'monthly_payment.userid as payment_userid',
+            'monthly_payment.amount_due',
+            'monthly_payment.due_date',
+            'monthly_payment.status as monthly_payment_status',
+            'tbl_payment.status as payment_status',
+            'tbl_payment.amount as payment_amount',
+            'tbl_payment.refund_amount as refund_amount',
+            'property_pricing.min_price'
         )
             ->join('property', 'tbl_bookinghistory.propertyid', '=', 'property.propertyid')
             ->join('tbl_guest', 'tbl_bookinghistory.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
             ->join('location', 'tbl_bookinghistory.propertyid', '=', 'location.propertyid') // Join location table using propertyid
             ->leftJoin('monthly_payment', 'tbl_bookinghistory.bhid', '=', 'monthly_payment.bhid')
             ->leftJoin('tbl_payment', 'tbl_bookinghistory.bhid', '=', 'tbl_payment.bhid')
-            ->leftJoin('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid') 
-            ->leftJoin('property_pricing', 'unitdetails.proppricingid', '=', 'property_pricing.proppricingid') 
+            ->leftJoin('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid')
+            ->leftJoin('property_pricing', 'unitdetails.proppricingid', '=', 'property_pricing.proppricingid')
             ->where('property.userid', $userId)
             ->get();
 
