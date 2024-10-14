@@ -199,7 +199,7 @@ export default function BookingHistory({ profile }) {
                 amount: item.amount_due,
                 propertyid: item.propertyid,
                 description: item.name,
-                return_url: "http://localhost:3000/paymentVerification",
+                return_url: "https://fe-rose-sigma.vercel.app/paymentVerification",
                 bookingid: item.id
 
 
@@ -226,7 +226,7 @@ export default function BookingHistory({ profile }) {
                 propertyid: item.propertyid,
                 description: item.name,
                 length: item.stay_length,
-                return_url: "http://localhost:3000/paymentVerification",
+                return_url: "https://fe-rose-sigma.vercel.app/paymentVerification",
                 bookingid: item.id
 
 

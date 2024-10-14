@@ -179,7 +179,7 @@ function BookingDetailsUI() {
             description: propertyData.property_details.property_name,
             status: "Pending",
             length: lengthStay,
-            return_url: "http://localhost:3000/paymentVerification",
+            return_url: "https://fe-rose-sigma.vercel.app/paymentVerification",
             bookingid: res.data.bookingid,
           }
         );
