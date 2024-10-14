@@ -61,7 +61,7 @@ function BookingDetailsUI() {
         console.log("RESPONSE DATA: ", response.data["data"]);
       })
       .catch((error) => {
-        alert("Error decoding JWT token:", error);
+        console.log("Error decoding JWT token:", error);
         setUser(null);
       });
   } else {

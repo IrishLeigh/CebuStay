@@ -10,7 +10,7 @@
 .bg-light {
   background-color: #f8f9fa;
 }
-* Search Input */ .search-container {
+.search-container {
   position: relative;
   margin-left: 1rem;
 }
