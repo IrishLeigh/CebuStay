@@ -151,7 +151,7 @@ const LoginUI = () => {
         }
         navigate("/"); // Correct usage of navigate function
       } else {
-        setLoginError("Invalid credentials"); // Update error message for invalid credentials
+        setLoginError(response.data["message"]); // Update error message for invalid credentials
         console.log("Login failed");
       }
     } catch (error) {
