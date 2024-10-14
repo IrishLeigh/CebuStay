@@ -10,10 +10,12 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useNavigate } from "react-router-dom";
 
 const PropertyCard = ({ nearbyLocation, onClick }) => {
   // Determine screen size
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const navigate = useNavigate();
 
   // Check if the places array is valid
   if (!Array.isArray(nearbyLocation) || nearbyLocation.length === 0) {
@@ -49,10 +51,23 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
 
     return stars;
   };
+  const handleView = (e, propertyid) => {
+    // Construct query params
+    const queryParams = new URLSearchParams({
+      guestCapacity: '', // Default to empty string if null
+      checkin_date: '', // Default to empty string if null
+      checkout_date: '', // Default to empty string if null
+    }).toString();
+
+    console.log("Query Params:", queryParams);
+  
+    // Navigate to the property page with query parameters
+    navigate(`/accommodation/property/${propertyid}?${queryParams}`);
+  };
 
   return (
     <ButtonBase
-      onClick={onClick}
+      onClick={handleView}
       sx={{ display: "block", textAlign: "left", width: "100%" }}
     >
       <Card
