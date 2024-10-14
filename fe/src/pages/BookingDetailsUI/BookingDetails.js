@@ -328,7 +328,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
 
         )}
 
-        <Card sx={{ p: 3, mt: 3 }}>
+        {/* <Card sx={{ p: 3, mt: 3 }}>
           <Typography variant="h6" color="primary" ml={1} pt={0.5}>
             <CancelIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
             Cancellation Policy:
@@ -358,7 +358,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
               </Typography>
             )}
           </Box>
-        </Card>
+        </Card> */}
       </Box>
     </ThemeProvider>
   );
