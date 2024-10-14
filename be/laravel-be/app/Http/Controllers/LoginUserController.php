@@ -34,14 +34,15 @@ class LoginUserController extends CORS
         $user = UserModel::where('email', $email)->first(); // Check if email exists
 
         if (!$user) { // If email doesn't exist
-            return response()->json(['message' => 'Password incorrect.', 'status' => 'error']);
-        }
-        if (!Hash::check($password, $user->password)) { // If password doesn't match
-            return response()->json(['message' => 'Password incorrect.', 'status' => 'error']);
+            return response()->json(['message' => 'Email not found.', 'status' => 'error']);
         }
         if ($user->isverified != 1) {
             return response()->json(['message' => 'Email not verified.', 'status' => 'error']);
         }
+        if (!Hash::check($password, $user->password)) { // If password doesn't match
+            return response()->json(['message' => 'Password incorrect.', 'status' => 'error']);
+        }
+
         // Generate JWT token for authorization
         $userid = $user->userid;
         $key = "6b07a9f92c4960e5348c13f8a5a7b0e96f07a0258358e2690d3b3f3c7c8b2e7f";
