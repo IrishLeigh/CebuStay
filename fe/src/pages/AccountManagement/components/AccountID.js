@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from "react";
 import "../css/AccountID.css";
-import { Divider, TextField, InputAdornment, Paper, CircularProgress, Snackbar, Alert } from "@mui/material";
-import AccountCircle from '@mui/icons-material/PermIdentity';
-import axios from 'axios';
+import {
+  Divider,
+  TextField,
+  InputAdornment,
+  Paper,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Grid,
+  Box,
+  useTheme, // Added useTheme
+  useMediaQuery, // Added useMediaQuery
+} from "@mui/material";
+import AccountCircle from "@mui/icons-material/PermIdentity";
+import axios from "axios";
 
 export default function AccountID({ profile, onUpdateProfile }) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [isChanged, setIsChanged] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [editedProfile, setEditedProfile] = useState(null); // State to hold edited profile data
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if the screen size is mobile
 
   useEffect(() => {
     if (profile) {
@@ -20,71 +32,59 @@ export default function AccountID({ profile, onUpdateProfile }) {
     }
   }, [profile]);
 
-  useEffect(() => {
-    if (profile) {
-      setIsChanged(firstName !== profile.firstname || lastName !== profile.lastname);
-      setEditedProfile({
-        ...profile,
-        firstname: firstName,
-        lastname: lastName
-      });
-    }
-  }, [firstName, lastName, profile]);
-
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
 
   const handleSaveName = async (e) => {
     e.preventDefault();
-  
-    // Regular expression to allow only alphabetic characters and spaces (if needed)
+
     const namePattern = /^[A-Za-z\s]+$/;
-  
-    // Validate the first name
+
+    // Validate names
     if (!namePattern.test(firstName)) {
-      setSnackbarMessage("Invalid first name. Only alphabetic characters are allowed.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(
+        "Invalid first name. Only alphabetic characters are allowed.",
+        "error"
+      );
       return;
     }
-  
-    // Validate the last name
     if (!namePattern.test(lastName)) {
-      setSnackbarMessage("Invalid last name. Only alphabetic characters are allowed.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(
+        "Invalid last name. Only alphabetic characters are allowed.",
+        "error"
+      );
       return;
     }
-  
+
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${profile.userid}`, {
-        userid: profile.userid,
-        firstname: firstName,
-        lastname: lastName,
-      });
-  
-      setSnackbarMessage("Personal information updated successfully!");
-      setSnackbarSeverity("success");
-      setIsChanged(false);
-      if (onUpdateProfile) {
-        onUpdateProfile(editedProfile); // Pass updated profile back to parent component
-      }
+      await axios.put(
+        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        {
+          userid: profile.userid,
+          firstname: firstName,
+          lastname: lastName,
+        }
+      );
+
+      showSnackbar("Personal information updated successfully!", "success");
+      onUpdateProfile({ ...profile, firstname: firstName, lastname: lastName });
     } catch (error) {
-      setSnackbarMessage("Failed to update data. Please try again later.");
-      setSnackbarSeverity("error");
       console.error("Failed to update data. Please try again later.", error);
-    } finally {
-      setSnackbarOpen(true);
+      showSnackbar("Failed to update data. Please try again later.", "error");
     }
   };
-  
+
+  const showSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
 
   const handleCancel = () => {
     if (profile) {
       setFirstName(profile.firstname);
       setLastName(profile.lastname);
-      setIsChanged(false);
     }
   };
 
@@ -93,87 +93,110 @@ export default function AccountID({ profile, onUpdateProfile }) {
   }
 
   return (
-    <Paper className="account-cntr" sx={{ borderRadius: '12px' }}>
-      <div className="account-id-cntr">
-        <div className="account-id-title">Cebustay ID</div>
-        <div className="account-id-desc">
-          Your unique Cebustay ID is used to help others find and identify you on our booking platform. It is displayed in your bookings and profile information.
-        </div>
-      </div>
-
-      <Divider orientation="vertical" sx={{ padding: '2rem' }} />
-
-      {/* First name and last name fields */}
-      <div className="account-id-cntr">
-        <TextField
-          required
-          id="outlined-required"
-          label="First Name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '8px',
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start" sx={{ marginRight: '1rem' }}>
-                <AccountCircle />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <TextField
-          required
-          id="outlined-required"
-          label="Last Name"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '8px',
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start" sx={{ marginRight: '1rem' }}>
-                <AccountCircle />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <div className="account-btn-cntr">
-          <button
-            className={`save-btn ${isChanged ? 'save-btn-withChanges' : 'save-btn-withoutChanges'}`}
-            onClick={handleSaveName}
-            disabled={!isChanged}
-          >
-            Save
-          </button>
-          <button
-            className={`cancel-btn ${isChanged ? 'cancel-btn-withChanges' : 'cancel-btn-withoutChanges'}`}
-            onClick={handleCancel}
-            disabled={!isChanged}
-          >
-            Cancel
-          </button>
-        </div>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity={snackbarSeverity}
-            sx={{ width: "100%" }}
-          >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </div>
+    <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <div className="account-id-cntr">
+            <h2 className="account-id-title">Cebustay ID</h2>
+            <p className="account-id-desc">
+              Your unique Cebustay ID is used to help others find and identify
+              you on our booking platform. It is displayed in your bookings and
+              profile information.
+            </p>
+          </div>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ width: "100%", p: "2rem" }}>
+            <TextField
+              required
+              label="First Name"
+              value={firstName}
+              fullWidth
+              onChange={(e) => setFirstName(e.target.value)}
+              sx={{
+                mb: 2, // Add margin bottom for spacing
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                },
+              }}
+              InputProps={{
+                startAdornment: !isMobile && (
+                  <InputAdornment
+                    position="start"
+                    sx={{ marginRight: "1rem" }}
+                  >
+                    <AccountCircle />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              required
+              label="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              fullWidth
+              sx={{
+                mb: 2, // Add margin bottom for spacing
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                },
+              }}
+              InputProps={{
+                startAdornment: !isMobile && (
+                  <InputAdornment
+                    position="start"
+                    sx={{ marginRight: "1rem" }}
+                  >
+                    <AccountCircle />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <div>
+              <button
+                className={`save-btn ${
+                  firstName !== profile.firstname ||
+                  lastName !== profile.lastname
+                    ? "save-btn-withChanges"
+                    : "save-btn-withoutChanges"
+                }`}
+                onClick={handleSaveName}
+                disabled={
+                  firstName === profile.firstname &&
+                  lastName === profile.lastname
+                }
+              >
+                Save
+              </button>
+              <button
+                className={`cancel-btn ${
+                  firstName !== profile.firstname ||
+                  lastName !== profile.lastname
+                    ? "cancel-btn-withChanges"
+                    : "cancel-btn-withoutChanges"
+                }`}
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={3000}
+              onClose={handleCloseSnackbar}
+            >
+              <Alert
+                onClose={handleCloseSnackbar}
+                severity={snackbarSeverity}
+                sx={{ width: "100%" }}
+              >
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
+          </Box>
+        </Grid>
+      </Grid>
     </Paper>
   );
 }

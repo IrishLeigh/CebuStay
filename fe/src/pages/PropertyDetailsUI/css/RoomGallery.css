@@ -1,0 +1,51 @@
+div.scrollmenu {
+  background-color: #ffff;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+div.scrollmenu div {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+
+div.scrollmenu div:hover {
+  background-color: #ffff;
+}
+
+gallery-image {
+  width: 250px;
+  height: 250px;
+}
+
+/* Custom scrollbar for WebKit browsers (Chrome, Safari) */
+.scrollmenu {
+  overflow: auto; /* Enable scrolling */
+  scrollbar-width: thin; /* For Firefox */
+}
+
+.scrollmenu::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+.scrollmenu::-webkit-scrollbar-track {
+  background: #ffff; /* Background of the scrollbar track */
+  border-radius: 8px; /* Rounded corners for the scrollbar track */
+}
+
+.scrollmenu::-webkit-scrollbar-thumb {
+  background: #16B4DD; /* Color of the scrollbar thumb */
+  border-radius: 8px; /* Rounded corners for the scrollbar thumb */
+}
+
+.scrollmenu::-webkit-scrollbar-thumb:hover {
+  background: #0c95a4; /* Darker color when hovering over the thumb */
+}
+
+/* Optional: Style for Firefox */
+.scrollmenu {
+  scrollbar-color: #16B4DD #ffff; /* Thumb color and track color */
+}

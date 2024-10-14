@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import ImagePreviewModal from "./ImagePreviewModal";
 import axios from "axios";
-import { Tooltip } from "@mui/material";
+import { Tooltip, useMediaQuery, useTheme } from "@mui/material";
 export default function UserProfile({ profile }) {
   const [changeloading, setChangeloading] = useState(false);
   const [logoutloading, setLogoutloading] = useState(false);
@@ -18,6 +18,8 @@ export default function UserProfile({ profile }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
 
   const [profileImage, setProfileImage] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
@@ -224,7 +226,9 @@ export default function UserProfile({ profile }) {
   ) : (
     <>
       <HeaderAccountMgnt />
+  
       <div className="edit-profile-cntr">
+       {/* {!isMobile && ( */}
         <div className="account-banner-container">
           <img
             src="EditProfileBanner.png"
@@ -232,6 +236,8 @@ export default function UserProfile({ profile }) {
             className="account-banner-image"
           />
         </div>
+       {/* )} */}
+        
         <div className="user-details-container">
           <div className="avatar-details-container">
             <div className="avatar-wrapper">

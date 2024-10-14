@@ -646,7 +646,7 @@ const removeNewUnitBed = (bedroomIndex) => {
                 onChange={(e) => handleRoomTypeChange(index, e.target.value)}
                 placeholder="Room Type"
                 sx={{ width: "40%" }}
-                disabled={["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname) && !isEditing}
+                disabled={["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomname) || !isEditing}
                 helperText=""
               />
               <Box sx={{ display: "flex", alignItems: "center" }}>

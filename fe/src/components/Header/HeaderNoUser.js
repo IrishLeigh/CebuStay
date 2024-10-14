@@ -30,11 +30,11 @@ function HeaderNoUser() {
   };
 
   const handleSignUpClick = () => {
-    window.location.href = "register";
+    navigate("register");
   };
 
   const handleLoginClick = () => {
-    window.location.href = "login";
+    navigate("login");
   };
 
   const handleOpenMenu = (event) => {

@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 0;
   margin: 0; /* Ensure no margin */
   padding: 0; /* Ensure no padding */
 }
@@ -47,7 +46,6 @@
   height: 200px;
   object-fit: cover;
   border-radius: 50%;
-  object-fit: cover;
   border: 3px solid #ccc;
 }
 
@@ -90,7 +88,7 @@
 }
 
 .logout-btn-container {
-  margin-left: auto;
+  margin-left: auto; /* Keep button aligned to the right */
 }
 
 .logout-btn {
@@ -125,9 +123,41 @@
   color: #666; /* Adjust color to your theme */
 }
 
-/* Adjust  for resolutions below 1920px */
+/* Adjust for resolutions below 1920px */
 @media (max-width: 1900px) {
   .account-banner-container {
     height: 300px; /* Adjusted height for resolutions below 1920px */
+  }
+}
+
+@media (max-width: 425px) {
+  .user-details-container {
+    width: 100%; 
+    padding: 0; /* Ensure padding is removed */
+    flex-direction: column; /* Stack the items vertically */
+    align-items: center; /* Center align items */
+  }
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    margin: 0; /* Reset margin */
+    align-items: center; /* Center align user details */
+  }
+
+  .logout-btn {
+    margin-top: 1rem; /* Adjust margin for better spacing */
+    width: 100%; /* Optionally make the button full-width */
+  }
+  
+  .logout-btn-container {
+    margin-left: 0; /* Align button container in mobile view */
+  }
+
+  /* Hide elements in mobile view */
+  .avatar-details-container,
+  .user-name,
+  .user-id {
+    display: none; /* Adjust this based on what you want to hide */
   }
 }

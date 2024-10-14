@@ -9,6 +9,10 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Grid,
+  Box,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import Email from "@mui/icons-material/Email";
 import CalendarToday from "@mui/icons-material/CalendarToday";
@@ -38,6 +42,8 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [editedProfile, setEditedProfile] = useState(null); // State to hold edited profile data
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if the screen size is mobile
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -184,54 +190,50 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
-      <div className="account-id-cntr">
-        <div className="account-id-title">Personal Information</div>
-        <div className="account-id-desc">
-          Your email address is essential for managing your Cebustay account. It
-          enables you to access your profile, receive booking confirmations, and
-          stay informed with the latest updates and offers. Keeping your email
-          current ensures you don't miss any important communications.
-        </div>
-      </div>
+      <Grid container spacing={2} >
+        <Grid item xs={12} md={6}>
+          <div className="account-id-cntr">
+            <div className="account-id-title">Personal Information</div>
+            <div className="account-id-desc">
+              Your email address is essential for managing your Cebustay account. It
+              enables you to access your profile, receive booking confirmations, and
+              stay informed with the latest updates and offers. Keeping your email
+              current ensures you don't miss any important communications.
+            </div>
+          </div>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ width: "100%", p: "2rem" }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Birthday"
+              value={birthday ? dayjs(birthday) : null}
+              onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  required
+                  sx={{
+                    mb: 2, // This sets the bottom margin to 2
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                    },
+                  
+                  }}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: !isMobile && (
+                      <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                        <CalendarToday />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+              maxDate={dayjs().subtract(18, "year")}
+            />
+          </LocalizationProvider>
 
-      <Divider orientation="vertical" sx={{ padding: "2rem" }} />
-
-      {/* Email, Birthday, Country, and Phone Number */}
-      <div className="account-id-cntr">
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="Birthday"
-            value={birthday ? dayjs(birthday) : null}
-            onChange={(date) =>
-              setBirthday(date ? date.format("YYYY-MM-DD") : "")
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                required
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                  marginTop: "1rem",
-                }}
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment
-                      position="start"
-                      sx={{ marginRight: "1rem" }}
-                    >
-                      <CalendarToday />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
-            maxDate={dayjs().subtract(18, "year")}
-          />
-        </LocalizationProvider>
 
         <TextField
           required
@@ -240,13 +242,16 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           label="Country"
           value={country}
           onChange={handleCountryChange}
+          fullWidth
           sx={{
+            mt:2,
+            mb: 2,
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
             },
           }}
           InputProps={{
-            startAdornment: (
+            startAdornment: !isMobile && (
               <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
                 <Public />
               </InputAdornment>
@@ -266,13 +271,15 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           label="Phone Number"
           value={phone}
           onChange={handlePhoneChange}
+          fullWidth
           sx={{
+            mb: 2,
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
             },
           }}
           InputProps={{
-            startAdornment: (
+            startAdornment: !isMobile && (
               <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
                 <Phone sx={{ marginRight: "0.5rem" }} />
                 {phoneNumberPrefix}{" "}
@@ -289,40 +296,48 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           error={phone && phone.length > 0 && phone.length !== 10}
         />
 
-        <div className="account-btn-cntr">
-          <button
-            className={`save-btn ${
-              isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
-            }`}
-            onClick={handleSaveInfo}
-            disabled={!isChanged}
-          >
-            Save
-          </button>
-          <button
-            className={`cancel-btn ${
-              isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
-            }`}
-            onClick={handleCancel}
-            disabled={!isChanged}
-          >
-            Cancel
-          </button>
-        </div>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert
+          <div >
+            <button
+              className={`save-btn ${
+                isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+              }`}
+              onClick={handleSaveInfo}
+              disabled={!isChanged}
+            >
+              Save
+            </button>
+            <button
+              className={`cancel-btn ${
+                isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+              }`}
+              onClick={handleCancel}
+              disabled={!isChanged}
+            >
+              Cancel
+            </button>
+          </div>
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={3000}
             onClose={handleCloseSnackbar}
-            severity={snackbarSeverity}
-            sx={{ width: "100%" }}
           >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </div>
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={snackbarSeverity}
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+ 
+          </Box>
+      
+        </Grid>
+      </Grid>
+
+
+      {/* Email, Birthday, Country, and Phone Number */}
+    
     </Paper>
   );
 }

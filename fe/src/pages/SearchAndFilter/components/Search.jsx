@@ -118,7 +118,9 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                 checkin_date,
                 checkout_date
             };
-            navigate(`property/${suggestion.name.propertyid}`, { state });
+            const path = `/accommodation/property/${suggestion.name.propertyid}`;
+            console.log('Navigating to:', path);  // Debugging line
+            navigate(path, { state });
         }
     };
         // Disable scrolling when suggestions are shown
