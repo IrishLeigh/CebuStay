@@ -29,7 +29,9 @@ export default function AccommodationReservation() {
   const [searchTerm, setSearchTerm] = useState("");
   const [propertyData, setPropertyData] = useState([]);
   const [checkIns, setCheckIns] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
   const [checkOut, setCheckOut] = useState([]);
+  const [cancelled, setCancelled] = useState([]);
   const [user, setUser] = useState(null);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -82,10 +84,12 @@ export default function AccommodationReservation() {
             },
           }
         );
-
-        console.log(propertyRes.data);
+        const filteredUpcomingData = propertyRes.data.filter(item => item.status === 'Confirmed');
+        const filterCheckedInData = propertyRes.data.filter(item => item.status === 'Checked in');
+        console.log('asdasd',propertyRes.data);
+        setUpcoming(filteredUpcomingData);
         setPropertyData(propertyRes.data);
-        setCheckIns(propertyRes.data); // Assuming checkIns are the same as propertyRes.data initially
+        setCheckIns(filterCheckedInData); // Assuming checkIns are the same as propertyRes.data initially
       } catch (error) {
         console.error(error);
       } finally {
@@ -107,7 +111,12 @@ export default function AccommodationReservation() {
             },
           }
         );
-        setCheckOut(checkoutRes.data);
+        const filteredData = checkoutRes.data.filter(item => item.status === 'Checked out');
+        const filterCancelledData = checkoutRes.data.filter(item => item.status === 'Cancelled');
+        setCheckOut(filteredData);
+        setCancelled(filterCancelledData);
+
+        console.log("checkouts: ", checkoutRes.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -221,6 +230,12 @@ export default function AccommodationReservation() {
       case "out":
         data = checkOut;
         break;
+      case "cancelled":
+        data = cancelled;
+        break;
+      case "upcoming":
+        data = upcoming;
+        break;
       default:
         data = [];
     }
@@ -234,19 +249,15 @@ export default function AccommodationReservation() {
   const filteredPropertyData = useMemo(() => {
     let data =
       selectedButton === "all"
-        ? [...checkIns, ...checkOut]
+        ? [...checkIns, ...checkOut, ...cancelled, ...upcoming]
         : selectedButton === "in"
         ? checkIns
         : selectedButton === "out"
         ? checkOut
         : selectedButton === "cancelled"
-        ? propertyData.filter(
-            (item) => item.status.toLowerCase() === "cancelled"
-          )
+        ? cancelled
         : selectedButton === "upcoming"
-        ? propertyData.filter(
-            (item) => item.status.toLowerCase() === "upcoming"
-          )
+        ? upcoming
         : [];
 
     // Sort the data by checkin_date (or another date field you prefer)
@@ -312,7 +323,7 @@ export default function AccommodationReservation() {
               className="buttons flex justify-evenly w-full"
               style={{ width: "fit-content", flexDirection: "row" }}
             >
-              {["All", "In", "Out", "Cancelled", "Upcoming"].map((button) => (
+              {["All","Upcoming", "In", "Out", "Cancelled"].map((button) => (
                 <button
                   key={button}
                   className={`btn ${
