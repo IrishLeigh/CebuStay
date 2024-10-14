@@ -217,7 +217,7 @@ export default function SinglePropertyUI({ propertyid }) {
           </Grid>
         </Grid>
         <div style={{ margin: "1rem 0" }}>
-          <Directions propertyid={propertyid.propertyid} />
+          <Directions propertyid={propertyid} />
         </div>
         <div style={{ margin: "1rem 0" }}>
           <PropertyInfo

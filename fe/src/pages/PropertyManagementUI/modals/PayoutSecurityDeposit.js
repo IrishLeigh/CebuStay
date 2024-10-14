@@ -1,20 +1,57 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "../css/payoutSecurityDeposit.css";
+import axios from "axios";
 
 const PayoutSecurityDeposit = ({
+  bookhistoryid,
   guestName,
   propertyName,
   checkoutDate,
   onClose,
+  securityDepo,
   onConfirm, // New prop to handle confirmation
 }) => {
-  const [securityDeposit, setSecurityDeposit] = useState("0");
+  const [securityDeposit, setSecurityDeposit] = useState(0);
   const handleInputChange = (event) => {
-    // Ensure that only numeric values are entered
-    const value = event.target.value.replace(/[^\d]/g, "");
-    setSecurityDeposit(value);
+    let value = event.target.value;
+
+    // Ensure that only numeric values are processed
+    value = value.replace(/[^\d]/g, "");
+
+    // Convert value to a number and check against max
+    const numericValue = Number(value);
+
+    // Set securityDeposit to the lesser of the input or the max value
+    if (numericValue > securityDepo) {
+      setSecurityDeposit(securityDepo); // If input exceeds max, set it to the max value
+    } else {
+      setSecurityDeposit(numericValue); // Otherwise, use the input value
+    }
+  };
+  useEffect(() => {
+    setSecurityDeposit(securityDepo);
+  }, [securityDepo]);
+
+  console.log("Security Deposit:", securityDeposit);
+
+  const handleSecurityDeposit = async () => {
+    console.log("Checking in: ", securityDeposit);
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/refundsecurity", {
+        bhid: bookhistoryid,
+        amount: securityDeposit
+      }
+      );
+      console.log('Response:', response.data);
+      if (response.data.status === 'success') {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -56,15 +93,17 @@ const PayoutSecurityDeposit = ({
           <div className="security-deposit">
             <h2>Security Deposit:</h2>
             <input
-              type="text"
-              value={`₱ ${securityDeposit}`}
+              type="number" // Changed to number input
+              value={securityDeposit} // Use the raw numeric value
               className="text-field"
               onChange={handleInputChange} // Update state on change
+              max={securityDepo} // Set the max to securityDepo
+              placeholder={`₱ ${securityDepo}`} // Add placeholder with formatted value
             />
           </div>
         </div>
         {/* Confirm payout button */}
-        <button className="confirm-btn" onClick={onConfirm}>
+        <button className="confirm-btn" onClick={handleSecurityDeposit}>
           Confirm Payout
         </button>
       </div>
