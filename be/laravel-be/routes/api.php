@@ -40,6 +40,7 @@ Route::post('/paypal/cancel-payout/{payoutItemId}', [PayPalController::class, 'c
 
 // Route::post('/checkout-sessions', [CheckoutSessionController::class, 'create']);
 Route::post('/create-payment-link', [PaymentController::class, 'createPaymentLink']);
+Route::post('/refundsecurity', [PaymentController::class, 'refundSecurity']);
 Route::get('/retrieve-payment-link/{linkId}', [PaymentController::class, 'retrievePaymentLinkApi']);
 Route::put('/update-payment-link', [PaymentController::class, 'updatePaymentLink']);
 Route::get('/getpayments', [PaymentController::class, 'getPayments']);

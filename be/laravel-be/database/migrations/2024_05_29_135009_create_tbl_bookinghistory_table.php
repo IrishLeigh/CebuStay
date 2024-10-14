@@ -30,6 +30,7 @@ return new class extends Migration {
             $table->date('booking_date');
             $table->enum('type', ['reservation', 'booking']);
             $table->enum('check_type', ['checkin', 'checkout']);
+            $table->tinyInteger('securityDeposit')->nullable()->default(0);
 
             $table->foreign('userid')->references('userid')->on('users');
             $table->foreign('propertyid')->references('propertyid')->on('property');

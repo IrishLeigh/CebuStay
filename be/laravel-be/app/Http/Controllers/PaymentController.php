@@ -193,6 +193,8 @@ class PaymentController extends CORS
                     $nextDueDate = $checkinDate->addMonths(2);
                 }
 
+                $dueDateChecker = $nextDueDate;
+
                 // Ensure the next due date does not exceed the checkout date
                 if ($nextDueDate->addMonth()->greaterThan($checkoutDate)) {
                     $monthlyPayment->status = 'Paid';
@@ -301,6 +303,11 @@ class PaymentController extends CORS
             }
             if($monthlyPayment){
                 $sendRefund = $monthlyPayment->amount_paid - $amountToRefund; // Subtract the refunded amount
+                if ($dayresult === 1) {
+                    $sendRefund =  $amountToRefund;
+                } else {
+                    $sendRefund = $monthlyPayment->amount_paid - $amountToRefund;
+                }
             }else{
                 if ($dayresult === 1) {
                     $sendRefund = $amountToRefund;
@@ -455,6 +462,77 @@ class PaymentController extends CORS
                     'status' => 'success',
                     'refund' => $refundData,
                     'payment' => $amountToRefund
+                ], 200);
+            } else {
+                return response()->json(['error' => 'Failed to process the refund.'], 500);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    public function refundSecurity(Request $request)
+    {
+        $this->enableCors($request);
+
+        $bookingid = $request->input('bhid');
+        $amount = $request->input('amount');
+        $bookinghistory = BookingHistory::where('bhid', $bookingid)->first();
+        $property = Property::find($bookinghistory->propertyid);
+        $unitDetails = UnitDetails::where('propertyid', $property->propertyid)->first();
+        $pricing = PropertyPricing::where('proppricingid', $unitDetails->proppricingid)->first();
+        $payment = Payment::where('bhid', $bookinghistory->bhid)->first();    
+        $reason = $request->input('reason', 'others'); 
+
+
+        if (!$bookingid) {
+            return response()->json(['error' => 'Payment ID and amount are required.'], 400);
+        }
+
+        // Create a Guzzle client to handle the refund request
+        $client = new Client();
+
+        try {
+            // Prepare the PayMongo secret key
+            $apiKey = env('PAYMONGO_SECRET_KEY', 'sk_test_eFrCmpKXktDTxx7avwDX7uBQ'); // Replace with your secret key
+            $encodedApiKey = base64_encode($apiKey . ':');
+
+            // Send the refund request to PayMongo
+            $response = $client->request('POST', 'https://api.paymongo.com/v1/refunds', [
+                'body' => json_encode([
+                    'data' => [
+                        'attributes' => [
+                            'amount' => $amount * 100, // Convert amount to centavos
+                            'payment_id' => $payment->linkid,
+                            'reason' => $reason,
+                        ]
+                    ]
+                ]),
+                'headers' => [
+                    'Authorization' => 'Basic ' . $encodedApiKey,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ]
+            ]);
+
+            // Parse the response
+            $refundData = json_decode($response->getBody(), true);
+
+            // Check if the refund was successful
+            if (isset($refundData['data']['id'])) {
+                // Update the payment record in the database
+                
+              $bookinghistory->securityDeposit = 1;
+              $bookinghistory->save();
+                // Return the refund data
+                return response()->json([
+                    'message' => 'Sent Security Deposit Refund Successful',
+                    'status' => 'success'
                 ], 200);
             } else {
                 return response()->json(['error' => 'Failed to process the refund.'], 500);

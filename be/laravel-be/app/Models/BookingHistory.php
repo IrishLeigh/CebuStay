@@ -30,7 +30,8 @@ class BookingHistory extends Model
         'type',
         'check_type',
         'booking_date',
-        'isreview'
+        'isreview',
+        'securityDeposit',
     ];
 
     public function property()
