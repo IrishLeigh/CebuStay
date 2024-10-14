@@ -84,9 +84,13 @@ export default function AccommodationReservation() {
             },
           }
         );
-        const filteredUpcomingData = propertyRes.data.filter(item => item.status === 'Confirmed');
-        const filterCheckedInData = propertyRes.data.filter(item => item.status === 'Checked in');
-        console.log('asdasd',propertyRes.data);
+        const filteredUpcomingData = propertyRes.data.filter(
+          (item) => item.status === "Confirmed"
+        );
+        const filterCheckedInData = propertyRes.data.filter(
+          (item) => item.status === "Checked in"
+        );
+        console.log("asdasd", propertyRes.data);
         setUpcoming(filteredUpcomingData);
         setPropertyData(propertyRes.data);
         setCheckIns(filterCheckedInData); // Assuming checkIns are the same as propertyRes.data initially
@@ -111,8 +115,12 @@ export default function AccommodationReservation() {
             },
           }
         );
-        const filteredData = checkoutRes.data.filter(item => item.status === 'Checked out');
-        const filterCancelledData = checkoutRes.data.filter(item => item.status === 'Cancelled');
+        const filteredData = checkoutRes.data.filter(
+          (item) => item.status === "Checked out"
+        );
+        const filterCancelledData = checkoutRes.data.filter(
+          (item) => item.status === "Cancelled"
+        );
         setCheckOut(filteredData);
         setCancelled(filterCancelledData);
 
@@ -218,29 +226,29 @@ export default function AccommodationReservation() {
     setDeleteItemId(null);
   };
 
-  const getDataToDisplay = () => {
-    let data = [];
-    switch (selectedButton) {
-      case "all":
-        data = filteredPropertyData;
-        break;
-      case "in":
-        data = checkIns;
-        break;
-      case "out":
-        data = checkOut;
-        break;
-      case "cancelled":
-        data = cancelled;
-        break;
-      case "upcoming":
-        data = upcoming;
-        break;
-      default:
-        data = [];
-    }
-    return data;
-  };
+  // const getDataToDisplay = () => {
+  //   let data = [];
+  //   switch (selectedButton) {
+  //     case "all":
+  //       data = filteredPropertyData;
+  //       break;
+  //     case "in":
+  //       data = checkIns;
+  //       break;
+  //     case "out":
+  //       data = checkOut;
+  //       break;
+  //     case "cancelled":
+  //       data = cancelled;
+  //       break;
+  //     case "upcoming":
+  //       data = upcoming;
+  //       break;
+  //     default:
+  //       data = [];
+  //   }
+  //   return data;
+  // };
 
   const handleRowClick = (id) => {
     setSelectedId(id);
@@ -292,6 +300,13 @@ export default function AccommodationReservation() {
                 .toLowerCase()
                 .includes(searchTerm.toLowerCase())
             );
+          case "Firstname":
+            return (
+              item.booker.firstname &&
+              item.booker.firstname
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase())
+            );
           case "Type":
             return (
               item.property_type &&
@@ -323,7 +338,7 @@ export default function AccommodationReservation() {
               className="buttons flex justify-evenly w-full"
               style={{ width: "fit-content", flexDirection: "row" }}
             >
-              {["All","Upcoming", "In", "Out", "Cancelled"].map((button) => (
+              {["All", "Upcoming", "In", "Out", "Cancelled"].map((button) => (
                 <button
                   key={button}
                   className={`btn ${
@@ -337,6 +352,7 @@ export default function AccommodationReservation() {
                 </button>
               ))}
             </div>
+
             <div
               className="search-container"
               style={{
@@ -464,6 +480,7 @@ export default function AccommodationReservation() {
               )}
             </div>
           </div>
+
           <div
             style={{
               position: "relative",
@@ -524,6 +541,7 @@ export default function AccommodationReservation() {
                       <TableCell align="center">Actions</TableCell>
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
                     {loading ? (
                       <TableRow>
@@ -542,7 +560,7 @@ export default function AccommodationReservation() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ) : filteredPropertyData.length === 0 ? (
+                    ) : filteredData.length === 0 ? (
                       <TableRow>
                         <TableCell
                           colSpan={11}
@@ -552,65 +570,90 @@ export default function AccommodationReservation() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredPropertyData.map((item) => (
+                      filteredData.map((item) => (
                         <TableRow
                           key={item.id}
                           style={{ borderBottom: "1px solid #e0e0e0" }}
                         >
+                          {/* Booking ID */}
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
+                            style={{ cursor: "pointer" }}
                           >
                             {item.bookingid ? item.bookingid : item.bhid}
                           </TableCell>
+
+                          {/* Firstname */}
+                          <TableCell
+                            onClick={() => handleEdit(item)}
+                            align="center"
+                            style={{ cursor: "pointer" }}
+                          >
+                            {item.booker?.firstname || "N/A"}
+                          </TableCell>
+
+                          {/* Lastname */}
+                          <TableCell
+                            onClick={() => handleEdit(item)}
+                            align="center"
+                            style={{ cursor: "pointer" }}
+                          >
+                            {item.booker?.lastname || "N/A"}
+                          </TableCell>
+
+                          {/* Email */}
+                          <TableCell
+                            onClick={() => handleEdit(item)}
+                            align="center"
+                            style={{ cursor: "pointer" }}
+                          >
+                            {item.booker?.email || "N/A"}
+                          </TableCell>
+
+                          {/* Property Name */}
+                          <TableCell
+                            onClick={() => handleEdit(item)}
+                            align="center"
+                            style={{ cursor: "pointer" }}
+                          >
+                            {item.property_name || "N/A"}
+                          </TableCell>
+
+                          {/* Type */}
+                          <TableCell
+                            onClick={() => handleEdit(item)}
+                            align="center"
+                            style={{ cursor: "pointer" }}
+                          >
+                            {item.property_type || "N/A"}
+                          </TableCell>
+
+                          {/* Address */}
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
                           >
-                            {item.booker.firstname}
+                            {item.property_address || "N/A"}
                           </TableCell>
+
+                          {/* Booking Date */}
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
                           >
-                            {item.booker.lastname}
+                            {item.booking_date || "N/A"}
                           </TableCell>
+
+                          {/* Total Price */}
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
                           >
-                            {item.booker.email}
+                            {item.total_price || "N/A"}
                           </TableCell>
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                          >
-                            {item.property_name}
-                          </TableCell>
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                          >
-                            {item.property_type}
-                          </TableCell>
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                          >
-                            {item.property_address}
-                          </TableCell>
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                          >
-                            {item.booking_date}
-                          </TableCell>
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                          >
-                            {item.total_price}
-                          </TableCell>
+
+                          {/* Status */}
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
@@ -618,8 +661,10 @@ export default function AccommodationReservation() {
                               color: item.status === "Active" ? "green" : "red",
                             }}
                           >
-                            {item.status}
+                            {item.status || "N/A"}
                           </TableCell>
+
+                          {/* Actions */}
                           <TableCell align="center">
                             <MdEdit
                               onClick={(e) => {
@@ -650,6 +695,7 @@ export default function AccommodationReservation() {
           </div>
         </div>
       </div>
+
       {modalOpen && (
         <div
           style={{
