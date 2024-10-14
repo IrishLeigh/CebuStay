@@ -853,7 +853,7 @@ export default function BookingHistory({ profile }) {
     </div>
 </Modal>
 
-            {/* <Modal
+            <Modal
     isOpen={modalIsOpen}
     onRequestClose={closeReviewModal}
     style={{
@@ -977,7 +977,7 @@ export default function BookingHistory({ profile }) {
             Cancel
         </button>
     </div>
-</Modal> */}
+</Modal>
 
             {viewPendingData && (
 
@@ -1081,100 +1081,100 @@ style={{
 )}
 </Modal>
 
-            //     <Modal
-            //     isOpen={viewPendingisOpen}
-            //     onClose={closeModal}
-            //     style={{
-            //         overlay: {
-            //             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            //             margin: '1rem',
-            //         },
-            //         content: {
-            //             top: '50%',
-            //             left: '50%',
-            //             right: 'auto',
-            //             bottom: 'auto',
-            //             transform: 'translate(-50%, -50%)',
-            //             padding: '2rem',
-            //             borderRadius: '0.5rem',
-            //             width: '90%',
-            //             maxWidth: '500px',
-            //             backgroundColor: '#fff',
-            //             border: 'none',
-            //             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-            //         },
-            //     }}
-            // >
-            //     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            //         <button
-            //             onClick={closeModal}
-            //             style={{
-            //                 position: 'absolute',
-            //                 top: '0.1rem',
-            //                 right: '1.8rem',
-            //                 width: '30px',
-            //                 height: '30px',
-            //                 border: 'none',
-            //                 backgroundColor: 'transparent',
-            //                 color: 'red',
-            //                 fontSize: '2rem',
-            //                 cursor: 'pointer',
-            //                 transition: 'color 0.3s ease',
-            //             }}
-            //             onMouseOver={(e) => (e.target.style.color = '#0056b3')}
-            //             onMouseOut={(e) => (e.target.style.color = '#007bff')}
-            //         >
-            //             &times; {/* This renders as an 'X' */}
-            //         </button>
-            //     </div>
-            //     <Typography id="payment-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
-            //         Payment Details
-            //     </Typography>
-            //     {selectedPaymentData.unit_type === 'Monthly Term' ? (<>
-            //         <div style={{ textAlign: 'center' }}>
-            //     <Typography id="payment-modal-description" sx={{ mt: 2 }}>
-            //         Due Date: {formatDate(selectedPaymentData.due_date)}
-            //     </Typography>
+                <Modal
+                isOpen={viewPendingisOpen}
+                onClose={closeModal}
+                style={{
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        margin: '1rem',
+                    },
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        transform: 'translate(-50%, -50%)',
+                        padding: '2rem',
+                        borderRadius: '0.5rem',
+                        width: '90%',
+                        maxWidth: '500px',
+                        backgroundColor: '#fff',
+                        border: 'none',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                    },
+                }}
+            >
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                        onClick={closeModal}
+                        style={{
+                            position: 'absolute',
+                            top: '0.1rem',
+                            right: '1.8rem',
+                            width: '30px',
+                            height: '30px',
+                            border: 'none',
+                            backgroundColor: 'transparent',
+                            color: 'red',
+                            fontSize: '2rem',
+                            cursor: 'pointer',
+                            transition: 'color 0.3s ease',
+                        }}
+                        onMouseOver={(e) => (e.target.style.color = '#0056b3')}
+                        onMouseOut={(e) => (e.target.style.color = '#007bff')}
+                    >
+                        &times; {/* This renders as an 'X' */}
+                    </button>
+                </div>
+                <Typography id="payment-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
+                    Payment Details
+                </Typography>
+                {selectedPaymentData.unit_type === 'Monthly Term' ? (<>
+                    <div style={{ textAlign: 'center' }}>
+                <Typography id="payment-modal-description" sx={{ mt: 2 }}>
+                    Due Date: {formatDate(selectedPaymentData.due_date)}
+                </Typography>
                 
-            //     <Typography sx={{ mt: 2 }}>
-            //         Amount Due: {selectedPaymentData.amount_due}
-            //     </Typography>
-            //     </div>
-            //     <div style={{ display: 'flex', justifyContent: 'center' }}>
-            //     <Button
-            //         variant="contained"
-            //         color="primary"
-            //         onClick={() => handlePayment(selectedPaymentData)}
-            //         sx={{ mt: 2 }}
-            //         disabled={monthlyLoading}
-            //     >
-            //         {monthlyLoading ? <CircularProgress size={24} /> : "Pay Now"}
-            //     </Button>
-            //     </div>
-            //     </>):(<>
-            //         <div style={{ textAlign: 'center' }}>
-            //     <Typography id="payment-modal-description" sx={{ mt: 2 }}>
-            //         Due Date: {formatDate(selectedPaymentData.checkIn)}
-            //     </Typography>
+                <Typography sx={{ mt: 2 }}>
+                    Amount Due: {selectedPaymentData.amount_due}
+                </Typography>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handlePayment(selectedPaymentData)}
+                    sx={{ mt: 2 }}
+                    disabled={monthlyLoading}
+                >
+                    {monthlyLoading ? <CircularProgress size={24} /> : "Pay Now"}
+                </Button>
+                </div>
+                </>):(<>
+                    <div style={{ textAlign: 'center' }}>
+                <Typography id="payment-modal-description" sx={{ mt: 2 }}>
+                    Due Date: {formatDate(selectedPaymentData.checkIn)}
+                </Typography>
                 
-            //     <Typography sx={{ mt: 2 }}>
-            //         Amount Due: {selectedPaymentData.amount}
-            //     </Typography>
-            //     </div>
-            //     <div style={{ display: 'flex', justifyContent: 'center' }}>
-            //     <Button
-            //         variant="contained"
-            //         color="primary"
-            //         onClick={() => handlePaymentSingle(selectedPaymentData)}
-            //         sx={{ mt: 2 }}
-            //         disabled={singleLoading}
-            //     >
-            //         {singleLoading ? <CircularProgress size={24} /> : "Pay Now"}
-            //     </Button>
-            //     </div>
-            //     </>)}
+                <Typography sx={{ mt: 2 }}>
+                    Amount Due: {selectedPaymentData.amount}
+                </Typography>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handlePaymentSingle(selectedPaymentData)}
+                    sx={{ mt: 2 }}
+                    disabled={singleLoading}
+                >
+                    {singleLoading ? <CircularProgress size={24} /> : "Pay Now"}
+                </Button>
+                </div>
+                </>)}
                 
-            // </Modal>
+            </Modal>
             
             )}
 
