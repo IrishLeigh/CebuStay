@@ -1,26 +1,45 @@
-
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Avatar, Stack, TextField, InputAdornment, Chip, Divider, Radio, RadioGroup, FormControlLabel, Select, MenuItem, Card, Grid } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import Countries from '../../components/Booking/Countries';
-import PhoneNumberInput from '../../components/Booking/PhoneNumber';
-import { ThemeProvider } from '@mui/material/styles';
-import BookingGuestTheme from './theme/bookingGuestTheme';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Avatar,
+  Stack,
+  TextField,
+  InputAdornment,
+  Chip,
+  Divider,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Select,
+  MenuItem,
+  Card,
+  Grid,
+} from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import Countries from "../../components/Booking/Countries";
+import PhoneNumberInput from "../../components/Booking/PhoneNumber";
+import { ThemeProvider } from "@mui/material/styles";
+import BookingGuestTheme from "./theme/bookingGuestTheme";
 
 function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const policies = ['Non-refundable', 'Modifiable if plans change', 'Maximum 2 Guests']; // Example facilities
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const services = ['Room service', 'Free Wi-Fi', 'Airport shuttle']; // Example services
+  const policies = [
+    "Non-refundable",
+    "Modifiable if plans change",
+    "Maximum 2 Guests",
+  ]; // Example facilities
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const services = ["Room service", "Free Wi-Fi", "Airport shuttle"]; // Example services
   const [bookingFor, setBookingFor] = useState(1);
-  const [guestName, setGuestName] = useState('');
-  const [guestEmail, setGuestEmail] = useState('');
-  const [arrivalTime, setArrivalTime] = useState('');
-  const [requests, setRequests] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [countryCode, setCountryCode] = useState('');
+  const [guestName, setGuestName] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
+  const [arrivalTime, setArrivalTime] = useState("");
+  const [requests, setRequests] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const handleCountryChange = (country) => setSelectedCountry(country);
   const handleCountryCodeChange = (countryCode) => setCountryCode(countryCode);
   const handleArrivalChange = (event) => setArrivalTime(event.target.value);
@@ -28,30 +47,32 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
   const handleSpecialRequestChange = (event) => setRequests(event.target.value);
 
   const convertTimeTo12HourFormat = (time) => {
-    const [hours, minutes] = time.split(':');
-    const amPm = hours >= 12 ? 'PM' : 'AM';
+    const [hours, minutes] = time.split(":");
+    const amPm = hours >= 12 ? "PM" : "AM";
     const twelveHourFormat = `${((hours + 11) % 12) + 1}:${minutes} ${amPm}`;
     return twelveHourFormat;
   };
-  const getInitial = (email) => email ? email.charAt(0).toUpperCase() : '';
+  const getInitial = (email) => (email ? email.charAt(0).toUpperCase() : "");
   const handleFirstNameChange = (event) => setFirstName(event.target.value);
   const handleLastNameChange = (event) => setLastName(event.target.value);
   const handleEmailChange = (event) => setEmail(event.target.value);
-  const handleBookingForChange = (event) => setBookingFor(parseInt(event.target.value)); // Update value as integer
+  const handleBookingForChange = (event) =>
+    setBookingFor(parseInt(event.target.value)); // Update value as integer
   const handleGuestNameChange = (event) => setGuestName(event.target.value);
   const handleGuestEmailChange = (event) => setGuestEmail(event.target.value);
 
   useEffect(() => {
-    if (bookingFor === 1) { // If booking for myself
+    if (bookingFor === 1) {
+      // If booking for myself
       setGuestName(`${firstName} ${lastName}`);
     } else {
-      setGuestName('');
+      setGuestName("");
     }
   }, [bookingFor, firstName, lastName]);
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!User){
+    if (!User) {
       setEmail("");
       setFirstName("");
       setLastName("");
@@ -59,7 +80,6 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
       setEmail(User.email);
       setFirstName(User.firstname);
       setLastName(User.lastname);
-
     }
   }, [User]);
 
@@ -78,13 +98,31 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
       countryCode,
     };
     onGuestDetailsChange(guestDetails);
-  }, [email, firstName, lastName, selectedCountry, countryCode, bookingFor, guestName, guestEmail, arrivalTime, requests, phoneNumber, onGuestDetailsChange]);
+  }, [
+    email,
+    firstName,
+    lastName,
+    selectedCountry,
+    countryCode,
+    bookingFor,
+    guestName,
+    guestEmail,
+    arrivalTime,
+    requests,
+    phoneNumber,
+    onGuestDetailsChange,
+  ]);
 
   return (
     <ThemeProvider theme={BookingGuestTheme}>
-      <Box sx={{ borderRadius: '8px', marginTop: '2rem' }}>
-        <Card >
-          <Stack direction="row" spacing={2} alignItems="center" justifyContent="left">
+      <Box sx={{ borderRadius: "8px", marginTop: "2rem" }}>
+        <Card>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            justifyContent="left"
+          >
             <Avatar sx={{ width: 56, height: 56 }}>{getInitial(email)}</Avatar>
             <div>
               <Typography variant="body1">You are signed in as</Typography>
@@ -94,82 +132,136 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
         </Card>
 
         <Card sx={BookingGuestTheme.customStyles.borderCard}>
-          <Stack direction="row" spacing={2} alignItems="stretch" justifyContent="left" width="100%">
-            <div style={{ width: '100%' }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="stretch"
+            justifyContent="left"
+            width="100%"
+          >
+            <div style={{ width: "100%" }}>
               <Typography>First Name</Typography>
-              <TextField 
-                fullWidth color={firstName ? "success" : "primary"} 
-                focused value={firstName} 
-                onChange={handleFirstNameChange} 
-                InputProps={{ endAdornment: firstName ? 
-                  <InputAdornment position="end"><CheckIcon color="success" /></InputAdornment> : null }} 
-                  disabled
-                  helperText="The booker's name is the person currently signed in."
-                  required
+              <TextField
+                fullWidth
+                color={firstName ? "success" : "primary"}
+                focused
+                value={firstName}
+                onChange={handleFirstNameChange}
+                InputProps={{
+                  endAdornment: firstName ? (
+                    <InputAdornment position="end">
+                      <CheckIcon color="success" />
+                    </InputAdornment>
+                  ) : null,
+                }}
+                disabled
+                helperText="The booker's name is the person currently signed in."
+                required
               />
-
             </div>
-            <div style={{ width: '100%' }}>
+            <div style={{ width: "100%" }}>
               <Typography>Last Name</Typography>
-              <TextField 
-                fullWidth color={lastName ? "success" : "primary"} 
-                focused value={lastName} 
-                onChange={handleLastNameChange} 
-                InputProps={{ endAdornment: lastName ? 
-                <InputAdornment position="end">
-                  <CheckIcon color="success" />
-                </InputAdornment> : null }} 
+              <TextField
+                fullWidth
+                color={lastName ? "success" : "primary"}
+                focused
+                value={lastName}
+                onChange={handleLastNameChange}
+                InputProps={{
+                  endAdornment: lastName ? (
+                    <InputAdornment position="end">
+                      <CheckIcon color="success" />
+                    </InputAdornment>
+                  ) : null,
+                }}
                 disabled
                 required
-                />
+              />
             </div>
           </Stack>
           <Stack direction="column" fullWidth>
-            <div style={{ width: '49%', marginTop: '1rem' }}>
+            <div style={{ width: "49%", marginTop: "1rem" }}>
               <Typography>Your email:</Typography>
-              <TextField 
-                fullWidth color={email ? "success" : "primary"} 
-                focused value={email} onChange={handleEmailChange} 
-                InputProps={{ endAdornment: email ? 
-                  <InputAdornment position="end">
-                    <CheckIcon color="success" />
-                  </InputAdornment> : null }} 
-                 disabled
-                 required
-                />
-                
+              <TextField
+                fullWidth
+                color={email ? "success" : "primary"}
+                focused
+                value={email}
+                onChange={handleEmailChange}
+                InputProps={{
+                  endAdornment: email ? (
+                    <InputAdornment position="end">
+                      <CheckIcon color="success" />
+                    </InputAdornment>
+                  ) : null,
+                }}
+                disabled
+                required
+              />
             </div>
-            <PhoneNumberInput phoneNumber={phoneNumber} countryCode={countryCode} onPhoneNumberChange={handlePhoneNumberChange} onCountryCodeChange={handleCountryCodeChange} />
-            <div style={{ width: '100%', marginTop: '16px' }}>
+            <PhoneNumberInput
+              phoneNumber={phoneNumber}
+              countryCode={countryCode}
+              onPhoneNumberChange={handlePhoneNumberChange}
+              onCountryCodeChange={handleCountryCodeChange}
+            />
+            <div style={{ width: "100%", marginTop: "16px" }}>
               <Typography>Who are you booking for?</Typography>
-              <RadioGroup row value={bookingFor} onChange={handleBookingForChange} sx={{ justifyContent: 'flex-start' }}  required>
-                <FormControlLabel value={1} control={<Radio />} label="I am booking for myself" />
-                <FormControlLabel value={0} control={<Radio />} label="Booking for someone else" />
+              <RadioGroup
+                row
+                value={bookingFor}
+                onChange={handleBookingForChange}
+                sx={{ justifyContent: "flex-start" }}
+                required
+              >
+                <FormControlLabel
+                  value={1}
+                  control={<Radio />}
+                  label="I am booking for myself"
+                />
+                <FormControlLabel
+                  value={0}
+                  control={<Radio />}
+                  label="Booking for someone else"
+                />
               </RadioGroup>
             </div>
           </Stack>
         </Card>
-        {bookingFor !== 1 &&  (
+        {bookingFor !== 1 && (
           <Card>
-             <Typography sx={{ marginBottom: '1rem' , fontWeight: 'bold'}}>Booking For Other Guest Details</Typography>
-            <Grid container spacing={2}   >
+            <Typography sx={{ marginBottom: "1rem", fontWeight: "bold" }}>
+              Booking For Other Guest Details
+            </Typography>
+            <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Typography>Guest Name</Typography>
-                <TextField fullWidth value={guestName} onChange={handleGuestNameChange} />
+                <TextField
+                  fullWidth
+                  value={guestName}
+                  onChange={handleGuestNameChange}
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography>Guest Email</Typography>
-                <TextField fullWidth value={guestEmail} onChange={handleGuestEmailChange} />
+                <TextField
+                  fullWidth
+                  value={guestEmail}
+                  onChange={handleGuestEmailChange}
+                />
               </Grid>
             </Grid>
           </Card>
         )}
 
-
         <Card sx={BookingGuestTheme.customStyles.borderCard}>
-          <Typography sx={{ marginBottom: '1rem' , fontWeight: 'bold'}}>Special Requests</Typography>
+          <Typography sx={{ marginBottom: "1rem", fontWeight: "bold" }}>
+            Special Requests
+          </Typography>
           <Typography>
-            Special requests cannot be guaranteed – but the property will do its best to meet your needs. You can always make a special request after your booking is complete!
+            Special requests cannot be guaranteed – but the property will do its
+            best to meet your needs. You can always make a special request after
+            your booking is complete!
           </Typography>
           <TextField
             id="filled-multiline-flexible"
@@ -184,15 +276,25 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
         </Card>
 
         <Card sx={BookingGuestTheme.customStyles.borderCard}>
-        <Typography sx={{ marginBottom: '1rem' , fontWeight: 'bold'}}>Your arrival time</Typography>
-          <Typography>
-            You can check-in between {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_from)} and {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_until)}
+          <Typography sx={{ marginBottom: "1rem", fontWeight: "bold" }}>
+            Your arrival time
           </Typography>
+          {/* <Typography> */}
+          {/* You can check-in between {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_from)} and {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_until)} */}
+          {/* Pick a check-in time below */}
+          {/* </Typography> */}
           <Stack direction="column">
             <Typography>Select your arrival time</Typography>
-            <Select label="Arrival Time" fullWidth value={arrivalTime} onChange={handleArrivalChange}>
-              {Array.from(Array(24).keys()).map(hour => (
-                <MenuItem key={hour} value={`${hour}:00`}>{`${hour}:00 - ${hour + 1}:00`}</MenuItem>
+            <Select
+              label="Arrival Time"
+              fullWidth
+              value={arrivalTime}
+              onChange={handleArrivalChange}
+            >
+              {Array.from(Array(24).keys()).map((hour) => (
+                <MenuItem key={hour} value={`${hour}:00`}>{`${hour}:00 - ${
+                  hour + 1
+                }:00`}</MenuItem>
               ))}
             </Select>
           </Stack>
