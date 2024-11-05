@@ -176,7 +176,7 @@ class BookingController extends CORS
             $booking->checkin_date = $checkin;
             $booking->checkout_date = $checkout;
             if ($property->unit_type === 'Monthly Term') {
-                $length = $request->input('stay_length') / 31;
+                $length = ceil($request->input('stay_length') / 31);
                 $booking->total_price = $request->input('total_price') * $length;
             } else {
                 $booking->total_price = $request->input('total_price') * $request->input('stay_length');

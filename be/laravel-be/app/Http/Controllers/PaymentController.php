@@ -369,7 +369,7 @@ class PaymentController extends CORS
                 // Update the payment record in the database
                 
                 if($monthlyPayment){
-                    $payment->refund_amount = $monthlyPayment->amount_paid - $amountToRefund; // Subtract the refunded amount
+                    $payment->refund_amount = $sendRefund; // Subtract the refunded amount
                     $payment->amount = $amountToRefund;
                 }else{
                     if ($dayresult === 1) {
