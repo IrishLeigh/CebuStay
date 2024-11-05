@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useRef } from 'react';
-import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider, useTheme, useMediaQuery, Snackbar, Alert } from "@mui/material";
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import { Cancel, MoneyOff, CheckCircle } from '@mui/icons-material'; // Import Material-UI icons
@@ -25,13 +25,15 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     modificationCharge: '',
   };
   const [policiesData, setPoliciesData] = useState(initialPoliciesData);
-  const [error, setError] = useState("");
+  
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
   const topRef = useRef(null); // Create a reference for the top of the component
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Check if the screen size is mobile
-
+  const [errorMessages, setErrorMessages] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [currentErrorIndex, setCurrentErrorIndex] = useState(0);
   useEffect(() => {
      // Scroll to the top of the component when it mounts
      window.scrollTo(0, 0);
@@ -41,8 +43,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     if (parentPoliciesData) {
         // Update local state with values from parentPoliciesData
         setPoliciesData({// spread the incoming data
-            isCancellationPolicy: true,  // true for standard
-            isModification: true,  // true for modification
+          
+            isCancellationPolicy: parentPoliciesData.isCancellationPolicy ?? true,  // true for standard
+           
+            isModification: parentPoliciesData.isModification ?? true,  // true for modification
             cancellationDays: parentPoliciesData.cancellationDays || '',  // default empty
             cancellationCharge: parentPoliciesData.cancellationCharge || '',  // default empty
             modificationDays: parentPoliciesData.modificationDays || '',  // default empty
@@ -108,84 +112,79 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
   };
 
   const validateAndProceed = () => {
-    // Validate cancellation policy
+    const errors = [];
+
+    // Validation checks
     if (policiesData.isCancellationPolicy && (!policiesData.cancellationDays || !policiesData.cancellationCharge)) {
       if (!policiesData.cancellationDays) {
-        alert("Please specify the number of days for cancellation policy.");
-        return;
+        errors.push("Please specify the number of days for cancellation policy.");
       }
       if (!policiesData.cancellationCharge) {
-        alert("Please specify the charge for cancellation.");
-        return;
+        errors.push("Please specify the charge for cancellation.");
       }
     }
-  
-    // Validate modification policy
-    if (policiesData.isModification) {
+
+    if (policiesData.isModification && (!policiesData.modificationDays || !policiesData.modificationCharge)) {
       if (!policiesData.modificationDays) {
-        alert("Please specify the number of days for modification policy.");
-        return;
+        errors.push("Please specify the number of days for modification policy.");
       }
       if (!policiesData.modificationCharge) {
-        alert("Please specify the charge for modification.");
-        return;
+        errors.push("Please specify the charge for modification policy");
       }
     }
-    
-    // Validate house rules
-    if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed) {
-      alert("Please select at least one standard rule.");
-      return;
-    }
-  
-    if (showTimePicker && (!houseRulesData.quietHoursStart || !houseRulesData.quietHoursEnd)) {
-      alert("Please specify quiet hours.");
-      return;
-    }
-  
-    if (!houseRulesData.customRules) {
-      alert("Please enter your custom rules.");
-      return;
-    }
-  
-    // Validate check-in and check-out times
-    if (
-      !houseRulesData.checkInFrom ||
-      !houseRulesData.checkOutFrom ||
-      !houseRulesData.checkOutUntil
-    ) {
-      alert("Please specify check-in and check-out times.");
-      return;
-    }
-  
-    // Check that check-out is after check-in
-    const checkInFrom = new Date(houseRulesData.checkInFrom);
-    const checkInUntil = new Date(houseRulesData.checkInUntil);
-    const checkOutFrom = new Date(houseRulesData.checkOutFrom);
-    const checkOutUntil = new Date(houseRulesData.checkOutUntil);
-  
-    if (checkOutFrom < checkInUntil) {
-      alert("Check-out time must be after check-in time.");
-      return;
-    }
-  
-    setError("");
-    onPoliciesDataChange(policiesData); // Send updated data to parent
-    onHouseRulesDataChange(houseRulesData);
-    handleNext(); // Navigate to the next component
-  };
-  
 
-  console.log("policiesData", policiesData);
-  console.log("houseRulesData", houseRulesData);
+    if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed) {
+      errors.push("Please select at least one standard rule.");
+    }
+
+    if (!houseRulesData.customRules) {
+      errors.push("Please enter your custom rules.");
+    }
+
+    if (!houseRulesData.checkInFrom || !houseRulesData.checkOutFrom || !houseRulesData.checkOutUntil) {
+      errors.push("Please specify check-in and check-out times.");
+    }
+    if (houseRulesData.checkInFrom > houseRulesData.checkOutFrom) {
+      errors.push("Check-in time cannot be after check-out time.");
+    }
+    if (houseRulesData.checkOutFrom > houseRulesData.checkOutUntil) {
+      errors.push("Check-out from  cannot be be after check-out until.");
+    }
+
+    if (errors.length > 0) {
+      setErrorMessages(errors);
+      setCurrentErrorIndex(0);
+      showNextError();
+    } else {
+      setErrorMessages([]);
+      // Proceed with form submission or navigation
+      onPoliciesDataChange(policiesData); // Send updated data to parent
+    onHouseRulesDataChange(houseRulesData);
+      handleNext();
+    }
+  };
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+    setCurrentErrorIndex((prevIndex) => prevIndex + 1);
+  };
+
+  const showNextError = () => {
+    if (errorMessages.length > currentErrorIndex) {
+      setSnackbarOpen(true);
+    }
+  };
+
+  // console.log("policiesData", policiesData);
+  // console.log("houseRulesData", houseRulesData);
+  console.log("parentPoliciesData is Cancellation", parentPoliciesData.isCancellationPolicy);
   return (
     <div ref={topRef}>
-    <Container maxWidth="lg" className="centered-container">
+    <Container maxWidth="md" className="centered-container">
       <AnimatePage>
         <Box display="flex" justifyContent="center" alignItems="center">
           <Paper
             sx={{
-              width: '80vw',
+              
               padding: isMobile ? "1rem" : "2rem",
               borderRadius: '0.8rem',
               boxShadow: 3,
@@ -256,6 +255,11 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             }}
                             variant="outlined"
                           />
+                          {/* {errorMesasge for cancellation days here} */}
+                          {errorMessages.includes("Please specify the number of days for cancellation policy.") && (
+                            <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify the number of days for cancellation policy.</Typography>
+                          )}
+                        
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             {!isMobile && (
                               <ListItemIcon>
@@ -284,6 +288,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             <MenuItem value={50}>50%</MenuItem>
                             <MenuItem value={60}>60%</MenuItem>
                           </Select>
+                          {/* errorMesasge for cancellation charge here */}
+                          {errorMessages.includes("Please specify the number of days for modification policy.") && (
+                            <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify the number of days for modification policy.</Typography>
+                          )}
                         </Box>
                       </Box>
                     )}
@@ -358,6 +366,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             InputProps={{ inputProps: { min: 1 } }}
                             variant="outlined"
                           />
+                          {/* errorMesasge for modification days here */}
+                          {errorMessages.includes("Please specify the number of days for modification policy.") && (
+                            <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify the number of days for modification policy.</Typography>
+                          )}
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             {!isMobile && (
                               <ListItemIcon>
@@ -384,6 +396,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             <MenuItem value={50}>50%</MenuItem>
                             <MenuItem value={60}>60%</MenuItem>
                           </Select>
+                          {/* errorMesasge for modification charge here */}
+                          {errorMessages.includes("Please specify the charge for modification policy.") && (
+                            <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify the charge for modification policy.</Typography>
+                          )}
                         </Box>
                       </Box>
                     )}
@@ -407,7 +423,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                 </Grid>
               </Grid>
               {/* Validation Error Message */}
-              {error && <Typography color="red">{error}</Typography>}
+              {/* {error && <Typography color="red">{error}</Typography>} */}
               {/* Action Buttons */}
             </form>
             <Box
@@ -490,6 +506,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                         </Grid>
                       </Box>
                     )}
+                    {/* Error Message for Quiet Hours */}
+                      {errorMessages.includes("Please specify quiet hours start and end.") && (
+                        <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify quiet hours start and end.</Typography>
+                      )}
                   </Box>
                   <Box>
                     <Typography sx={{ fontWeight: 'bold', fontSize: 18, mt: 2, mb: 1 }}>
@@ -504,6 +524,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       multiline
                       rows={4}
                     />
+                    {/* Error Message for Custom Rules */}
+                    {errorMessages.includes("Please enter your custom rules.") && (
+                      <Typography color="error" sx={{fontSize: "0.8rem" }}>Please enter your custom rules.</Typography>
+                    )}
                   </Box>
                   <Box>
                     <Typography sx={{ fontWeight: 'bold', fontSize: 18, mt: 2, mb: 1 }}>
@@ -520,6 +544,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                           value={houseRulesData.checkInFrom}
                           fullWidth
                         />
+
 
                       </Grid>
                       {/* <Grid item xs={12} md={6}>
@@ -568,11 +593,17 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                   </Box>
                 </form>
 
-              {error && (
-                <Typography color="error" sx={{ mt: 2, textAlign: 'center', fontWeight: 'bold' }}>
-                  {error}
-                </Typography>
+              {/* {Error Messagwe for Check-in and Check-out Times} */}
+              {errorMessages.includes("Please specify check-in and check-out times.") && (
+                <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify check-in and check-out times.</Typography>
               )}
+              {errorMessages.includes(" Check-in time cannot be after check-out time.") && (
+                <Typography color="error" sx={{fontSize: "0.8rem" }}> Check-in time cannot be after check-out time.</Typography>
+              )}
+               {errorMessages.includes(" Check-out from time cannot be be after check-out until.") && (
+                <Typography color="error" sx={{fontSize: "0.8rem" }}> Check-out from time cannot be be after check-out until.</Typography>
+              )}
+              
             </Box>
             
           </Paper>
@@ -586,6 +617,16 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
           Next
         </Button>
       </div>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="error" onClose={handleCloseSnackbar}>
+          {errorMessages[currentErrorIndex]}
+        </Alert>
+      </Snackbar>
     </Container>
     </div>
   );

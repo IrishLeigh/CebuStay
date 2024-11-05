@@ -120,9 +120,9 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
 
   return (
     <Box >
-      <Container maxWidth="lg">
+      <Container maxWidth="md" className="centered-container">
         <AnimatePage>
-          <Grid container spacing={2} justifyContent="center">
+          <Grid container justifyContent="center">
             <Grid item xs={12} md={12}>
               <Box
                 sx={{
@@ -138,7 +138,7 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
                     padding: isMobile ? "1rem" : "2rem", // No padding for mobile
                     width: "100%",
                     borderRadius: "0.8rem",
-                    mb: "rem",
+                   
                   }}
                 >
                   <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "1rem" }}>
@@ -243,9 +243,19 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
         </Button>
       </div>
 
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+      {/* <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
         <Alert onClose={handleSnackbarClose} severity="warning" sx={{ width: '100%' }}>
           {snackbarMessage}
+        </Alert>
+      </Snackbar> */}
+      <Snackbar
+        open={snackbarOpen}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={3000}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+        {snackbarMessage}
         </Alert>
       </Snackbar>
     </Box>

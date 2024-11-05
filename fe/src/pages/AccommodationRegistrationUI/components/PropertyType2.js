@@ -68,9 +68,9 @@ export default function PropertyType2({
 
           <Typography
             sx={{
-              fontSize: "1.5rem",
+              fontSize: "1rem",
               textAlign: "left",
-              marginBottom: 5,
+              marginBottom: 4,
             }}
           >
             The term is all about how long guests can book a stay—whether it’s for a quick getaway or a longer adventure!

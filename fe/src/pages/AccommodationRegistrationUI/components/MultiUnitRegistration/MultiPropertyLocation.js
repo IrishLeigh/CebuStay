@@ -216,7 +216,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
 
   return (
     <div ref={topRef} >
-      <Container maxWidth="lg" className="centered-container">
+      <Container maxWidth="md" className="centered-container">
         <AnimatePage>
           <Box display="flex" justifyContent="center" alignItems="center">
             <Paper
@@ -337,7 +337,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
             <Button
               variant="contained"
               onClick={resetPosition}
-              style={{ fontSize: "1rem", marginTop: "1rem" }}
+              sx={{ fontSize: "1rem", marginTop: "1rem" , backgroundColor: '#6A6A6A', color: '#fff' }}
             >
               Reset
             </Button>
@@ -364,7 +364,8 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
             Next
           </Button>
         </div>
-        <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
           <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
             {snackbarMessage}
           </Alert>

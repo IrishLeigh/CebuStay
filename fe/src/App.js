@@ -1,3 +1,5 @@
+//APP.js 11/02/24
+
 import { DataProvider } from "./components/registration_unit/registration_location/contextAddressData";
 
 import RegistrationUI from "./Registration_User/RegistrationUI";
@@ -89,7 +91,7 @@ function App() {
       setUser(null);
       console.log("No token found");
     }
-  }, [token, isPropertyListed]);
+  }, [token]);
 
   useEffect(() => {
     const handleSessionCheck = () => {
