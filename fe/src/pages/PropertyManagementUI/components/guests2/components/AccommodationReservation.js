@@ -322,6 +322,8 @@ export default function AccommodationReservation() {
     }
   }, [searchTerm, selectedOption, propertyData]);
 
+  console.log("selectedButton: ", selectedButton);
+
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
       <div className="full-height">
@@ -346,7 +348,12 @@ export default function AccommodationReservation() {
                       ? "underline-purple"
                       : ""
                   }`}
-                  onClick={() => setSelectedButton(button.toLowerCase())}
+                  onClick={() => {
+                    setSelectedButton(button.toLowerCase());
+                    setModalOpen(false);
+                    setEditModalOpen(false);
+                    setDeleteItemId(null);
+                }}
                 >
                   {button}
                 </button>
@@ -513,6 +520,7 @@ export default function AccommodationReservation() {
                   <MdClose />
                 </button>
                 <CheckInCheckOut
+                category={selectedButton}
                   item={selectedReservation}
                   onClose={closeModal}
                 />

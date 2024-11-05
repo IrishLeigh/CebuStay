@@ -26,7 +26,8 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
   const unitData = PropertyData?.[0];
 
   const formatPrice = (value) => {
-    return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
+    const roundedValue = Math.ceil(value); // Round up to the nearest whole number
+    return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(roundedValue);
   };
 
   useEffect(() => {

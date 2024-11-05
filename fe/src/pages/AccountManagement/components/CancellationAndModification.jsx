@@ -354,6 +354,7 @@ const CancellationAndModification = ({
     } else {
       console.log("Current date is less than or equal to the check-in date minus prior days.");
     }
+    console.log("dayResult: ", dayResult);
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/refund-payment', {
@@ -370,7 +371,7 @@ const CancellationAndModification = ({
         setSnackbarMessage("Successfully cancelled the booking.");
         setSnackbarSeverity("success");
         setTimeout(() => {
-          window.location.reload();
+          // window.location.reload();
         }, 1000);
       } else {
         setSnackbarMessage("Failed to cancel the booking.");
