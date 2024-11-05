@@ -144,7 +144,7 @@ export default function BannerOffers({
               className="offers-icon"
               sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
             />
-            <p>Pay with ease with our  options</p>
+            <p>Pay with ease with our options</p>
           </Box>
           <Box className="offers">
             <CalendarMonthIcon

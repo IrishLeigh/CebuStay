@@ -386,7 +386,7 @@ export default function PropertyManagementListing() {
             Your Properties
           </h1>
           <p style={{ fontSize: "0.875rem", textAlign: "left" }}>
-            Property management lsiting, where you can easily view, edit, and
+            Property management listing, where you can easily view, edit, and
             manage all property details.
           </p>
         </div>
