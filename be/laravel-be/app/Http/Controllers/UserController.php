@@ -71,6 +71,10 @@ class UserController extends CORS
             $user->password = Hash::make($request->input('password'));
         }
 
+        if ($request->input('paypalcountrycode')) {
+            $user->paypalcountrycode = $request->input('paypalcountrycode', $user->paypalcountrycode);
+        }
+
         if ($request->input('paypalmail')) {
             $user->paypalmail = $request->input('paypalmail', $user->paypalmail);
         }
