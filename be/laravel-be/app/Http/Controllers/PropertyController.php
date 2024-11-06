@@ -443,7 +443,7 @@ class PropertyController extends CORS
                 foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
                     if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
                         foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
-                            if ($unitRoom->roomname === 'Bedroom') {
+                            if ($unitRoom->roomname === 'Bedspace' || $unitRoom->roomname === 'Bedroom') {
                                 $bedroomCount += $unitRoom->quantity;
                             } elseif ($unitRoom->roomname === 'Bathroom') {
                                 $bathroomCount += $unitRoom->quantity;
@@ -475,7 +475,7 @@ class PropertyController extends CORS
                 foreach ($unitDetailsByPropertyId[$propertyId] as $unitDetail) {
                     if (isset($unitRoomsByUnitId[$unitDetail->unitid])) {
                         foreach ($unitRoomsByUnitId[$unitDetail->unitid] as $unitRoom) {
-                            if ($unitRoom->roomname == 'Bedroom') {
+                            if ($unitRoom->roomname == 'Bedroom' || $unitRoom->roomname == 'Bedspace') {
                                 foreach ($bedroomTypes as $bedroomType) {
                                     if ($bedroomType->unitroomid == $unitRoom->unitroomid) {
                                         $bedCount += $bedroomType->singlebed + $bedroomType->bunkbed + $bedroomType->largebed + $bedroomType->superlargebed;
