@@ -1,0 +1,61 @@
+.sort-menu {
+  display: flex;
+  width: 100%;
+  /* border: 1px solid #ccc; Grey border around the whole box */
+  border-radius: 12px; /* Rounded corners */
+  overflow: hidden; /* Ensures no overflow issues */
+  background-color: #FFFF; /* White background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Box shadow for a subtle effect */
+}
+
+.sort-btn {
+  flex: 1; /* Each button takes equal space initially */
+  margin: 0;
+  padding: 12px 16px; /* Increased padding for better visual separation */
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  background-color: #FFFF; /* Transparent background by default */
+  color: #000; /* Default text color */
+  font-size: 0.8rem; /* Default font size */
+  font-weight: 500;
+  transition: color 0.4s, background-color 0.4s, border-radius 0.4s; /* Transition for color, background, and border-radius */
+  font-family: 'poppins', Tahoma, Geneva, Verdana, sans-serif;
+ 
+}
+
+.sort-btn:first-of-type {
+  flex: 0 0 10%; /* First button (Sort) is 10% width and fixed */
+  pointer-events: none; /* Disable pointer events for the first button */
+  background-color: #FFF; /* White background */
+  color: #000; /* Black text color */
+   border-right: 1px solid #ccc; /* Only right border */
+  border-top: none; /* No top border */
+  border-bottom: none; /* No bottom border */
+  border-left: none; /* No left border */
+  border-radius: 12px 0 0 12px; /* Rounded corners */
+}
+
+.sort-btn:not(:first-of-type):hover,
+.sort-btn:not(:first-of-type):focus {
+  background-image: linear-gradient(
+    to right,
+    #16B4DD,
+    #BA84E1,
+    #04befe,
+    #BA84E1
+  );
+  background-size: 300% 100%;
+  color: #fff; /* Text color on hover or focus */
+  border-radius: 12px; /* Rounded corners on hover or focus */
+}
+
+.sort-btn:focus {
+  outline: none; /* Remove focus outline */
+}
+
+.sort-btn:active {
+  background-color: #16B4DD; /* Background color on click */
+  color: #fff; /* Text color on click */
+  border-radius: 12px; /* Rounded corners on click */
+}

@@ -1,0 +1,113 @@
+/* Base Styles */
+.amenity-cntr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: left;
+}
+
+.each-amenity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: Poppins, sans-serif;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 1rem;
+  width: 15%; /* Default width for large screens */
+}
+
+.no-amenities,
+.no-facilities,
+.no-services,
+.no-houserules,
+.no-cancellation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  font-size: 16px;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.policy-grid {
+  padding: 16px;
+  border-radius: 8px;
+  height: 200px;
+  width: 480px; /* Default width */
+  background-color: #fff;
+  border: 1px solid #dddddd;
+}
+
+.policy-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 45px;
+}
+
+.policy-item span {
+  font-family: "Poppins", sans-serif;
+}
+
+.policy-item .bold {
+  font-weight: bold;
+}
+
+.policy-item .normal {
+  font-weight: normal;
+  margin-left: auto;
+}
+
+/* Responsive Styles */
+
+/* For tablets and below */
+@media (max-width: 1024px) {
+  .each-amenity {
+    width: 30%; /* Adjust to take more space on smaller screens */
+  }
+
+  .policy-grid {
+    width: 100%; /* Make policy grid full-width */
+  }
+}
+
+/* For small screens like phones */
+@media (max-width: 600px) {
+  .each-amenity {
+    width: 100%; /* Each amenity takes full width on small screens */
+    padding: 10px; /* Reduce padding for smaller screens */
+  }
+
+  .policy-grid {
+    width: 100%; /* Ensure full width for policy grid */
+    height: auto; /* Adjust height to fit content */
+  }
+
+  .no-amenities,
+  .no-facilities,
+  .no-services,
+  .no-houserules,
+  .no-cancellation {
+    font-size: 14px; /* Smaller font size for better readability on small screens */
+    height: auto; /* Adjust height to fit content */
+    padding: 10px; /* Add padding for better layout */
+  }
+
+  .policy-item {
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align text to the left */
+    margin-bottom: 20px; /* Reduce spacing */
+  }
+
+  .policy-item .normal {
+    margin-left: 0; /* Reset margin on small screens */
+    margin-top: 5px;
+  }
+}

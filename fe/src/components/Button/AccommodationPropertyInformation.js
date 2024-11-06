@@ -1,39 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Typography, Grid, Container } from "@mui/material";
 import { motion } from "framer-motion";
+import '../../components/Button/NextButton.css'
 
 const data = {
   basicAmenities: [
-    { icon: "toiletries.png", text: "Toiletries" },
-    { icon: "aircon.png", text: "Air Conditioning" },
-    { icon: "wifi.png", text: "Wi-Fi" },
-    { icon: "minibar.png", text: "Mini Bar" },
-    { icon: "workspace.png", text: "Workspace" },
-    { icon: "tv.png", text: "Television" },
-    { icon: "refrigerator.png", text: "Refrigerator" },
-    { icon: "microwave.png", text: "Microwave" },
+    { icon: "/toiletries.png", text: "Toiletries" },
+    { icon: "/aircon.png", text: "Air Conditioning" },
+    { icon: "/wifi.png", text: "Wi-Fi" },
+    { icon: "/minibar.png", text: "Mini Bar" },
+    { icon: "/workspace.png", text: "Workspace" },
+    { icon: "/tv.png", text: "Television" },
+    { icon: "/refrigerator.png", text: "Refrigerator" },
+    { icon: "/microwave.png", text: "Microwave" },
   ],
   basicServices: [
-    { icon: "housekeeping.png", text: "House Keeping" },
-    { icon: "breakfast.png", text: "Breakfast" },
-    { icon: "shuttle.png", text: "Shuttle Service" },
-    { icon: "carrental.png", text: "Car Rental" },
-    { icon: "frontdesk.png", text: "24hours Front Desk" },
-    { icon: "concierge.png", text: "Concierge" },
-    { icon: "laundry.png", text: "Laundry" },
-    { icon: "petfriendly.png", text: "Pet Friendly" },
-    { icon: "roomservice.png", text: "Room Service" },
-    { icon: "cleaningservice.png", text: "Cleaning Service" },
-    { icon: "wakeupcall.png", text: "Wake-up Call Service" },
+    { icon: "/housekeeping.png", text: "House Keeping" },
+    { icon: "/breakfast.png", text: "Breakfast" },
+    { icon: "/shuttle.png", text: "Shuttle Service" },
+    { icon: "/carrental.png", text: "Car Rental" },
+    { icon: "/frontdesk.png", text: "24hours Front Desk" },
+    { icon: "/concierge.png", text: "Concierge" },
+    { icon: "/laundry.png", text: "Laundry" },
+    { icon: "/petfriendly.png", text: "Pet Friendly" },
+    { icon: "/roomservice.png", text: "Room Service" },
+    { icon: "/cleaningservice.png", text: "Cleaning Service" },
+    { icon: "/wakeupcall.png", text: "Wake-up Call Service" },
   ],
   facilities: [
-    { icon: "swimmingpool.png", text: "Swimming Pool" },
-    { icon: "gym.png", text: "Gym" },
-    { icon: "wellness.png", text: "Wellness Facilities" },
-    { icon: "gameroom.png", text: "Game Room" },
-    { icon: "sports.png", text: "Sports Facilities" },
-    { icon: "parking.png", text: "Parking" },
-    { icon: "businesscenter.png", text: "Business Center" },
+    { icon: "/swimmingpool.png", text: "Swimming Pool" },
+    { icon: "/gym.png", text: "Gym" },
+    { icon: "/wellness.png", text: "Wellness Facilities" },
+    { icon: "/gameroom.png", text: "Game Room" },
+    { icon: "/sports.png", text: "Sports Facilities" },
+    { icon: "/parking.png", text: "Parking" },
+    { icon: "/businesscenter.png", text: "Business Center" },
   ],
 };
 
@@ -103,16 +104,21 @@ function AmenityButton({ icon, text, isSelected, onClick }) {
   );
 }
 
-function CategorySection({ category, label }) {
-  const [selectedItems, setSelectedItems] = useState([]);
+function CategorySection({ category, label, onItemsChange, initialSelectedItems }) {
+  const [selectedAmenities, setSelectedAmenities] = useState(initialSelectedItems || []);
 
   const toggleItemSelection = (itemText) => {
-    if (selectedItems.includes(itemText)) {
-      setSelectedItems(selectedItems.filter((item) => item !== itemText));
-    } else {
-      setSelectedItems([...selectedItems, itemText]);
-    }
+    const newSelectedAmenities = selectedAmenities.includes(itemText)
+      ? selectedAmenities.filter((item) => item !== itemText)
+      : [...selectedAmenities, itemText];
+
+    setSelectedAmenities(newSelectedAmenities);
+    onItemsChange(category, newSelectedAmenities); // Notify parent component about the updated selected items
   };
+
+  useEffect(() => {
+    onItemsChange(category, selectedAmenities);
+  }, [selectedAmenities, category, onItemsChange]);
 
   return (
     <>
@@ -134,7 +140,7 @@ function CategorySection({ category, label }) {
               <AmenityButton
                 icon={item.icon}
                 text={item.text}
-                isSelected={selectedItems.includes(item.text)}
+                isSelected={selectedAmenities.includes(item.text)}
                 onClick={() => toggleItemSelection(item.text)}
               />
             </Grid>
@@ -145,7 +151,23 @@ function CategorySection({ category, label }) {
   );
 }
 
-function AccommodationPropertyInformation() {
+function AccommodationPropertyInformation({ onAmenitiesChange, parentAmenities, handleBack, handleNext }) {
+  const [selectedAmenities, setSelectedAmenities] = useState(parentAmenities);
+
+  const handleItemsChange = (category, items) => {
+    setSelectedAmenities((prevSelectedAmenities) => ({
+      ...prevSelectedAmenities,
+      [category]: items,
+    }));
+  };
+
+  const handleSave = () => {
+    console.log("Save changes", selectedAmenities);
+
+    onAmenitiesChange(selectedAmenities);
+    handleNext();
+  };
+
   return (
     <>
       <Container
@@ -155,7 +177,8 @@ function AccommodationPropertyInformation() {
           flexDirection: "column",
           justifyContent: "center",
           textAlign: "left",
-          marginTop: "5rem",
+          marginTop: "2rem",
+          marginBottom: "8rem",
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "2rem" }}>
@@ -164,9 +187,42 @@ function AccommodationPropertyInformation() {
         <Typography sx={{ fontSize: "1.5rem", mb: 2 }}>
           Please click the buttons you choose.
         </Typography>
-        <CategorySection category="basicAmenities" label={"Basic Amenities"} />
-        <CategorySection category="basicServices" label={"Basic Services"} />
-        <CategorySection category="facilities" label={"Facilities"} />
+        <CategorySection
+          category="basicAmenities"
+          label={"Basic Amenities"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicAmenities}
+        />
+        <CategorySection
+          category="basicServices"
+          label={"Basic Services"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.basicServices}
+        />
+        <CategorySection
+          category="facilities"
+          label={"Facilities"}
+          onItemsChange={handleItemsChange}
+          initialSelectedItems={selectedAmenities.facilities}
+        />
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+        <Button
+            variant="contained"
+            color="primary"
+            onClick={handleBack}
+            sx={{ fontFamily: "Poppins, sans-serif", width: 200, height: 50 }}
+          >
+            Back
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            sx={{ fontFamily: "Poppins, sans-serif", width: 200, height: 50 }}
+          >
+            Save
+          </Button>
+        </div>
       </Container>
     </>
   );

@@ -1,0 +1,103 @@
+/* Sidebar container for proper positioning */
+.sidebar-container {
+    position: relative;
+    height: 100vh;
+}
+
+/* Sidebar styling */
+.account-sidebar {
+    height: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    transform: translateX(0); /* Sidebar visible by default on larger screens */
+}
+
+.account-sidebar.open {
+    transform: translateX(0); /* Sidebar open when the class is active */
+}
+
+.logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+.main-menu {
+    font-size: 1.2em;
+    color: grey;
+    margin: 2.2rem 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: grey;
+    cursor: pointer;
+    transition: color 0.3s, border-right 0.3s;
+}
+
+.menu-item svg {
+    margin-right: 10px;
+}
+
+.menu-item:hover,
+.menu-item.active {
+    color: #A334CF;
+    border-right: 4px solid #A334CF;
+}
+
+/* Toggle button for sidebar */
+.sidebar-toggle {
+    display: none; /* Hidden by default on large screens */
+    position: absolute;
+    top: 20px;
+    left: 260px;
+    background-color: #f8f8f8;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .account-sidebar {
+        transform: translateX(-100%); /* Hide sidebar by default on small screens */
+    }
+
+    .account-sidebar.open {
+        transform: translateX(0); /* Show sidebar when open */
+    }
+
+    .sidebar-toggle {
+        display: block; /* Show toggle button on small screens */
+        left: 20px; /* Move toggle to the left for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .main-menu {
+        font-size: 1em;
+    }
+
+    .menu-item {
+        padding: 8px;
+    }
+
+    .menu-item svg {
+        margin-right: 8px;
+    }
+}

@@ -1,0 +1,328 @@
+/* AccommodationReservation.css */
+
+/* Existing styles... */
+
+.header .title {
+  /* background-image: url("C:\Kaye\capstone1\CebuStayNew\CebuStay\fe\public\ReservationBanner.png"); */ /*kani nga path kay sa ako rani*/
+  /* background-image: url("ReservationBanner.png"); ako lang sa comment kay mo error diri sa ako */
+  /* background-color: #a334cf; */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Aligns content to the start (top) of the container */
+  align-items: flex-start; /* Aligns content to the start (left) of the container */
+  color: #ffffff;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  border-bottom-left-radius: 15px; /* Curves the bottom left corner */
+  border-bottom-right-radius: 15px; /* Curves the bottom right corner */
+  overflow: hidden; /* Ensures content and image don’t overflow */
+  height: 100px; /* Adjust height as needed */
+  padding: 1rem; /* Adds some padding if needed */
+}
+
+.header p {
+  font-size: 1rem;
+}
+
+.table-header {
+  background-color: #f0f0f0;
+}
+
+.table-header th {
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header-container {
+  background: linear-gradient(to right, #990099, #990099, #cc00cc);
+  padding: 1.5rem;
+  color: #ffffff;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  width: 100%;
+  text-align: center; /* Center align header title and description */
+}
+
+.header-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: white;
+  font-family: "Poppins", sans-serif; /* Ensure to import the font if not already */
+  text-align: left;
+}
+
+.header-description {
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.buttons .btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #333;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.buttons .btn.clicked {
+  color: #000000; /* Change text color */
+}
+
+.buttons .btn.underline {
+  text-decoration: none;
+  position: relative; /* Ensure position is relative for the ::after pseudo-element */
+}
+
+.btn.underline-purple::after {
+  content: "";
+  position: absolute;
+  bottom: -0.2rem; /* Adjust this value for more or less space below the text */
+  left: 50%; /* Center the underline */
+  transform: translateX(-50%); /* Center it properly */
+  height: 0.2rem; /* Default underline height */
+  width: 80%; /* Set the width of the underline */
+  background-color: #a334cf;
+}
+
+@media (max-width: 768px) {
+  .btn.underline-purple::after {
+    height: 0.15rem; /* Adjusted height for small screens */
+    bottom: -0.1rem; /* Adjusted position for small screens */
+    width: 60%; /* Adjust the width for small screens, if desired */
+  }
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  z-index: 10;
+  width: 10rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dropdown-content button {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  outline: none;
+}
+
+.dropdown-content button:hover {
+  background-color: #fccd6e;
+  color: #fff;
+}
+
+/* Search Input */
+.search-container {
+  position: relative;
+  margin-left: 1rem;
+}
+
+.search-container input {
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+  height: 3rem;
+  width: 100%;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+.search-container input:focus {
+  border-color: #5e5e5e;
+}
+
+/* Menu Button */
+.menu-button {
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  margin-left: 0.2rem;
+  height: 3rem;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+.menu-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.modal-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-content p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.confirm-button,
+.cancel-button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #45a049;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #da190b;
+}
+
+/* Table */
+.table-container {
+  position: relative;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+.table-container table {
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.table-container th {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #f0f0f0;
+}
+
+.table-container td {
+  padding: 0.5rem 1rem;
+}
+
+.buttons {
+  display: flex; /* Use flex to align buttons in a row */
+  justify-content: space-between; /* Evenly space buttons */
+  align-items: center; /* Center items vertically */
+}
+
+.buttons .btn {
+  min-width: 80px; /* Set a minimum width for buttons to prevent them from being too small */
+  font-size: 16px; /* Default font size */
+}
+
+/* Responsive Design */
+.full-height {
+  height: 100%;
+}
+
+.full-width {
+  width: 100%; /* Default full width */
+  font-size: 1rem; /* Default font size */
+}
+
+@media (max-width: 700px) {
+  .buttons .btn {
+    font-size: 10px; /* Smaller font size for mobile screens */
+    margin: -1rem; /* Reduced horizontal space between buttons */
+    width: auto; /* Maintain default button width */
+  }
+}
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .controls div {
+    width: 70%;
+  }
+
+  .search-container {
+    align-items: flex-end; /* Aligns items to the right in vertical layout */
+    margin-top: 2rem; /* Reduces margin on small screens */
+  }
+}

@@ -1,0 +1,128 @@
+.account-cntr{
+  background-color: #ffffff;
+  border-radius: 12px;
+  font-family: Poppins, sans-serif;
+  padding: 2rem;
+  margin: 3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+ 
+
+}
+.account-id-cntr {
+  width: 100%;
+  display: block ;
+  gap: 1rem;
+  padding: 2rem;
+  
+}
+
+.account-id-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  font-family: Poppins, sans-serif;
+}
+
+.account-id-desc {
+  font-size: 1rem;
+  margin-bottom: 0px;
+  font-family: Poppins, sans-serif;
+  text-align: justify;
+}
+
+
+.account-btn-cntr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.save-btn-withChanges {
+  background-color: #16B4DD;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  width: 9rem;
+  cursor: pointer;
+}
+
+.save-btn-withChanges:hover {
+  background-color: #0f9ed8;
+}
+
+.cancel-btn-withChanges {
+  background-color: #ffff;
+  color: #16B4DD;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid #16B4DD;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  width: 9rem;
+  cursor: pointer;
+}
+
+.cancel-btn-withChanges:hover {
+  background-color: #EE414B;
+  color: #ffff;
+  border: 1px solid #fff;
+}
+
+.save-btn-withoutChanges {
+  background-color: #6A6A6A;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  width: 9rem;
+  cursor: not-allowed;
+}
+
+
+.cancel-btn-withoutChanges {
+  background-color: #ffff;
+  color: #6A6A6A;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid #6A6A6A;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  width: 9rem;
+  cursor: not-allowed;
+}
+
+
+@media( max-width: 425px) {
+  .account-cntr{
+
+    padding: 1rem;
+    margin: 1rem;
+  
+  }
+
+  .account-id-desc {
+    font-size: 0.8rem;
+  }
+
+  .account-id-cntr {
+    padding: 1rem;
+    
+  }
+  }

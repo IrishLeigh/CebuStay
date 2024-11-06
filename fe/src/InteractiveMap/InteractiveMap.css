@@ -1,0 +1,244 @@
+.leaflet-container {
+  /* background-color: rgba(255, 255, 255, 0.2); 30% opacity */
+  background-color: transparent;
+}
+.city-tooltip {
+  background-color: #ffffff;
+  border: 2px solid #f77d1e;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px;
+  text-align: center;
+  opacity: 0; /* Start with tooltip hidden */
+  transition: opacity 0.3s ease; /* Smooth transition */
+}
+
+.leaflet-tooltip {
+  font-size: inherit; /* Inherit font size from custom class */
+}
+
+/* Show tooltip on hover */
+.leaflet-marker-icon:hover + .leaflet-tooltip {
+  opacity: 1;
+}
+/* Default style for markers */
+.leaflet-marker-icon {
+  border: none; /* No border by default */
+}
+
+/* InteractiveMap.css */
+
+.map {
+  height: 100vh;
+  width: 70%;
+  margin: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.map-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-background {
+  background-image: url("/public/sea4.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height: 111vh;
+  /* padding: 0.5rem; */
+  /* transform: rotate(35deg); */
+  /* transform-origin: center center; */
+}
+
+.map-filter-cntr {
+  /* position: sticky; Makes the filter buttons stick when scrolling */
+  top: 0; /* Position them at the top of the scrolling container */
+  background-color: white; /* Ensure the background color is white for contrast */
+  padding: 0.5rem; /* Add some padding */
+  z-index: 1000; /* Ensure it's on top of other elements */
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.map-filter-btn {
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, background-color 0.3s;
+  border-radius: 5px;
+}
+
+/* Hover state */
+.map-filter-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* Clicked state */
+.map-filter-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* Additional styles for the reset button */
+.reset-btn {
+  background-color: white;
+  border: none;
+  color: #2a2a2e;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: transform 0.2s ease-in-out, background-color 0.3s;
+}
+
+/* Hover state for the reset button */
+.reset-btn:hover {
+  transform: scale(1.05);
+  background-color: #16b4dd;
+  color: white;
+}
+
+/* Clicked state for the reset button */
+.reset-btn:active {
+  transform: scale(0.95);
+  background-color: #16b4dd;
+  color: white;
+}
+
+/* Media query for 14-inch screens (1366px resolution) */
+
+/* Media query for screens wider than 1440px */
+@media screen and (min-width: 1440px) {
+  .map {
+    height: 100vh;
+    width: 70%;
+    padding: 0.5rem;
+  }
+}
+@media screen and (max-width: 1366px) {
+  .map {
+    width: 60%;
+    height: 135vh;
+  }
+
+  .map-background {
+    height: 155vh;
+    /* padding: 0.5rem; */
+    /* transform: rotate(35deg); */
+    /* transform-origin: center center; */
+  }
+}
+/* Media query for medium screens (like tablets) */
+@media screen and (max-width: 1024px) {
+  .map {
+    width: 80%;
+  }
+}
+
+/* Media query for small screens (like phones) */
+@media screen and (max-width: 768px) {
+  .map {
+    width: 100%;
+    height: 100vh;
+  }
+}
+
+/* Style for the tooltip */
+.city-tooltip {
+  background-color: #ffffff;
+  border: 2px solid #f77d1e;
+  border-radius: 5px;
+  color: #333333;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for a cute effect */
+  opacity: 0; /* Start with tooltip hidden */
+  transition: opacity 0.3s ease; /* Smooth transition */
+}
+
+path.leaflet-interactive {
+  outline: none;
+}
+
+.instructions-dialog {
+  position: absolute; /* Use absolute positioning */
+  top: 20%; /* Center vertically with some offset */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -20%); /* Adjust positioning */
+  width: 80%; /* Width of the dialog */
+  max-width: 500px; /* Maximum width */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* Slightly transparent white background */
+  padding: 20px; /* Padding inside the content */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+.instructions-content {
+  text-align: center; /* Center text alignment */
+}
+
+.instructions-content h2 {
+  margin: 0; /* Remove default margin */
+  font-size: 24px; /* Font size for the heading */
+}
+
+.instructions-content p {
+  margin: 10px 0 20px; /* Top margin for spacing, bottom margin for spacing */
+}
+
+.instructions-content button {
+  padding: 10px 20px; /* Padding for the button */
+  background-color: #007bff; /* Blue background color */
+  color: white; /* White text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners for the button */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size for button text */
+}
+
+.instructions-content button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+/* InteractiveMap.css */
+.sticky-button-container {
+  position: sticky;
+  top: 100px; /* Adjust this value as needed */
+  left: 10px;
+  z-index: 500; /* Ensure it's above the map but below other UI elements */
+  background-color: transparent; /* Remove background if needed */
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.reset-btn {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  color: #fff;
+  width: 100px; /* Same width for all buttons */
+}

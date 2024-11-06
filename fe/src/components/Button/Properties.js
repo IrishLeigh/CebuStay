@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
+import "../../components/Button/NextButton.css";
 
 const propertyTypes = [
   {
@@ -28,12 +29,34 @@ const propertyTypes = [
   },
 ];
 
-export default function Properties() {
-  const [selectedType, setSelectedType] = useState(null);
-  const handleClick = (button) => {
-    setSelectedType(selectedType === button ? null : button);
-  };
+export default function Properties({ onSelectedTypeChange, parentSelectedData  }) {
+  const [selectedType, setSelectedType] = useState(parentSelectedData);
 
+  // useEffect(() => {
+  //   const storedSelectedType = localStorage.getItem("selectedType");
+  //   if (storedSelectedType) {
+  //     setSelectedType(storedSelectedType);
+  //   }
+  // }, []);
+
+  // const handleClick = (button) => {
+  //   const newSelectedType = selectedType === button ? null : button;
+  //   setSelectedType(newSelectedType);
+  //   localStorage.setItem("selectedType", newSelectedType);
+  //   onSelectedTypeChange(selectedType === button ? null : button);
+  //   console.log("Property:", newSelectedType);
+  // };
+
+
+// Inside the handleClick function
+const handleClick = (button) => {
+  setSelectedType(selectedType === button ? null : button);
+  console.log("Selected Type after click:", selectedType); // Log the selected type after click
+  onSelectedTypeChange(selectedType === button ? null : button); // Propagate selectedType to parent
+  console.log("Property:", selectedType === button ? null : button); // Log selected property
+};
+
+  console.log("selected type sulod: ", selectedType);
   return (
     <Box>
       <Container
@@ -43,7 +66,9 @@ export default function Properties() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
+          minHeight: "100%",
+          mb:"4rem",
+          mt:"4rem",
         }}
       >
         <Typography
@@ -68,7 +93,7 @@ export default function Properties() {
           perfect property type to list on CebuStay?
         </Typography>
 
-        <Grid container spacing={2} justifyContent="center">
+        <Grid container spacing={2} justifyContent="center" mb={5}>
           {propertyTypes.map((type, index) => (
             <Grid item xs={12} key={index}>
               <Box>

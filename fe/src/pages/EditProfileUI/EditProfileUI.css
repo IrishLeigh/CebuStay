@@ -1,0 +1,150 @@
+/* EditProfile specific CSS */
+
+
+  
+  .edit-profile-container {
+    height: 100%; /* Ensure the container takes up the full height of the viewport */
+  }
+  
+  .edit-sidebar {
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    margin-top: .2rem;
+
+  }
+  
+  .edit-sidebar-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .edit-sidebar-item.active {
+    background-color: #007bff;
+  }
+  
+  .edit-sidebar-item:hover {
+    background-color: #007bff;
+  }
+  
+  .edit-sidebar-icon {
+    margin-right: 10px;
+    font-size: 1.5rem; /* Adjust icon size */
+  }
+  
+  .edit-sidebar-text {
+    font-family: 'Open Sans', sans-serif;
+    color: black;
+    transition: color 0.3s;
+
+  }
+  
+  .edit-sidebar-item:hover .edit-sidebar-text {
+    color: white;
+  }
+  
+  .edit-content {
+    padding: 20px;
+    background: 
+      radial-gradient(circle at top left, lightblue 50%, transparent 50%),
+      radial-gradient(circle at bottom right, aquamarine 50%, transparent 50%);
+    background-color: lightblue;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+    height: 60rem;
+  }
+  
+  
+  
+  .edit-section {
+    margin: 0 auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+  }
+  
+  .edit-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Make containers fit the screen */
+  }
+  
+  .edit-detail-container {
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .edit-detail-container:hover {
+    background-color: rgb(149, 224, 133);
+  }
+  
+  .edit-detail-label {
+    font-family: 'Open Sans', sans-serif;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .edit-edit-text {
+    color: rgb(152, 141, 141);
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    margin-right: 1rem;
+  }
+  .edit-edit-text:hover{
+    color: black;
+  }
+  
+  .edit-section-header {
+    font-weight: 600;
+    margin-left: 0.5rem;
+    text-align: center;
+  }
+  
+  .edit-button {
+    background-color: #eee;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 10em;
+    border-radius: 1rem;
+    color: lightcoral;
+    box-shadow: 0 0.4rem #dfd9d9;
+    cursor: pointer;
+  }
+  
+  .edit-button:active {
+    color: white;
+    box-shadow: 0 0.2rem #dfd9d9;
+    transform: translateY(0.2rem);
+  }
+  
+  .edit-button:hover:not(:disabled) {
+    background: lightcoral;
+    color: white;
+    text-shadow: 0 0.1rem #bcb4b4;
+  }
+  
+  .edit-button:disabled {
+    cursor: auto;
+    color: grey;
+  }
+  
+
+  
+
+  

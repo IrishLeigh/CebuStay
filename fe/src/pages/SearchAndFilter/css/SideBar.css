@@ -1,0 +1,694 @@
+/* Sidebar.css */
+.bg-white {
+    background-color: #ffffff;
+    width: 15.5rem;
+    padding: 1rem;
+    margin-top: 5px;
+    border-radius: 8px;
+    box-shadow: #000;
+    border-color: #000;
+    height: fit-content;
+}
+
+.text-lg {
+    font-size: 1.125rem; /* Adjust as needed */
+}
+
+.font-semibold {
+    font-weight: 600;
+    font-size: medium;
+}
+
+.text-zinc-600 {
+    color: #718096;
+}
+
+.mt-6 {
+    margin-top: 1.5rem; /* Adjust as needed */
+}
+
+.hr {
+    border-top-width: 1px;
+}
+
+.my-2 {
+    margin-bottom: 0.5rem;
+    margin-top: -1rem;
+}
+
+.block {
+    display: block;
+}
+
+.text-sm {
+    font-size: 0.875rem; /* Adjust as needed */
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-zinc-700 {
+    color: #4a5568;
+}
+
+.mt-1 {
+    margin-top: 0.25rem;
+}
+
+.px-3 {
+    padding-left: 0.75rem; /* Adjust as needed */
+    padding-right: 0.75rem; /* Adjust as needed */
+}
+
+.py-2 {
+    padding-top: 0.5rem; /* Adjust as needed */
+    padding-bottom: 0.5rem; /* Adjust as needed */
+}
+
+.border {
+    border-width: 1px;
+}
+
+.border-zinc-300 {
+    border-color: rgb(0, 0, 0);
+}
+
+.rounded-md {
+    border-radius: 0.375rem; /* Adjust as needed */
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.focus\:outline-none:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.focus\:ring-indigo-500:focus {
+    --ring-opacity: 1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.focus\:border-indigo-500:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.sm\:text-sm {
+    font-size: 0.875rem; /* Adjust as needed */
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.gap-2 > * {
+    margin-right: 0.2rem; /* Adjust as needed */
+    margin-bottom: 0.5rem; /* Adjust as needed */
+}
+
+.bg-blue-500 {
+    background-color: #4299e1;
+}
+
+.hover\:bg-blue-700:hover {
+    background-color: #2b6cb0;
+}
+
+.text-white {
+    color: #fff;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.py-2 {
+    padding-top: 0.5rem; /* Adjust as needed */
+    padding-bottom: 0.5rem; /* Adjust as needed */
+}
+
+.px-4 {
+    padding-left: 1rem; /* Adjust as needed */
+    padding-right: 1rem; /* Adjust as needed */
+}
+
+.rounded {
+    border-radius: 0.25rem; /* Adjust as needed */
+}
+
+.w-full {
+    width: 100%;
+}
+
+.bg-zinc-200 {
+    background-color: #edf2f7;
+}
+
+.text-black {
+    color: #000;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+[type='checkbox'] {
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    background-color: #edf2f7;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.25rem;
+    transition: background-color 0.15s ease-in-out;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+[type='checkbox']:checked {
+    background-color: #4299e1;
+    border-color: #4299e1;
+}
+
+
+/*new css*/
+.clickable-button {
+    cursor: pointer;
+}
+
+/* Style for buttons when clicked */
+.bg-blue-500.clicked {
+    background-color: #4299e1 !important;
+}
+
+/* Style for default buttons */
+.bg-white.button {
+    background-color: #fff !important;
+    color: #4299e1 !important;
+    border: 1px solid #4299e1 !important; 
+}
+
+/* Hover style for default buttons */
+.bg-white.button:hover {
+    background-color: #4299e1 !important;
+    color: #fff !important;
+}
+
+/* Additional styles */
+
+/* Adjustments for select elements */
+.select {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: 2.5rem; /* Adjust as needed */
+    margin-top: 0.25rem; /* Adjust as needed */
+}
+
+.select::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 0.75rem; /* Adjust as needed */
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.select select {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem 1rem; /* Adjust as needed */
+    border: 1px solid #cbd5e0;
+    border-radius: 0.375rem; /* Adjust as needed */
+    background-color: #fff;
+    font-size: 0.875rem; /* Adjust as needed */
+    appearance: none;
+    outline: none;
+}
+
+/* Adjustments for range input */
+input[type='range'] {
+    width: 100%;
+    height: 0.5rem; /* Adjust as needed */
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: opacity 0.2s;
+    transition: opacity 0.2s;
+    border-radius: 0.25rem; /* Adjust as needed */
+}
+
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1rem; /* Adjust as needed */
+    height: 1rem; /* Adjust as needed */
+    background: #4299e1;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+input[type='range']:hover {
+    opacity: 1;
+}
+
+
+/* SideBar.css */
+
+/* Button base style */
+.button {
+  border: 1px solid #ffffff; /* White border */
+  color: #000000; /* Black text color */
+  background-color: transparent; /* Transparent background */
+  padding: 0.25rem 0.5rem; /* Smaller padding for smaller size */
+  border-radius: 0.25rem; /* Rounded corners */
+  font-size: 0.75rem; /* Smaller font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  outline: none; /* Remove default outline */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+  margin: 0.25rem; /* Small margin for spacing */
+  white-space: nowrap; /* Prevent text from wrapping */
+  text-align: center; /* Center text inside button */
+  min-width: 3rem; /* Set a minimum width to keep button size consistent */
+}
+
+/* Button active state */
+.button.light-blue {
+  background-color: #0000ff; /* Blue background */
+  color: #ffffff; /* White text color */
+  border-color: #0000ff; /* Blue border */
+}
+
+/* Flex container style for 2-column layout */
+.button-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  gap: 0.5rem; /* Gap between buttons */
+  max-width: 100%; /* Ensure container doesn't exceed parent width */
+}
+
+
+
+
+
+
+
+/* Sidebar container to wrap the sidebar and toggle button */
+.sidebar-container {
+  display: flex;
+  flex-direction: column; /* Stack sidebar and toggle vertically */
+  height: 100vh; /* Full height of the viewport */
+  position: relative; /* Position relative to handle absolute/fixed elements inside */
+}
+
+@media (min-width: 769px) {
+  .sidebar-container {
+    flex-direction: row; /* Sidebar and content side by side on larger screens */
+  }
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed; /* Fixed so it stays on top */
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%; /* Full viewport height */
+  background-color: white;
+  padding: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  transform: translateX(-100%); /* Hidden by default */
+  z-index: 9999; /* High z-index so it's on top */
+  overflow-y: auto; /* Enable scrolling */
+}
+
+.sidebar.open {
+  transform: translateX(0); /* Show sidebar when open */
+}
+
+.sidebar-toggle-btn {
+  position: fixed;
+  left: 0; /* Stick it to the left side */
+  top: 50%; /* Center it vertically */
+  transform: translateY(-50%);
+  background-color: #15A1C6; /* Button color */
+  color: white; /* Text color */
+  border: none; /* No border */
+  padding: 0.5rem; /* Padding */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Animation */
+  z-index: 1000; /* Make sure it's above other elements */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
+}
+
+.sidebar-toggle-btn.open {
+  background-color: #0d6efd; /* Darker color when open */
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #0a5db0; /* Slightly darker on hover */
+}
+
+.sidebar-toggle-btn svg {
+  width: 1.25rem; /* Icon size */
+  height: 1.25rem; /* Icon size */
+  transition: transform 0.3s ease; /* Animation for icon */
+}
+
+.sidebar.open .sidebar-toggle-btn svg {
+  transform: rotate(180deg); /* Rotate icon when open */
+}
+
+/* Close button inside the sidebar (hidden by default) */
+.sidebar-close-btn {
+  display: none;
+  background-color: transparent;
+  color: #000;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%); /* Sidebar hidden by default */
+  }
+
+  .sidebar.open {
+    transform: translateX(0); /* Sidebar shown when open */
+  }
+
+  .sidebar {
+    overflow-y: auto; /* Enable scrolling */
+  }
+
+  .sidebar-toggle-btn {
+    display: block;
+  }
+
+  .sidebar.open .sidebar-close-btn {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    transform: none;
+    position: relative;
+    width: 250px;
+    height: 100vh; /* Full height of viewport */
+  }
+
+  .sidebar {
+    overflow: visible; /* Fit content without scrolling */
+  }
+
+  .sidebar-toggle-btn {
+    display: none;
+  }
+
+  .sidebar-close-btn {
+    display: none;
+  }
+}
+
+
+
+/* Menu button for mobile */
+.menu-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+
+/* Media queries for larger screens */
+@media (min-width: 769px) {
+  /* On larger screens, sidebar is always visible */
+  .sidebar {
+    position: static;
+    transform: none; /* No sliding effect */
+    width: 16rem;
+    box-shadow: none;
+  }
+
+  /* Hide the toggle button on larger screens */
+  .menu-button {
+    display: none;
+  }
+}
+
+
+
+
+
+
+
+
+.flex-wrap {
+    flex-wrap: wrap; /* Wrap items onto multiple lines */
+}
+
+  .wrap-check-51 input[type="checkbox"] {
+    display: none;
+    visibility: hidden;
+  }
+  
+  .wrap-check-51 label {
+    display: inline-block;
+  }
+  
+  .wrap-check-51 .cbx {
+    position: relative;
+    top: 1px;
+    width: 17px;
+    height: 17px;
+    border: 1px solid #c8ccd4;
+    border-radius: 3px;
+    vertical-align: middle;
+    transition: background 0.1s ease;
+    cursor: pointer;
+  }
+  
+  .wrap-check-51 .cbx:after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 5px;
+    width: 5px;
+    height: 11px;
+    opacity: 0;
+    transform: rotate(45deg) scale(0);
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transition: all 0.3s ease;
+    transition-delay: 0.15s;
+  }
+  
+  .wrap-check-51 .lbl {
+    margin-left: 5px;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  
+  .wrap-check-51 input[type="checkbox"]:checked ~ .cbx {
+    border-color: transparent;
+    background: #15A1C6;
+    animation: jelly-42 0.6s ease;
+  }
+  
+  .wrap-check-51 input[type="checkbox"]:checked ~ .cbx:after {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+
+  .property-type {
+    margin-top: 1.5rem;
+}
+
+.property-type h3 {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.property-type .checkbox-list {
+    margin-top: 0.5rem;
+}
+
+.property-type .checkbox-list .checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.property-type .checkbox-list .checkbox-item label {
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.property-type .checkbox-list .checkbox-item input[type="checkbox"] {
+    display: none;
+}
+
+.property-type .checkbox-list .checkbox-item .custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+.property-type .checkbox-list .checkbox-item .custom-checkbox:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.25rem;
+}
+
+.property-type .checkbox-list .checkbox-item input[type="checkbox"]:checked + .custom-checkbox:before {
+    background-color: #4299e1;
+}
+
+.property-type .see-more {
+    margin-top: 0.5rem;
+    text-align: left;
+}
+
+.property-type .see-more button {
+    background-color: transparent;
+    color: #4299e1;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.property-type .see-more button:hover {
+    text-decoration: underline;
+}
+
+  
+  @-moz-keyframes jelly-42 {
+    from {
+      transform: scale(1, 1);
+    }
+    30% {
+      transform: scale(1.25, 0.75);
+    }
+    40% {
+      transform: scale(0.75, 1.25);
+    }
+    50% {
+      transform: scale(1.15, 0.85);
+    }
+    65% {
+      transform: scale(0.95, 1.05);
+    }
+    75% {
+      transform: scale(1.05, 0.95);
+    }
+    to {
+      transform: scale(1, 1);
+    }
+  }
+  
+  @-webkit-keyframes jelly-42 {
+    from {
+      transform: scale(1, 1);
+    }
+    30% {
+      transform: scale(1.25, 0.75);
+    }
+    40% {
+      transform: scale(0.75, 1.25);
+    }
+    50% {
+      transform: scale(1.15, 0.85);
+    }
+    65% {
+      transform: scale(0.95, 1.05);
+    }
+    75% {
+      transform: scale(1.05, 0.95);
+    }
+    to {
+      transform: scale(1, 1);
+    }
+  }
+  
+  @-o-keyframes jelly-42 {
+    from {
+      transform: scale(1, 1);
+    }
+    30% {
+      transform: scale(1.25, 0.75);
+    }
+    40% {
+      transform: scale(0.75, 1.25);
+    }
+    50% {
+      transform: scale(1.15, 0.85);
+    }
+    65% {
+      transform: scale(0.95, 1.05);
+    }
+    75% {
+      transform: scale(1.05, 0.95);
+    }
+    to {
+      transform: scale(1, 1);
+    }
+  }
+  
+  @keyframes jelly-42 {
+    from {
+      transform: scale(1, 1);
+    }
+    30% {
+      transform: scale(1.25, 0.75);
+    }
+    40% {
+      transform: scale(0.75, 1.25);
+    }
+    50% {
+      transform: scale(1.15, 0.85);
+    }
+    65% {
+      transform: scale(0.95, 1.05);
+    }
+    75% {
+      transform: scale(1.05, 0.95);
+    }
+    to {
+      transform: scale(1, 1);
+    }
+  }
+  

@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import axios from "axios";
 import './OTP_Registration.css';
 import { Link, useNavigate } from 'react-router-dom';
-
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 const OTPRegistration = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -25,7 +26,9 @@ const OTPRegistration = () => {
   const [verificationToken, setVerificationToken] = useState(''); // Define verificationToken state variable
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Define showSuccessMessage state variable
   const [instructionText, setInstructionText] = useState(''); // Define setInstructionText state variable
-
+  const [response, setResponse] = useState(null);
+  const [severity, setSeverity] = useState('');
+  const [open, setOpen] = useState(false);
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisibility(!confirmPasswordVisibility);
   };
@@ -110,10 +113,15 @@ const OTPRegistration = () => {
         token: verificationToken
       });
       if(res.data.status === "error" && res.data.message === "Incorrect code"){
-        alert(res.data.message);
+        setResponse("Incorrect code");
+        setSeverity("error");
+        setOpen(true);
+        // alert(res.data.message);
         return;
       } else if(res.data.status === "error" && res.data.message === "Verification token expired."){
-        alert(res.data.message);
+        setResponse("Verification token expired.");
+        setSeverity("error");
+        setOpen(true);
         return;
       }
       // setToken(res.data.token);
@@ -123,13 +131,30 @@ const OTPRegistration = () => {
       // if (profileResponse.data.verify_token === token) {
       //   handleVerify();
       // }
-      localStorage.removeItem("email");
-      alert(res.data.message);
-      navigate('/login');
+      
+      if(res.data.status === "success"){
+        
+        setSeverity("success");
+        localStorage.removeItem("email");
+        setResponse("Verification successful!");
+        setOpen(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 4000)
+      }
+   
     } catch (error) {
    //   setResponse("Error occurred while submitting data.");
       console.error(error);
     }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
   };
 
   const handleSubmitPass = async (e) => {
@@ -170,7 +195,12 @@ const OTPRegistration = () => {
   }
   return (
     <div className="center-container">
-      <form className="otp-Form" onSubmit={handleSubmit}>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} >
+        <Alert severity={severity} sx={{ width: '100%', textAlign: 'center' }} onClose={handleClose}>
+          {response}
+        </Alert>
+      </Snackbar>
+      <form className="otp-Form" onSubmit={handleSubmit} style={{width:'320px'}}>
         {showVerifyButton && (
           <>
             <span className="mainHeading" style={{ fontSize: '25px' }}>Enter OTP</span>

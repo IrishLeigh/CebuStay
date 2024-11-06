@@ -1,0 +1,47 @@
+.footer-background {
+  background-color: #f1f1f1;
+  height: 20px; /* Optional: adjust based on your design */
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: white; /* Dark background color */
+  color: black; /* White text color for contrast */
+}
+
+.footer-logo img {
+  height: 50px; /* Adjust based on your logo size */
+}
+
+.footer-section {
+  flex: 1;
+  margin: 0 20px;
+}
+
+.footer-section h4 {
+  margin-bottom: 10px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 10px; /* Space between icons */
+}
+
+.social-icon {
+  color: white; /* Icon color */
+  text-decoration: none; /* Remove underline */
+}
+
+.social-icon:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 10px 0;
+  background-color: #CCC; /* Slightly darker background for the bottom */
+  color: black; /* White text */
+}

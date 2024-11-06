@@ -1,8 +1,10 @@
-.center-container {
+.center-containerr {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Adjusted height */
+  /* margin-bottom: 2rem; */
+  /* margin-top: -2rem; */
+  height: calc(100vh - 60px); /* Full viewport height minus navbar height */
 }
 
 .registration-container {
@@ -11,14 +13,14 @@
   width: 450px;
   border-radius: 20px;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); /* Adding shadow effect */
-  margin-top: 10rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .flex-row {
@@ -59,7 +61,7 @@
   color: white;
   font-size: 15px;
   font-weight: 500;
-  border-radius: 10px;
+  /* border-radius: 20px; */
   height: 50px;
   width: 100%;
   cursor: pointer;
@@ -80,3 +82,32 @@
   cursor: pointer;
 }
 
+/* Add this to your CSS file */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media screen and (max-width: 461px) {
+  .center-containerr{
+    height: calc(85vh - 60px);
+    scale: 0.9;
+  }
+}
+@media screen and (max-width: 413px) {
+  .center-containerr{
+    height: calc(80vh - 60px);
+    scale: 0.8;
+  }
+}
+
+@media screen and (max-width: 364px) {
+  .center-containerr{
+    height: calc(75vh - 60px);
+    scale: 0.7;
+  }
+}

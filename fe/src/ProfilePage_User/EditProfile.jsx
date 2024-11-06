@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { MdPerson, MdHistory, MdStar, MdDelete } from 'react-icons/md';
 import './EditProfile.css';
-
 import axios from 'axios';
 import { useUser } from "../components/UserProvider";
+
+
+
 
 const EditProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -31,6 +33,8 @@ const EditProfile = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
+
+  console.log("Profile of Mine", profile);
   return (
     <div className="edit-profile-container">
       <div className="edit-sidebar">
@@ -54,7 +58,7 @@ const EditProfile = () => {
             <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
               <div className="edit-detail-label">Name</div>
               <div className="edit-detail" style={{ textAlign: 'left' }}> {profile.firstname} {profile.lastname} </div>
-              <Link to="/EditName">
+              <Link to="/profile/edit-name">
                 <span className="edit-edit-text">Edit</span>
               </Link>
             </div>
@@ -66,7 +70,7 @@ const EditProfile = () => {
             <div className="edit-detail-container" style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.2) 0px 1px 3px 0px, rgba(0, 0, 0, 0.14) 0px 1px 1px -2px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px', padding: '20px', borderRadius: '8px', marginBottom: '20px', cursor: 'pointer', position: 'relative' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'yellow' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white' }}>
               <div className="edit-detail-label">Phone Number</div>
               <div className="edit-detail" style={{ textAlign: 'left' }}>{profile.cellnumber}</div>
-              <Link to="/EditPhone">
+              <Link to="/profile/edit-phone">
                 <span className="edit-edit-text">Edit</span>
               </Link>
             </div>

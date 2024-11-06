@@ -1,0 +1,24 @@
+/* Layout.css */
+
+.layout-container {
+    display: flex;
+  }
+
+  .main-content-wrapper {
+    flex-grow: 1; /* Expand to fill remaining space */
+    overflow: hidden; /* Prevent content from overflowing */
+  }
+
+  .content-layout {
+    display: flex;
+  }
+
+  .sidebar {
+    flex: 1;
+    /* Add additional styles for the sidebar as needed */
+  }
+
+  .main-content {
+    flex: 3;
+    /* Add additional styles for the main content as needed */
+  }

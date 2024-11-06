@@ -1,0 +1,67 @@
+.stay-card {
+  position: relative; /* Changed from absolute to relative */
+  top: 20px; /* Adjust this if needed */
+  right: 20px; /* Adjust this if needed */
+  width: 350px; /* Adjust as needed */
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  margin: 20px; /* Added margin for spacing */
+}
+
+.close-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.stay-image {
+  width: 100%;
+  height: 200px; /* Adjust height as needed */
+  object-fit: cover;
+}
+
+.tabs {
+  display: flex;
+  background-color: #f4f4f4;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  background-color: #ffffff;
+  border-bottom: 2px solid #16B4DD; /* Active tab indicator */
+  font-weight: bold;
+}
+
+.tab-content {
+  display: none;
+  padding: 15px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.tab-content ul {
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.tab-content ul li {
+  margin-bottom: 5px;
+}
