@@ -159,7 +159,7 @@ export default function PricePayment({
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setIsEditing(false);
+    // setIsEditing(false);
     // Gather the data to be sent to the API
     const dataToSave = {
       unitPricing: {
@@ -191,7 +191,8 @@ export default function PricePayment({
           });
           // parentUnitPricing.min_price = res.data.updatedPricing.min_price;
           setIsSaved(true);
-          setIsEditing(false);
+          setHasChanges(false);
+          // setIsEditing(false);
           setHasError(false);
           setSnackbarMessage("Unit pricing saved successfully");
           setOpenSnackbar(true);

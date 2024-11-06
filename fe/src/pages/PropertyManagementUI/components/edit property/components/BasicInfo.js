@@ -151,10 +151,9 @@ const handleAddressChange = (newAddress) => {
 
   const handleSave = async () => {
     if (!validateForm()) return;
-
+  
     setIsLoading(true);
-    setIsEditing(false);
-
+  
     try {
       const save_response = await axios.put(
         `http://127.0.0.1:8000/api/updatepropertyinfo/${propertyData.propertyid}`,
@@ -171,27 +170,40 @@ const handleAddressChange = (newAddress) => {
           headers: { "Content-Type": "application/json" },
         }
       );
-
+  
       if (save_response.data.status === "success") {
         setHasError(false);
         setSnackbarMessage("Basic Info saved successfully!");
-        setIsEditing(false);
+        
+        // Don't exit the edit mode
+      
         setOpenSnackbar(true);
         onSaveStatusChange("Saved");
+  
+        // Reset hasChanges to false after saving
+        setHasChanges(false);
       } else {
         setHasError(true);
         setSnackbarMessage("Failed to save Basic Info");
-        setIsEditing(false);
         setOpenSnackbar(true);
       }
     } catch (error) {
       setSnackbarMessage("Error saving property data");
       setOpenSnackbar(true);
       console.error("Error saving property data:", error);
+    } finally {
+      setIsLoading(false);
+      setHasChanges(false);
+      setHasError(false); // Reset errors
+      setErrorMessage([]); // Clear any error messages
     }
-    setIsLoading(false);
   };
-
+  
+/**
+ * Cancels any unsaved changes and resets the form to its original state.
+ * If there are unsaved changes, prompts the user to confirm discarding them.
+ * @returns {void}
+ */
   const handleCancel = () => {
     if (hasChanges) {
       const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");

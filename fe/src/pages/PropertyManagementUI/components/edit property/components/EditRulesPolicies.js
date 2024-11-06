@@ -286,9 +286,9 @@ export default function EditRulesPolicies({
       return;
     }
     setIsLoading(true);
-    setIsEditing(false);
-  console.log("Saved House Rules:", houseRulesData);
-  console.log("Saved Policies:", policiesData);
+    // setIsEditing(false);
+    // console.log("Saved House Rules:", houseRulesData);
+    // console.log("Saved Policies:", policiesData);
     // Validation before saving
     if (policiesData.isCancellationPolicy && (policiesData.cancellationDays === "" || policiesData.cancellationCharge === "")) {
       alert("Please enter both cancellation days and cancellation charge.");
@@ -327,7 +327,7 @@ export default function EditRulesPolicies({
         onPoliciesChange(res.data.rawUpdatedPolicies);
         setHasError(false);
         setHasChanges(false);
-        setIsEditing(false);
+        // setIsEditing(false);
         setSnackbarMessage("Rules and Policies Saved Successfully");
         setOpenSnackbar(true);
         onSaveStatusChange('Saved');

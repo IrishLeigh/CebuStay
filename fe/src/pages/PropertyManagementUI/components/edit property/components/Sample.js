@@ -115,16 +115,20 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
   };
   // Handle guest capacity change
   const handleGuestCapacityChange = (value) => {
-    setHasChanges(true);
-    setGuestCapacity(value);
+    if (value !== guestCapacity) {
+      setGuestCapacity(value);
+      setHasChanges(true);
+    }
   };
+  
   // Add a new room
   const addOldRoom = () => {
-    setHasChanges(true);
+    
     setUnitRooms((prevRooms) => [
       ...prevRooms,
       { roomname: "", quantity: 0 },
     ]);
+    setHasChanges(true);
   };
   // Add a new room and store it in newUnitRooms
   const addNewRoom = () => {
@@ -164,10 +168,12 @@ const removeNewRoom = (index) => {
   // Handle room quantity change
   const handleQuantityChange = (index, value) => {
     const updatedRooms = [...unitRooms];
-    updatedRooms[index].quantity = value;
-    setHasChanges(true);
-    setUnitRooms(updatedRooms);
-  };
+    if (updatedRooms[index].quantity !== value) { // Only mark as changed if quantity is different
+      updatedRooms[index].quantity = value;
+      setHasChanges(true);
+      setUnitRooms(updatedRooms);
+    }
+  }
   // Increment room quantity
   const incrementQuantity = (index) => {
     const updatedRooms = [...unitRooms];
@@ -180,8 +186,8 @@ const removeNewRoom = (index) => {
     const updatedRooms = [...unitRooms];
     if (updatedRooms[index].quantity > 0) {
       updatedRooms[index].quantity -= 1;
+      setHasChanges(true); // Mark as changed when quantity is decremented
     }
-    setHasChanges(true);
     setUnitRooms(updatedRooms);
   };
   // Increment newroom quantity
@@ -527,7 +533,7 @@ if (!isValidNewUnitBeds) {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setIsEditing(false);
+    // setIsEditing(false);
   
     // Check if there are any changes by comparing current data with the original data
     const hasChanges =
@@ -578,15 +584,18 @@ if (!isValidNewUnitBeds) {
           });
   
           // Set status indicators for the user
-          setIsEditing(false);
+          // setIsEditing(false);
+          setHasChanges(false);
           setOpenSnackbar(true); // This assumes you have a Snackbar to show feedback
           onSaveStatusChange('Saved'); // Custom callback or action to indicate the save status
           setHasError(false);
+          
           setSnackbarMessage("Room and details saved successfully!");
         }
       } catch (err) {
         console.error("Error saving data:", err);
       } finally {
+        setHasChanges(false);
         setIsLoading(false); // Stop the loading spinner, even if there's an error
       }
     } else {
@@ -597,7 +606,7 @@ if (!isValidNewUnitBeds) {
     }
     setNewUnitRooms([]); // Clear newly added rooms after save
     setNewUnitBeds([]); // Clear newly added beds after save
-    setHasChanges(true);
+    // setHasChanges(true);
   };
   
   const handleCancel = () => {
@@ -617,8 +626,8 @@ if (!isValidNewUnitBeds) {
     setOpenSnackbar(false);
   };
   
-  console.log("PROPERTY DTA FROM PARENT", propertyData);
-
+  // console.log("PROPERTY DTA FROM PARENT", propertyData);
+console.log("HAS CHANGES?", hasChanges);
 
   return (
     <>
