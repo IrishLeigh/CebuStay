@@ -43,11 +43,16 @@ export default function PricePayment({
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+ 
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
+  const [errorMessage, setErrorMessage] = useState([]);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [hasError, setHasError] = useState(false);
+ 
 
 
   useEffect(() => {
@@ -131,7 +136,28 @@ export default function PricePayment({
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
+  const validateForm = () => {
+    if (basePrice === "") {
+      setHasError(true);
+      setSnackbarMessage("Price of the unit is required");
+      setErrorMessage((prev) => [...prev, "Price of the unit is required"]);
+      setOpenSnackbar(true);
+      return false;
+    }
+
+    if (basePrice <= 0) {
+      setHasError(true);
+      setSnackbarMessage("Price of the unit must be greater than zero");
+      setErrorMessage((prev) => [...prev, "Price of the unit must be greater than zero"]);
+      setOpenSnackbar(true);
+      return false;
+    }
+
+    return true;
+  };
   const handleSave = async () => {
+    if (!validateForm()) return;
+
     setIsLoading(true);
     setIsEditing(false);
     // Gather the data to be sent to the API
@@ -166,8 +192,11 @@ export default function PricePayment({
           // parentUnitPricing.min_price = res.data.updatedPricing.min_price;
           setIsSaved(true);
           setIsEditing(false);
+          setHasError(false);
+          setSnackbarMessage("Unit pricing saved successfully");
           setOpenSnackbar(true);
           onSaveStatusChange('Saved');
+          
           setIsLoading(false);
         }
       }
@@ -177,7 +206,7 @@ export default function PricePayment({
     }finally {
       setIsLoading(false);
     }
-    console.log("Saving data:", dataToSave);
+    // console.log("Saving data:", dataToSave);
 
   };
   const handleCloseSnackbar  = () => {
@@ -438,13 +467,14 @@ export default function PricePayment({
             open={openSnackbar}
             autoHideDuration={6000}
             onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
           >
             <Alert
               onClose={handleCloseSnackbar}
-              severity="success"
+              severity={hasError ? "error" : "success"}
               sx={{ width: "100%" }}
             >
-            Basic Info saved successfully!
+              {snackbarMessage}
             </Alert>
           </Snackbar>
       </Paper>

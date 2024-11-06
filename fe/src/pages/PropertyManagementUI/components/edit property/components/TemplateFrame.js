@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -10,10 +10,11 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import getDashboardTheme from '../../../../Dashboard/dashboard/theme/getDashboardTheme';
 import { useNavigate } from 'react-router-dom';
-import { Typography, useMediaQuery , useTheme} from '@mui/material';
+import { useMediaQuery, useTheme, Snackbar } from '@mui/material';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  position: 'relative',
+  top: 0,
+  position: 'sticky',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -27,18 +28,13 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   flex: '0 0 auto',
 }));
 
-function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
+function TemplateFrameEdit({ onEditChange, onSave, hasChanges, hasError }) {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
-
-  // useEffect(() => {
-  //   if (saved) {
-  //     setIsEditing(false);
-  //     onEditChange(false);
-  //   }
-  // }, [saved, onEditChange]);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleBackToHome = () => {
     navigate('/admin/listings');
@@ -52,11 +48,21 @@ function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
     });
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
     if (onSave) {
-      onSave();
-      setIsEditing (false);
+      const success = await onSave(); // Assume onSave returns a boolean indicating success
+      if (success) {
+        setIsEditing(false); // Exit edit mode if save is successful
+
+      } else {
+       
+      }
+      setSnackbarOpen(true); // Open snackbar to show message
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   const dashboardTheme = createTheme(getDashboardTheme('light'));
@@ -73,7 +79,7 @@ function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
             width: '100%',
             p: '8px 12px',
             pl: isMobile ? '1rem' : '3rem',
-            pr:  isMobile ? '1rem' : '3rem',
+            pr: isMobile ? '1rem' : '3rem',
           }}
         >
           <Button
@@ -86,8 +92,6 @@ function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
           >
             Property Management / Edit Property
           </Button>
-
-          
 
           <IconButton
             size="small"
@@ -115,26 +119,30 @@ function TemplateFrameEdit({ onEditChange, onSave, hasChanges }) {
               {isEditing ? 'Cancel Edit' : 'Edit'}
             </Button>
             {isEditing && (
-              <Button
-                variant="contained"
-                size="small"
-                onClick={handleSaveChanges}
-                disabled={!hasChanges} // Disable if no changes have been made
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: hasChanges ? '#4CAF50' : '#fffff', // Change color based on hasChanges
-                  '&:hover': {
-                    backgroundColor: hasChanges ? '#45A049' : '#fffff', // Adjust hover effect
-                  },
-                  ml: 2,
-                }}
-              >
-                Save Changes
-              </Button>
+              
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSaveChanges}
+                  disabled={!hasChanges} // Disable if no changes have been made
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: hasChanges ? '#4CAF50' : '#ffffff', // Change color based on hasChanges
+                    '&:hover': {
+                      backgroundColor: hasChanges ? '#45A049' : '#ffffff', // Adjust hover effect
+                    },
+                  }}
+                >
+                  Save Changes
+                </Button>
+               
             )}
           </div>
         </Toolbar>
       </StyledAppBar>
+
+      {/* Snackbar for showing error messages */}
+    
     </ThemeProvider>
   );
 }

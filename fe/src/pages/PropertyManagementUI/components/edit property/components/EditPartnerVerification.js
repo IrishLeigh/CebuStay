@@ -11,6 +11,7 @@ import TemplateFrameEdit from './TemplateFrame';
 import IndividualHost from './EditIndividualHost';
 import CompanyHost from './EditCompanyHost';
 import axios from 'axios';
+import LoadingModal from '../modal/LoadingModal';
 
 export default function EditPartnerVerification({ parentPartnerData, onSaveStatusChange, propertyid}) {
   const [hostType, setHostType] = useState('');
@@ -19,12 +20,14 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   const [ isEditing, setIsEditing ] = useState(false);
   const [ hasChanges, setHasChanges ] = useState(false);
   const [ isSaved, setIsSaved] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
-
   const [isCancelled, setIsCancelled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState([]);
+  const [hasError, setHasError] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message state
 
   useEffect(() => {
     if (parentPartnerData) {
@@ -81,40 +84,44 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
 
   const validateAndProceed = () => {
     // Mapping of field keys to user-friendly names
-    const fieldLabels = {
-      firstName: "First Name",
-      lastName: "Last Name",
-      Email: "Email Address",
-      PhoneNumber: "Phone Number",
-      DateOfBirth: "Date of Birth",
-      DisplayName: "Display Name",
-      // Add more fields as necessary
-    };
+    // const fieldLabels = {
+    //   firstName: "First Name",
+    //   lastName: "Last Name",
+    //   Email: "Email Address",
+    //   PhoneNumber: "Phone Number",
+    //   DateOfBirth: "Date of Birth",
+    //   DisplayName: "Display Name",
+    //   // Add more fields as necessary
+    // };
   
-    // Helper function to check for empty fields and map to friendly names
-    const getEmptyFields = (data) => {
-      if (Object.keys(data).length === 0) {
-        return ['No information has been filled out yet. Please complete the required fields before proceeding.'];
-      }
-      return Object.keys(data).filter(key => !data[key]).map(key => fieldLabels[key] || key);
-    };
+    // // Helper function to check for empty fields and map to friendly names
+    // const getEmptyFields = (data) => {
+    //   if (Object.keys(data).length === 0) {
+    //     return ['No information has been filled out yet. Please complete the required fields before proceeding.'];
+    //   }
+    //   return Object.keys(data).filter(key => !data[key]).map(key => fieldLabels[key] || key);
+    // };
   
     // Validate Individual host data
     if (hostType === 'Individual') {
-      const emptyFields = getEmptyFields(individualData);
-      if (emptyFields.length > 0) {
-        alert(`Please fill in the following required information for the individual host: ${emptyFields.join(', ')}.`);
-        return;
+      if(individualData.FirstName  == "" || individualData.LastName == "" || individualData.Email == "" || individualData.PhoneNumber == "" || individualData.DateOfBirth == "" || individualData.DisplayName == "" ){
+        setHasError(true);
+        errorMessage.push("Please fill out all the required fields for the individual host.");
+        setSnackbarMessage("Please fill out all the required fields for the individual host.");
+        setOpenSnackbar(true);
+        return false;
       }
+
+      if ()
     }
   
     // Validate Company host data
     if (hostType === 'Company') {
-      const emptyFields = getEmptyFields(companyData);
-      if (emptyFields.length > 0) {
-        alert(`Please provide the following required details for the company host: ${emptyFields.join(', ')}.`);
-        return;
-      }
+      // const emptyFields = getEmptyFields(companyData);
+      // if (emptyFields.length > 0) {
+      //   alert(`Please provide the following required details for the company host: ${emptyFields.join(', ')}.`);
+      //   return;
+      // }
     }
   
     // Validate phone number and email for both types
@@ -147,7 +154,8 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
     // onHostDataChange(dataToSend);
     // openModal();
-    alert("Successfully submitted!");
+    // alert("Successfully submitted!");
+    return true;
   };
   //handle Save for Edit
   const onSubmitIndividual = async () => {
@@ -156,6 +164,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
     }
     setIsLoading(true);
     setIsEditing(false);
+    
     // Gather the data to be sent to the API
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
    //propertyowner
@@ -283,9 +292,10 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   
   const handleSave = () => {
      // Gather the data to be sent to the API
-     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+    //  const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
      if (hostType === 'Individual') {
        onSubmitIndividual();
+
        
      }else if (hostType === 'Company') {
        onSubmitCompany();
@@ -391,6 +401,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
         <Divider sx={{ my: 2 }} />
         {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData} isEditing={isEditing}  isCancelled={isCancelled}/>}
         {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData}  isEditing={isEditing}  isCancelled={isCancelled}/>}
+        <LoadingModal open={isLoading} />
       </Paper>
 
     </>
