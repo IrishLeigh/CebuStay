@@ -180,15 +180,8 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
   return (
     <div ref={topRef}>
       <Container
-        maxWidth="lg"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          textAlign: "left",
-          marginTop: "2rem",
-          marginBottom: "8rem",
-        }}
+        maxWidth="md"
+       className="centered-container"
       >
         <Typography sx={{ fontSize: "2rem", fontWeight: "bold", mb: 2, fontFamily: "Poppins, sans-serif" }}>
           Customize Your Stay
@@ -227,7 +220,7 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
           open={snackbarOpen}
           autoHideDuration={6000}
           onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
             {snackbarMessage}

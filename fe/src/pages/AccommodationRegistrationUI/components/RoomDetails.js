@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef  } from "react";
-import { Box, Paper, Typography, IconButton, TextField, Button, Container, Grid, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Paper, Typography, IconButton, TextField, Button, Container, Grid, useTheme, useMediaQuery, Alert, Snackbar } from "@mui/material";
 import { AddCircle as AddCircleIcon, Add as AddIcon, Remove as RemoveIcon, Cancel as CancelIcon } from "@mui/icons-material";
 import { useData } from "../../../components/registration_unit/registration_location/contextAddressData";
 import AnimatePage from "./AnimatedPage";
@@ -23,6 +23,8 @@ export default function RoomDetails({
   const topRef = useRef(null); // Create a ref for scrolling to the top
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
+  const [errorMessage, setErrorMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -51,7 +53,7 @@ export default function RoomDetails({
   const addRoom = () => {
     setUnitDetailsData((prevData) => ({
       ...prevData,
-      roomDetails: [...prevData.roomDetails, { roomType: "", quantity: 0 }],
+      roomDetails: [...prevData.roomDetails, { roomType: "", quantity: 1 }],
     }));
   };
 
@@ -63,7 +65,7 @@ export default function RoomDetails({
 
   const handleQuantityChange = (index, value) => {
     const updatedRoomDetails = [...unitDetailsData.roomDetails];
-    updatedRoomDetails[index].quantity = value;
+    updatedRoomDetails[index].quantity = Math.max(1, Number(value)); // Ensure quantity is at least 1
     setUnitDetailsData({ ...unitDetailsData, roomDetails: updatedRoomDetails });
   };
 
@@ -89,120 +91,166 @@ export default function RoomDetails({
 
   const handleGuestCapacityChange = (value) => {
     setUnitDetailsData({ ...unitDetailsData, guestCapacity: value });
+    setErrorMessage("");
   };
 
   const validateForm = () => {
-    const hasBedroom = unitDetailsData.roomDetails.some(
-      (room) => room.roomType === "Bedspace" && room.quantity > 0
-    );
-    return hasBedroom && unitDetailsData.guestCapacity.trim() !== "";
+    const errors = [];
+    const nonEmptyRooms = unitDetailsData.roomDetails.filter(room => room.quantity > 0); // Filter rooms with quantity > 0
+  
+    // Validate guest capacity
+    const capacity = unitDetailsData.guestCapacity;
+    if (capacity === "" || capacity < 1 || capacity > 100) {
+      errors.push("Guest capacity must be between 1 and 100.");
+    }
+  
+    // Check that at least one space is defined and not empty
+    if (nonEmptyRooms.length === 0) {
+      errors.push("Please define at least one space with a valid quantity.");
+    }
+  
+    // Ensure custom room types are not empty and have quantity >= 1
+    for (const room of unitDetailsData.roomDetails) {
+      const isCustomRoom = !["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType);
+      
+      // If the room is custom, ensure name and quantity are valid
+      if (isCustomRoom) {
+        if (room.roomType.trim() === "") {
+          errors.push("Please specify a name for all added rooms.");
+          break;
+        }
+        if (room.quantity < 1) {
+          errors.push("Custom room quantity cannot be zero.");
+          break;
+        }
+      }
+    }
+  
+    if (errors.length > 0) {
+      setErrorMessage(errors[0]);
+      setSnackbarOpen(true);
+      return false;
+    }
+  
+    setErrorMessage("");
+    return true;
   };
-
+  
   const validateAndProceed = () => {
     if (!validateForm()) {
-      alert("Please fill in all fields.");
+      
       return;
     }
     onRoomDetailsChange(unitDetailsData);
     handleNext();
   };
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   return (
     <div ref={topRef} >
-    <Container maxWidth="lg" className="centered-container">
-      
+    <Container maxWidth="md" className="centered-container">
       <AnimatePage>
-        <Grid container justifyContent="center" alignItems="center">
-          <Grid item xs={12} md={8} lg={6}>
-            <Box>
-              
-              <Paper 
-                elevation={3} 
-                sx={{ 
-                  padding: isMobile ? "1rem" : "2rem", // No padding for mobile
-                  borderRadius: "0.8rem" }}  >
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                  <Typography variant="h4" fontWeight="bold">
-                    Room Details
-                  </Typography>
-                </Box>
-                <Typography variant="body1" sx={{ textAlign: "left", mb: 3 }}>
-                  Available rooms in the unit, you can add rooms that are not in the selection
+        <Paper 
+          elevation={3} 
+          sx={{ 
+          padding: isMobile ? "1rem" : "2rem", // No padding for mobile
+          borderRadius: "0.8rem" ,
+          width: "100%" }}  >
+          <Grid container justifyContent="left" alignItems="left">
+            <Grid item xs={12} md={12} lg={12}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center",  mb: 2 }}>
+                <Typography variant="h4" fontWeight="bold">
+                  Room Details
                 </Typography>
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6">How many guests can stay?</Typography>
-                  <TextField
-                    label="Guest Capacity"
-                    value={unitDetailsData.guestCapacity}
-                    onChange={(e) => handleGuestCapacityChange(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    type="number"
-                    InputProps={{ inputProps: { min: 1 } }}
-                    
-                  />
-                </Box>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                  List of Rooms Available
-                </Typography>
-                {unitDetailsData.roomDetails.map((room, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      mb: 2,
-                    }}
-                  >
-                    <TextField
-                      value={room.roomType}
-                      onChange={(e) => handleRoomTypeChange(index, e.target.value)}
-                      placeholder="Room Type"
-                      // sx={{ width: "40%" }}
-                      disabled = {["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? true : false}
-                    />
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <IconButton onClick={() => incrementQuantity(index)}>
-                        <AddIcon />
-                      </IconButton>
-                      <TextField
-                        value={room.quantity}
-                        onChange={(e) => handleQuantityChange(index, e.target.value)}
-                        sx={{ width: "3rem", textAlign: "center" }}
-                      />
-                      <IconButton onClick={() => decrementQuantity(index)}>
-                        <RemoveIcon />
-                      </IconButton>
-                    </Box>
-                    <IconButton 
-                      onClick={() => removeRoom(index)} 
-                      sx={{ visibility: ["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? 'hidden' : 'visible' }} // Use visibility
-                    >
-                      <CancelIcon color="error" />
-                    </IconButton>
-                  </Box>
-                ))}
-
-                <Button
-                  startIcon={<AddCircleIcon />}
-                  onClick={addRoom}
+              </Box>
+              <Typography variant="body1" sx={{ textAlign: "left", mb: 3 }}>
+                Available rooms in the unit, you can add rooms that are not in the selection
+              </Typography>
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h6">How many guests can stay?</Typography>
+                <TextField
+                  label="Guest Capacity"
+                  value={unitDetailsData.guestCapacity}
+                  onChange={(e) => handleGuestCapacityChange(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  type="number"
+                  InputProps={{ inputProps: { min: 1 } }}
+                  error={!!errorMessage && errorMessage.includes("Guest capacity")}
+                  helperText={errorMessage && errorMessage.includes("Guest capacity") ? errorMessage : ""}
+                  
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={12} >
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                List of Spaces Available
+              </Typography>
+              {unitDetailsData.roomDetails.map((room, index) => (
+                <Box
+                  key={index}
                   sx={{
-                    color: "grey",
-                    backgroundColor: "transparent",
-                    "&:hover": {
-                      color: "#ADC939",
-                      backgroundColor: "transparent", // Keep background transparent on hover
-                    },
-                    mt: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    mb: 2,
                   }}
                 >
-                  Add Room
-                </Button>
-              </Paper>
-            </Box>
+                  <TextField
+                    value={room.roomType}
+                    onChange={(e) => handleRoomTypeChange(index, e.target.value)}
+                    placeholder="Type the name of the space"
+                    sx={{ width: "100%" }}
+                    disabled = {["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? true : false}
+                   
+                  />
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <IconButton onClick={() => decrementQuantity(index)}>
+                      <RemoveIcon />
+                    </IconButton>
+                    
+                    <TextField
+                      value={room.quantity}
+                      onChange={(e) => handleQuantityChange(index, e.target.value)}
+                      sx={{ width: "2.5rem", textAlign: "center" }}
+                    />
+                    <IconButton onClick={() => incrementQuantity(index)}>
+                      <AddIcon />
+                    </IconButton>
+                    
+                  </Box>
+                  <IconButton 
+                    onClick={() => removeRoom(index)} 
+                    sx={{ visibility: ["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) ? 'hidden' : 'visible' }} // Use visibility
+                  >
+                    <CancelIcon color="error" />
+                  </IconButton>
+                </Box>
+              ))}
+
+         
+
+              <Button
+                startIcon={<AddCircleIcon />}
+                onClick={addRoom}
+                sx={{
+                  color: "grey",
+                  backgroundColor: "transparent",
+                  "&:hover": {
+                    color: "#ADC939",
+                    backgroundColor: "transparent", // Keep background transparent on hover
+                  },
+                  mt: 2,
+                }}
+              >
+                Add Space
+              </Button>
+              <Typography color="error" sx={{ mt: 2, fontSize: '0.8rem'}}>{errorMessage}</Typography>
+            </Grid>
           </Grid>
-        </Grid>
+        </Paper>
       </AnimatePage>
       <div className="stepperFooter">
         <Button  onClick={handleBack} className="stepperPrevious">
@@ -213,6 +261,16 @@ export default function RoomDetails({
         </Button>
       </div>
     </Container>
+    <Snackbar
+        open={snackbarOpen}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={3000}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import SingleBedIcon from '@mui/icons-material/SingleBed';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { Button, RadioGroup, FormControlLabel, Radio, Snackbar, Divider, useTheme, useMediaQuery } from '@mui/material'; // Added necessary imports
+import { Button, RadioGroup, FormControlLabel, Radio, Snackbar, Divider, useTheme, useMediaQuery, Alert } from '@mui/material'; // Added necessary imports
 import { useData } from '../../../components/registration_unit/registration_location/contextAddressData';
 import '../../../components/Button/NextButton.css';
 import AnimatePage from './AnimatedPage';
@@ -17,10 +17,11 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
   const { bedroomQTY } = useData();
   const [bedrooms, setBedrooms] = useState([]);
   const [errors, setErrors] = useState({});
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Check if the screen size is mobile
+  const [errorMessage, setErrorMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -61,13 +62,16 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
   const validate = () => {
     const newErrors = {};
     bedrooms.forEach((bedroom, index) => {
-      if (Object.values(bedroom).every((bed) => bed === 0)) {
-        newErrors[index] = 'At least one bed type must be selected in each bedroom.';
+      const hasAtLeastOneBed = bedroom.singleBed > 0 || bedroom.doubleBed > 0 || bedroom.largeBed > 0 || bedroom.superLargeBed > 0;
+  
+      if (!hasAtLeastOneBed) {
+        newErrors[index] = 'At least one bed type must be selected with a quantity greater than zero in each bedroom.';
       }
     });
     setErrors(newErrors);
     return newErrors;
   };
+  
 
   const handleNextStep = () => {
     const newErrors = validate();
@@ -75,7 +79,8 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
       onBedroomDetailsChange(bedrooms);
       handleNext();
     } else {
-      setSnackbarMessage('Please ensure each bedroom has at least one bed type selected.');
+     setErrorMessage("Please ensure each bedroom has at least one bed with a quantity greater than zero.");
+      
       setSnackbarOpen(true);
     }
   };
@@ -84,9 +89,11 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
     handleBack();
   };
 
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+
 
   const handleSleepingTypeChangeUnitBeds = (index, value) => {
     setBedrooms((prevBedrooms) =>
@@ -99,7 +106,7 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
   console.log("BEDROOMDETAILS NI SHA",bedrooms );
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" className="centered-container">
       <AnimatePage>
         <Box mt={4}>
           <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -113,7 +120,7 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
             <Paper
               elevation={3}
               sx={{
-                mb: 10,
+                mb: "1rem",
                 padding: isMobile ? "1rem" : "2rem", // No padding for mobile
                 borderRadius: '0.8rem',
               }}
@@ -124,11 +131,7 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
                   <Typography variant="h6" fontWeight="bold">
                     Bed space {index + 1}
                   </Typography>
-                  {errors[index] && (
-                    <Typography sx={{ color: 'red', fontSize: '0.875rem' }}>
-                      {errors[index]}
-                    </Typography>
-                  )}
+                 
                 </Grid>
 
                 {/* RadioGroup for Sleeping Type */}
@@ -170,14 +173,16 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
                     <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                       Single Bed
                     </Typography>
-                    <IconButton onClick={() => incrementQuantity(index, 'singleBed')}>
-                      <AddIcon />
+                    <IconButton onClick={() => decrementQuantity(index, 'singleBed')}>
+                      <RemoveIcon />
                     </IconButton>
+                    
                     <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.singleBed}
                     </Typography>
-                    <IconButton onClick={() => decrementQuantity(index, 'singleBed')}>
-                      <RemoveIcon />
+                   
+                    <IconButton onClick={() => incrementQuantity(index, 'singleBed')}>
+                      <AddIcon />
                     </IconButton>
                   </Box>
                 </Grid>
@@ -188,14 +193,14 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
                     <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                       Double Bed
                     </Typography>
-                    <IconButton onClick={() => incrementQuantity(index, 'doubleBed')}>
-                      <AddIcon />
+                    <IconButton onClick={() => decrementQuantity(index, 'doubleBed')}>
+                      <RemoveIcon />
                     </IconButton>
                     <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.doubleBed}
                     </Typography>
-                    <IconButton onClick={() => decrementQuantity(index, 'doubleBed')}>
-                      <RemoveIcon />
+                    <IconButton onClick={() => incrementQuantity(index, 'doubleBed')}>
+                      <AddIcon />
                     </IconButton>
                   </Box>
                 </Grid>
@@ -206,14 +211,14 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
                     <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                       Large Bed
                     </Typography>
-                    <IconButton onClick={() => incrementQuantity(index, 'largeBed')}>
-                      <AddIcon />
+                    <IconButton onClick={() => decrementQuantity(index, 'largeBed')}>
+                      <RemoveIcon />
                     </IconButton>
                     <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.largeBed}
-                    </Typography>
-                    <IconButton onClick={() => decrementQuantity(index, 'largeBed')}>
-                      <RemoveIcon />
+                    </Typography> 
+                    <IconButton onClick={() => incrementQuantity(index, 'largeBed')}>
+                      <AddIcon />
                     </IconButton>
                   </Box>
                 </Grid>
@@ -224,18 +229,24 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
                     <Typography variant="body1" sx={{ ml: 2, flexGrow: 1 }}>
                       Super Large Bed
                     </Typography>
-                    <IconButton onClick={() => incrementQuantity(index, 'superLargeBed')}>
-                      <AddIcon />
+                    <IconButton onClick={() => decrementQuantity(index, 'superLargeBed')}>
+                      <RemoveIcon />
                     </IconButton>
+                    
                     <Typography sx={{ width: '2rem', textAlign: 'center' }}>
                       {bedroom.superLargeBed}
                     </Typography>
-                    <IconButton onClick={() => decrementQuantity(index, 'superLargeBed')}>
-                      <RemoveIcon />
+                    <IconButton onClick={() => incrementQuantity(index, 'superLargeBed')}>
+                      <AddIcon />
                     </IconButton>
                   </Box>
                 </Grid>
                 {/* Add other bed types here */}
+                {errors[index] && (
+                    <Typography  color ='error'sx={{  fontSize: '0.875rem' , m : "1rem 0rem 0 1rem"}}>
+                      {errors[index]}
+                    </Typography>
+                  )}
               </Grid>
             </Paper>
           ))}
@@ -251,13 +262,16 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
         </Button>
       </div>
 
-      {/* Snackbar for error messages */}
       <Snackbar
         open={snackbarOpen}
         onClose={handleSnackbarClose}
-        message={snackbarMessage}
-        autoHideDuration={6000}
-      />
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={3000}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

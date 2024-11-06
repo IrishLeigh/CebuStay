@@ -7,27 +7,27 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Ensure the import 
 const propertyTypes = [
   {
     name: "Private Residential",
-    description: "A stand-alone house with multiple bedrooms, bathrooms, a kitchen, and living spaces. Ideal for families or groups who want privacy.",
+    description: "A standalone home ideal for families or groups seeking privacy.",
     icon: "/apartment.png",
   },
   {
     name: "Townhouse",
-    description: "A multi-story home that shares walls with neighbors, usually with several bedrooms, bathrooms, and a small yard.",
+    description: "A multi-story home sharing walls with neighbors, often with a small yard.",
     icon: "/home.png",
   },
   {
     name: "Subdivision House",
-    description: "A house in a private community with access to shared amenities like parks or security services.",
+    description: "A house in a community with shared amenities like parks or security.",
     icon: "/home.png",
   },
   {
     name: "Condominium",
-    description: "A residential property with private units and shared amenities like pools and fitness centers.",
+    description: "A private unit with shared amenities like pools and gyms.",
     icon: "/condominium.png",
   },
   {
-    name: "Others", // This will act as a flag only
-    description: "Diverse accommodations beyond traditional options, such as vacation rentals, cottages, or other unique properties.",
+    name: "Others",
+    description: "Unique accommodations, including vacation rentals and cottages.",
     icon: "/Others.png",
   },
 ];
@@ -98,19 +98,19 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
   };
 
   return (
-    <Container>
+    <Container maxWidth="md">
       <AnimatePage>
         {!showOthers ? (
           <>
             {/* Conditionally render description based on screen width */}
            
               <>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem", textAlign: "left" }}>
-                  Unlock the door to hosting with CebuStay! List your property and open your doors to guests effortlessly!
+                <Typography sx={{ fontWeight: "bold", fontSize: "2rem", textAlign: "left" }}>
+                  Property Type
                 </Typography>
 
-                <Typography sx={{ fontSize: "1.1rem", textAlign: "left", marginBottom: 4 }}>
-                  Ready to dive in? Kickstart your hosting journey by selecting the perfect property type to list on CebuStay.
+                <Typography sx={{ fontSize: "1rem", textAlign: "left", marginBottom: 4 }}>
+                   Kickstart your hosting journey by selecting the perfect property type to list on CebuStay.
                 </Typography>
               </>
 
@@ -168,52 +168,65 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
             </Grid>
           </>
         ) : (
+          // Others Button
           <>
             <Box mt={2} display="flex" alignItems="center">
-              <Button onClick={handleBack} style={{ textTransform: 'none', padding: 0 }}>
+              <Button 
+                onClick={handleBack}  
+                variant="text" 
+                style={{ 
+                  textTransform: 'none', 
+                  padding: 0 ,
+                  color: '#6A6A6A',
+                  backgroundColor: 'transparent',
+                }}>
                 <ArrowBackIcon style={{ marginRight: 8 }} />
-                Back
+                Back to Property Type
               </Button>
             </Box>
 
             <Box mt={3}>
-              <Typography variant="h5" fontWeight="bold">
-                Property Type
-              </Typography>
-              <Typography fontSize={18} mb={2}>
-                This section features a variety of unique and non-traditional homes, ideal for those seeking something different.
-              </Typography>
-              <Grid container spacing={2}>
-                {buttonsData.map((button, index) => (
-                  <Grid item xs={4} key={index} style={{ margin: "0 auto" }}>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        backgroundColor:
-                          selectedButton === button.label ? "#16B4DD" : "white",
-                        color: selectedButton === button.label ? "white" : "black",
-                        fontFamily: "Poppins, sans-serif",
-                        height: 80,
-                        fontWeight: "bold",
-                        fontSize: "1.125rem",
-                        textTransform: "initial",
-                        width: "250px",
-                      }}
-                      startIcon={
-                        <img
-                          src={button.icon}
-                          alt={button.label}
-                          style={{ width: 40, height: 40, marginRight: 10 }}
-                        />
-                      }
-                      onClick={() => handleButtonClickInsideOthers(button.label)} // Only buttons inside "Others" will be saved
-                    >
-                      {button.label}
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
+    <Typography fontSize={16} mb={2}>
+      This section features a variety of unique and non-traditional homes, ideal for those seeking something different.
+    </Typography>
+
+    <Grid container spacing={2}>
+      {buttonsData.map((button, index) => (
+        <Grid
+          item
+          xs={12} sm={6} md={4} // Adjust column layout for different screen sizes
+          key={index}
+          display="flex"
+          justifyContent="center"
+        >
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: selectedButton === button.label ? "#16B4DD" : "white",
+              color: selectedButton === button.label ? "white" : "black",
+              fontFamily: "Poppins, sans-serif",
+              height: 80,
+              fontWeight: "bold",
+              fontSize: "1.125rem",
+              textTransform: "initial",
+              width: { xs: '100%', sm: '75%', md: '250px' }, // Responsive width
+              maxWidth: '250px',
+            }}
+            startIcon={
+              <img
+                src={button.icon}
+                alt={button.label}
+                style={{ width: 40, height: 40, marginRight: 10 }}
+              />
+            }
+            onClick={() => handleButtonClickInsideOthers(button.label)}
+          >
+            {button.label}
+          </Button>
+        </Grid>
+      ))}
+    </Grid>
+  </Box>
           </>
         )}
       </AnimatePage>

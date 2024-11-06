@@ -19,6 +19,7 @@ import {
   Grid,
   useMediaQuery,
   createTheme,
+  Tooltip,
 } from "@mui/material";
 import PropertyType from "./components/PropertyType";
 import PropertyType2 from "./components/PropertyType2";
@@ -51,78 +52,61 @@ import PropertyRulesPolicies from "./components/PropertyRulesPolicies";
 import UnitPricingPerMonth from "./components/PropertyPricingPerMonth";
 import { useTheme } from "@emotion/react";
 
-
-
-// Customized Stepper
-const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
-  color: theme.palette.mode === "dark" ? theme.palette.grey[700] : "#eaeaf0",
-  display: "flex",
-  height: 2,
-  alignItems: "center",
-  ...(ownerState.active && {
-    color: "#16B4DD",
-  }),
-  "& .QontoStepIcon-completedIcon": {
-    color: "#16B4DD",
-    zIndex: 1,
-    fontSize: 18,
-  },
-  "& .QontoStepIcon-circle": {
-    width: 8,
-    height: 8,
+  // Styled component for the custom step icon
+  const CustomStepIconRoot = styled("div")(({ theme, ownerState }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 32,
+    height: 32,
     borderRadius: "50%",
-    backgroundColor: "currentColor",
-  },
-}));
-const QontoConnector = styled(StepConnector)(({ theme }) => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 2,
-    left: "calc(-50% + 16px)",
-    right: "calc(50% + 16px)",
-  },
-  [`&.${stepConnectorClasses.active}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: "#16B4DD",
+    backgroundColor: ownerState.completed ? "#A334CF" : ownerState.active ? "#16B4DD" : "#eaeaf0",
+    color: ownerState.completed || ownerState.active ? "white" : theme.palette.grey[400],
+    fontSize: 16,
+    fontWeight: "bold",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: ownerState.active ? "#16B4DD" : theme.palette.grey[500],
     },
-  },
-  [`&.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: "#16B4DD",
-    },
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    borderColor:
-      theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
-    borderTopWidth: 3,
-    borderRadius: 1,
-  },
-}));
-function QontoStepIcon(props) {
-  const { active, completed, className } = props;
+  }));
 
-  return (
-    <QontoStepIconRoot ownerState={{ active }} className={className}>
-      {completed ? (
-        <Check className="QontoStepIcon-completedIcon" />
-      ) : (
-        <div className="QontoStepIcon-circle" />
-      )}
-    </QontoStepIconRoot>
-  );
-}
-QontoStepIcon.propTypes = {
-  /**
-   * Whether this step is active.
-   * @default false
-   */
-  active: PropTypes.bool,
-  className: PropTypes.string,
-  /**
-   * Mark the step as completed. Is passed to child components.
-   * @default false
-   */
-  completed: PropTypes.bool,
-};
+  // Styled component for the connector between steps
+  const CustomConnector = styled(StepConnector)(({ theme }) => ({
+    [`& .MuiStepConnector-line`]: {
+      borderColor: theme.palette.grey[400],
+      borderTopWidth: 2,
+    },
+  }));
+
+  function CustomStepIcon(props) {
+    const { active, completed, icon, label } = props;
+    const [isHovered, setIsHovered] = useState(false);
+  
+    return (
+      <Tooltip
+        title={label}
+        arrow
+        // open={active || isHovered} // Show tooltip when active or hovered
+        open = {isHovered}
+ 
+      >
+        <CustomStepIconRoot
+          ownerState={{ active, completed }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {completed ? <Check fontSize="small" /> : icon}
+        </CustomStepIconRoot>
+      </Tooltip>
+    );
+  }
+  
+  CustomStepIcon.propTypes = {
+    active: PropTypes.bool,
+    completed: PropTypes.bool,
+    icon: PropTypes.node,
+    label: PropTypes.string.isRequired,
+  };
 
 export default function AccommodationRegistration({ onPropertyListedClick , handleLogout}) {
   const handleSubmit = async () => {
@@ -1528,64 +1512,63 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
   }, [userid]);
   
 
-  console.log("Property Information from parent", propertyInfo);
-  console.log("Multi beds from parent", multiRoomsAndBeds);
-  console.log("Policies from parent:", policiesData);
-  console.log("House Rules from parent:", houseRulesData);
-  console.log("USER ID FROM LOCALSTORAGE:", userid);
+  // console.log("Property Information from parent", propertyInfo);
+  // console.log("Multi beds from parent", multiRoomsAndBeds);
+  // console.log("Policies from parent:", policiesData);
+  // console.log("House Rules from parent:", houseRulesData);
+  // console.log("USER ID FROM LOCALSTORAGE:", userid);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box className="registration-body">
-        <Grid container sx={{ height: "100vh" }}>
-          {/* Stepper on the left */}
-          <Grid
-            item
-            xs={12}
-            sm={2}
-            sx={{
-              display: { xs: "none", sm: "block" }, // Hide on small screens
-              position: "sticky", // Keep the stepper in place as you scroll
-              top: 0, // Stick to the top of the viewport
-              height: "100%", // Full height of the viewport
-              backgroundColor: "white", // Background color for the stepper area
-              padding: "2rem",
-              boxShadow: "0px 0.25em 0.625em rgba(0, 0, 0, 0.1)", // Optional shadow
-              overflowY: "auto", // Enable scrolling inside the stepper area
-              paddingBottom: "5rem",
-            }}
-          >
-            <Stepper activeStep={step} orientation="vertical">
-              {steps.map((label, index) => (
-                <Step key={index}>
-                  <StepButton onClick={() => setStep(index)}>
-                    <StepLabel>{label}</StepLabel>
-                  </StepButton>
-                </Step>
-              ))}
-            </Stepper>
-          </Grid>
+<ThemeProvider theme={theme}>
+  <Box className="registration-body">
+    <Grid container sx={{ height: "100vh" }}>
 
-          {/* Main content on the right */}
-          <Grid
-            item
-            xs={12}
-            sm={10} // Main content takes 10 columns on small and up
-            sx={{
-              padding: isMobile ? "0" : "2rem 2rem 4rem 2rem", // No padding for mobile
-              overflowY: "auto", // Allow scrolling in main content
-              height: "100vh", // Full height of the viewport
-            }}
-          >
-            {/* Main content on the right */}
-            <Box
-              sx={{
-                padding: isMobile ? "0" : "2rem", // No padding for mobile
-                overflowX: "hidden", // Prevent horizontal scrolling in main content
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+      {/* Main content with stepper on top */}
+      <Grid
+        item
+        xs={12}
+        sx={{
+          padding: isMobile ? "0" : "2rem", // Adjust padding based on screen size
+          overflowY: "auto", // Allow scrolling in main content
+          height: "100vh", // Full height of the viewport
+        }}
+      >
+         <Box
+          sx={{
+            backgroundColor: "transparent",
+            padding: "1rem 2rem",
+            zIndex: 100,
+            marginBottom: "1rem", // Add space below stepper
+            maxWidth: "992px", // Set maxWidth for different screen sizes
+            marginX: "auto", // Center the stepper horizontally
+          }}
+        >
+          <Stepper activeStep={step} orientation="horizontal">
+          {steps.map((label, index) => (
+            <Step key={label}>
+               {/* <StepButton onClick={() => setStep(index)}  disabled={index > step} > */}
+                <StepLabel
+                  StepIconComponent={(props) => (
+                    <CustomStepIcon {...props} label={label} active={index === step} icon={index + 1} />
+                  )}
+                >
+                
+                </StepLabel>
+              {/* </StepButton> */}
+             
+            </Step>
+      ))}
+          </Stepper>
+        </Box>
+
+        {/* Main content */}
+        <Box
+          sx={{
+            overflowX: "hidden", // Prevent horizontal scrolling in main content
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
               {step === 0 && (
                 <PropertyType
                   onSelectedTypeChange={handleSelectedTypeChange}
@@ -1624,12 +1607,15 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                     />
                   )}
                   {step === 3 && (
+                    <div>
                     <RoomDetails
                       onRoomDetailsChange={handleRoomDetailsChange}
                       parentUnitDetailsData={unitDetailsData}
                       handleNext={handleNext}
                       handleBack={handleBack}
                     />
+                    </div>
+                    
                   )}
                   {step === 4 && (
                     <BedroomDetails2
