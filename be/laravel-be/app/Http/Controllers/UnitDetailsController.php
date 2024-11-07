@@ -426,15 +426,18 @@ class UnitDetailsController extends CORS
         if ($request->has('newUnitBeds')) {
             $add_bedrooms = $request->input('newUnitBeds');
             $unitroom = UnitRooms::where('unitid', $unitid)
-                ->where('roomname', 'Bedspace')
+                ->whereIn('roomname', ['Bedspace', 'Bedroom'])
                 ->first();
+
             $unitroomid = $unitroom->unitroomid;
             if ($unitroom) {
                 foreach ($add_bedrooms as $bedroom) {
                     $beds = $bedroom['beds'];
                     $new_bedroom = new BedroomType();
                     $new_bedroom->unitroomid = $unitroomid;
-                    $new_bedroom->bedroomnum = $beds['bedroomnum'] ?? 0;
+                    //increment bedroomnum below
+
+                    $new_bedroom->bedroomnum = $bedroom['bedroomnum'] ?? 0;
                     $new_bedroom->singlebed = $beds['singleBed'] ?? 0;
                     $new_bedroom->bunkbed = $beds['doubleBed'] ?? 0;
                     $new_bedroom->largebed = $beds['largeBed'] ?? 0;
@@ -451,7 +454,7 @@ class UnitDetailsController extends CORS
         //get all unitdetails and unitrooms and bedtypes
         $unitdetails = UnitDetails::where('unitid', $unitid)->first();
         $unitrooms = UnitRooms::where('unitid', $unitid)->get();
-        $unitroom_bedroom = UnitRooms::where('unitid', $unitid)->where('roomname', 'Bedspace')->first();
+        $unitroom_bedroom = UnitRooms::where('unitid', $unitid)->whereIn('roomname', ['Bedspace', 'Bedroom'])->first();
         $bedtypes = BedroomType::where('unitroomid', $unitroom_bedroom->unitroomid)->get();
         return response()->json([
             'message' => 'Unit details updated successfully',
