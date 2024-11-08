@@ -194,14 +194,14 @@ class PropertyController extends CORS
         $property_ownerdetails = [];
         $property_companydetails = [];
         $company_logo_url = null;
-
+        $test = null;
         foreach ($units as $unit) {
             $unitpricing = DB::table('property_pricing')->select('min_price')->where('proppricingid', $unit->proppricingid)->first();
             $unitid = $unit->unitid;
             $unitrooms = DB::table('unitrooms')->select('unitroomid', 'roomname', 'quantity')->where('unitid', $unitid)->get();
             $unitroomsCollection = collect($unitrooms);
             // $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
-            $unitbedroom = $unitroomsCollection->whereIn('roomname', ['Bedroom', 'Bedarea', 'Bedspace'])->first();
+            $unitbedroom = $unitrooms->whereIn('roomname', ['Bedroom', 'Bedarea', 'Bedspace'])->first();
             $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
             if ($propownid->ownershiptype == 'Individual') {
                 $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
@@ -223,6 +223,7 @@ class PropertyController extends CORS
 
 
             $unitbedroom_beds = DB::table('bedroomtype')->where('unitroomid', $unitbedroom->unitroomid)->get();
+            $test = $unitbedroom_beds;
             $unitbeds = [];
 
             foreach ($unitbedroom_beds as $bedroom) {
@@ -246,7 +247,8 @@ class PropertyController extends CORS
                         'bedroomid' => $bedroom->bedroomid,
                         'bedroomnum' => $bedroom->bedroomnum,
                         'beds' => $beds,
-                        'sleepingtype' => $bedroom->sleepingtype
+                        'sleepingtype' => $bedroom->sleepingtype,
+                        'unitroomid' => $bedroom->unitroomid
                     ];
                 }
             }
@@ -289,6 +291,7 @@ class PropertyController extends CORS
         ] : null;
 
         return response()->json([
+            "test" => $test,
             "property_details" => $property_info,
             "property_address" => $property_address,
             "property_unitdetails" => $unit_details,

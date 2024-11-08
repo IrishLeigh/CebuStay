@@ -16,7 +16,7 @@ class PayoutController
             'property.property_name',
             'property.unit_type AS paymentTerm', // Add paymentTerm from the unit_type column in the Property model
             DB::raw("CONCAT(users.firstname, ' ', users.lastname) AS customername"),
-            'users.paypalmail', 
+            'users.paypalmail',
             DB::raw("DATE_FORMAT(tbl_payment.updated_at, '%M %d, %Y') as payment_date"), // Format the updated_at field
             DB::raw("IFNULL(DATE_FORMAT(tbl_bookinghistory.checkout_date, '%M %d, %Y'), NULL) as checkout_date") // Format the checkout_date or set it to null
         )
@@ -64,6 +64,7 @@ class PayoutController
             'tbl_payout.*',
             'property.property_name',
             'property.unit_type AS paymentTerm', // Add paymentTerm from the unit_type column in the Property model
+            'users.paypalcountrycode',
             DB::raw("CONCAT(users.firstname, ' ', users.lastname) AS customername"),
             DB::raw("DATE_FORMAT(tbl_payment.updated_at, '%M %d, %Y') as payment_date"), // Format the updated_at field
             DB::raw("IFNULL(DATE_FORMAT(tbl_bookinghistory.checkout_date, '%M %d, %Y'), NULL) as checkout_date") // Format the checkout_date or set it to null
