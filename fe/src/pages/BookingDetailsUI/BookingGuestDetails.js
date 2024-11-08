@@ -22,7 +22,7 @@ import PhoneNumberInput from "../../components/Booking/PhoneNumber";
 import { ThemeProvider } from "@mui/material/styles";
 import BookingGuestTheme from "./theme/bookingGuestTheme";
 
-function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
+function BookingGuest({ User, onGuestDetailsChange, PropertyData, errorMessage }) {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -97,6 +97,7 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
       phoneNumber,
       countryCode,
     };
+    console.log("Guest Details",guestDetails);
     onGuestDetailsChange(guestDetails);
   }, [
     email,
@@ -112,6 +113,8 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
     phoneNumber,
     onGuestDetailsChange,
   ]);
+
+  console.log("Error message",errorMessage);
 
   return (
     <ThemeProvider theme={BookingGuestTheme}>
@@ -205,6 +208,9 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
               onPhoneNumberChange={handlePhoneNumberChange}
               onCountryCodeChange={handleCountryCodeChange}
             />
+            {!phoneNumber && errorMessage.includes("Please enter phone number") && (
+              <Typography sx={{ fontSize: "0.875rem" }}color="error">Please enter phone number</Typography>
+            )}
             <div style={{ width: "100%", marginTop: "16px" }}>
               <Typography>Who are you booking for?</Typography>
               <RadioGroup
@@ -241,6 +247,9 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
                   value={guestName}
                   onChange={handleGuestNameChange}
                 />
+                {errorMessage.includes("Please enter guest name") && (
+                  <Typography sx={{ fontSize: "0.875rem" }}color="error">Please enter guest name</Typography>
+                )}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography>Guest Email</Typography>
@@ -249,7 +258,11 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
                   value={guestEmail}
                   onChange={handleGuestEmailChange}
                 />
+                {errorMessage.includes("Please enter guest email") && (
+                <Typography sx={{ fontSize: "0.875rem" }}color="error">Please enter guest email</Typography>
+              )}
               </Grid>
+              
             </Grid>
           </Card>
         )}
@@ -273,30 +286,35 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData }) {
             onChange={handleSpecialRequestChange}
             sx={BookingGuestTheme.customStyles.specialRequestTextField}
           />
+          {!requests && errorMessage.includes("Please enter special request") && (
+            <Typography sx={{ fontSize: "0.875rem" }}color="error">Please enter special requests</Typography>
+          )}
         </Card>
 
         <Card sx={BookingGuestTheme.customStyles.borderCard}>
           <Typography sx={{ marginBottom: "1rem", fontWeight: "bold" }}>
             Your arrival time
           </Typography>
-          {/* <Typography> */}
-          {/* You can check-in between {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_from)} and {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_until)} */}
-          {/* Pick a check-in time below */}
-          {/* </Typography> */}
+          <Typography sx={{ marginBottom: "1rem" }}> 
+            You can check-in on or after {convertTimeTo12HourFormat(PropertyData.property_houserules[0].check_in_from)} . Pick a check-in time below.
+          </Typography>
           <Stack direction="column">
-            <Typography>Select your arrival time</Typography>
-            <Select
+            <TextField
               label="Arrival Time"
+              type="time"
               fullWidth
               value={arrivalTime}
               onChange={handleArrivalChange}
-            >
-              {Array.from(Array(24).keys()).map((hour) => (
-                <MenuItem key={hour} value={`${hour}:00`}>{`${hour}:00 - ${
-                  hour + 1
-                }:00`}</MenuItem>
-              ))}
-            </Select>
+              InputLabelProps={{
+                shrink: true, // Keeps the label on top even when input is filled
+              }}
+              inputProps={{
+                step: 3600, // Ensures the time can only be selected in whole hours (3600 seconds)
+              }}
+            />
+            {!arrivalTime &&errorMessage.includes("Please select arrival time") && (
+              <Typography sx={{ fontSize: "0.875rem" }}color="error">Please select arrival time</Typography>
+            )}
           </Stack>
         </Card>
       </Box>

@@ -60,7 +60,7 @@ export default function EditRulesPolicies({
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [hasError, setHasError] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-
+  
   useEffect(() => {
     console.log("On Mount");
     console.log("House Rules:", houseRules);
@@ -200,6 +200,86 @@ export default function EditRulesPolicies({
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
+//   const validateForm = () => {
+//     const { noise_restrictions, quietHoursStart, quietHoursEnd, customRules, checkInFrom, checkOutUntil , checkOutFrom, smokingAllowed, petsAllowed, partiesAllowed} = houseRulesData;
+//     const { cancellationDays, cancellationCharge, modificationDays, modificationCharge } = policiesData;
+
+//     // Check if at least one standard rule is selected
+//     const atLeastOneStandardRuleSelected = smokingAllowed || petsAllowed || partiesAllowed || noise_restrictions;
+
+//     if (!atLeastOneStandardRuleSelected) {
+//         setHasError(true);
+//         errorMessage.push("Please select at least one standard rule.");
+//         setSnackbarMessage("Please select at least one standard rule.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Validate noise restrictions if selected
+//     if (noise_restrictions) {
+//         if (!quietHoursStart || !quietHoursEnd) {
+//             setHasError(true);
+//             errorMessage.push("Quiet Hours start and end times are required.");
+//             setSnackbarMessage("Quiet Hours start and end times are required.");
+//             setOpenSnackbar(true);
+//             return false;
+//         }
+//         if (quietHoursStart >= quietHoursEnd) {
+//             setHasError(true);
+//             errorMessage.push("Quiet Hours start time must be before Quiet Hours end time.");
+//             setSnackbarMessage("Quiet Hours start time must be before Quiet Hours end time.");
+//             setOpenSnackbar(true);
+//             return false;
+//         }
+//     }
+
+//     // Check if custom rules are provided
+//     if (!customRules.trim()) {
+//         setHasError(true);
+//         errorMessage.push("Custom rules are required.");
+//         setSnackbarMessage("Custom rules are required.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Ensure check-in and check-out fields are not empty
+//     if (!checkInFrom || !checkOutUntil) {
+//         setHasError(true);
+//         errorMessage.push("Check-in and check-out times are required.");
+//         setSnackbarMessage("Check-in and check-out times are required.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Ensure check-in from time is before check-out until time
+    
+//     if (checkOutFrom >= checkOutUntil) {
+//         setHasError(true);
+//         errorMessage.push("Check-out from time must be before check-out until time.");
+//         setSnackbarMessage("Check-out from time must be before check-out until time.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Validation for policies
+//     if (policiesData.isCancellationPolicy && (cancellationDays === "" || cancellationCharge === "")) {
+//         setHasError(true);
+//         errorMessage.push("Please enter both cancellation days and cancellation charge.");
+//         setSnackbarMessage("Please enter both cancellation days and cancellation charge.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     if (policiesData.isModificationPolicy && (modificationDays === "" || modificationCharge === "")) {
+//         setHasError(true);
+//         errorMessage.push("Please enter both modification days and modification charge.");
+//         setSnackbarMessage("Please enter both modification days and modification charge.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     return true; // Return true if all validations pass
+// };
   const validateForm = () => {
     const { noise_restrictions, quietHoursStart, quietHoursEnd, customRules, checkInFrom, checkOutUntil , checkOutFrom, smokingAllowed, petsAllowed, partiesAllowed} = houseRulesData;
     const { cancellationDays, cancellationCharge, modificationDays, modificationCharge } = policiesData;
@@ -798,6 +878,7 @@ export default function EditRulesPolicies({
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
+
         >
           <Alert
             onClose={handleCloseSnackbar}

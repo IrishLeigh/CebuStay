@@ -53,6 +53,7 @@ export default function PricePayment({
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [hasError, setHasError] = useState(false);
  
+ 
 
 
   useEffect(() => {
@@ -155,6 +156,25 @@ export default function PricePayment({
 
     return true;
   };
+  // const validateForm = () => {
+  //   if (basePrice === "") {
+  //     setHasError(true);
+  //     setSnackbarMessage("Price of the unit is required");
+  //     setErrorMessage((prev) => [...prev, "Price of the unit is required"]);
+  //     setOpenSnackbar(true);
+  //     return false;
+  //   }
+
+  //   if (basePrice <= 0) {
+  //     setHasError(true);
+  //     setSnackbarMessage("Price of the unit must be greater than zero");
+  //     setErrorMessage((prev) => [...prev, "Price of the unit must be greater than zero"]);
+  //     setOpenSnackbar(true);
+  //     return false;
+  //   }
+
+  //   return true;
+  // };
   const handleSave = async () => {
     if (!validateForm()) return;
 
@@ -468,11 +488,12 @@ export default function PricePayment({
             open={openSnackbar}
             autoHideDuration={6000}
             onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }} 
           >
             <Alert
               onClose={handleCloseSnackbar}
               severity={hasError ? "error" : "success"}
+
               sx={{ width: "100%" }}
             >
               {snackbarMessage}

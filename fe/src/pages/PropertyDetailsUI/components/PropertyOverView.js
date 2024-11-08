@@ -242,10 +242,15 @@ export default function PropertyOverView({ rating, propertyinfo }) {
                 <td>Email</td>
                 <td>
                   {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
-                    <a 
-                      href={`mailto:${propertyDetail?.property_owner?.property_owner?.email}`} 
-                      style={{ color: '#16B4DD', fontWeight: 'bold' }}
-                    >
+                    <a
+                    href={`mailto:${propertyDetail?.property_owner?.property_owner?.email}`}
+                    style={{
+                      color: '#16B4DD',
+                      fontWeight: 'bold',
+                      wordBreak: 'break-word', // Ensures that long email addresses break to next line if necessary
+                      maxWidth: '100%', // Prevents the link from overflowing the container
+                    }}
+                  >
                       {propertyDetail?.property_owner?.property_owner?.email}
                     </a>
                   ) : (

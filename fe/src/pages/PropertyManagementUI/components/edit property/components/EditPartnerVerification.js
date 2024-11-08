@@ -29,7 +29,6 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   const [hasError, setHasError] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message state
-
   useEffect(() => {
     if (parentPartnerData) {
       setHostType(parentPartnerData.property_ownership.ownershiptype || '');

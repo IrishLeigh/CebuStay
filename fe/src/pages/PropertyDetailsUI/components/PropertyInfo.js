@@ -30,7 +30,9 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
               {count} {type}
             </div>
           ));
-          const name = `Bedroom #${index + 1}`;
+          const bedtype =
+          bedroom.sleepingtype === "room" ? "Bedroom" : "Bedspace";
+           const name = `${bedtype} #${index + 1}`;
           return { name, details: bedTypes };
         });
 
@@ -100,10 +102,10 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
 
   return (
     <div>
-      <div className="map-filter-cntr">
+      <div className="property-filter-container">
         {/* Filter buttons for categories */}
         <button
-          className="map-filter-btn"
+          className="property-filter-btn"
           style={{
             backgroundColor: "#16B4DD",
             display: "flex",
@@ -155,7 +157,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
         )}
 
         <button
-          className="map-filter-btn"
+          className="property-filter-btn"
           style={{
             backgroundColor: "#F9CC41",
             display: "flex",
@@ -180,7 +182,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
         </button>
         
         <button
-          className="map-filter-btn"
+          className="property-filter-btn"
           style={{
             backgroundColor: "#F77D1E",
             display: "flex",
@@ -205,7 +207,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
         </button>
 
         <button
-          className="map-filter-btn"
+          className="property-filter-btn"
           style={{
             backgroundColor: "#EE414B",
             display: "flex",
@@ -230,7 +232,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
         </button>
 
         <button
-          className="map-filter-btn"
+          className="property-filter-btn"
           style={{
             backgroundColor: "#A334CF",
             display: "flex",
@@ -255,7 +257,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
         </button>
 
         <button
-          className="map-filter-btn"
+          className="property-filter-btn"
           style={{
             backgroundColor: "#0C58BF",
             display: "flex",

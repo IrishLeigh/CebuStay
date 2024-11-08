@@ -107,29 +107,31 @@ export default function AccountID({ profile, onUpdateProfile }) {
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ width: "100%", p: "2rem" }}>
-            <TextField
-              required
-              label="First Name"
-              value={firstName}
-              fullWidth
-              onChange={(e) => setFirstName(e.target.value)}
-              sx={{
-                mb: 2, // Add margin bottom for spacing
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }}
-              InputProps={{
-                startAdornment: !isMobile && (
-                  <InputAdornment
-                    position="start"
-                    sx={{ marginRight: "1rem" }}
-                  >
-                    <AccountCircle />
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <TextField
+            required
+            label="First Name"
+            value={firstName}
+            fullWidth
+            onChange={(e) => setFirstName(e.target.value)}
+            sx={{
+              mb: 2, // Add margin bottom for spacing
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                display: "flex", // Ensure flex layout for alignment
+              },
+            }}
+            InputProps={{
+              startAdornment: !isMobile && (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+              sx: {
+                paddingLeft: isMobile ? '8px' : '16px', // Adjust left padding to ensure alignment
+              }
+            }}
+          />
+
             <TextField
               required
               label="Last Name"
@@ -146,7 +148,7 @@ export default function AccountID({ profile, onUpdateProfile }) {
                 startAdornment: !isMobile && (
                   <InputAdornment
                     position="start"
-                    sx={{ marginRight: "1rem" }}
+                    
                   >
                     <AccountCircle />
                   </InputAdornment>

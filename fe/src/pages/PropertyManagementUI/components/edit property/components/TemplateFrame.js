@@ -42,7 +42,7 @@ function TemplateFrameEdit({ onEditChange, onSave, hasChanges, hasError }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [localIsEditing, setLocalIsEditing] = useState(isEditing);
 
-useEffect(() => {
+React.useEffect(() => {
   setLocalIsEditing(isEditing);
 }, [isEditing]);
 

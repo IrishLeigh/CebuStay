@@ -70,6 +70,7 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
   const [hasError, setHasError] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
  
+
  
   useEffect(() => {
     if (propertyData && propertyData.length > 0) {
@@ -120,7 +121,6 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
       setHasChanges(true);
     }
   };
-  
   // Add a new room
   const addOldRoom = () => {
     
@@ -521,6 +521,74 @@ if (!isValidNewUnitBeds) {
 
   return true;
 }
+// const validateForm = () => {
+//   if (!guestCapacity) {
+//     setHasError(true);
+//     errorMessage.push("Guest Capacity is required");
+//     setSnackbarMessage("Guest Capacity is required");
+//     setOpenSnackbar(true);
+//     return false;
+//   }
+//   if (guestCapacity < 0 || guestCapacity > 100) {
+//     setHasError(true);
+//     errorMessage.push("Guest Capacity must be between 0 and 100");
+//     setSnackbarMessage("Guest Capacity must be between 0 and 100");
+//     setOpenSnackbar(true);
+//     return false;
+//   }
+//  // unitrooms roomname is empty and quantity is below 0 or 0 put error
+//  if ( unitRooms.every((room) =>  room.quantity < 0 || room.quantity === 0)) {
+//   setHasError(true);
+//   errorMessage.push("Room quantity must be greater than 0");
+//   setSnackbarMessage("Room quantity must be greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+//  }
+
+//  // newunitrooms roomname is empty and quantity is below 0 or 0 put error
+//  if ( newUnitRooms.some((room) => !room.roomname || room.quantity < 0 || room.quantity === 0)) {
+//   setHasError(true);
+//   errorMessage.push("Room name is required and quantity must be greater than 0");
+//   setSnackbarMessage("Room name is required and quantity must be greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+//  }
+// // Validation to check that at least one bed quantity is greater than 0 in each bedroom
+// const isValidUnitBeds = unitBeds.every((bedroom) =>
+//   Object.values(bedroom.beds).some((quantity) => quantity > 0)
+// );
+
+// if (!isValidUnitBeds) {
+//   setHasError(true);
+//   errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+// }
+
+// // Validation to check that at least one bed quantity is greater than 0 in each bedroom
+// const isValidNewUnitBeds = newUnitBeds.every((bedroom) =>
+//   Object.values(bedroom.beds).some((quantity) => quantity > 0)
+// );
+
+// if (!isValidNewUnitBeds) {
+//   setHasError(true);
+//   errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+// }
+
+
+
+
+
+
+ 
+
+
+//   return true;
+// }
   // Handle save
   const handleSave = async () => {
 
@@ -730,8 +798,7 @@ console.log("HAS CHANGES?", hasChanges);
                   onChange={(e) => handleQuantityChange(index, e.target.value)}
                   sx={{ width: "4rem", textAlign: "center" ,}}
                   disabled={["Bedspace"].includes(room.roomname) || !isEditing}
-                />
-                
+                />            
                 <IconButton onClick={() => incrementQuantity(index)} disabled={["Bedspace"].includes(room.roomname) || !isEditing}  >
                   <AddIcon />
                 </IconButton>
@@ -1112,6 +1179,7 @@ console.log("HAS CHANGES?", hasChanges);
           <Alert
             onClose={handleCloseSnackbar}
             severity={hasError ? "error" : "success"}
+
             sx={{ width: "100%" }}
           >
             {snackbarMessage}

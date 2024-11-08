@@ -76,6 +76,9 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
         if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
             setShowSuggestions(false);
         }
+        if (inputRef.current && !inputRef.current.contains(event.target)) {
+            setShowSuggestions(false);
+        }
     };
 
 
@@ -165,6 +168,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                             value={query}
                             onChange={handleInputChange}
                             onFocus={() => setShowSuggestions(true)}
+                            ref={inputRef}
                         />
                         {showSuggestions && query.length > 0 && suggestions.length > 0 && inputRef.current && (
                             <ul

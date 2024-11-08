@@ -80,3 +80,42 @@
 .host-details-table td:last-child {
   text-align: left; /* Align content in the second column */
 }
+
+.property-filter-container {
+  top: 0; /* Position them at the top of the scrolling container */
+  background-color: white; /* Ensure the background color is white for contrast */
+  padding: 0.5rem; /* Add some padding */
+  z-index: 1000; /* Ensure it's on top of other elements */
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  border-radius: 12px;
+  overflow: auto;
+
+}
+
+.property-filter-btn {
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, background-color 0.3s;
+  border-radius: 5px;
+}
+
+/* Hover state */
+.property-filter-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* Clicked state */
+.property-filter-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}

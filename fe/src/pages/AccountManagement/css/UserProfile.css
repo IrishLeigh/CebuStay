@@ -87,9 +87,9 @@
   color: #6a6a6a;
 }
 
-.logout-btn-container {
-  margin-left: auto; /* Keep button aligned to the right */
-}
+/* .logout-btn-container {
+  margin-left: auto; /* Keep button aligned to the right*/
+
 
 .logout-btn {
   background-color: #ee414b;
@@ -128,6 +128,33 @@
   .account-banner-container {
     height: 300px; /* Adjusted height for resolutions below 1920px */
   }
+
+}
+/* Ensure flex direction is set to column for tablet and mobile views */
+@media (max-width: 768px) {
+  .user-details-container {
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center align items */
+    padding: 1rem; /* Adjust padding for spacing */
+  }
+
+  .user-details {
+    margin: 0; /* Reset margin to avoid extra space */
+    align-items: center; /* Center user details */
+    text-align: center; /* Optional: Center text */
+  }
+
+  .avatar-details-container {
+    display: flex;
+    flex-direction: column; /* Stack avatar and details vertically */
+    align-items: center; /* Center-align avatar and details */
+  }
+
+  .logout-btn {
+    margin-top: 1rem; /* Add spacing from other elements */
+    width: 80%; /* Make the button take up more space */
+    text-align: center; /* Center-align button text */
+  }
 }
 
 @media (max-width: 425px) {
@@ -151,13 +178,14 @@
   }
   
   .logout-btn-container {
-    margin-left: 0; /* Align button container in mobile view */
+    align-items: center; /* Align button container in mobile view */
+    justify-content: center;
   }
 
   /* Hide elements in mobile view */
-  .avatar-details-container,
+  /* .avatar-details-container,
   .user-name,
   .user-id {
-    display: none; /* Adjust this based on what you want to hide */
-  }
+    display: none; Adjust this based on what you want to hide */
+  /* } */
 }

@@ -23,6 +23,7 @@ export default function ReservationSection({
   const [notification, setNotification] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+
   useEffect(() => {
     if (propertyinfo) {
       setPropertyInfo(propertyinfo);

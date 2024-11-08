@@ -79,9 +79,9 @@ export default function FooterNew() {
           <InstagramIcon
             sx={{ color: "#52525B", fontSize: "2.0rem", cursor: "pointer" }}
           />
-          <GitHubIcon
+          {/* <GitHubIcon
             sx={{ color: "#52525B", fontSize: "2.0rem", cursor: "pointer" }}
-          />
+          /> */}
         </div>
         <div className="footer-r3">
           <div className="footer-r3-left">
