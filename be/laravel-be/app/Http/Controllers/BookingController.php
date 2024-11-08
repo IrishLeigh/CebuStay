@@ -50,10 +50,11 @@ class BookingController extends CORS
         if (!preg_match('/\d{4}-\d{2}-\d{2}/', $checkin) || !preg_match('/\d{4}-\d{2}-\d{2}/', $checkout)) {
             return response()->json(['message' => 'Invalid date format. Use yyyy-mm-dd.', 'status' => 'error']);
         }
-        $bookings = Booking::where('unitid', $unitid)->get();
+        $bookings = Booking::where('unitid', $unitid)->where('status', '!=', 'Cancelled')->get();
 
         if ($bookingId) {
             $bookingExcept = Booking::where('unitid', $unitid)
+            ->where('status', '!=', 'Cancelled')
                 ->where('bookingid', '!=', $bookingId)
                 ->get();
             foreach ($bookingExcept as $booking) {
@@ -111,7 +112,7 @@ class BookingController extends CORS
             }
 
             // Retrieve all bookings for the given unitid
-            $bookings = Booking::where('unitid', $request->input('unitid'))->get();
+            $bookings = Booking::where('unitid', $request->input('unitid'))->where('status', '!=', 'Cancelled')->get();
             $property = Property::find($request->input('propertyid'));
 
             // Perform validation check for date conflict

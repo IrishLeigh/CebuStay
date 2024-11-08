@@ -164,7 +164,6 @@ class PaymentController extends CORS
         // $payment->amount += $request->input('amount');
         $payment->save();
 
-
         $property = Property::find($booking->propertyid);
         if ($property->unit_type === 'Monthly Term') {
             $unitDetails = UnitDetails::where('propertyid', $property->propertyid)->first();
@@ -175,28 +174,23 @@ class PaymentController extends CORS
                     ->latest('created_at')
                     ->first();
 
-                if (!$monthlyPayment) {
-                    // If there is no previous monthly payment, create a new one
-                    $monthlyPayment = new MonthlyPayment();
-                }
-
                 // Get booking check-in and check-out dates
                 $checkinDate = Carbon::parse($booking->checkin_date);
                 $checkoutDate = Carbon::parse($booking->checkout_date);
 
-                // Calculate the next due date
-                if ($monthlyPayment->due_date) {
-                    // If there is already a due date, calculate the next one (next month)
-                    $nextDueDate = Carbon::parse($monthlyPayment->due_date)->addMonth();
-                } else {
-                    // If this is the first payment, use the check-in date as the initial due date
-                    $nextDueDate = $checkinDate->addMonths(2);
+                if (!$monthlyPayment) {
+                    $monthlyPayment = new MonthlyPayment();
+                    $nextDueDate = $checkinDate->addMonths(3);
+                    $monthlyPayment->due_date =  Carbon::parse($booking->checkin_date)->addMonths(3);
+                }else {
+                    $nextDueDate = Carbon::parse($monthlyPayment->due_date)->addMonths(1);
+                    $monthlyPayment->due_date = Carbon::parse($monthlyPayment->due_date)->addMonths(1);
                 }
 
                 $dueDateChecker = $nextDueDate;
 
                 // Ensure the next due date does not exceed the checkout date
-                if ($nextDueDate->addMonth()->greaterThan($checkoutDate)) {
+                if ($nextDueDate->greaterThan($checkoutDate)) {
                     $monthlyPayment->status = 'Paid';
                     $monthlyPayment->due_date = $checkoutDate; // Set the final due date to the checkout date
                     $monthlyPayment->bookingid = $request->input('bookingid');
@@ -209,7 +203,7 @@ class PaymentController extends CORS
                     $monthlyPayment->amount_due = 0;
 
                     $monthlyPayment->save();
-
+                
                     $charge = $booking->total_price * .15;
                     $paymentId = $payment->pid;
 
@@ -229,13 +223,10 @@ class PaymentController extends CORS
                     $monthlyPayment->amount_paid += $monthlyPayment->amount_due;
                 }
                 // $monthlyPayment->status = 'paid';
-                $monthlyPayment->due_date = $nextDueDate; // Set the next due date
+                
                 $monthlyPayment->save();
             }
         }
-
-
-
         return response()->json($payment);
     }
 
@@ -301,14 +292,14 @@ class PaymentController extends CORS
             } else {
                 $amountToRefund = round(($percentage / 100) * $totalAmount);
             }
-            if($monthlyPayment){
-                $sendRefund = $monthlyPayment->amount_paid - $amountToRefund; // Subtract the refunded amount
-                if ($dayresult === 1) {
-                    $sendRefund =  $amountToRefund;
+            if($isMonthlyPayment){
+                // $sendRefund = $monthlyPayment->amount_paid - $amountToRefund;
+                if ($dayresult === 1) { 
+                    $sendRefund =  $amountToRefund - $monthlyPayment->amount_due;
                 } else {
-                    $sendRefund = $monthlyPayment->amount_paid - $amountToRefund;
+                    $sendRefund = $monthlyPayment->amount_paid - $amountToRefund - $monthlyPayment->amount_due;
                 }
-            }else{
+            }else if(!$isMonthlyPayment){
                 if ($dayresult === 1) {
                     $sendRefund = $amountToRefund;
                 } else {
@@ -398,26 +389,6 @@ class PaymentController extends CORS
                 // $charge = $booking->total_price * .15;
                 
                 $paymentId = $payment->pid;
-                // $payout_record = new Payout();
-                // $userid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                //     ->join('users', 'tbl_booking.userid', '=', 'users.userid')
-                //     ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                //     ->value('users.userid');
-                // $propertyid = Payment::join('tbl_booking', 'tbl_payment.bookingid', '=', 'tbl_booking.bookingid')
-                //     ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
-                //     ->where('tbl_payment.pid', $paymentId) // Replace with the actual payment ID
-                //     ->value('property.propertyid');
-                // $get_manager_userid = Property::where('propertyid', $propertyid)->value('userid');
-                // if ($payment->amount > 0) {
-                //     $payout_record->userid = $get_manager_userid;
-                //     $payout_record->propertyid = $propertyid;
-                //     $payout_record->pid = $paymentId;
-                //     // $payout_record->payout_date = $booking->checkout_date;
-                //     $charge = $payment->amount * .15;
-                //     $payout_record->payout_amount = $payment->amount - $charge;
-                //     $payout_record->status = "Pending";
-                //     $payout_record->save();
-                // }
 
                 
                 $bookingHistory = new BookingHistory();
