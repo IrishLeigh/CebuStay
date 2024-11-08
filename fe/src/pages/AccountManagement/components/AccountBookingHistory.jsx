@@ -10,7 +10,7 @@ import { useNavigate, Link } from 'react-router-dom';
 // Set the app element for accessibility
 Modal.setAppElement('#root');
 
-{/* Styles for Overlay */}
+{/* Styles for Overlay */ }
 const overlayStyles = {
     position: 'fixed',
     top: 0,
@@ -25,7 +25,7 @@ const overlayStyles = {
 };
 
 const contentStyles = {
-    padding: '2rem',
+    padding: '1rem 2rem 2rem 2rem',
     borderRadius: '0.5rem',
     width: '90%',
     maxWidth: '500px',
@@ -37,9 +37,6 @@ const contentStyles = {
 };
 
 const closeButtonStyles = {
-    position: 'absolute',
-    top: '0.1rem',
-    right: '1.8rem',
     width: '30px',
     height: '30px',
     border: 'none',
@@ -74,7 +71,7 @@ export default function BookingHistory({ profile }) {
     const [selectedPaymentData, setSelectedPaymentData] = useState(null);
     const [viewPendingData, setViewPendingData] = useState(false);
     const [viewPendingisOpen, setViewPendingisOpen] = useState(false);
-
+    const [reviewDone, setReviewDone] = useState(false);
     const [upcomingBooking, setUpcomingBooking] = useState(null);
     const [cancelledBooking, setCancelledBooking] = useState([]);
     const [completedBooking, setCompletedBooking] = useState(null);
@@ -287,8 +284,8 @@ export default function BookingHistory({ profile }) {
         setViewPendingisOpen(true);
         setViewPendingData(true);
         setSelectedPaymentData(item);
-        
-    
+
+
         // Log statements to ensure the state update happened
         console.log('Payment details:', item);
         console.log('View Pending Data:', viewPendingData); // This will log before state updates
@@ -335,6 +332,7 @@ export default function BookingHistory({ profile }) {
     };
 
     const handleReview = async () => {
+        setReviewDone(true);
         if (!reviewText.trim()) {
             setError('Please enter a review.');
         } else {
@@ -360,12 +358,14 @@ export default function BookingHistory({ profile }) {
                         checkout_date: '', // Default to empty string if null
                     }).toString();
                     setTimeout(() => {
-                        navigate(`/property/${currentPropertyId}?${queryParams}`);
+                        navigate(`/accommodation/property/${currentPropertyId}?${queryParams}`);
                         closeReviewModal();
                     }, 2000);
                 }
             } catch (error) {
                 console.log(error)
+            } finally {
+                setReviewDone(false);
             }
         }
     };
@@ -645,8 +645,14 @@ export default function BookingHistory({ profile }) {
                                                         }}
                                                     >
                                                         {
-                                                            key === 'status' && selectedButton === 'CANCELLED'
-                                                                ? item.isCancel
+                                                            key === 'status'
+                                                                ? selectedButton === 'COMPLETED'
+                                                                    ? item.book_status // Display book_status when selectedButton is COMPLETED
+                                                                    : selectedButton === 'CANCELLED'
+                                                                        ? item.isCancel // Display isCancel when selectedButton is CANCELLED
+                                                                        : item.isCancel === 'Checked in'
+                                                                            ? item.isCancel // Display 'Checked in' status if item.isCancel equals 'Checked in'
+                                                                            : item.status
                                                                 : key === 'checkIn'
                                                                     ? formatDate(item[key])
                                                                     : key === 'amount'
@@ -781,714 +787,359 @@ export default function BookingHistory({ profile }) {
             </Snackbar>
 
             {modalIsOpen && (
-    <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000
-    }}>
-        <div style={{
-            backgroundColor: '#fff',
-            borderRadius: '0.5rem',
-            padding: '2rem',
-            width: '90%',
-            maxWidth: '500px',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-            maxHeight: '90vh',
-            overflowY: 'auto'
-        }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
-                    {currentPropertyName}
-                </small>
-                <small style={{ color: '#666', fontSize: '1rem' }}>
-                    {currentLocation}
-                </small>
-                <small style={{ color: '#666', fontSize: '1rem' }}>
-                    Property ID # {currentPropertyId} | Booking ID # {currentBID}
-                </small>
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-                <label style={{ fontWeight: '500', color: '#333' }}>Rating:</label>
-                <div style={{ display: 'flex', fontSize: '1rem' }}>
-                    {[1, 2, 3, 4, 5].map(star => (
-                        <svg
-                            key={star}
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill={rating >= star ? '#FBBF24' : '#D1D5DB'}
-                            viewBox="0 0 24 24"
-                            style={{
-                                margin: '0 0.1rem',
-                                width: '2.5rem',
-                                height: '2.5rem',
-                                cursor: reviewSubmitted ? 'default' : 'pointer'
-                            }}
-                            onClick={!reviewSubmitted ? () => setRating(star) : undefined}
-                        >
-                            <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-8.28-.72L12 2 10.28 8.52 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                    ))}
-                </div>
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="review-text" style={{ fontWeight: '500', color: '#333' }}>Review:</label>
-                <textarea
-                    id="review-text"
-                    rows="4"
-                    style={{
-                        padding: '0.5rem',
-                        borderRadius: '0.25rem',
-                        border: '1px solid #ddd',
-                        width: '100%',
-                        fontSize: '1rem',
-                        resize: 'vertical',
-                        backgroundColor: reviewSubmitted ? '#f9f9f9' : '#fff',
-                        pointerEvents: reviewSubmitted ? 'none' : 'auto',
-                    }}
-                    value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
-                ></textarea>
-                {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
-            </div>
-
-            {reviewSubmitted && (
-                <div style={{ marginBottom: '1rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', color: '#333' }}>Your Review:</h3>
-                    <p style={{ fontSize: '1rem', color: '#333' }}>{reviewText}</p>
-                </div>
-            )}
-
-            <div style={{ textAlign: 'right' }}>
-                <button
-                    onClick={handleReview}
-                    style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: reviewSubmitted ? '#28a745' : '#A334CF',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '0.25rem',
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        marginRight: '0.5rem',
-                        transition: 'background-color 0.3s',
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#218838' : '#9b2d8b'}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#28a745' : '#A334CF'}
-                    disabled={reviewSubmitted}
-                >
-                    {reviewSubmitted ? 'REVIEWED' : 'Done'}
-                </button>
-                <button
-                    onClick={closeReviewModal}
-                    style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: '#f0f0f0',
-                        color: '#000',
-                        border: 'none',
-                        borderRadius: '0.25rem',
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        transition: 'background-color 0.3s',
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-                >
-                    Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-)}
-
-            {/* <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeReviewModal}
-                style={{
-                    overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-                    content: {
-                        top: '50%',
-                        left: '50%',
-                        right: 'auto',
-                        bottom: 'auto',
-                        transform: 'translate(-50%, -50%)',
-                        padding: '2rem',
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        backgroundColor: '#fff',
                         borderRadius: '0.5rem',
+                        padding: '2rem',
                         width: '90%',
                         maxWidth: '500px',
-                        backgroundColor: '#fff',
-                        border: 'none',
                         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-                        overflow: 'auto',
-                        maxHeight: '90vh',  // Ensure modal fits within screen height on mobile
-                    },
-                }}
-            >
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                    <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
-                        {currentPropertyName}
-                    </small>
-                    <small style={{ color: '#666', fontSize: '1rem' }}>
-                        {currentLocation}
-                    </small>
-                    <small style={{ color: '#666', fontSize: '1rem' }}>
-                        Property ID # {currentPropertyId} | Booking ID # {currentBID}
-                    </small>
-                </div>
+                        maxHeight: '90vh',
+                        overflowY: 'auto'
+                    }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                            <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
+                                {currentPropertyName}
+                            </small>
+                            <small style={{ color: '#666', fontSize: '1rem' }}>
+                                {currentLocation}
+                            </small>
+                            <small style={{ color: '#666', fontSize: '1rem' }}>
+                                Property ID # {currentPropertyId} | Booking ID # {currentBID}
+                            </small>
+                        </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="review-rating" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>Rating:</label>
-                    <div style={{ display: 'flex', fontSize: '1rem' }}>
-                        {[1, 2, 3, 4, 5].map(star => (
-                            <svg
-                                key={star}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill={rating >= star ? '#FBBF24' : '#D1D5DB'}
-                                viewBox="0 0 24 24"
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ fontWeight: '500', color: '#333' }}>Rating:</label>
+                            <div style={{ display: 'flex', fontSize: '1rem' }}>
+                                {[1, 2, 3, 4, 5].map(star => (
+                                    <svg
+                                        key={star}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill={rating >= star ? '#FBBF24' : '#D1D5DB'}
+                                        viewBox="0 0 24 24"
+                                        style={{
+                                            margin: '0 0.1rem',
+                                            width: '2.5rem',
+                                            height: '2.5rem',
+                                            cursor: reviewSubmitted ? 'default' : 'pointer'
+                                        }}
+                                        onClick={!reviewSubmitted ? () => setRating(star) : undefined}
+                                    >
+                                        <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-8.28-.72L12 2 10.28 8.52 2 9.24l5.46 4.73L5.82 21z" />
+                                    </svg>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label htmlFor="review-text" style={{ fontWeight: '500', color: '#333' }}>Review:</label>
+                            <textarea
+                                id="review-text"
+                                rows="4"
                                 style={{
-                                    margin: '0 0.1rem',
-                                    width: '2.5rem',
-                                    height: '2.5rem',
-                                    cursor: reviewSubmitted ? 'default' : 'pointer'
+                                    padding: '0.5rem',
+                                    borderRadius: '0.25rem',
+                                    border: '1px solid #ddd',
+                                    width: '100%',
+                                    fontSize: '1rem',
+                                    resize: 'vertical',
+                                    backgroundColor: reviewSubmitted ? '#f9f9f9' : '#fff',
+                                    pointerEvents: reviewSubmitted ? 'none' : 'auto',
                                 }}
-                                onClick={!reviewSubmitted ? () => setRating(star) : undefined}
-                            >
-                                <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-8.28-.72L12 2 10.28 8.52 2 9.24l5.46 4.73L5.82 21z" />
-                            </svg>
-                        ))}
-                    </div>
-                </div>
+                                value={reviewText}
+                                onChange={(e) => setReviewText(e.target.value)}
+                            ></textarea>
+                            {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
+                        </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="review-text" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>Review:</label>
-                    <textarea
-                        id="review-text"
-                        name="review"
-                        rows="4"
-                        style={{
-                            padding: '0.5rem',
-                            borderRadius: '0.25rem',
-                            border: '1px solid #ddd',
-                            width: '100%',
-                            fontSize: '1rem',
-                            color: '#333',
-                            resize: 'vertical',
-                            backgroundColor: reviewSubmitted ? '#f9f9f9' : '#fff',
-                            pointerEvents: reviewSubmitted ? 'none' : 'auto',
-                        }}
-                        value={reviewText}
-                        onChange={(e) => setReviewText(e.target.value)}
-                    ></textarea>
-                    {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
-                </div>
+                        {reviewSubmitted && (
+                            <div style={{ marginBottom: '1rem' }}>
+                                <h3 style={{ fontSize: '1.25rem', color: '#333' }}>Your Review:</h3>
+                                <p style={{ fontSize: '1rem', color: '#333' }}>{reviewText}</p>
+                            </div>
+                        )}
 
-                <div style={{ display: reviewSubmitted ? 'block' : 'none', marginBottom: '1rem' }}>
-                    <h3 style={{ margin: '0.5rem 0', fontSize: '1.25rem', color: '#333' }}>Your Review:</h3>
-                    <p style={{ fontSize: '1rem', color: '#333' }}>{reviewText}</p>
-                </div>
-
-                <div style={{ textAlign: 'right' }}>
-                    <button
-                        onClick={handleReview}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: reviewSubmitted ? '#28a745' : '#A334CF',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '0.25rem',
-                            cursor: 'pointer',
-                            fontSize: '1rem',
-                            marginRight: '0.5rem',
-                            transition: 'background-color 0.3s',
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#218838' : '#9b2d8b'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#28a745' : '#A334CF'}
-                        disabled={reviewSubmitted}
-                    >
-                        {reviewSubmitted ? 'REVIEWED' : 'Done'}
-                    </button>
-                    <button
-                        onClick={closeReviewModal}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: '#f0f0f0',
-                            color: '#000',
-                            border: 'none',
-                            borderRadius: '0.25rem',
-                            cursor: 'pointer',
-                            fontSize: '1rem',
-                            transition: 'background-color 0.3s',
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </Modal>
-
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeReviewModal}
-                style={{
-                    overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-                    content: {
-                        top: '50%',
-                        left: '50%',
-                        right: 'auto',
-                        bottom: 'auto',
-                        transform: 'translate(-50%, -50%)',
-                        padding: '2rem',
-                        borderRadius: '0.5rem',
-                        width: '90%', // Change width to a percentage for responsiveness
-                        maxWidth: '500px',
-                        backgroundColor: '#fff',
-                        border: 'none',
-                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-                        overflow: 'auto', // Add overflow auto to handle long content
-                    }
-                }}
-            >
-
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                    <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
-                        {currentPropertyName}
-                    </small>
-                    <small style={{ color: '#666', fontSize: '1rem' }}>
-                        {currentLocation}
-                    </small>
-                    <small style={{ color: '#666', fontSize: '1rem' }}>
-                        Property ID # {currentPropertyId} | Booking ID # {currentBID}
-                    </small>
-                </div>
-
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="review-rating" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>Rating:</label>
-                    <div style={{ display: 'flex', fontSize: '1rem' }}>
-                        {[1, 2, 3, 4, 5].map(star => (
-                            <svg
-                                key={star}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill={rating >= star ? '#FBBF24' : '#D1D5DB'}
-                                viewBox="0 0 24 24"
+                        <div style={{ textAlign: 'right' }}>
+                            <button
+                                onClick={handleReview}
                                 style={{
-                                    margin: '0 0.1rem',
-                                    width: '2.5rem',
-                                    height: '2.5rem',
-                                    cursor: reviewSubmitted ? 'default' : 'pointer' // Change cursor based on submission
+                                    padding: '0.5rem 1rem',
+                                    backgroundColor: reviewSubmitted ? '#28a745' : '#A334CF',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: '0.25rem',
+                                    cursor: 'pointer',
+                                    fontSize: '1rem',
+                                    marginRight: '0.5rem',
+                                    transition: 'background-color 0.3s',
                                 }}
-                                onClick={!reviewSubmitted ? () => setRating(star) : undefined} // Disable click after submission
+                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#218838' : '#9b2d8b'}
+                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#28a745' : '#A334CF'}
+                                disabled={reviewSubmitted || reviewDone}
                             >
-                                <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-8.28-.72L12 2 10.28 8.52 2 9.24l5.46 4.73L5.82 21z" />
-                            </svg>
-                        ))}
+                                {reviewSubmitted ? 'REVIEWED' : reviewDone ? <CircularProgress size={24} /> : 'Done'}
+                            </button>
+                            <button
+                                onClick={closeReviewModal}
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    backgroundColor: '#f0f0f0',
+                                    color: '#000',
+                                    border: 'none',
+                                    borderRadius: '0.25rem',
+                                    cursor: 'pointer',
+                                    fontSize: '1rem',
+                                    transition: 'background-color 0.3s',
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
+                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+                                disabled={reviewDone}
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="review-text" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>Review:</label>
-                    <textarea
-                        id="review-text"
-                        name="review"
-                        rows="4"
-                        style={{
-                            padding: '0.5rem',
-                            borderRadius: '0.25rem',
-                            border: '1px solid #ddd',
-                            width: '100%',
-                            fontSize: '1rem',
-                            color: '#333',
-                            resize: 'vertical',
-                            backgroundColor: reviewSubmitted ? '#f9f9f9' : '#fff',
-                            pointerEvents: reviewSubmitted ? 'none' : 'auto',
-                        }}
-                        value={reviewText}
-                        onChange={(e) => setReviewText(e.target.value)}
-                    ></textarea>
-                    {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
-                </div>
-
-                <div style={{ display: reviewSubmitted ? 'block' : 'none', marginBottom: '1rem' }}>
-                    <h3 style={{ margin: '0.5rem 0', fontSize: '1.25rem', color: '#333' }}>Your Review:</h3>
-                    <p style={{ fontSize: '1rem', color: '#333' }}>{reviewText}</p>
-                </div>
-
-                <div style={{ textAlign: 'right' }}>
-                    <button
-                        onClick={handleReview}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: reviewSubmitted ? '#28a745' : '#A334CF',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '0.25rem',
-                            cursor: 'pointer',
-                            fontSize: '1rem',
-                            marginRight: '0.5rem',
-                            transition: 'background-color 0.3s',
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#218838' : '#9b2d8b'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = reviewSubmitted ? '#28a745' : '#A334CF'}
-                        disabled={reviewSubmitted}
-                    >
-                        {reviewSubmitted ? 'REVIEWED' : 'Done'}
-                    </button>
-                    <button
-                        onClick={closeReviewModal}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: '#f0f0f0',
-                            color: '#000',
-                            border: 'none',
-                            borderRadius: '0.25rem',
-                            cursor: 'pointer',
-                            fontSize: '1rem',
-                            transition: 'background-color 0.3s',
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
-                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </Modal> */}
-
-            {/* {viewPendingData && (
-                <Modal
-                    isOpen={viewPendingisOpen}
-                    onRequestClose={closeModal}
-                    style={{
-                        overlay: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                            margin: '1rem',
-                        },
-                        content: {
-                            top: '50%',
-                            left: '50%',
-                            right: 'auto',
-                            bottom: 'auto',
-                            transform: 'translate(-50%, -50%)',
-                            padding: '2rem',
-                            borderRadius: '0.5rem',
-                            width: '90%',
-                            maxWidth: '500px',
-                            backgroundColor: '#fff',
-                            border: 'none',
-                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-                            overflow: 'auto',
-                            maxHeight: '90vh', // Ensure modal fits within screen height on mobile
-                        },
-                    }}
-                >
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <button
-                            onClick={closeModal}
-                            style={{
-                                position: 'absolute',
-                                top: '0.1rem',
-                                right: '1.8rem',
-                                width: '30px',
-                                height: '30px',
-                                border: 'none',
-                                backgroundColor: 'transparent',
-                                color: 'red',
-                                fontSize: '2rem',
-                                cursor: 'pointer',
-                                transition: 'color 0.3s ease',
-                            }}
-                            onMouseOver={(e) => (e.target.style.color = '#0056b3')}
-                            onMouseOut={(e) => (e.target.style.color = '#007bff')}
-                        >
-                            &times;
-                        </button>
-                    </div>
-
-                    <Typography id="payment-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
-                        Payment Details
-                    </Typography>
-
-                    {selectedPaymentData.unit_type === 'Monthly Term' ? (
-                        <>
-                            <div style={{ textAlign: 'center' }}>
-                                <Typography id="payment-modal-description" sx={{ mt: 2 }}>
-                                    Due Date: {formatDate(selectedPaymentData.due_date)}
-                                </Typography>
-                                <Typography sx={{ mt: 2 }}>
-                                    Amount Due: {selectedPaymentData.amount_due}
-                                </Typography>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handlePayment(selectedPaymentData)}
-                                    sx={{ mt: 2 }}
-                                    disabled={monthlyLoading}
-                                >
-                                    {monthlyLoading ? <CircularProgress size={24} /> : 'Pay Now'}
-                                </Button>
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <div style={{ textAlign: 'center' }}>
-                                <Typography id="payment-modal-description" sx={{ mt: 2 }}>
-                                    Due Date: {formatDate(selectedPaymentData.checkIn)}
-                                </Typography>
-                                <Typography sx={{ mt: 2 }}>
-                                    Amount Due: {selectedPaymentData.amount}
-                                </Typography>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handlePaymentSingle(selectedPaymentData)}
-                                    sx={{ mt: 2 }}
-                                    disabled={singleLoading}
-                                >
-                                    {singleLoading ? <CircularProgress size={24} /> : 'Pay Now'}
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                </Modal>
-
-            )} */}
-            {/* Overlay Container */}
-{viewPendingisOpen && (
-    <div style={overlayStyles}>
-        <div style={contentStyles}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button
-                    onClick={closeModal}
-                    style={closeButtonStyles}
-                >
-                    &times;
-                </button>
-            </div>
-            <button
-                    onClick={closeModal}
-                    style={closeButtonStyles}
-                >
-                    &times;
-                </button>
-
-            <Typography id="payment-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
-                Payment Details
-            </Typography>
-
-            {selectedPaymentData.unit_type === 'Monthly Term' ? (
-                <>
-                    <div style={{ textAlign: 'center' }}>
-                        <Typography id="payment-modal-description" sx={{ mt: 2 }}>
-                            Due Date: {formatDate(selectedPaymentData.due_date)}
-                        </Typography>
-                        <Typography sx={{ mt: 2 }}>
-                            Amount Due: {selectedPaymentData.amount_due}
-                        </Typography>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handlePayment(selectedPaymentData)}
-                            sx={{ mt: 2 }}
-                            disabled={monthlyLoading}
-                        >
-                            {monthlyLoading ? <CircularProgress size={24} /> : 'Pay Now'}
-                        </Button>
-                    </div>
-                </>
-            ) : (
-                <>
-                    <div style={{ textAlign: 'center' }}>
-                        <Typography id="payment-modal-description" sx={{ mt: 2 }}>
-                            Due Date: {formatDate(selectedPaymentData.checkIn)}
-                        </Typography>
-                        <Typography sx={{ mt: 2 }}>
-                            Amount Due: {selectedPaymentData.amount}
-                        </Typography>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handlePaymentSingle(selectedPaymentData)}
-                            sx={{ mt: 2 }}
-                            disabled={singleLoading}
-                        >
-                            {singleLoading ? <CircularProgress size={24} /> : 'Pay Now'}
-                        </Button>
-                    </div>
-                </>
             )}
-        </div>
-    </div>
-)}
+
+            {/* Overlay Container */}
+            {viewPendingisOpen && (
+                <div style={overlayStyles}>
+                    <div style={contentStyles}>
+
+
+                        <div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <button
+                                    onClick={closeModal}
+                                    style={closeButtonStyles}
+                                >
+                                    &times;
+                                </button>
+                            </div>
+                            <Typography id="payment-modal-title" variant="h6" component="h2" style={{ textAlign: 'center' }}>
+                                Payment Details
+                            </Typography>
+
+                            {selectedPaymentData.unit_type === 'Monthly Term' ? (
+                                <>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <Typography id="payment-modal-description" sx={{ mt: 2 }}>
+                                            Due Date: {formatDate(selectedPaymentData.due_date)}
+                                        </Typography>
+                                        <Typography sx={{ mt: 2 }}>
+                                            Amount Due: {selectedPaymentData.amount_due}
+                                        </Typography>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handlePayment(selectedPaymentData)}
+                                            sx={{ mt: 2 }}
+                                            disabled={monthlyLoading}
+                                        >
+                                            {monthlyLoading ? <CircularProgress size={24} /> : 'Pay Now'}
+                                        </Button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <Typography id="payment-modal-description" sx={{ mt: 2 }}>
+                                            Due Date: {formatDate(selectedPaymentData.checkIn)}
+                                        </Typography>
+                                        <Typography sx={{ mt: 2 }}>
+                                            Amount Due: {selectedPaymentData.amount}
+                                        </Typography>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handlePaymentSingle(selectedPaymentData)}
+                                            sx={{ mt: 2 }}
+                                            disabled={singleLoading}
+                                        >
+                                            {singleLoading ? <CircularProgress size={24} /> : 'Pay Now'}
+                                        </Button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* //VIEW REVIEW */}
             {viewReviewisOpen && (
-    <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
-    }}>
-        <div style={{
-            backgroundColor: '#fff',
-            borderRadius: '0.5rem',
-            padding: '1rem',
-            width: '90vw',
-            maxWidth: '500px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button onClick={closeViewReviewModal} style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    fontSize: '1.5rem',
-                    cursor: 'pointer',
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1000,
                 }}>
-                    &times;
-                </button>
-            </div>
+                    <div style={{
+                        backgroundColor: '#fff',
+                        borderRadius: '0.5rem',
+                        padding: '1rem',
+                        width: '90vw',
+                        maxWidth: '500px',
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                    }}>
+                        {/* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <button onClick={closeViewReviewModal} style={{
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                fontSize: '1.5rem',
+                                cursor: 'pointer',
+                                color: 'red',
+                            }}>
+                                &times;
+                            </button>
+                        </div> */}
 
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                marginBottom: '1rem',
-            }}>
-                <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
-                    {currentPropertyName}
-                </small>
-                <small style={{ color: '#666', fontSize: '1rem' }}>
-                    {currentLocation}
-                </small>
-                <small style={{ color: '#666', fontSize: '1rem' }}>
-                    Property ID # {currentPropertyId} | Booking ID # {currentBID}
-                </small>
-            </div>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            marginBottom: '1rem',
+                        }}>
+                            <small style={{ color: '#666', fontSize: '1.125rem', fontWeight: '1000' }}>
+                                {currentPropertyName}
+                            </small>
+                            <small style={{ color: '#666', fontSize: '1rem' }}>
+                                {currentLocation}
+                            </small>
+                            <small style={{ color: '#666', fontSize: '1rem' }}>
+                                Property ID # {currentPropertyId} | Booking ID # {currentBID}
+                            </small>
+                        </div>
 
-            <div style={{ marginBottom: '1rem' }}>
-                <label style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    fontWeight: '500',
-                    color: '#333',
-                }}>
-                    Rating:
-                </label>
-                <div style={{ display: 'flex', fontSize: '1rem' }}>
-                    {[1, 2, 3, 4, 5].map(star => (
-                        <svg key={star}
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill={review?.rating >= star ? '#FBBF24' : '#D1D5DB'}
-                            viewBox="0 0 24 24"
-                            style={{ margin: '0 0.1rem', width: '2.5rem', height: '2.5rem' }}
-                        >
-                            <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-8.28-.72L12 2 10.28 8.52 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                    ))}
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '0.5rem',
+                                fontWeight: '500',
+                                color: '#333',
+                            }}>
+                                Rating:
+                            </label>
+                            <div style={{ display: 'flex', fontSize: '1rem' }}>
+                                {[1, 2, 3, 4, 5].map(star => (
+                                    <svg key={star}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill={review?.rating >= star ? '#FBBF24' : '#D1D5DB'}
+                                        viewBox="0 0 24 24"
+                                        style={{ margin: '0 0.1rem', width: '2.5rem', height: '2.5rem' }}
+                                    >
+                                        <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24l-8.28-.72L12 2 10.28 8.52 2 9.24l5.46 4.73L5.82 21z" />
+                                    </svg>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '0.5rem',
+                                fontWeight: '500',
+                                color: '#333',
+                            }}>
+                                Review:
+                            </label>
+                            <p style={{
+                                marginBottom: '0px',
+                                fontSize: '1rem',
+                                color: 'gray',
+                                fontStyle: 'italic',
+                                backgroundColor: '#f9f9f9',
+                                padding: '0.5rem',
+                                borderRadius: '0.25rem',
+                                border: '1px solid #ddd',
+                                width: '100%',
+                            }}>
+                                "{review?.review}"
+                            </p>
+                            <p style={{
+                                fontSize: '0.675rem',
+                                color: 'gray',
+                                fontStyle: 'italic',
+                                marginLeft: '0.5rem',
+                            }}>
+                                {new Date(review?.created_at).toLocaleString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                })}
+                            </p>
+                        </div>
+
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginTop: '2.5rem',
+                        }}>
+                            <button onClick={() => {
+                                const queryParams = new URLSearchParams({
+                                    guestCapacity: '',
+                                    checkin_date: '',
+                                    checkout_date: '',
+                                }).toString();
+                                setTimeout(() => {
+                                    navigate(`/accommodation/property/${currentPropertyId}?${queryParams}`);
+                                    closeViewReviewModal();
+                                }, 500);
+                            }} style={{
+                                padding: '0.5rem 1rem',
+                                color: '#000099',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '1rem',
+                            }}>
+                                View Property
+                            </button>
+                            <button onClick={closeViewReviewModal} style={{
+                                padding: '0.5rem 1rem',
+                                backgroundColor: '#f0f0f0',
+                                color: '#000',
+                                border: 'none',
+                                borderRadius: '0.25rem',
+                                cursor: 'pointer',
+                                fontSize: '1rem',
+                                transition: 'background-color 0.3s',
+                            }}>
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-                <label style={{
-                    display: 'block',
-                    marginBottom: '0.5rem',
-                    fontWeight: '500',
-                    color: '#333',
-                }}>
-                    Review:
-                </label>
-                <p style={{
-                    marginBottom: '0px',
-                    fontSize: '1rem',
-                    color: 'gray',
-                    fontStyle: 'italic',
-                    backgroundColor: '#f9f9f9',
-                    padding: '0.5rem',
-                    borderRadius: '0.25rem',
-                    border: '1px solid #ddd',
-                    width: '100%',
-                }}>
-                    "{review?.review}"
-                </p>
-                <p style={{
-                    fontSize: '0.675rem',
-                    color: 'gray',
-                    fontStyle: 'italic',
-                    marginLeft: '0.5rem',
-                }}>
-                    {new Date(review?.created_at).toLocaleString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: true,
-                    })}
-                </p>
-            </div>
-
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '2.5rem',
-            }}>
-                <button onClick={() => {
-                    const queryParams = new URLSearchParams({
-                        guestCapacity: '',
-                        checkin_date: '',
-                        checkout_date: '',
-                    }).toString();
-                    setTimeout(() => {
-                        navigate(`/property/${currentPropertyId}?${queryParams}`);
-                        closeViewReviewModal();
-                    }, 2000);
-                }} style={{
-                    padding: '0.5rem 1rem',
-                    color: '#000099',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                }}>
-                    View Property
-                </button>
-                <button onClick={closeViewReviewModal} style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#f0f0f0',
-                    color: '#000',
-                    border: 'none',
-                    borderRadius: '0.25rem',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    transition: 'background-color 0.3s',
-                }}>
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-)}
+            )}
 
 
         </div>
