@@ -48,10 +48,10 @@ const [localState, setLocalState] = useState({
 const [street, setStreet] = useState("");
 const [address, setAddress] = useState("");
 const [postalCode, setPostalCode] = useState("");
-
 const [hasChanges, setHasChanges] = useState(false); // Track changes
 const [saveCount, setSaveCount] = useState(0);
 const [openSnackbar, setOpenSnackbar] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message state
 const [isSaved, setIsSaved] = useState(false);
 const [isLoading, setIsLoading] = useState(false);
 const [addPin, setAddPin] = useState(null);
@@ -64,6 +64,8 @@ const [mapPos, setMapPos] = useState(addPin);
 const { location2 } = useData();
 const theme = useTheme();
 const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
+const [errorMessage, setErrorMessage] = useState([]);
+const [hasError, setHasError] = useState(false);
   
 
   useEffect(() => {
@@ -92,32 +94,7 @@ const handleAddressChange = (newAddress) => {
   setIsChangesAddress(true);
 };
 
-const fetchAddress = async (latLng) => {
-  if (!latLng) {
-    console.warn("latLng is null or undefined. Exiting fetchAddress.");
-    return;
-  }
-  const { lat, lng } = latLng;
-  try {
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyCekj_gI-EaiGAORCqQlLwvxrgvfgULaMM`
-    );
-    const data = await response.json();
-    if (data.results.length > 0) {
-      const formattedAddress = data.results[0].formatted_address;
-      setAddress(formattedAddress);
-      handleAddressChange(formattedAddress);
 
-      const point = turf.point([lng, lat]);
-      const isInCebuArea = CebuGeoJson.features.some((feature) =>
-        turf.booleanPointInPolygon(point, feature)
-      );
-      setIsInCebu(isInCebuArea);
-    }
-  } catch (error) {
-    console.error("Error fetching address data:", error);
-  }
-};
 
   useEffect(() => {
     // Save input data to localStorage whenever it changes
@@ -125,69 +102,6 @@ const fetchAddress = async (latLng) => {
     localStorage.setItem("postalCode", postalCode);
   }, [street, postalCode]);
 
-  const handleSetPin = async () => {
-    const address = `${street}, Cebu, Philippines, ${postalCode}`;
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          address
-        )}&key=AIzaSyCekj_gI-EaiGAORCqQlLwvxrgvfgULaMM`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch geolocation data");
-      }
-
-      const data = await response.json();
-
-      if (data.results.length > 0) {
-        const { lat, lng } = data.results[0].geometry.location;
-
-        setAddPin({ lat, lng });
-        // setMapVal(`${lat}, ${lng}`);
-        setMapPos({ lat, lng });
-        location({ lat, lng });
-        fullAddress(address);
-        console.log("Pin set:", lat, lng);
-      } else {
-        console.error("No results found in the geocoding response.");
-      }
-    } catch (error) {
-      console.error("Error fetching geolocation data:", error);
-    }
-  };
-  
-  const onMapClick = (mapProps, map, clickEvent) => {
-    const { latLng } = clickEvent;
-    const latitude = latLng.lat();
-    const longitude = latLng.lng();
-    const newPos = { lat: latitude, lng: longitude };
-
-    fetchAddress(newPos);
-    setPosition({ lat: latitude, lng: longitude });
-    setMapPos({ lat: latitude, lng: longitude });
-    setMapVal(`${latitude}, ${longitude}`);
-  };
-
-  const resetPosition = () => {
-    setPosition(null);
-    setAddress("");
-    setIsInCebu(false);
-  };
-
-  const saveLocation = () => {
-    if (position) {
-      if (isInCebu) {
-        setMapVal(`${position.lat}, ${position.lng}`);
-        location2(mapPos);
-        console.log("Location saved:", position.lat, position.lng);
-      } else {
-        console.log("The location is outside Cebu.");
-      }
-    } else {
-      console.log("No location to save");
-    }
-  };
 
   const handleChange = (field, value) => {
     setLocalState((prevState) => ({
@@ -209,17 +123,38 @@ const fetchAddress = async (latLng) => {
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
-  const handleSave = async () => {
-    console.log("Object propertyData:", localState);
-    console.log("Property data:", propertyData);
-    setIsLoading(true);
-    
-    setIsEditing(false);
-    
-    setSaveCount((prevCount) => prevCount + 1);
+  const validateForm = () => {
+    if (!localState.propertyName) {
+      setHasError(true);
+      errorMessage.push("Property Name is required");
+      setSnackbarMessage("Property Name is required");
+      setOpenSnackbar(true);
+     
+      return false;
+    }
+    if (!localState.description) {
+      setHasError(true);
+      errorMessage.push("Description is required");
+      setSnackbarMessage("Description is required");
+      setOpenSnackbar(true);
+      return false;
+    }
+    if (!localState.directions) {
+      setHasError(true);
+      errorMessage.push("Property Directions are required");
+      setSnackbarMessage("Property Directions are required");
+      setOpenSnackbar(true);
+      return false;
+    }
+    return true;
+  };
 
+  const handleSave = async () => {
+    if (!validateForm()) return;
+  
+    setIsLoading(true);
+  
     try {
-      // Use the correct route with propertyid from propertyData
       const save_response = await axios.put(
         `http://127.0.0.1:8000/api/updatepropertyinfo/${propertyData.propertyid}`,
         {
@@ -232,32 +167,43 @@ const fetchAddress = async (latLng) => {
           zipcode: postalCode,
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-            // Add any authorization headers if needed
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
-
-      // Check response status
+  
       if (save_response.data.status === "success") {
-        // alert("Basic Info saved successfully!");
-        setIsSaved(true);
-        setIsEditing(false);
-        setOpenSnackbar(true);
-        onSaveStatusChange('Saved');
-        setIsLoading(false);
+        setHasError(false);
+        setSnackbarMessage("Basic Info saved successfully!");
         
-        console.log(save_response.data);
+        // Don't exit the edit mode
+      
+        setOpenSnackbar(true);
+        onSaveStatusChange("Saved");
+  
+        // Reset hasChanges to false after saving
+        setHasChanges(false);
       } else {
-        alert("Failed to save Basic Info");
+        setHasError(true);
+        setSnackbarMessage("Failed to save Basic Info");
+        setOpenSnackbar(true);
       }
     } catch (error) {
+      setSnackbarMessage("Error saving property data");
+      setOpenSnackbar(true);
       console.error("Error saving property data:", error);
+    } finally {
+      setIsLoading(false);
+      setHasChanges(false);
+      setHasError(false); // Reset errors
+      setErrorMessage([]); // Clear any error messages
     }
-    setIsChangesAddress(false);
   };
-
+  
+/**
+ * Cancels any unsaved changes and resets the form to its original state.
+ * If there are unsaved changes, prompts the user to confirm discarding them.
+ * @returns {void}
+ */
   const handleCancel = () => {
     if (hasChanges) {
       const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
@@ -283,11 +229,11 @@ const fetchAddress = async (latLng) => {
     setOpenSnackbar(false);
   }
 //  console.log ("saveCount", saveCount);
-console.log ("address basic info", propertyAddress);
-console.log ("BASIC INFO NA TRANSFER BA", propertyData);
+// console.log ("address basic info", propertyAddress);
+// console.log ("BASIC INFO NA TRANSFER BA", propertyData);
   return (
     <div>
-       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel} hasError={hasError}/>
     <Paper
       style={{
         width: "auto",
@@ -353,6 +299,20 @@ console.log ("BASIC INFO NA TRANSFER BA", propertyData);
               onChange={(e) => handleChange("propertyName", e.target.value)}
               disabled={!isEditing}
             />
+            {!localState.propertyName && errorMessage.includes("Property Name is required") && (
+              <Typography
+                color='error'
+                sx={{
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "0.75rem",
+                 
+                }}
+              >
+                Property Name is required
+              </Typography>
+              )}
+              
+            
           </div>
           <div style={{ marginBottom: "1rem" }}>
             <InputLabel
@@ -532,19 +492,21 @@ console.log ("BASIC INFO NA TRANSFER BA", propertyData);
         </Grid>
       </Grid>
 
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={hasError ? "error" : "success"} 
+          variant="filled"
         >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-          Basic Info saved successfully!
-          </Alert>
-        </Snackbar>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
     </Paper>
     <LoadingModal open={isLoading} />
     </div>

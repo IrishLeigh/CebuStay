@@ -36,7 +36,6 @@ export default function EditRulesPolicies({
     quietHoursStart: "22:00",
     quietHoursEnd: "06:00",
     checkInFrom: "12:00",
-    checkInUntil: "14:00",
     checkOutFrom: "12:00",
     checkOutUntil: "14:00",
     customRules: "",
@@ -53,11 +52,15 @@ export default function EditRulesPolicies({
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
-
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState([]);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [hasError, setHasError] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  
   useEffect(() => {
     console.log("On Mount");
     console.log("House Rules:", houseRules);
@@ -197,12 +200,175 @@ export default function EditRulesPolicies({
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
+//   const validateForm = () => {
+//     const { noise_restrictions, quietHoursStart, quietHoursEnd, customRules, checkInFrom, checkOutUntil , checkOutFrom, smokingAllowed, petsAllowed, partiesAllowed} = houseRulesData;
+//     const { cancellationDays, cancellationCharge, modificationDays, modificationCharge } = policiesData;
+
+//     // Check if at least one standard rule is selected
+//     const atLeastOneStandardRuleSelected = smokingAllowed || petsAllowed || partiesAllowed || noise_restrictions;
+
+//     if (!atLeastOneStandardRuleSelected) {
+//         setHasError(true);
+//         errorMessage.push("Please select at least one standard rule.");
+//         setSnackbarMessage("Please select at least one standard rule.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Validate noise restrictions if selected
+//     if (noise_restrictions) {
+//         if (!quietHoursStart || !quietHoursEnd) {
+//             setHasError(true);
+//             errorMessage.push("Quiet Hours start and end times are required.");
+//             setSnackbarMessage("Quiet Hours start and end times are required.");
+//             setOpenSnackbar(true);
+//             return false;
+//         }
+//         if (quietHoursStart >= quietHoursEnd) {
+//             setHasError(true);
+//             errorMessage.push("Quiet Hours start time must be before Quiet Hours end time.");
+//             setSnackbarMessage("Quiet Hours start time must be before Quiet Hours end time.");
+//             setOpenSnackbar(true);
+//             return false;
+//         }
+//     }
+
+//     // Check if custom rules are provided
+//     if (!customRules.trim()) {
+//         setHasError(true);
+//         errorMessage.push("Custom rules are required.");
+//         setSnackbarMessage("Custom rules are required.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Ensure check-in and check-out fields are not empty
+//     if (!checkInFrom || !checkOutUntil) {
+//         setHasError(true);
+//         errorMessage.push("Check-in and check-out times are required.");
+//         setSnackbarMessage("Check-in and check-out times are required.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Ensure check-in from time is before check-out until time
+    
+//     if (checkOutFrom >= checkOutUntil) {
+//         setHasError(true);
+//         errorMessage.push("Check-out from time must be before check-out until time.");
+//         setSnackbarMessage("Check-out from time must be before check-out until time.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     // Validation for policies
+//     if (policiesData.isCancellationPolicy && (cancellationDays === "" || cancellationCharge === "")) {
+//         setHasError(true);
+//         errorMessage.push("Please enter both cancellation days and cancellation charge.");
+//         setSnackbarMessage("Please enter both cancellation days and cancellation charge.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     if (policiesData.isModificationPolicy && (modificationDays === "" || modificationCharge === "")) {
+//         setHasError(true);
+//         errorMessage.push("Please enter both modification days and modification charge.");
+//         setSnackbarMessage("Please enter both modification days and modification charge.");
+//         setOpenSnackbar(true);
+//         return false;
+//     }
+
+//     return true; // Return true if all validations pass
+// };
+  const validateForm = () => {
+    const { noise_restrictions, quietHoursStart, quietHoursEnd, customRules, checkInFrom, checkOutUntil , checkOutFrom, smokingAllowed, petsAllowed, partiesAllowed} = houseRulesData;
+    const { cancellationDays, cancellationCharge, modificationDays, modificationCharge } = policiesData;
+
+    // Check if at least one standard rule is selected
+    const atLeastOneStandardRuleSelected = smokingAllowed || petsAllowed || partiesAllowed || noise_restrictions;
+
+    if (!atLeastOneStandardRuleSelected) {
+        setHasError(true);
+        errorMessage.push("Please select at least one standard rule.");
+        setSnackbarMessage("Please select at least one standard rule.");
+        setOpenSnackbar(true);
+        return false;
+    }
+
+    // Validate noise restrictions if selected
+    if (noise_restrictions) {
+        if (!quietHoursStart || !quietHoursEnd) {
+            setHasError(true);
+            errorMessage.push("Quiet Hours start and end times are required.");
+            setSnackbarMessage("Quiet Hours start and end times are required.");
+            setOpenSnackbar(true);
+            return false;
+        }
+        if (quietHoursStart >= quietHoursEnd) {
+            setHasError(true);
+            errorMessage.push("Quiet Hours start time must be before Quiet Hours end time.");
+            setSnackbarMessage("Quiet Hours start time must be before Quiet Hours end time.");
+            setOpenSnackbar(true);
+            return false;
+        }
+    }
+
+    // Check if custom rules are provided
+    if (!customRules.trim()) {
+        setHasError(true);
+        errorMessage.push("Custom rules are required.");
+        setSnackbarMessage("Custom rules are required.");
+        setOpenSnackbar(true);
+        return false;
+    }
+
+    // Ensure check-in and check-out fields are not empty
+    if (!checkInFrom || !checkOutUntil) {
+        setHasError(true);
+        errorMessage.push("Check-in and check-out times are required.");
+        setSnackbarMessage("Check-in and check-out times are required.");
+        setOpenSnackbar(true);
+        return false;
+    }
+
+    // Ensure check-in from time is before check-out until time
+    
+    if (checkOutFrom >= checkOutUntil) {
+        setHasError(true);
+        errorMessage.push("Check-out from time must be before check-out until time.");
+        setSnackbarMessage("Check-out from time must be before check-out until time.");
+        setOpenSnackbar(true);
+        return false;
+    }
+
+    // Validation for policies
+    if (policiesData.isCancellationPolicy && (cancellationDays === "" || cancellationCharge === "")) {
+        setHasError(true);
+        errorMessage.push("Please enter both cancellation days and cancellation charge.");
+        setSnackbarMessage("Please enter both cancellation days and cancellation charge.");
+        setOpenSnackbar(true);
+        return false;
+    }
+
+    if (policiesData.isModificationPolicy && (modificationDays === "" || modificationCharge === "")) {
+        setHasError(true);
+        errorMessage.push("Please enter both modification days and modification charge.");
+        setSnackbarMessage("Please enter both modification days and modification charge.");
+        setOpenSnackbar(true);
+        return false;
+    }
+
+    return true; // Return true if all validations pass
+};
 
   const handleSave = async () => {
+    if (!validateForm()) {
+      return;
+    }
     setIsLoading(true);
-    setIsEditing(false);
-  console.log("Saved House Rules:", houseRulesData);
-  console.log("Saved Policies:", policiesData);
+    // setIsEditing(false);
+    // console.log("Saved House Rules:", houseRulesData);
+    // console.log("Saved Policies:", policiesData);
     // Validation before saving
     if (policiesData.isCancellationPolicy && (policiesData.cancellationDays === "" || policiesData.cancellationCharge === "")) {
       alert("Please enter both cancellation days and cancellation charge.");
@@ -239,6 +405,10 @@ export default function EditRulesPolicies({
         });
         onHouseRulesChange(res.data.rawUpdatedRules);
         onPoliciesChange(res.data.rawUpdatedPolicies);
+        setHasError(false);
+        setHasChanges(false);
+        // setIsEditing(false);
+        setSnackbarMessage("Rules and Policies Saved Successfully");
         setOpenSnackbar(true);
         onSaveStatusChange('Saved');
       }
@@ -255,7 +425,7 @@ export default function EditRulesPolicies({
 
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+      <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel} hasError={hasError}/>
       <Paper
         style={{
           width: "auto",
@@ -416,87 +586,95 @@ export default function EditRulesPolicies({
                   variant="h4"
                   sx={{ fontWeight: "bold", fontSize: 18, m: 2 }}
                 >
-                  Set your own rules
+                  Custom Rules
                 </Typography>
                 <TextField
                   id="outlined-multiline-flexible"
+                  
                   placeholder="Enter your custom rules here. Each line represents one rule."
                   multiline
                   maxRows={10}
                   value={houseRulesData.customRules}
                   disabled={!isEditing}
                   onChange={(e) => handleStandardInputChange(e, 'customRules')}
-                  sx={{ m: 2, width: "92%" }}
+                  sx={{  width: "100%" , m: 2 }}
                 />
               </Box>
 
-              <Box sx={{ display: "column", justifyContent: "left", alignItems: "left", m: 2 }}>
-                <Box sx={{ display: "flex", justifyContent: "left", alignItems: "left", m: 2 }}>
-                  <TextField
-                    id="check-in-from"
-                    label="Check-in From"
-                    type="time"
-                    value={houseRulesData.checkInFrom}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    inputProps={{
-                      step: 300, // 5 min
-                    }}
-                    disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkInFrom')}
-                    sx={{ marginRight: 2 }}
-                  />
-                  <TextField
-                    id="check-in-until"
-                    label="Check-in Until"
-                    type="time"
-                    value={houseRulesData.checkInUntil}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    inputProps={{
-                      step: 300, // 5 min
-                    }}
-                    disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkInUntil')}
-                    sx={{ marginRight: 2 }}
-                  />
-                </Box>
+              <Grid container sx={{ m: 2 }}>
+                <Grid item sx={12}>
+                  <Box sx={{ justifyContent: "left", alignItems: "left" }}>
+                    <Typography
+                      variant="h4"
+                      sx={{ fontWeight: "bold", fontSize: 18, m: "0 0 1rem 0" }}
+                    >
+                      Check-in and Check-out Times
+                    </Typography>
+                    <Typography
+                     
+                      sx={{ fontSize: "0.875rem", m: "0 0 2rem 0" }}
+                    >
+                      Specify the times when guests can check-in and check-out. Make sure to communicate these times clearly to avoid any misunderstandings.
+                    </Typography>
 
-                <Box sx={{ display: "flex", justifyContent: "left", alignItems: "left", m: 2 }}>
-                  <TextField
-                    id="check-out-from"
-                    label="Check-out From"
-                    type="time"
-                    value={houseRulesData.checkOutFrom}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    inputProps={{
-                      step: 300, // 5 min
-                    }}
-                    disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkOutFrom')}
-                    sx={{ marginRight: 2 }}
-                  />
-                  <TextField
-                    id="check-out-until"
-                    label="Check-out Until"
-                    type="time"
-                    value={houseRulesData.checkOutUntil}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    inputProps={{
-                      step: 300, // 5 min
-                    }}
-                    disabled={!isEditing}
-                    onChange={(e) => handleStandardInputChange(e, 'checkOutUntil')}
-                    sx={{ marginRight: 2 }}
-                  />
-                </Box>
-              </Box>
+
+                    <Grid container spacing={2}>
+                      <Grid item sx={12} lg={12}>
+                        <TextField
+                          id="check-in-from"
+                          label="Check-in From"
+                          type="time"
+                          value={houseRulesData.checkInFrom}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          inputProps={{
+                            step: 300, // 5 min
+                          }}
+                          disabled={!isEditing}
+                          onChange={(e) => handleStandardInputChange(e, 'checkInFrom')}
+                          sx={{ width: "100%" }}
+                        />
+                      </Grid>
+                      <Grid item sx={12} lg={6}>
+                        <TextField
+                          id="check-out-from"
+                          label="Check-out From"
+                          type="time"
+                          value={houseRulesData.checkOutFrom}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          inputProps={{
+                            step: 300, // 5 min
+                          }}
+                          disabled={!isEditing}
+                          onChange={(e) => handleStandardInputChange(e, 'checkOutFrom')}
+                          sx={{ width: "100%" }}
+                        />
+                      </Grid>
+                      <Grid item sx={12} lg={6}>
+                        <TextField
+                          id="check-out-until"
+                          label="Check-out Until"
+                          type="time"
+                          value={houseRulesData.checkOutUntil}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          inputProps={{
+                            step: 300, // 5 min
+                          }}
+                          disabled={!isEditing}
+                          onChange={(e) => handleStandardInputChange(e, 'checkOutUntil')}
+                          sx={{ width: "100%" }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Grid>
+              </Grid>
+
             </div>
           </Grid>
 
@@ -699,13 +877,16 @@ export default function EditRulesPolicies({
           open={openSnackbar}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+
         >
           <Alert
             onClose={handleCloseSnackbar}
-            severity="success"
+            severity={hasError ? "error" : "success"}
             sx={{ width: "100%" }}
           >
-          Basic Info saved successfully!
+            {snackbarMessage}
+          
           </Alert>
         </Snackbar>
       </Paper>

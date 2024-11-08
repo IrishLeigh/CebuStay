@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, useTheme, useMediaQuery } from '@mui/material';
+import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, useTheme, useMediaQuery, Snackbar, Alert } from '@mui/material';
 
 import { Crop } from '@mui/icons-material';
 import { Last } from 'react-bootstrap/esm/PageItem';
@@ -11,6 +11,8 @@ import TemplateFrameEdit from './TemplateFrame';
 import IndividualHost from './EditIndividualHost';
 import CompanyHost from './EditCompanyHost';
 import axios from 'axios';
+import LoadingModal from '../modal/LoadingModal';
+import countryCodePatterns from '../../../../../components/Booking/countryCodePatterns';
 
 export default function EditPartnerVerification({ parentPartnerData, onSaveStatusChange, propertyid}) {
   const [hostType, setHostType] = useState('');
@@ -19,13 +21,14 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   const [ isEditing, setIsEditing ] = useState(false);
   const [ hasChanges, setHasChanges ] = useState(false);
   const [ isSaved, setIsSaved] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
-
   const [isCancelled, setIsCancelled] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState([]);
+  const [hasError, setHasError] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // Snackbar message state
   useEffect(() => {
     if (parentPartnerData) {
       setHostType(parentPartnerData.property_ownership.ownershiptype || '');
@@ -80,74 +83,52 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
 
 
   const validateAndProceed = () => {
-    // Mapping of field keys to user-friendly names
-    const fieldLabels = {
-      firstName: "First Name",
-      lastName: "Last Name",
-      Email: "Email Address",
-      PhoneNumber: "Phone Number",
-      DateOfBirth: "Date of Birth",
-      DisplayName: "Display Name",
-      // Add more fields as necessary
-    };
-  
-    // Helper function to check for empty fields and map to friendly names
-    const getEmptyFields = (data) => {
-      if (Object.keys(data).length === 0) {
-        return ['No information has been filled out yet. Please complete the required fields before proceeding.'];
-      }
-      return Object.keys(data).filter(key => !data[key]).map(key => fieldLabels[key] || key);
-    };
-  
     // Validate Individual host data
     if (hostType === 'Individual') {
-      const emptyFields = getEmptyFields(individualData);
-      if (emptyFields.length > 0) {
-        alert(`Please fill in the following required information for the individual host: ${emptyFields.join(', ')}.`);
-        return;
+      if(individualData.FirstName  == "" || individualData.LastName == "" || individualData.Email == "" || individualData.PhoneNumber == "" || individualData.DateOfBirth == "" || individualData.DisplayName == "" ){
+        setHasError(true);
+        errorMessage.push("Please fill out all the required fields for the individual host.");
+        setSnackbarMessage("Please fill out all the required fields for the individual host.");
+        setOpenSnackbar(true);
+        return false;
       }
+
+      // Validate phone number with country code
+        const { countryCode, PhoneNumber } = individualData;
+        const phonePattern = countryCodePatterns[countryCode];
+        
+        if (!phonePattern || !phonePattern.test(PhoneNumber)) {
+          setHasError(true);
+          errorMessage.push('Invalid phone number. Please ensure it matches the format for the selected country code.');
+          setSnackbarMessage('Invalid phone number. Please ensure it matches the format for the selected country code.');
+          setOpenSnackbar(true);
+          return false;
+        }
+
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
+         // Check email validity
+        if (!emailPattern.test(individualData.Email || companyData.email)) {
+          setHasError(true);
+          errorMessage.push('Invalid email. Please provide a valid email address.');
+          setSnackbarMessage('Invalid email. Please provide a valid email address.');
+          setOpenSnackbar(true);
+          return;
+        }
     }
   
     // Validate Company host data
     if (hostType === 'Company') {
-      const emptyFields = getEmptyFields(companyData);
-      if (emptyFields.length > 0) {
-        alert(`Please provide the following required details for the company host: ${emptyFields.join(', ')}.`);
-        return;
-      }
+     
     }
   
     // Validate phone number and email for both types
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|net|edu|gov|info|io|co)$/;
-    const phoneWithCountryCode = `${individualData.countryCode}${individualData.PhoneNumber || companyData.PhoneNumber}`;
-    
-    // Define phone number patterns based on country code
-    const phonePatterns = {
-      '+1': /^\+1\d{10}$/, // USA/Canada (1 country code and 10 digits)
-      '+63': /^\+63\d{10}$/, // Philippines (63 country code and 10 digits)
-      '+44': /^\+44\d{10}$/, // UK (44 country code and 10 digits)
-      // Add more country codes and patterns as needed
-    };
-  
-    const pattern = phonePatterns[individualData.countryCode] || /^\+[1-9]\d{1,14}$/;  // Default for other countries
-  
-    // Check email validity
-    if (!emailPattern.test(individualData.Email || companyData.email)) {
-      alert('Invalid email address. Please enter a valid email.');
-      return;
-    }
-  
-    // Check phone number validity
-    if (!pattern.test(phoneWithCountryCode)) {
-      alert('Invalid phone number. Please enter a valid phone number.');
-      return;
-    }
-  
+   
+   
     // If no validation errors, proceed to submit the data
-    const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+    // const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
     // onHostDataChange(dataToSend);
-    // openModal();
-    alert("Successfully submitted!");
+ 
+    return true;
   };
   //handle Save for Edit
   const onSubmitIndividual = async () => {
@@ -155,7 +136,8 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
       return;
     }
     setIsLoading(true);
-    setIsEditing(false);
+    // setIsEditing(false);
+    
     // Gather the data to be sent to the API
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
    //propertyowner
@@ -173,11 +155,11 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
           displayname: dataToSend.DisplayName,
           dateofbirth: dataToSend.DateOfBirth,
           email: dataToSend.Email,
-          contactnumber: dataToSend.phoneNumber,
+          contactnumber: dataToSend.PhoneNumber,
           street: dataToSend.Street,
           barangay: dataToSend.Barangay,
           city : dataToSend.City,
-          zipcode : dataToSend.Zipcode,
+          zipcode : dataToSend.ZipCode,
           describe : dataToSend.Describe,
           calendar: "",
           primary_address:"address",
@@ -189,7 +171,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
         setIsSaved(true);
         onSaveStatusChange('Saved');
         setHasChanges(false); 
-        setIsEditing(false);
+        // setIsEditing(false);
         setIsCancelled(false);
         setIsLoading(false);
         setOpenSnackbar(true);
@@ -202,7 +184,7 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   };
   const onSubmitCompany = async () => {
     setIsLoading(true);
-    setIsEditing(false);
+    // setIsEditing(false);
   
     // Gather the data to be sent to the API
     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
@@ -281,15 +263,30 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
     }
   };
   
-  const handleSave = () => {
-     // Gather the data to be sent to the API
-     const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
-     if (hostType === 'Individual') {
-       onSubmitIndividual();
-       
-     }else if (hostType === 'Company') {
-       onSubmitCompany();
-     }
+  const handleSave = async () => {
+    try {
+      // Gather the data to be sent to the API
+      // Example:
+      // const dataToSend = hostType === 'Individual' ? { hostType, ...individualData } : { hostType, ...companyData };
+  
+      let success = false; // Default to false
+  
+      if (hostType === 'Individual') {
+        success = await onSubmitIndividual(); // assuming onSubmitIndividual() returns a boolean indicating success
+      } else if (hostType === 'Company') {
+        success = await onSubmitCompany(); // assuming onSubmitCompany() returns a boolean indicating success
+      }
+  
+      return success; // Return true if save was successful, false if it failed
+  
+    } catch (error) {
+      console.error("Error during save:", error);
+      return false; // Return false if there was an error during the save process
+    }
+  };
+  
+  const handleCloseSnackbar  = () => {
+    setOpenSnackbar(false);
   }
 
   
@@ -391,6 +388,21 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
         <Divider sx={{ my: 2 }} />
         {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData} isEditing={isEditing}  isCancelled={isCancelled}/>}
         {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData}  isEditing={isEditing}  isCancelled={isCancelled}/>}
+        <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar} 
+          severity={hasError ? "error" : "success"} 
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+        <LoadingModal open={isLoading} />
       </Paper>
 
     </>

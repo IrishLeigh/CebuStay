@@ -4,7 +4,7 @@ import BookingDetails from "./BookingDetails";
 import BookingGuestDetails from "./BookingGuestDetails";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-
+import countryCodePatterns from "../../components/Booking/countryCodePatterns";
 
 function BookingDetailsUI() {
   const [price, setPrice] = useState(null);
@@ -21,6 +21,7 @@ function BookingDetailsUI() {
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyUnitDetails, setPropertyUnitDetails] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState([]);
 
   
   // Extract query parameters
@@ -104,15 +105,46 @@ function BookingDetailsUI() {
 
   }, [propertyid]);
 
+// Validate phone number based on country code pattern
+const validatePhoneNumber = (countryCode, phoneNumber) => {
+  const pattern = countryCodePatterns[countryCode];
+  return pattern ? pattern.test(phoneNumber) : false;
+};
+
   // Guest details validation
-  const validateGuestDetails = (details) => {
-    if (!details) return false;
-    const requiredFields = ["firstName", "lastName", "email", "phoneNumber", "countryCode", "guestName"];
-    return requiredFields.every((field) => details[field]);
+  const validateGuestDetails = () => {
+    setErrorMessage([]); // Reset errors before validation
+  
+    let errors = []; // Temporarily store errors
+  
+    if(guestDetails.arrivalTime === "") {
+      errors.push("Please select arrival time");
+    }
+    if(guestDetails.bookingFor === 0 && guestDetails.guestName === "" ) {
+      errors.push("Please enter guest name");
+    }
+    if(guestDetails.bookingFor === 0 && guestDetails.guestEmail === "") {
+      errors.push("Please enter guest email");
+    }
+    if(guestDetails.requests === "") {
+      errors.push("Please enter special request");
+    }
+    if(guestDetails.phoneNumber === "") {
+      errors.push("Please enter phone number");
+    }
+    if(validatePhoneNumber(guestDetails.countryCode, guestDetails.phoneNumber) === false) {
+      errors.push("Please enter a valid phone number");
+    }
+  
+    if (errors.length > 0) {
+      setErrorMessage(errors); // Set errors in state
+      return false;
+    }
+    return true;
   };
 
   const handleNextPayment = async () => {
-    if (!validateGuestDetails(guestDetails)) {
+    if (!validateGuestDetails()) {
       setSnackbarMessage("Please fill in all required fields.");
       setOpenSnackbar(true);
       return;
@@ -182,7 +214,8 @@ function BookingDetailsUI() {
     );
   }
 
-  console.log("Property Price MAO GYUD NI :", price);
+  // console.log("Property Price MAO GYUD NI :", price);
+  console.log("guest", guestDetails);
   return (
     <div ref={topRef} style={{ width : '100%'  }}>
       <AppBar position="static" sx={{ background: "#16B4DD" }}>
@@ -215,6 +248,7 @@ function BookingDetailsUI() {
             onGuestDetailsChange={setGuestDetails}
             User={user}
             PropertyData={propertyData}
+            errorMessage = {errorMessage}
           />
           <Box mt={2} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
@@ -228,8 +262,13 @@ function BookingDetailsUI() {
           </Box>
         </Grid>
       </Grid>
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
-        <Alert onClose={() => setOpenSnackbar(false)} severity="error">
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={6000} 
+        onClose={() => setOpenSnackbar(false)} 
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="error" variant="filled"> 
           {snackbarMessage}
         </Alert>
       </Snackbar>

@@ -32,7 +32,6 @@ export default function Sample({ propertyData, onSaveStatusChange }) {
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [errors, setErrors] = useState({}); // Define errors state variable
   const [unitid, setUnitid] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
@@ -50,7 +49,6 @@ export default function Sample({ propertyData, onSaveStatusChange }) {
     },
     // You can add more bed objects as needed
   ]);
-
 const [newUnitRooms, setNewUnitRooms] = useState([]);
 const [newRoomName, setNewRoomName] = useState(""); // State for new room name
 const [newRoomQuantity, setNewRoomQuantity] = useState(0); // State for new room quantity
@@ -62,13 +60,16 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
       { unitroomid: 4,  roomname: "Living Room", quantity: 0 },
       { unitroomid: 5,  roomname: "Kitchen", quantity: 0 },
     ]);
-    
   const [bedroomQTY, setBedroomQTY] = useState(0);
   const [bedAreaQTY, setBedAreaQTY] = useState(0);
   const [guestCapacity, setGuestCapacity] = useState(0);
   const [sleepingTypes, setSleepingTypes] = useState(newUnitRooms.map(() => 'room')); // Initialize with default values
   const [originalData, setOriginalData] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState([]);
+  const [hasError, setHasError] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+ 
 
  
   useEffect(() => {
@@ -115,17 +116,19 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
   };
   // Handle guest capacity change
   const handleGuestCapacityChange = (value) => {
-    setHasChanges(true);
-    setGuestCapacity(value);
+    if (value !== guestCapacity) {
+      setGuestCapacity(value);
+      setHasChanges(true);
+    }
   };
-
   // Add a new room
   const addOldRoom = () => {
-    setHasChanges(true);
+    
     setUnitRooms((prevRooms) => [
       ...prevRooms,
       { roomname: "", quantity: 0 },
     ]);
+    setHasChanges(true);
   };
   // Add a new room and store it in newUnitRooms
   const addNewRoom = () => {
@@ -135,7 +138,6 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
     setNewRoomQuantity(0); // Reset quantity
     setHasChanges(true);
   };
-
   // Handle room type change// Handle new room type change
 const handleNewRoomTypeChange = (index, value) => {
   const updatedRooms = [...newUnitRooms]; // Update newUnitRooms instead of unitRooms
@@ -143,7 +145,6 @@ const handleNewRoomTypeChange = (index, value) => {
   setHasChanges(true);
   setNewUnitRooms(updatedRooms);
 };
-
 // Handle new room quantity change
 const handleNewQuantityChange = (index, value) => {
   const updatedRooms = [...newUnitRooms]; // Update newUnitRooms instead of unitRooms
@@ -164,15 +165,15 @@ const removeNewRoom = (index) => {
     updatedRooms[index].roomname = value;
     setUnitRooms(updatedRooms);
   };
-
   // Handle room quantity change
   const handleQuantityChange = (index, value) => {
     const updatedRooms = [...unitRooms];
-    updatedRooms[index].quantity = value;
-    setHasChanges(true);
-    setUnitRooms(updatedRooms);
-  };
-
+    if (updatedRooms[index].quantity !== value) { // Only mark as changed if quantity is different
+      updatedRooms[index].quantity = value;
+      setHasChanges(true);
+      setUnitRooms(updatedRooms);
+    }
+  }
   // Increment room quantity
   const incrementQuantity = (index) => {
     const updatedRooms = [...unitRooms];
@@ -180,17 +181,15 @@ const removeNewRoom = (index) => {
     setHasChanges(true);
     setUnitRooms(updatedRooms);
   };
-
   // Decrement room quantity
   const decrementQuantity = (index) => {
     const updatedRooms = [...unitRooms];
     if (updatedRooms[index].quantity > 0) {
       updatedRooms[index].quantity -= 1;
+      setHasChanges(true); // Mark as changed when quantity is decremented
     }
-    setHasChanges(true);
     setUnitRooms(updatedRooms);
   };
-
   // Increment newroom quantity
 const incrementNewQuantity = (index) => {
   const updatedRooms = [...newUnitRooms]; // Use newUnitRooms for updating
@@ -198,7 +197,6 @@ const incrementNewQuantity = (index) => {
   setHasChanges(true);
   setNewUnitRooms(updatedRooms); // Update the state with the new rooms
 };
-
 // Decrement newroom quantity
 const decrementNewQuantity = (index) => {
   const updatedRooms = [...newUnitRooms]; // Use newUnitRooms for updating
@@ -208,7 +206,6 @@ const decrementNewQuantity = (index) => {
   setHasChanges(true);
   setNewUnitRooms(updatedRooms); // Update the state with the new rooms
 };
-
 const handleAddNewBed = () => {
   // 1. Log the current state for debugging
   console.log('Initial unitRooms:', unitRooms);
@@ -263,7 +260,6 @@ if (newUnitBeds.length > 0) {
   // 7. Mark changes as true
   setHasChanges(true);
 };
-
 // Effect to log updated unitRooms and newUnitBeds
 useEffect(() => {
   console.log('Updated unitRooms:', unitRooms);
@@ -457,20 +453,155 @@ const removeNewUnitBed = (bedroomIndex) => {
     setHasChanges(true);
   };
   
+const validateForm = () => {
+  if (!guestCapacity) {
+    setHasError(true);
+    errorMessage.push("Guest Capacity is required");
+    setSnackbarMessage("Guest Capacity is required");
+    setOpenSnackbar(true);
+    return false;
+  }
+  if (guestCapacity < 0 || guestCapacity > 100) {
+    setHasError(true);
+    errorMessage.push("Guest Capacity must be between 0 and 100");
+    setSnackbarMessage("Guest Capacity must be between 0 and 100");
+    setOpenSnackbar(true);
+    return false;
+  }
+ // unitrooms roomname is empty and quantity is below 0 or 0 put error
+ if ( unitRooms.every((room) =>  room.quantity < 0 || room.quantity === 0)) {
+  setHasError(true);
+  errorMessage.push("Room quantity must be greater than 0");
+  setSnackbarMessage("Room quantity must be greater than 0");
+  setOpenSnackbar(true);
+  return false;
+ }
 
+ // newunitrooms roomname is empty and quantity is below 0 or 0 put error
+ if ( newUnitRooms.some((room) => !room.roomname || room.quantity < 0 || room.quantity === 0)) {
+  setHasError(true);
+  errorMessage.push("Room name is required and quantity must be greater than 0");
+  setSnackbarMessage("Room name is required and quantity must be greater than 0");
+  setOpenSnackbar(true);
+  return false;
+ }
+// Validation to check that at least one bed quantity is greater than 0 in each bedroom
+const isValidUnitBeds = unitBeds.every((bedroom) =>
+  Object.values(bedroom.beds).some((quantity) => quantity > 0)
+);
+
+if (!isValidUnitBeds) {
+  setHasError(true);
+  errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
+  setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
+  setOpenSnackbar(true);
+  return false;
+}
+
+// Validation to check that at least one bed quantity is greater than 0 in each bedroom
+const isValidNewUnitBeds = newUnitBeds.every((bedroom) =>
+  Object.values(bedroom.beds).some((quantity) => quantity > 0)
+);
+
+if (!isValidNewUnitBeds) {
+  setHasError(true);
+  errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
+  setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
+  setOpenSnackbar(true);
+  return false;
+}
+
+
+
+
+
+
+ 
+
+
+  return true;
+}
+// const validateForm = () => {
+//   if (!guestCapacity) {
+//     setHasError(true);
+//     errorMessage.push("Guest Capacity is required");
+//     setSnackbarMessage("Guest Capacity is required");
+//     setOpenSnackbar(true);
+//     return false;
+//   }
+//   if (guestCapacity < 0 || guestCapacity > 100) {
+//     setHasError(true);
+//     errorMessage.push("Guest Capacity must be between 0 and 100");
+//     setSnackbarMessage("Guest Capacity must be between 0 and 100");
+//     setOpenSnackbar(true);
+//     return false;
+//   }
+//  // unitrooms roomname is empty and quantity is below 0 or 0 put error
+//  if ( unitRooms.every((room) =>  room.quantity < 0 || room.quantity === 0)) {
+//   setHasError(true);
+//   errorMessage.push("Room quantity must be greater than 0");
+//   setSnackbarMessage("Room quantity must be greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+//  }
+
+//  // newunitrooms roomname is empty and quantity is below 0 or 0 put error
+//  if ( newUnitRooms.some((room) => !room.roomname || room.quantity < 0 || room.quantity === 0)) {
+//   setHasError(true);
+//   errorMessage.push("Room name is required and quantity must be greater than 0");
+//   setSnackbarMessage("Room name is required and quantity must be greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+//  }
+// // Validation to check that at least one bed quantity is greater than 0 in each bedroom
+// const isValidUnitBeds = unitBeds.every((bedroom) =>
+//   Object.values(bedroom.beds).some((quantity) => quantity > 0)
+// );
+
+// if (!isValidUnitBeds) {
+//   setHasError(true);
+//   errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+// }
+
+// // Validation to check that at least one bed quantity is greater than 0 in each bedroom
+// const isValidNewUnitBeds = newUnitBeds.every((bedroom) =>
+//   Object.values(bedroom.beds).some((quantity) => quantity > 0)
+// );
+
+// if (!isValidNewUnitBeds) {
+//   setHasError(true);
+//   errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
+//   setOpenSnackbar(true);
+//   return false;
+// }
+
+
+
+
+
+
+ 
+
+
+//   return true;
+// }
   // Handle save
   const handleSave = async () => {
 
-    console.log("SENT Unit Id", unitid);
-    console.log("SENT Guest Capacity:", guestCapacity);
-    console.log("SENT Unit Rooms:", unitRooms);
-    console.log("SENTUnit Beds:", unitBeds);
-    console.log("SENT New Unit Rooms:", newUnitRooms);
-    console.log("SENT New Unit Beds:", newUnitBeds);
-  
+    // console.log("SENT Unit Id", unitid);
+    // console.log("SENT Guest Capacity:", guestCapacity);
+    // console.log("SENT Unit Rooms:", unitRooms);
+    // console.log("SENTUnit Beds:", unitBeds);
+    // console.log("SENT New Unit Rooms:", newUnitRooms);
+    // console.log("SENT New Unit Beds:", newUnitBeds);
+    if (!validateForm()) return;
 
     setIsLoading(true);
-    setIsEditing(false);
+    // setIsEditing(false);
   
     // Check if there are any changes by comparing current data with the original data
     const hasChanges =
@@ -521,15 +652,18 @@ const removeNewUnitBed = (bedroomIndex) => {
           });
   
           // Set status indicators for the user
-          setIsEditing(false);
+          // setIsEditing(false);
+          setHasChanges(false);
           setOpenSnackbar(true); // This assumes you have a Snackbar to show feedback
           onSaveStatusChange('Saved'); // Custom callback or action to indicate the save status
-  
-          alert("Successfully saved!"); // Replace with a user-friendly notification method
+          setHasError(false);
+          
+          setSnackbarMessage("Room and details saved successfully!");
         }
       } catch (err) {
         console.error("Error saving data:", err);
       } finally {
+        setHasChanges(false);
         setIsLoading(false); // Stop the loading spinner, even if there's an error
       }
     } else {
@@ -540,7 +674,7 @@ const removeNewUnitBed = (bedroomIndex) => {
     }
     setNewUnitRooms([]); // Clear newly added rooms after save
     setNewUnitBeds([]); // Clear newly added beds after save
-    setHasChanges(true);
+    // setHasChanges(true);
   };
   
   const handleCancel = () => {
@@ -560,8 +694,8 @@ const removeNewUnitBed = (bedroomIndex) => {
     setOpenSnackbar(false);
   };
   
-
-  console.log("PROPERTY DTA FROM PARENT", propertyData);
+  // console.log("PROPERTY DTA FROM PARENT", propertyData);
+console.log("HAS CHANGES?", hasChanges);
 
   return (
     <>
@@ -624,12 +758,18 @@ const removeNewUnitBed = (bedroomIndex) => {
               required
               disabled={!isEditing}
             />
+            {hasError && errorMessage.includes("Guest Capacity is required") && (
+              <Typography color="error" sx ={{ fontSize: "0.75rem"}}>
+                Guest Capacity is required
+              </Typography>
+            )}
+           
 
           </Box>
 
           {/* Availbe Old ROoms */}
           <Typography variant="h6" sx={{ mb: 2 }}>
-            List of Rooms Available
+            List of Spaces Available
           </Typography>
           {unitRooms.map((room, index) => (
             <Box
@@ -650,17 +790,17 @@ const removeNewUnitBed = (bedroomIndex) => {
                 helperText=""
               />
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton onClick={() => incrementQuantity(index)} disabled={["Bedspace"].includes(room.roomname) || !isEditing}  >
-                  <AddIcon />
+                <IconButton onClick={() => decrementQuantity(index) } disabled={["Bedspace"].includes(room.roomname) || !isEditing} >
+                  <RemoveIcon />
                 </IconButton>
                 <TextField
                   value={room.quantity}
                   onChange={(e) => handleQuantityChange(index, e.target.value)}
                   sx={{ width: "4rem", textAlign: "center" ,}}
                   disabled={["Bedspace"].includes(room.roomname) || !isEditing}
-                />
-                <IconButton onClick={() => decrementQuantity(index) } disabled={["Bedspace"].includes(room.roomname) || !isEditing} >
-                  <RemoveIcon />
+                />            
+                <IconButton onClick={() => incrementQuantity(index)} disabled={["Bedspace"].includes(room.roomname) || !isEditing}  >
+                  <AddIcon />
                 </IconButton>
               </Box>
               <IconButton
@@ -696,8 +836,8 @@ const removeNewUnitBed = (bedroomIndex) => {
                 helperText=""
               />
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton onClick={() => incrementNewQuantity(index)} disabled={["Bedspace"].includes(room.roomname) || !isEditing}  >
-                  <AddIcon />
+              <IconButton onClick={() => decrementNewQuantity(index) } disabled={["Bedspace"].includes(room.roomname) || !isEditing}>
+                  <RemoveIcon />
                 </IconButton>
                 <TextField
                   value={room.quantity}
@@ -705,8 +845,8 @@ const removeNewUnitBed = (bedroomIndex) => {
                   sx={{ width: "4rem", textAlign: "center" ,}}
                   disabled={["Bedspace"].includes(room.roomname) || !isEditing}
                 />
-                <IconButton onClick={() => decrementNewQuantity(index) } disabled={["Bedspace"].includes(room.roomname) || !isEditing}>
-                  <RemoveIcon />
+                <IconButton onClick={() => incrementNewQuantity(index)} disabled={["Bedspace"].includes(room.roomname) || !isEditing}  >
+                  <AddIcon />
                 </IconButton>
               </Box>
               <IconButton
@@ -736,7 +876,7 @@ const removeNewUnitBed = (bedroomIndex) => {
               mt: 2,
             }}
           >
-            Add Custom Room
+            Add Custom Space
           </Button>
 
           <Box mt={4}>
@@ -1034,13 +1174,15 @@ const removeNewUnitBed = (bedroomIndex) => {
           open={openSnackbar}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <Alert
             onClose={handleCloseSnackbar}
-            severity="success"
+            severity={hasError ? "error" : "success"}
+
             sx={{ width: "100%" }}
           >
-            Room details saved successfully!
+            {snackbarMessage}
           </Alert>
         </Snackbar>
         </Paper>

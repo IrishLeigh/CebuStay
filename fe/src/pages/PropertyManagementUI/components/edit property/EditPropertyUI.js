@@ -88,9 +88,9 @@ export default function EditPropertyUI() {
           }
         );
         const data = response.data;
-        console.log("Property data FROM API:", data);
-        console.log("Pricing:", data.property_unitdetails[0].unitpricing);
-        console.log("Payment:", data.payment_method);
+        // console.log("Property data FROM API:", data);
+        // console.log("Pricing:", data.property_unitdetails[0].unitpricing);
+        // console.log("Payment:", data.payment_method);
         setData(data);
         setPropertyData(data.property_details);
         setPropertyAddress(data.property_address);
@@ -119,13 +119,13 @@ export default function EditPropertyUI() {
           const res_img = await axios.get(
             `http://127.0.0.1:8000/api/getfiles/${id}`
           );
-          console.log(res_img.data.img);
+          // console.log(res_img.data.img);
           setCoverImg(res_img.data.img);
 
           const res_img2 = await axios.get(
             `http://127.0.0.1:8000/api/getfiles-gallery/${id}`
           );
-          console.log("GALLERY", res_img2.data.img);
+          // console.log("GALLERY", res_img2.data.img);
           setGalleryImg(res_img2.data.img);
         }
         // // Determine if the property is a single unit type
@@ -159,7 +159,7 @@ export default function EditPropertyUI() {
   // console.log("Property Data TYPE?: ", propertyData.property_type);
   // console.log ("basicinfo status?: ", saveCount);
   // console.log ("Parent Partner Data: ", partnerData);
-  console.log("RoDATA FROM API: ", data);
+  // console.log("RoDATA FROM API: ", data);
 
   return (
     <div style={{ height: "100vh", color: "#000", background: "#F4F7FA" }}>
@@ -289,7 +289,7 @@ export default function EditPropertyUI() {
               onRoomDetailsChange={(updatedData) => setRooms(updatedData)}
               onSaveStatusChange={handleSaveStatusChange}
             />
-       =
+       
         </CustomTabPanel>
 
         <CustomTabPanel value={value} index={2}>

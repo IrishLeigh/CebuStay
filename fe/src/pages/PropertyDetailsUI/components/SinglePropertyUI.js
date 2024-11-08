@@ -38,58 +38,7 @@ export default function SinglePropertyUI({ propertyid }) {
   const handleCheckOutChange = (date) => setCheckOutDate(date);
   const handleGuestCountChange = (event) => setGuestCount(event.target.value);
 
-  // Snackbar close handler
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
-  // Handle reservation click
-  const handleReserveClick = async () => {
-    console.log("Reserve clicked");
-    console.log("Propertyid", propertyid);
-    console.log("Checkin Date", checkInDate.format("YYYY-MM-DD"));
-    console.log("Checkout Date", checkOutDate.format("YYYY-MM-DD"));
-
-    if (!checkInDate || !checkOutDate) {
-      setSnackbarMessage("Please select check-in and check-out dates");
-      setSnackbarOpen(true);
-      return;
-    }
-    if (!guestCount || guestCount <= 0) {
-      setSnackbarMessage("Please enter a valid number of guests");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    const queryParams = new URLSearchParams({
-      guestCount,
-      checkInDate: checkInDate.format("YYYY-MM-DD"),
-      checkOutDate: checkOutDate.format("YYYY-MM-DD"),
-    }).toString();
-
-    try {
-      const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
-        checkin_date: checkInDate.format("YYYY-MM-DD"),
-        checkout_date: checkOutDate.format("YYYY-MM-DD"),
-        guest_count: guestCount,
-        propertyid: propertyid,
-      });
-
-      if (res.data) {
-        console.log("Response", res.data);
-        if (res.data.status === "error") {
-          setSnackbarMessage(res.data.message);
-          setSnackbarOpen(true);
-        } else if (res.data.status === "success") {
-          navigate(`/booking/${propertyid}?${queryParams}`);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-      setSnackbarMessage("An error occurred. Please try again.");
-      setSnackbarOpen(true);
-    }
-  };
+ 
 
   useEffect(() => {
     setGuestCount(searchParams.get("guestCapacity") || 0);
@@ -151,8 +100,6 @@ export default function SinglePropertyUI({ propertyid }) {
     }
   };
 
-  
-
   // Fetch data when property ID changes or on mount
   useEffect(() => {
     fetchPropertyData();
@@ -173,7 +120,69 @@ export default function SinglePropertyUI({ propertyid }) {
     );
   }
 
+   // Snackbar close handler
+   const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  // Handle reservation click
+  const handleReserveClick = async () => {
+    console.log("Reserve clicked");
+    console.log("Propertyid", propertyid);
+    console.log("Checkin Date", checkInDate.format("YYYY-MM-DD"));
+    console.log("Checkout Date", checkOutDate.format("YYYY-MM-DD"));
+    
+    if (!checkInDate || !checkOutDate) {
+      setSnackbarMessage("Please select check-in and check-out dates");
+      setSnackbarOpen(true);
+      return;
+    }
+    if (!guestCount || guestCount <= 0) {
+      setSnackbarMessage("Please enter a valid number of guests");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if(guestCount > propertyInfo.property_unitdetails.guest_capacity){
+      setSnackbarMessage("Number of guests cannot exceed guest capacity");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    
+
+    const queryParams = new URLSearchParams({
+      guestCount,
+      checkInDate: checkInDate.format("YYYY-MM-DD"),
+      checkOutDate: checkOutDate.format("YYYY-MM-DD"),
+    }).toString();
+
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
+        checkin_date: checkInDate.format("YYYY-MM-DD"),
+        checkout_date: checkOutDate.format("YYYY-MM-DD"),
+        guest_count: guestCount,
+        propertyid: propertyid,
+      });
+
+      if (res.data) {
+        console.log("Response", res.data);
+        if (res.data.status === "error") {
+          setSnackbarMessage(res.data.message);
+          setSnackbarOpen(true);
+        } else if (res.data.status === "success") {
+          navigate(`/booking/${propertyid}?${queryParams}`);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      setSnackbarMessage("An error occurred. Please try again.");
+      setSnackbarOpen(true);
+    }
+  };
+
   console.log("GALLERY IMAGES IN PARENT", galleryImages);
+  console.log("Property info", propertyInfo);
 
   return (
     <div>
@@ -239,12 +248,13 @@ export default function SinglePropertyUI({ propertyid }) {
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={handleCloseSnackbar}
           severity="error"
           sx={{ width: "100%" }}
+            variant="filled"
         >
           {snackbarMessage}
         </Alert>

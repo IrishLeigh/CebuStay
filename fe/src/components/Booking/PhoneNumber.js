@@ -43,7 +43,7 @@ function PhoneNumber({ phoneNumber, countryCode, onPhoneNumberChange, onCountryC
   return (
     <Box sx={{ mt: '1rem' }}>
       <FormControl style={{ width: '30%', marginRight: '1rem' }}>
-        <InputLabel id="country-select-label">Country Code</InputLabel>
+        <InputLabel id="country-select-label" style={{backgroundColor:'white'}}>Country Code</InputLabel>
         <Select
           labelId="country-select-label"
           id="country-select"
