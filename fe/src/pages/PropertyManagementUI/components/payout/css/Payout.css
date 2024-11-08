@@ -4,7 +4,7 @@
   align-self: flex-start; /* Align to the left */
   text-align: left; /* Align title to the left */
   font-weight: bolder;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .info-container {
@@ -14,7 +14,7 @@
   background: white;
   border-radius: 0.8rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 2rem; /* Increased padding for more height */
+  padding: 1rem; /* Increased padding for more height */
   width: 100%; /* Full width */
   height: auto; /* Set height to auto for flexibility */
   position: relative; /* For positioning the edit text */
@@ -129,16 +129,16 @@
 
 .edit-modal {
   background: white; /* White background */
-  border-radius: 8px; /* Rounded corners */
+  border-radius: 0.8rem; /* Rounded corners */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
-  padding: 20px; /* Padding inside modal */
-  margin-top: 20px; /* Space between modal and info container */
-  margin-bottom: 20px;
-  max-width: 400px; /* Max width for the modal */
+  padding: 1rem; /* Padding inside modal */
+  /* margin-top: 20px; /* Space between modal and info container 
+  margin-bottom: 20px; */
+  /* max-width: 500px; Max width for the modal */
   width: 100%; /* Full width on smaller screens */
-  position: relative; /* Relative positioning for internal elements */
+  /* position: relative; Relative positioning for internal elements */
   font-family: 'Poppins', sans-serif; /* Ensure Poppins font is used */
-  z-index: 1000; /* Ensure it appears above other content */
+  /* z-index: 1000; Ensure it appears above other content */
 }
 
 .edit-modal h3 {
@@ -148,7 +148,7 @@
 }
 
 .edit-input-group {
-  margin-bottom: 15px; /* Space between input groups */
+  margin-bottom: 1rem; /* Space between input groups */
   font-family: 'Poppins', sans-serif; /* Ensure Poppins font is used */
   
 }
@@ -176,7 +176,10 @@
   font-family: 'Poppins', sans-serif; /* Use Poppins for input */
   font-size: 1rem; /* Font size for input text */
 }
-
+.edit-input-group select:focus {
+  border-color: #16B4DD; /* Change border color on focus */
+  outline: none; /* Remove default outline */
+}
 .edit-input-group input:focus {
   border-color: #16B4DD; /* Change border color on focus */
   outline: none; /* Remove default outline */
