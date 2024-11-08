@@ -396,7 +396,7 @@ const LoginUI = () => {
             {/* Google API Login */}
             <GoogleLogin
               clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com"
-              buttonText="Sign in with Google"
+              buttonText="Continue with Google"
               onSuccess={handleGoogleLoginSuccess}
               onFailure={handleGoogleLoginFailure}
               cookiePolicy={'single_host_origin'}

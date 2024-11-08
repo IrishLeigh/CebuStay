@@ -371,7 +371,7 @@ const CancellationAndModification = ({
         setSnackbarMessage("Successfully cancelled the booking.");
         setSnackbarSeverity("success");
         setTimeout(() => {
-          // window.location.reload();
+          window.location.reload();
         }, 1000);
       } else {
         setSnackbarMessage("Failed to cancel the booking.");
@@ -716,11 +716,14 @@ const CancellationAndModification = ({
           
 
           {/* Cancel Booking Button */}
-          <div className="cancel-booking-container mt-4">
+          {selectedBooking && selectedBooking.isCancel !== 'Checked in' &&(
+            <div className="cancel-booking-container mt-4">
             <button className="cancel-booking-btn" onClick={handleCancelBooking}>
               Cancel Booking
             </button>
           </div>
+          )}
+          
         </div>
 
       </div>
@@ -777,7 +780,7 @@ const CancellationAndModification = ({
             >
               <button
                 onClick={confirmCancelBooking}
-                className="btn-confirm"
+                className="btn-cancel"
                 style={{
                   padding: '10px 20px',
                   backgroundColor: '#e74c3c', // Red for cancel confirmation
@@ -827,6 +830,8 @@ const CancellationAndModification = ({
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ zIndex: 1301 }}
       >
         <Alert
           onClose={handleCloseSnackbar}
