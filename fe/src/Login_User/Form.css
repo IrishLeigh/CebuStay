@@ -2,8 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%; /* Adjusted height */
+  height: 100vh;  /* Use 100vh for full viewport height */
+  width: 100%;    /* Ensure it takes full width of the screen */
+  box-sizing: border-box;  /* To account for padding/borders in size calculations */
 }
+
 
 body {
   background: linear-gradient(135deg, #F4F7FA 50%, #F4F7FA 50%);
