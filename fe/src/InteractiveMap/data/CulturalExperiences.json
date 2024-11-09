@@ -118,5 +118,75 @@
     "description": "The Baluarte, or watchtower, is one of the many stone structures built along the coast of Cebu to guard against Moro pirate attacks during the Spanish period. Located near the Oslob Cuartel, this watchtower provides insight into the town's historical defense systems and Spanish colonial rule.",
     "description2": "For a visit to the Baluarte, casual and comfortable clothing is recommended. Wear sturdy shoes for walking along the coastal path, and don’t forget sun protection like a hat or sunscreen.",
     "city name": "Oslob"
+  },
+  {
+    "name": "St. Francis Xavier Church",
+    "coordinates": [9.774, 123.336],
+    "category": "Culture",
+    "iconUrl": "./church.png",
+    "imageUrl": "./stfrancisxavier.jpg",
+    "description": "The St. Francis Xavier Church in Alegria is a significant cultural landmark. This church, built during the Spanish colonial period, is a testament to the town's rich religious heritage and Spanish influence. It serves as a place of worship and an architectural reminder of the colonial past.",
+    "description2": "When visiting St. Francis Xavier Church, modest attire is recommended to show respect for the religious site. Comfortable shoes are ideal for exploring the church grounds and nearby areas. Photography is allowed but be mindful of any ongoing services.",
+    "city name": "Alegria"
+  },
+  {
+    "name": "Ani-anihan Festival",
+    "coordinates": [10.115, 123.514],
+    "category": "Culture & Experiences",
+    "iconUrl": "./harvest.png",
+    "imageUrl": "./ani-anihan.jpg",
+    "description": "The Ani-anihan Festival in Barili is a vibrant celebration of the town’s agricultural heritage and the local community’s gratitude for a bountiful harvest. This annual festival features colorful street parades, traditional dance performances, and displays of local produce, giving visitors a genuine taste of Barili’s rural culture and community life.",
+    "description2": "For an enjoyable visit to the Ani-anihan Festival, comfortable, light clothing is recommended, as activities are mostly outdoors. Don’t forget a hat or sunscreen for sun protection, and a camera to capture the colorful floats and costumes. Arriving early ensures a good view of the parades and performances.",
+    "city name": "Barili"
+  },
+  {
+    "name": "Silmugi Festival",
+    "coordinates": [10.837, 124.013],
+    "category": "Culture & Experiences",
+    "iconUrl": "./saint.png",
+    "imageUrl": "./silmugi.jpg",
+    "description": "The Silmugi Festival is an annual celebration in Borbon that showcases the town’s rich heritage and gratitude for the abundant harvest from the Silmugi River. This vibrant festival includes street dancing, traditional music, and local crafts, giving visitors a unique insight into Borbon’s culture and community spirit.",
+    "description2": "To experience the Silmugi Festival, visitors should come in comfortable clothing suited for warm weather, as the festivities often take place outdoors. Bring a camera to capture the colorful costumes and lively performances. Arriving early is recommended to find a good spot for viewing the parade and enjoying the cultural displays.",
+    "city name": "Borbon"
+  },
+  {
+    "name": "Budbod Festival",
+    "coordinates": [10.65, 124.0121],
+    "category": "Culture & Experiences",
+    "iconUrl": "./stickyrice.png",
+    "imageUrl": "./budbod.jpg",
+    "description": "The Budbod Festival in Catmon celebrates the town’s rich agricultural heritage and is named after the local delicacy, 'budbod' – a type of rice cake wrapped in banana leaves. This festival includes colorful parades, traditional dances, and a showcase of local culinary delights, giving visitors a taste of Catmon’s unique traditions and community spirit.",
+    "description2": "For a memorable experience at the Budbod Festival, wear comfortable clothing suitable for warm weather and outdoor activities. Bring a camera to capture the vibrant costumes and parade floats. Don’t miss the chance to sample the delicious 'budbod' and other local treats sold by vendors along the streets.",
+    "city name": "Catmon"
+  },
+  {
+    "name": "Sinulog sa Carmen",
+    "coordinates": [10.558, 123.972],
+    "category": "Culture & Experiences",
+    "iconUrl": "./festivalCarmen.png",
+    "imageUrl": "./sinulogCarmen.jpg",
+    "description": "Sinulog sa Carmen is a vibrant festival held annually in Carmen, honoring the Santo Niño and showcasing the town’s devotion and cultural traditions. The celebration includes street dancing, elaborate costumes, and lively music, similar to Cebu City’s Sinulog Festival but with a local touch that reflects Carmen’s unique community spirit.",
+    "description2": "Visitors attending Sinulog sa Carmen should wear light, comfortable clothing and be prepared for the warm weather, as events take place outdoors. Arriving early is recommended for a good view of the performances. Don’t miss the chance to immerse in the local culture and witness the colorful festivities.",
+    "city name": "Carmen"
+  },
+  {
+    "name": "Utanon Festival",
+    "coordinates": [9.761, 123.532],
+    "category": "Culture & Experiences",
+    "iconUrl": "./vegetables.png",
+    "imageUrl": "./utanon.jpg",
+    "description": "The Utanon Festival in Dalaguete celebrates the town's title as the 'Vegetable Basket of Cebu.' This annual festival showcases the abundant vegetable produce grown in the area, with street dancing, colorful costumes, and floats decorated with fresh vegetables. It’s a lively celebration of the local agricultural heritage and community pride.",
+    "description2": "For a visit to the Utanon Festival, wear comfortable clothing and bring a hat or sunscreen for sun protection, as events are often outdoors. Enjoy sampling fresh produce from local vendors, and don’t forget your camera to capture the vibrant costumes and creative vegetable-themed decorations.",
+    "city name": "Dalaguete"
+  },
+  {
+    "name": "Tubod Festival",
+    "coordinates": [10.721, 123.838],
+    "category": "Culture & Experiences",
+    "iconUrl": "./spring.png",
+    "imageUrl": "./tubodfestival.jpg",
+    "description": "The Tubod Festival in Tuburan celebrates the town’s natural springs (or 'tubod' in Cebuano) and its abundant water resources. This annual festival features colorful parades, traditional dances, and water-themed activities, reflecting the town’s deep connection to its springs, rivers, and natural beauty. The event also highlights Tuburan's cultural heritage and community pride.",
+    "description2": "For an enjoyable experience at the Tubod Festival, wear comfortable clothing and bring sun protection, as most activities take place outdoors. Capture the vibrant costumes and lively performances, and take the opportunity to explore Tuburan’s scenic landscapes and natural springs.",
+    "city name": "Tuburan"
   }
 ]
