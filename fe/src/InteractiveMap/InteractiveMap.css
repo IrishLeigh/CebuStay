@@ -29,17 +29,16 @@
 /* InteractiveMap.css */
 
 .map {
-  height: 100vh;
-  width: 70%;
   margin: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  /* background-color: #2a2a2e; */
 }
 .map-container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .map-background {
@@ -48,20 +47,18 @@
   background-position: center;
   background-size: cover;
   height: 111vh;
-  /* padding: 0.5rem; */
-  /* transform: rotate(35deg); */
-  /* transform-origin: center center; */
 }
 
 .map-filter-cntr {
-  /* position: sticky; Makes the filter buttons stick when scrolling */
-  top: 0; /* Position them at the top of the scrolling container */
-  background-color: white; /* Ensure the background color is white for contrast */
-  padding: 0.5rem; /* Add some padding */
+  position: sticky;
+  top: 0; /* Keeps the filter container at the top */
+  background-color: white; /* Background for contrast */
+  padding: 0.5rem; /* Container padding */
   z-index: 1000; /* Ensure it's on top of other elements */
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  gap: 0.5rem; /* Space between buttons */
 }
 
 .map-filter-btn {
@@ -85,9 +82,10 @@
 }
 
 /* Clicked state */
-.map-filter-btn:active {
-  transform: scale(0.95);
-  opacity: 0.8;
+.map-filter-btn:active,
+.map-filter-btn.active {
+  transform: translateY(2px); /* Slight downward movement for pressed effect */
+  box-shadow: inset 0px 4px 8px rgba(0, 0, 0, 0.2); /* Inset shadow for pressed look */
 }
 
 /* Additional styles for the reset button */
@@ -153,6 +151,13 @@
   .map {
     width: 100%;
     height: 100vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    width: 100%;
+    /* Add any other styles specific for small screens if needed */
   }
 }
 

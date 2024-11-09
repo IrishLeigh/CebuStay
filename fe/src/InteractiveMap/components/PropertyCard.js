@@ -28,6 +28,7 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
 
   // Display the first place if available
   const place = nearbyLocation[0];
+  const propertyid = place.propertyid;
 
   const renderStars = (rating) => {
     const stars = [];
@@ -36,31 +37,43 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
 
     // Create full stars
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className="">★</span>);
+      stars.push(
+        <span key={`full-${i}`} className="">
+          ★
+        </span>
+      );
     }
 
     // Add half star if applicable
     if (hasHalfStar) {
-      stars.push(<span key="half" className="">☆</span>);
+      stars.push(
+        <span key="half" className="">
+          ☆
+        </span>
+      );
     }
 
     // Fill remaining with empty stars up to 5
     for (let i = stars.length; i < 5; i++) {
-      stars.push(<span key={`empty-${i}`} className="">☆</span>);
+      stars.push(
+        <span key={`empty-${i}`} className="">
+          ☆
+        </span>
+      );
     }
 
     return stars;
   };
-  const handleView = (e, propertyid) => {
+  const handleView = (e) => {
     // Construct query params
     const queryParams = new URLSearchParams({
-      guestCapacity: '', // Default to empty string if null
-      checkin_date: '', // Default to empty string if null
-      checkout_date: '', // Default to empty string if null
+      guestCapacity: "", // Default to empty string if null
+      checkin_date: "", // Default to empty string if null
+      checkout_date: "", // Default to empty string if null
     }).toString();
 
     console.log("Query Params:", queryParams);
-  
+
     // Navigate to the property page with query parameters
     navigate(`/accommodation/property/${propertyid}?${queryParams}`);
   };
@@ -113,10 +126,7 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
               }}
             >
               {place.rating ? (
-                <>
-                  {renderStars(place.rating)}
-
-                </>
+                <>{renderStars(place.rating)}</>
               ) : (
                 "No rating yet"
               )}
@@ -154,7 +164,13 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
             <Typography
               variant="body2"
               color="textSecondary"
-              sx={{ marginLeft: "0.5rem", fontFamily: "Poppins", textOverflow: 'ellipsis', whiteSpace: 'wrap', overflow: 'auto',  }}
+              sx={{
+                marginLeft: "0.5rem",
+                fontFamily: "Poppins",
+                textOverflow: "ellipsis",
+                whiteSpace: "wrap",
+                overflow: "auto",
+              }}
             >
               {place.address}
             </Typography>
@@ -177,9 +193,7 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
                 fontSize: isSmallScreen ? "0.65rem" : "0.75rem",
                 fontFamily: "Poppins",
               }}
-            >
-              
-            </Typography>
+            ></Typography>
             <Typography
               variant="h5"
               sx={{
@@ -203,8 +217,7 @@ const PropertyCard = ({ nearbyLocation, onClick }) => {
             }}
           >
             Per night before taxes and fees
-            <br />
-            ({place.guestCapacity} Guests)
+            <br />({place.guestCapacity} Guests)
           </Typography>
         </CardContent>
       </Card>
