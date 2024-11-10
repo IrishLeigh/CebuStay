@@ -799,6 +799,14 @@ export default function AccommodationRegistration({
                                     userid: userid,
                                   }
                                 );
+                                if (manager.data) {
+                                  const res = await axios.post(
+                                    `https://whitesmoke-shark-473197.hostingersite.com/api/setpropertyerror/${propertyId}`,
+                                    {
+                                      button: 0,
+                                    }
+                                  );
+                                }
                                 console.log("Manager:", manager.data);
                                 console.log("Successfully Registered");
                                 // setModalMessage("Successfully Registered");
