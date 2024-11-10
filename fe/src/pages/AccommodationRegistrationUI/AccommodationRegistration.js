@@ -20,6 +20,8 @@ import {
   useMediaQuery,
   createTheme,
   Tooltip,
+  LinearProgress,
+  Typography,
 } from "@mui/material";
 import PropertyType from "./components/PropertyType";
 import PropertyType2 from "./components/PropertyType2";
@@ -124,7 +126,6 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
     return new File([blob], fileName, { type: blob.type });
   }
 
-
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
   //For Single Unit
   const [selectedPropertyType, setSelectedPropertyType] = useState("");
@@ -163,6 +164,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
   const containerRef = useRef(null);
   const contentRef = useRef(null); // Reference to the main content
 
+
   // Determine if the selected property type is single or multi-unit
   // Determine if the selected property type is single or multi-unit
   const isSingleUnit =
@@ -191,12 +193,12 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
   const [multiUnitFacilities, setMultiUnitFacilities] = useState([]);
   //For Both Single and Multi Unit Components
   const [step, setStep] = useState(0);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   //TO DO: Uncomment this line if localstorage does not work
   //const [user, setUser] = useState();
   const userid = localStorage.getItem("userid") || "";
   const role = localStorage.getItem("role") || "";
-
   // Define steps for flow A
   const stepsFlowA = [
     "Property",
@@ -227,7 +229,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
   ];
   const steps = isSingleUnit ? stepsFlowA : stepsFlowB;
   const [errorModalOpen, setErrorModalOpen] = useState(false);
-
+  const progress = (step / (steps.length - 1)) * 100;
   // Function to toggle the drawer
   const toggleDrawer = (open) => (event) => {
     if (
@@ -1541,6 +1543,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
             marginBottom: "1rem", // Add space below stepper
             maxWidth: "992px", // Set maxWidth for different screen sizes
             marginX: "auto", // Center the stepper horizontally
+            display: isMobile ? "none" : "block",
           }}
         >
           <Stepper activeStep={step} orientation="horizontal">
@@ -1559,6 +1562,36 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
             </Step>
       ))}
           </Stepper>
+        </Box>
+        <Box
+          sx={{
+            width: "100%",
+            backgroundColor: "white",
+            padding: "1rem 2rem",
+            zIndex: 100,
+            boxShadow: 1,
+            display: isMobile ? "block" : "none",
+          }}
+        >
+          {/* Step Number and Label */}
+          <Typography variant="h6" sx={{ fontWeight: "bold", textAlign: "center" }}>
+            Step {step + 1}: {steps[step]}
+          </Typography>
+
+          {/* Linear Progress Bar */}
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            sx={{
+              height: 10,
+              borderRadius: 5,
+              mt: 2,
+              backgroundColor: "#e0e0e0", // Optional: Light background color for unfilled portion
+              "& .MuiLinearProgress-bar": {
+                backgroundColor: "#16B4DD", // Set the filled portion to #164bdd
+              },
+            }}
+          />
         </Box>
 
         {/* Main content */}
@@ -1766,7 +1799,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   {/* Other steps for multi unit */}
                 </>
               )}
-            </Box>
+        </Box>
 
             {/* //Render circular progress indicator while loading */}
             {isLoading && (
@@ -1806,7 +1839,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
               onClose={handleCloseCompliance}
             />
             {/* Menu icon for mobile view */}
-            <IconButton
+            {/* <IconButton
               onClick={toggleDrawer(true)}
               sx={{
                 display: { xs: "block", sm: "none" },
@@ -1817,7 +1850,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
               }}
             >
               <MenuIcon />
-            </IconButton>
+            </IconButton> */}
             {/* Error Modal */}
             <ErrorModal
               isOpen={errorModalOpen}

@@ -39,14 +39,19 @@ export default function EditAmenities({
   const [ isSaved, setIsSaved ] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     // setSelectedAmenities(amenities || []);
     // setSelectedFacilities(facilities || []);
     // setSelectedServices(services || []);
-    console.log("Amenities:", amenities);
-    console.log("Facilities:", facilities);
-    console.log("Services:", services);
+    console.log("Parent Amenities:", amenities);
+    console.log("Parent Facilities:", facilities);
+    console.log("ParentServices:", services);
+    console.log("Selected Amenities:", selectedAmenities);
+    console.log("Selected Facilities:", selectedFacilities);
+    console.log("Selected Services:", selectedServices);
     setOriginalData({ amenities, facilities, services });
   }, [amenities, facilities, services]);
 
@@ -80,13 +85,29 @@ export default function EditAmenities({
     setHasChanges(true);
   };
 
+  const validateForm = () => {
+    const totalSelected = selectedAmenities.length + selectedFacilities.length + selectedServices.length;
+    if (totalSelected < 3) {
+      setSnackbarMessage("Please select at least 3 amenities, facilities, and services.");
+      setOpenSnackbar(true);
+      return false;
+    }
+   return true;
+  };
+  
   const handleSave = async () => {
-    // Integrate your API save logic here
+    if (!validateForm()) {
+      return;  // Exit early if validation fails
+    }
+  
+    // Clear error as validation has passed
+    setHasError(false);
     setIsLoading(true);
-
+  
     console.log("Selected Amenities:", selectedAmenities);
     console.log("Selected Facilities:", selectedFacilities);
     console.log("Selected Services:", selectedServices);
+  
     try {
       const res = await axios.post(
         `http://127.0.0.1:8000/api/updatepropertybenefits-single/${propertyid}`,
@@ -96,34 +117,40 @@ export default function EditAmenities({
           updated_services: selectedServices,
         }
       );
+  
       if (res.data.status === "success") {
         console.log(res.data);
         const updated_A = res.data.updatedAmenities;
         const updated_F = res.data.updatedFacilities;
         const updated_S = res.data.updatedServices;
+  
+        // Update selected items with the response data
         setSelectedAmenities(updated_A);
         setSelectedFacilities(updated_F);
         setSelectedServices(updated_S);
+  
+        // Notify parent about changes
         onAmenitiesChange(updated_A, updated_F, updated_S);
+  
+        // Mark the save status as successful
         setIsSaved(true);
-        // After saving, reset the state
-        // setOriginalData({
-        //   amenities: updated_A,
-        //   facilities: selectedFacilities,
-        //   services: selectedServices,
-        // });
         onSaveStatusChange('Saved');
+        
+        // Clear any changes tracking and close snackbar
         setHasChanges(false);
-        setIsEditing(false);
-        setIsLoading(false);
+        setSnackbarMessage("Changes saved successfully!");
         setOpenSnackbar(true);
+      } else {
+        console.log(res.data);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error during saving:", error);
+    } finally {
+      setIsLoading(false); // Reset loading state regardless of outcome
     }
-   
-   
   };
+  
+  
 
   const handleCancel = () => {
     if (hasChanges) {
@@ -154,11 +181,11 @@ export default function EditAmenities({
     setOpenSnackbar(false);
   }
 
-  console.log ("isSIngleUnit:", isSingleUnit);
+  // console.log ("isSIngleUnit:", isSingleUnit);
 
   return (
     <>
-       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel} hasError={hasError}/>
       <Paper
         style={{
           width: "auto",
@@ -243,19 +270,19 @@ export default function EditAmenities({
                     "Toiletries",
                     "Mini Bar",
                     "Refrigerator",
-                    "Airconditioning",
+                    "Air Conditioning",
                     "Workspace",
                     "Microwave",
-                    "Wi-fi",
+                    "Wi-Fi",
                     "Television",
                   ].map((amenity, index) => (
                     <Grid item xs={6} md={4} key={index}>
                       <FormControlLabel
                         control={
                           <Checkbox
-                            name={amenity.toLowerCase().replace(/\s+/g, "")}
+                            name={amenity}
                             checked={selectedAmenities.includes(
-                              amenity.toLowerCase().replace(/\s+/g, "")
+                              amenity
                             )}
                             onChange={handleAmenityChange}
                             disabled={!isEditing}
@@ -309,14 +336,23 @@ export default function EditAmenities({
                     "Sports Facility",
                     "Wellness Center",
                     "Parking",
+                    "Club House",
+                    "Bar",
+                    "Lounge area",
+                    "Wellness Facilities",
+                    "Sports Facilities",
+                    "Restaurant",
+                    "Cafe",
+                    "Bar",
+
                   ].map((facility, index) => (
                     <Grid item xs={6} md={4} key={index}>
                       <FormControlLabel
                         control={
                           <Checkbox
-                            name={facility.toLowerCase().replace(/\s+/g, "")}
+                            name={facility}
                             checked={selectedFacilities.includes(
-                              facility.toLowerCase().replace(/\s+/g, "")
+                              facility
                             )}
                             onChange={handleFacilityChange}
                             disabled={!isEditing}
@@ -363,23 +399,25 @@ export default function EditAmenities({
               </h6>
               <Grid container spacing={1}>
                 {[
-                  "Housekeeping",
+                  "House Keeping",
                   "Car Rental",
                   "Laundry",
                   "Breakfast",
-                  "24 Hours Front Desk",
+                  "24hours Front Desk",
                   "Pet Friendly",
                   "Shuttle Service",
-                  "Concierge Service",
+                  "Concierge",
                   "Room Service",
+                  "Wake-up call service",
+                  "Cleaning Service",
                 ].map((service, index) => (
                   <Grid item xs={6} md={4} key={index}>
                     <FormControlLabel
                       control={
                         <Checkbox
-                          name={service.toLowerCase().replace(/\s+/g, "")}
+                          name={service}
                           checked={selectedServices.includes(
-                            service.toLowerCase().replace(/\s+/g, "")
+                            service
                           )}
                           onChange={handleServiceChange}
                           disabled={!isEditing}
@@ -397,33 +435,18 @@ export default function EditAmenities({
                 ))}
               </Grid>
             </div>
-            {/* {isEditing && (
-              <div style={{ marginTop: "1rem", textAlign: "right" }}>
-                <Button onClick={handleCancel} sx={{ marginRight: "1rem" }}>
-                  Revert Changes
-                </Button>
-                <Button
-                  variant="contained"
-                  disabled={!hasChanges}
-                  onClick={handleSave}
-                >
-                  Save All Changes
-                </Button>
-              </div>
-            )} */}
           </Grid>
         </Grid>
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity="success"
-            sx={{ width: "100%" }}
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           >
-         Room Benefits saved successfully!
+          <Alert 
+            onClose={handleCloseSnackbar} 
+            severity={hasError ? "error" : "success"} 
+            sx={{ width: '100%' }}
+            variant="filled"
+          >
+            {snackbarMessage}
           </Alert>
         </Snackbar>
       </Paper>

@@ -73,6 +73,8 @@ export default function EditPhotos({
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [hasError, setHasError] = useState(false);
   const theme = createTheme({
     breakpoints: {
       values: {
@@ -290,29 +292,43 @@ export default function EditPhotos({
     setCurrentPhotoType(type);
   };
 
+  const validateForm = () => {
+    if (coverPhotos.length < 5) {
+      setHasError(true);
+      setSnackbarMessage("Please provide a total of 5 cover photos.");
+      setOpenSnackbar(true);
+      return false; // Validation failed
+    } else if (coverPhotos.length > 5) {
+     setHasError(true);
+     setSnackbarMessage("You can only upload up to 5 cover photos.");
+     setOpenSnackbar(true);
+      return false; // Validation failed
+    }
+    return true; // Validation passed
+  };
+  
   const handleSave = async () => {
+    if (!validateForm()) {
+      return; // Stop save process if validation fails
+    }
+    
     setIsLoading(true); // Start loading
-
+  
     console.log("Gallery Photos list", galleryPhotos);
-    // console.log("To add gallery photos", toAddGP);
+  
     if (toDeleteCP.length === toAddCP.length) {
-
       console.log(coverPhotos);
       console.log("To be deleted cover Photos", toDeleteCP);
       console.log("To be added cover Photos", toAddCP);
-
-      // Create a FormData object
+  
       const formdata = new FormData();
-
-      // Append toDeleteCP as JSON string
       formdata.append("toDelete", JSON.stringify(toDeleteCP));
-
-      // Convert Blob URLs to File objects and append to FormData
+  
       for (const item of toAddCP) {
-        const file = await fetchBlobAsFile(item.src, "photo.jpg"); // You can dynamically assign file names if needed
+        const file = await fetchBlobAsFile(item.src, "photo.jpg");
         formdata.append("files[]", file);
       }
-
+  
       try {
         const res = await axios.post(
           `http://127.0.0.1:8000/api/updatepropertyfiles-singleunit/${propertyid}`,
@@ -323,14 +339,16 @@ export default function EditPhotos({
             },
           }
         );
-        console.log(res.data);
+        
         if (res.data) {
           const formdata = new FormData();
           formdata.append("toDelete", JSON.stringify(toDeleteGP));
+          
           for (const item of toAddGP) {
-            const file = await fetchBlobAsFile(item.src, "photo.jpg"); // You can dynamically assign file names if needed
+            const file = await fetchBlobAsFile(item.src, "photo.jpg");
             formdata.append("files[]", file);
           }
+          
           const res2 = await axios.post(
             `http://127.0.0.1:8000/api/updatepropertyfiles-gallerysingleunit/${propertyid}`,
             formdata,
@@ -340,43 +358,27 @@ export default function EditPhotos({
               },
             }
           );
-          console.log(res2.data);
-          if (res2.data) {
-            if (res2.data.status === "success") {
-              setGalleryPhotos(res2.data.galleryPhotos);
-              setGalleryP(res2.data.galleryPhotos);
-              setToAddGP([]);
-              setToDeleteGP([]);
-            }
-            if (res.data.status === "success") {
-              setCoverPhotos(res.data.coverPhotos);
-              setCoverP(res.data.coverPhotos);
-              setToAddCP([]);
-              setToDeleteCP([]);
-            }
-          }
-
-          if (res.data.status === "success" || res2.data.status === "success") {
-            
+  
+          if (res2.data && (res.data.status === "success" || res2.data.status === "success")) {
             setIsSaved(true);
-
-            alert("Photos updated successfully");
-          }
-          if (res2.data.status === "null" && res.data.status === "null") {
-
-            alert("No changes made");
+            setHasError(false);
+            setSnackbarMessage("Photos updated successfully");
+           
+          } else if (res2.data.status === "null" && res.data.status === "null") {
+            console.log("No changes made");
+            setSnackbarMessage("No changes made");
           }
         }
       } catch (error) {
         console.log(error);
-      }finally{
+      } finally {
         onSaveStatusChange('Saved');
         setIsSaved(true);
         setIsLoading(false);
         setOpenSnackbar(true);
       }
     } else {
-      alert("You must add at least 5 cover photos");
+      setSnackbarMessage("Please provide 5 cover photos.");
     }
   };
 
@@ -636,282 +638,504 @@ export default function EditPhotos({
 
         {/* Cover Photo Dialog */}
 
-        <Dialog open={openCoverPhotoDialog} onClose={handleClose} maxWidth="lg" fullWidth sx={{ borderRadius: "8px" }}>
-          <DialogTitle>
-            Cover Photo
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={handleClose}
-              sx={{ position: 'absolute', right: 8, top: 8 }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <Box sx={{ display: 'flex', height: '500px', overflowX: 'hidden' }}> {/* Set height and hide overflow here */}
-              <Box sx={{ flex: '1 1 60%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img
-                  src={coverPhotos[selectedImageIndex]?.src}
-                  alt={`Selected Cover Photo`}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                  }}
-                />
-              </Box>
-              <Box sx={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
-                {isEditingCaption ? (
-                  <>
-                  <InputLabel htmlFor="caption">Caption</InputLabel>
-                    <TextField
-                      autoFocus
-                      margin="dense"
-                     
-                      type="text"
-                      fullWidth
-                      value={editedCaption}
-                      onChange={handleCaptionChange}
-                      variant="outlined"
-                    />
-                    <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                      <Button
-                        onClick={() => handleSaveCaption(coverPhotos[selectedImageIndex], true)}
-                        color="primary"
-                        variant="contained"
-                        startIcon={<SaveIcon />}
-                        sx={{ backgroundColor: '#4caf50', color: '#fff' }}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        onClick={() => setIsEditingCaption(false)}
-                        color="error"
-                        variant="contained"
-                        startIcon={<CancelIcon />}
-                        sx={{ backgroundColor: '#f44336', color: '#fff' }}
-                      >
-                        Cancel
-                      </Button>
-                    </Box>
-                  </>
-                ) : (
-                  <>
-                   <InputLabel htmlFor="caption">Caption</InputLabel>
-                    <Typography
-                      variant="h6"
-                      paragraph
-                      
-                      sx={{
-                        padding: '16px',
-                        border: '1px solid #ccc',
-                        borderRadius: '8px',
-                        backgroundColor: '#f9f9f9',
-                        fontStyle: 'italic',
-                        fontWeight: 'bold',
-                        color: '#333',
-                      }}
-                    >
-                      {coverPhotos[selectedImageIndex]?.caption || "No caption available"}
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                      <Button
-                        onClick={() => setIsEditingCaption(true)}
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<EditIcon />}
-                        sx={{ backgroundColor: '#1976d2', color: '#fff' , visibility: isEditing ? 'visible' : 'hidden',}}
-
-                      >
-                        Edit Caption
-                      </Button>
-                      <Button
-                        onClick={handleDeleteImage}
-                        variant="outlined"
-                        color="error"
-                        startIcon={<DeleteIcon />}
-                        sx={{ backgroundColor: '#f44336', color: '#fff', visibility: isEditing ? 'visible' : 'hidden', }}
-                      >
-                        Delete Photo
-                      </Button>
-                    </Box>
-                  </>
-                )}
-              </Box>
-            </Box>
-          </DialogContent>
-          <DialogActions sx={{ display: "flex", justifyContent: "space-between" ,background : '#f5f5f5', padding: '1rem 1.5rem'}}>
+        <Dialog
+  open={openCoverPhotoDialog}
+  onClose={handleClose}
+  fullScreen
+  sx={{ padding: 0 }}
+>
+  <DialogTitle
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "1rem",
+      borderBottom: "1px solid #ccc",
+    }}
+  >
+    Cover Photo
+    <IconButton
+      edge="end"
+      color="inherit"
+      onClick={handleClose}
+      sx={{ position: "absolute", right: 16, top: 16 }}
+    >
+      <CloseIcon />
+    </IconButton>
+  </DialogTitle>
+  <DialogContent
+    sx={{
+      padding: 0,
+      display: 'flex',
+      height: '100vh',
+      overflow: 'hidden',
+      flexDirection: { xs: 'column', md: 'row' }, // Stack on small screens
+    }}
+  >
+    <Box
+      sx={{
+        flex: { xs: '1 1 auto', md: '1 1 70%' },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: { xs: '50vh', md: '100%' }, // Adjust height for smaller screens
+        overflow: 'hidden',
+      }}
+    >
+      <img
+        src={coverPhotos[selectedImageIndex]?.src}
+        alt="Selected Cover Photo"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+        }}
+      />
+    </Box>
+    <Box
+      sx={{
+        flex: { xs: '1 1 auto', md: '1 1 30%' },
+        display: 'flex',
+        flexDirection: 'column',
+        padding: { xs: '1rem', md: '2rem' }, // Smaller padding on small screens
+        borderLeft: { xs: 'none', md: '1px solid #ccc' }, // Remove border on small screens
+        borderTop: { xs: '1px solid #ccc', md: 'none' }, // Add top border for stacked view
+        overflowY: 'auto',
+      }}
+    >
+      {isEditingCaption ? (
+        <>
+          <InputLabel htmlFor="caption">Edit Caption</InputLabel>
+          <TextField
+            autoFocus
+            fullWidth
+            value={editedCaption}
+            onChange={handleCaptionChange}
+            variant="outlined"
+            sx={{ marginBottom: '1rem' }}
+          />
+          <Box sx={{ display: 'flex', gap: '8px' }}>
             <Button
-              onClick={handlePrev}
+              onClick={() => handleSaveCaption(coverPhotos[selectedImageIndex], true)}
+              color="primary"
               variant="contained"
-              startIcon={<ArrowBackIcon />}
-              sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+              startIcon={<SaveIcon />}
             >
-              Previous
+              Save
             </Button>
             <Button
-              onClick={handleNext}
+              onClick={() => setIsEditingCaption(false)}
+              color="secondary"
               variant="contained"
-              endIcon={<ArrowForwardIcon />}
-              sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+              startIcon={<CancelIcon />}
             >
-              Next
+              Cancel
             </Button>
-          </DialogActions>
-        </Dialog>
-
-      {/* Gallery Photo Dialog */}
-      <Dialog open={openGalleryPhotoDialog} onClose={handleClose} maxWidth="lg" fullWidth>
-        <DialogTitle>
-          Gallery Photo
-          <IconButton
-            edge="end"
-            color="inherit"
-            onClick={handleClose}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            padding: '1rem 2rem', // Top/Bottom 1rem, Left/Right 2rem
-          }}
-        >
-          <Box
+          </Box>
+        </>
+      ) : (
+        <>
+          <InputLabel htmlFor="caption">Caption</InputLabel>
+          <Typography
+            variant="h6"
+            paragraph
             sx={{
-              display: 'flex',
-              height: '500px',
-              overflowX: 'hidden',  // Hides horizontal scrollbar
-              overflowY: 'auto',    // Allows vertical scrolling if needed
+              padding: '16px',
+              backgroundColor: '#f9f9f9',
+              borderRadius: '8px',
+              fontStyle: 'italic',
+              color: '#333',
             }}
           >
-            <Box sx={{ flex: '1 1 60%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img
-                src={galleryPhotos[selectedImageIndex]?.src}
-                alt={`Selected Gallery Photo`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                }}
-              />
-            </Box>
-            <Box sx={{ flex: '1 1 40%', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-              {isEditingCaption ? (
-                <>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    label="Caption"
-                    type="text"
-                    fullWidth
-                    value={editedCaption}
-                    onChange={handleCaptionChange}
-                    variant="outlined"
-                  />
-                  <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                    <Button
-                      onClick={() => handleSaveCaption(galleryPhotos[selectedImageIndex], false)}
-                      color="primary"
-                      variant="contained"
-                      startIcon={<SaveIcon />}
-                      sx={{ backgroundColor: '#4caf50', color: '#fff' }}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      onClick={() => setIsEditingCaption(false)}
-                      color="error"
-                      variant="contained"
-                      startIcon={<CancelIcon />}
-                      sx={{ backgroundColor: '#f44336', color: '#fff' }}
-                    >
-                      Cancel
-                    </Button>
-                  </Box>
-                </>
-              ) : (
-                <>
-                <InputLabel htmlFor="caption">Caption</InputLabel>
-                    <Typography
-                      variant="h6"
-                      paragraph
-                      
-                      sx={{
-                        padding: '16px',
-                        border: '1px solid #ccc',
-                        borderRadius: '8px',
-                        backgroundColor: '#f9f9f9',
-                        fontStyle: 'italic',
-                        fontWeight: 'bold',
-                        color: '#333',
-                      }}
-                    >
-                    {galleryPhotos[selectedImageIndex]?.caption || "No caption available"}
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                      <Button
-                        onClick={() => setIsEditingCaption(true)}
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<EditIcon />}
-                        sx={{ backgroundColor: '#1976d2', color: '#fff' , visibility: isEditing ? 'visible' : 'hidden',}}
-
-                      >
-                        Edit Caption
-                      </Button>
-                      <Button
-                        onClick={handleDeleteImage}
-                        variant="outlined"
-                        color="error"
-                        startIcon={<DeleteIcon />}
-                        sx={{ backgroundColor: '#f44336', color: '#fff', visibility: isEditing ? 'visible' : 'hidden', }}
-                      >
-                        Delete Photo
-                      </Button>
-                    </Box>
-                </>
-              )}
-            </Box>
+            {coverPhotos[selectedImageIndex]?.caption || "No caption available"}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+            <Button
+              onClick={() => setIsEditingCaption(true)}
+              variant="outlined"
+              color="primary"
+              startIcon={<EditIcon />}
+            >
+              Edit Caption
+            </Button>
+            <Button
+              onClick={handleDeleteImage}
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+            >
+              Delete Photo
+            </Button>
           </Box>
-        </DialogContent>
-        <DialogActions sx={{ display: "flex", justifyContent: "space-between", padding: '1rem 2rem' }}>
-          <Button
-            onClick={handlePrev}
-            variant="contained"
-            startIcon={<ArrowBackIcon />}
-            sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+        </>
+      )}
+    </Box>
+  </DialogContent>
+  <DialogActions
+    sx={{
+      justifyContent: "space-between",
+      padding: '1rem',
+      backgroundColor: '#f5f5f5',
+      borderTop: '1px solid #ccc',
+    }}
+  >
+    <Button
+      onClick={handlePrev}
+      variant="contained"
+      startIcon={<ArrowBackIcon />}
+      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+    >
+      Previous
+    </Button>
+    <Button
+      onClick={handleNext}
+      variant="contained"
+      endIcon={<ArrowForwardIcon />}
+      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+    >
+      Next
+    </Button>
+  </DialogActions>
+</Dialog>
+
+{/* Gallery Photo Dialog 1 */}
+
+<Dialog
+  open={openGalleryPhotoDialog}
+  onClose={handleClose}
+  fullScreen
+  sx={{ padding: 0 }}
+>
+  <DialogTitle
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "1rem",
+      borderBottom: "1px solid #ccc",
+    }}
+  >
+    Gallery Photo
+    <IconButton
+      edge="end"
+      color="inherit"
+      onClick={handleClose}
+      sx={{ position: "absolute", right: 16, top: 16 }}
+    >
+      <CloseIcon />
+    </IconButton>
+  </DialogTitle>
+  <DialogContent
+    sx={{
+      padding: 0,
+      display: 'flex',
+      height: '100vh',
+      overflow: 'hidden',
+      flexDirection: { xs: 'column', md: 'row' }, // Stack on small screens
+    }}
+  >
+     <Box
+      sx={{
+        flex: { xs: '1 1 auto', md: '1 1 70%' },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: { xs: '50vh', md: '100%' }, // Adjust height for smaller screens
+        overflow: 'hidden',
+      }}
+    >
+      <img
+        src={galleryPhotos[selectedImageIndex]?.src}
+        alt="Selected Gallery Photo"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+        }}
+      />
+    </Box>
+    <Box
+      sx={{
+        flex: { xs: '1 1 auto', md: '1 1 30%' },
+        display: 'flex',
+        flexDirection: 'column',
+        padding: { xs: '1rem', md: '2rem' }, // Smaller padding on small screens
+        borderLeft: { xs: 'none', md: '1px solid #ccc' }, // Remove border on small screens
+        borderTop: { xs: '1px solid #ccc', md: 'none' }, // Add top border for stacked view
+        overflowY: 'auto',
+      }}
+    >
+      {isEditingCaption ? (
+        <>
+          <InputLabel htmlFor="caption">Edit Caption</InputLabel>
+          <TextField
+            autoFocus
+            fullWidth
+            value={editedCaption}
+            onChange={handleCaptionChange}
+            variant="outlined"
+            sx={{ marginBottom: '1rem' }}
+          />
+          <Box sx={{ display: 'flex', gap: '8px' }}>
+            <Button
+              onClick={() => handleSaveCaption(galleryPhotos[selectedImageIndex], true)}
+              color="primary"
+              variant="contained"
+              startIcon={<SaveIcon />}
+            >
+              Save
+            </Button>
+            <Button
+              onClick={() => setIsEditingCaption(false)}
+              color="secondary"
+              variant="contained"
+              startIcon={<CancelIcon />}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <>
+          <InputLabel htmlFor="caption">Caption</InputLabel>
+          <Typography
+            variant="h6"
+            paragraph
+            sx={{
+              padding: '16px',
+              backgroundColor: '#f9f9f9',
+              borderRadius: '8px',
+              fontStyle: 'italic',
+              color: '#333',
+            }}
           >
-            Previous
-          </Button>
-          <Button
-            onClick={handleNext}
-            variant="contained"
-            endIcon={<ArrowForwardIcon />}
-            sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+            {galleryPhotos[selectedImageIndex]?.caption || "No caption available"}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+            <Button
+              onClick={() => setIsEditingCaption(true)}
+              variant="outlined"
+              color="primary"
+              startIcon={<EditIcon />}
+            >
+              Edit Caption
+            </Button>
+            <Button
+              onClick={handleDeleteImage}
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+            >
+              Delete Photo
+            </Button>
+          </Box>
+        </>
+      )}
+    </Box>
+  </DialogContent>
+  <DialogActions
+    sx={{
+      justifyContent: "space-between",
+      padding: '1rem',
+      backgroundColor: '#f5f5f5',
+      borderTop: '1px solid #ccc',
+    }}
+  >
+    <Button
+      onClick={handlePrev}
+      variant="contained"
+      startIcon={<ArrowBackIcon />}
+      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+    >
+      Previous
+    </Button>
+    <Button
+      onClick={handleNext}
+      variant="contained"
+      endIcon={<ArrowForwardIcon />}
+      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+    >
+      Next
+    </Button>
+  </DialogActions>
+</Dialog>
+
+      {/* Gallery Photo Dialog 2 */}
+      {/* <Dialog
+  open={openCoverPhotoDialog}
+  onClose={handleClose}
+  fullScreen
+  sx={{ padding: 0 }}
+>
+  <DialogTitle
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "1rem",
+      borderBottom: "1px solid #ccc",
+    }}
+  >
+    Cover Photo
+    <IconButton
+      edge="end"
+      color="inherit"
+      onClick={handleClose}
+      sx={{ position: "absolute", right: 16, top: 16 }}
+    >
+      <CloseIcon />
+    </IconButton>
+  </DialogTitle>
+  <DialogContent
+    sx={{
+      padding: 0,
+      display: 'flex',
+      height: '100vh',
+      overflow: 'hidden',
+      flexDirection: { xs: 'column', md: 'row' }, // Stack on small screens
+    }}
+  >
+    <Box
+      sx={{
+        flex: { xs: '1 1 auto', md: '1 1 70%' },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: { xs: '50vh', md: '100%' }, // Adjust height for smaller screens
+        overflow: 'hidden',
+      }}
+    >
+      <img
+        src={coverPhotos[selectedImageIndex]?.src}
+        alt="Selected Cover Photo"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+        }}
+      />
+    </Box>
+    <Box
+      sx={{
+        flex: { xs: '1 1 auto', md: '1 1 30%' },
+        display: 'flex',
+        flexDirection: 'column',
+        padding: { xs: '1rem', md: '2rem' }, // Smaller padding on small screens
+        borderLeft: { xs: 'none', md: '1px solid #ccc' }, // Remove border on small screens
+        borderTop: { xs: '1px solid #ccc', md: 'none' }, // Add top border for stacked view
+        overflowY: 'auto',
+      }}
+    >
+      {isEditingCaption ? (
+        <>
+          <InputLabel htmlFor="caption">Edit Caption</InputLabel>
+          <TextField
+            autoFocus
+            fullWidth
+            value={editedCaption}
+            onChange={handleCaptionChange}
+            variant="outlined"
+            sx={{ marginBottom: '1rem' }}
+          />
+          <Box sx={{ display: 'flex', gap: '8px' }}>
+            <Button
+              onClick={() => handleSaveCaption(coverPhotos[selectedImageIndex], true)}
+              color="primary"
+              variant="contained"
+              startIcon={<SaveIcon />}
+            >
+              Save
+            </Button>
+            <Button
+              onClick={() => setIsEditingCaption(false)}
+              color="secondary"
+              variant="contained"
+              startIcon={<CancelIcon />}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <>
+          <InputLabel htmlFor="caption">Caption</InputLabel>
+          <Typography
+            variant="h6"
+            paragraph
+            sx={{
+              padding: '16px',
+              backgroundColor: '#f9f9f9',
+              borderRadius: '8px',
+              fontStyle: 'italic',
+              color: '#333',
+            }}
           >
-            Next
-          </Button>
-        </DialogActions>
-      </Dialog>
+            {coverPhotos[selectedImageIndex]?.caption || "No caption available"}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+            <Button
+              onClick={() => setIsEditingCaption(true)}
+              variant="outlined"
+              color="primary"
+              startIcon={<EditIcon />}
+            >
+              Edit Caption
+            </Button>
+            <Button
+              onClick={handleDeleteImage}
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+            >
+              Delete Photo
+            </Button>
+          </Box>
+        </>
+      )}
+    </Box>
+  </DialogContent>
+  <DialogActions
+    sx={{
+      justifyContent: "space-between",
+      padding: '1rem',
+      backgroundColor: '#f5f5f5',
+      borderTop: '1px solid #ccc',
+    }}
+  >
+    <Button
+      onClick={handlePrev}
+      variant="contained"
+      startIcon={<ArrowBackIcon />}
+      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+    >
+      Previous
+    </Button>
+    <Button
+      onClick={handleNext}
+      variant="contained"
+      endIcon={<ArrowForwardIcon />}
+      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+    >
+      Next
+    </Button>
+  </DialogActions>
+</Dialog> */}
+ 
 
       </Paper>
       <Snackbar
           open={openSnackbar}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <Alert
             onClose={handleCloseSnackbar}
-            severity="success"
+            severity={hasError ? "error" : "success"}
             sx={{ width: "100%" }}
+            variant="filled"
           >
-          Basic Info saved successfully!
+         {snackbarMessage}
           </Alert>
         </Snackbar>
       <LoadingModal open={isLoading} />

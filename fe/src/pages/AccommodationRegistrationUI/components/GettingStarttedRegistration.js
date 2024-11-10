@@ -72,7 +72,7 @@ export default function GettingStartedRegistration({ handleNext, handleBack }) {
                         flexDirection: { xs: "column", md: "row" }, // Stack icons and text on smaller screens
                       }}
                     >
-                      <CheckCircle style={{ color: "#4caf50", marginRight: "8px" }} />
+                      <CheckCircle style={{ color: "#fbc02d", marginRight: "8px" }} />
                       <span>Join CebuStay and Connect with Travelers Seeking Authentic Local Stays!</span>
                     </div>
                     <div
@@ -96,7 +96,7 @@ export default function GettingStartedRegistration({ handleNext, handleBack }) {
                         flexDirection: { xs: "column", md: "row" }, // Stack icons and text on smaller screens
                       }}
                     >
-                      <LocalActivity style={{ color: "#ff5722", marginRight: "8px" }} />
+                      <LocalActivity style={{ color: "#fbc02d", marginRight: "8px" }} />
                       <span>Tap into a Growing Market of Travelers Looking for Unique Cebu Adventures!</span>
                     </div>
                     <Divider sx={{ marginBottom: "1rem" }} />

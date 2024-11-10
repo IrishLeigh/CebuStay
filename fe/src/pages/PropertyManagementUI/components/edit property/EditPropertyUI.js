@@ -96,17 +96,17 @@ export default function EditPropertyUI() {
         setPropertyAddress(data.property_address);
         setAmenities(
           data.property_amenities.map((a) =>
-            a.amenity_name.toLowerCase().replace(/\s+/g, "")
+            a.amenity_name.replace(/\s+/g, "")
           )
         );
         setFacilities(
           data.property_facilities.map((f) =>
-            f.facilities_name.toLowerCase().replace(/\s+/g, "")
+            f.facilities_name.replace(/\s+/g, "")
           )
         );
         setServices(
           data.property_services.map((s) =>
-            s.service_name.toLowerCase().replace(/\s+/g, "")
+            s.service_name.replace(/\s+/g, "")
           )
         );
         setHouseRules(data.property_houserules[0]);

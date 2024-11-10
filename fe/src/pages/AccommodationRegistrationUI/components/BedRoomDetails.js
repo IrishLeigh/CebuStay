@@ -38,7 +38,7 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
       doubleBed: 0,
       largeBed: 0,
       superLargeBed: 0,
-      sleepingtype: 'room',
+      sleepingtype: '',
     }));
     setBedrooms(initialBedrooms);
   };

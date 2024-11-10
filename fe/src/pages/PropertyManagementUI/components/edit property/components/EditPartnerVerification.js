@@ -85,17 +85,18 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
   const validateAndProceed = () => {
     // Validate Individual host data
     if (hostType === 'Individual') {
-      if(individualData.FirstName  == "" || individualData.LastName == "" || individualData.Email == "" || individualData.PhoneNumber == "" || individualData.DateOfBirth == "" || individualData.DisplayName == "" ){
+      if(individualData.FirstName  == "" || individualData.LastName == "" || individualData.Email == "" || individualData.PhoneNumber == "" || individualData.DateOfBirth == "" || individualData.DisplayName == ""  || individualData.Describe == "" ){
         setHasError(true);
         errorMessage.push("Please fill out all the required fields for the individual host.");
         setSnackbarMessage("Please fill out all the required fields for the individual host.");
         setOpenSnackbar(true);
         return false;
       }
-
+  
       // Validate phone number with country code
         const { countryCode, PhoneNumber } = individualData;
         const phonePattern = countryCodePatterns[countryCode];
+  
         
         if (!phonePattern || !phonePattern.test(PhoneNumber)) {
           setHasError(true);
@@ -174,7 +175,9 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
         // setIsEditing(false);
         setIsCancelled(false);
         setIsLoading(false);
+        setSnackbarMessage("Host Information saved successfully!");
         setOpenSnackbar(true);
+       
         console.log("success");
       }
     } catch (error) {
@@ -386,17 +389,18 @@ export default function EditPartnerVerification({ parentPartnerData, onSaveStatu
           />
         </RadioGroup> */}
         <Divider sx={{ my: 2 }} />
-        {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData} isEditing={isEditing}  isCancelled={isCancelled}/>}
-        {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData}  isEditing={isEditing}  isCancelled={isCancelled}/>}
+        {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  parentData={parentPartnerData} isEditing={isEditing}  isCancelled={isCancelled} errorMessage={errorMessage}/>}
+        {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} parentData={parentPartnerData}  isEditing={isEditing}  isCancelled={isCancelled} />}
         <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        
       >
         <Alert
           onClose={handleCloseSnackbar} 
-          severity={hasError ? "error" : "success"} 
+          severity={hasError ? "error" : "success"}
           variant="filled"
         >
           {snackbarMessage}
