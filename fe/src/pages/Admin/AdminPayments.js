@@ -89,6 +89,8 @@ export default function AdminPayments() {
         }
       } catch (error) {
         console.error(error);
+        localStorage.removeItem("admin_token");
+        navigate("/superadmin");
       }
     };
     fetchData();
