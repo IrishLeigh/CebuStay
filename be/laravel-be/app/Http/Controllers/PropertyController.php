@@ -654,157 +654,79 @@ class PropertyController extends CORS
     {
         $this->enableCors($request);
 
-        if ($request->input('updated_amenities')) {
+        // Update Amenities
+        if ($request->has('updated_amenities')) {
             $updated_amenities = $request->input('updated_amenities');
 
-            // Get the existing amenities, transform the names, and extract them into an array of strings
-            $existing_amenities = Amenity::where('propertyid', $propertyid)
-                ->whereNull('unitid')
-                ->get()
-                ->map(function ($amenity) {
-                    // Transform the name to lowercase and remove spaces
-                    return strtolower(str_replace(' ', '', $amenity->amenity_name));
-                })
-                ->toArray(); // Convert the collection to an array of strings
-            // Loop through the updated amenities and add new ones
-            foreach ($updated_amenities as $updated_amenity) {
-                // Transform the updated amenity to lowercase and remove spaces for comparison
-                $updated_amenity_transformed = strtolower(str_replace(' ', '', $updated_amenity));
+            // Step 1: Delete all existing amenities for the given property
+            Amenity::where('propertyid', $propertyid)->whereNull('unitid')->delete();
 
-                // Check if the transformed updated amenity is not in the existing amenities
-                if (!in_array($updated_amenity_transformed, $existing_amenities)) {
-                    $new_amenity = new Amenity();
-                    $new_amenity->propertyid = $propertyid;
-
-                    // Capitalize the first letter of each word
-                    $new_amenity->amenity_name = ucwords(strtolower($updated_amenity));
-
-                    $new_amenity->ismulti = true;
-                    $new_amenity->save();
-                }
-            }
-
-
-            // Loop through the existing amenities and remove any that are not in the updated list
-            foreach ($existing_amenities as $existing_amenity) {
-                if (!in_array($existing_amenity, $updated_amenities)) {
-                    Amenity::where('propertyid', $propertyid)
-                        ->where('amenity_name', $existing_amenity)
-                        ->delete();
-                }
+            // Step 2: Insert the new amenities
+            foreach ($updated_amenities as $amenity_name) {
+                $new_amenity = new Amenity();
+                $new_amenity->propertyid = $propertyid;
+                $new_amenity->amenity_name = $amenity_name;
+                $new_amenity->ismulti = false;
+                $new_amenity->save();
             }
 
             $updated_amenities = Amenity::where('propertyid', $propertyid)
                 ->whereNull('unitid')
-                ->get()
-                ->map(function ($amenity) {
-                    // Transform the name to lowercase and remove spaces
-                    return strtolower(str_replace(' ', '', $amenity->amenity_name));
-                })
-                ->toArray(); // Convert the collection to an array of strings
+                ->pluck('amenity_name')
+                ->toArray();
         }
-        if ($request->input('updated_facilities')) {
+
+        // Update Facilities
+        if ($request->has('updated_facilities')) {
             $updated_facilities = $request->input('updated_facilities');
 
-            // Get the existing facilities, transform the names, and extract them into an array of strings
-            $existing_facilities = Facilities::where('propertyid', $propertyid)
-                ->get()
-                ->map(function ($facility) {
-                    // Transform the name to lowercase and remove spaces
-                    return strtolower(str_replace(' ', '', $facility->facilities_name));
-                })
-                ->toArray(); // Convert the collection to an array of strings
+            // Step 1: Delete all existing facilities for the given property
+            Facilities::where('propertyid', $propertyid)->delete();
 
-            // Loop through the updated facilities and add new ones
-            foreach ($updated_facilities as $updated_facility) {
-                // Transform the updated facility to lowercase and remove spaces for comparison
-                $updated_facility_transformed = strtolower(str_replace(' ', '', $updated_facility));
-
-                // Check if the transformed updated facility is not in the existing facilities
-                if (!in_array($updated_facility_transformed, $existing_facilities)) {
-                    $new_facility = new Facilities();
-                    $new_facility->propertyid = $propertyid;
-
-                    // Capitalize the first letter of each word
-                    $new_facility->facilities_name = ucwords(strtolower($updated_facility));
-
-                    $new_facility->save();
-                }
+            // Step 2: Insert the new facilities
+            foreach ($updated_facilities as $facility_name) {
+                $new_facility = new Facilities();
+                $new_facility->propertyid = $propertyid;
+                $new_facility->facilities_name = $facility_name;
+                $new_facility->save();
             }
 
-            // Loop through the existing facilities and remove any that are not in the updated list
-            foreach ($existing_facilities as $existing_facility) {
-                if (!in_array($existing_facility, $updated_facilities)) {
-                    Facilities::where('propertyid', $propertyid)
-                        ->where('facilities_name', $existing_facility)
-                        ->delete();
-                }
-            }
-
-            // Update the list of existing facilities after modifications
             $updated_facilities = Facilities::where('propertyid', $propertyid)
-                ->get()
-                ->map(function ($facility) {
-                    // Transform the name to lowercase and remove spaces
-                    return strtolower(str_replace(' ', '', $facility->facilities_name));
-                })
-                ->toArray(); // Convert the collection to an array of strings
+                ->pluck('facilities_name')
+                ->toArray();
         }
 
-        if ($request->input('updated_services')) {
+        // Update Services
+        if ($request->has('updated_services')) {
             $updated_services = $request->input('updated_services');
 
-            // Get the existing services, transform the names, and extract them into an array of strings
-            $existing_services = Service::where('propertyid', $propertyid)
-                ->whereNull('unitid')
-                ->get()
-                ->map(function ($service) {
-                    // Transform the name to lowercase and remove spaces
-                    return strtolower(str_replace(' ', '', $service->service_name));
-                })
-                ->toArray(); // Convert the collection to an array of strings
+            // Step 1: Delete all existing services for the given property
+            Service::where('propertyid', $propertyid)->whereNull('unitid')->delete();
 
-            // Loop through the updated services and add new ones
-            foreach ($updated_services as $updated_service) {
-                // Transform the updated service to lowercase and remove spaces for comparison
-                $updated_service_transformed = strtolower(str_replace(' ', '', $updated_service));
-
-                // Check if the transformed updated service is not in the existing services
-                if (!in_array($updated_service_transformed, $existing_services)) {
-                    $new_service = new Service();
-                    $new_service->propertyid = $propertyid;
-
-                    // Capitalize the first letter of each word
-                    $new_service->service_name = ucwords(strtolower($updated_service));
-
-                    $new_service->ismulti = true; // Assuming you want to set ismulti as true
-                    $new_service->save();
-                }
+            // Step 2: Insert the new services
+            foreach ($updated_services as $service_name) {
+                $new_service = new Service();
+                $new_service->propertyid = $propertyid;
+                $new_service->service_name = $service_name;
+                $new_service->ismulti = false;
+                $new_service->save();
             }
 
-            // Loop through the existing services and remove any that are not in the updated list
-            foreach ($existing_services as $existing_service) {
-                if (!in_array($existing_service, $updated_services)) {
-                    Service::where('propertyid', $propertyid)
-                        ->where('service_name', $existing_service)
-                        ->delete();
-                }
-            }
-
-            // Update the list of existing services after modifications
             $updated_services = Service::where('propertyid', $propertyid)
                 ->whereNull('unitid')
-                ->get()
-                ->map(function ($service) {
-                    // Transform the name to lowercase and remove spaces
-                    return strtolower(str_replace(' ', '', $service->service_name));
-                })
-                ->toArray(); // Convert the collection to an array of strings
+                ->pluck('service_name')
+                ->toArray();
         }
 
-
-        return response()->json(['status' => 'success', 'updatedAmenities' => $updated_amenities, 'updatedFacilities' => $updated_facilities, 'updatedServices' => $updated_services]);
+        // Return response with updated data
+        return response()->json([
+            'status' => 'success',
+            'updatedAmenities' => $updated_amenities ?? [],
+            'updatedFacilities' => $updated_facilities ?? [],
+            'updatedServices' => $updated_services ?? []
+        ]);
     }
+
 
     public function updatePropertyRules(Request $request, $propertyid)
     {
