@@ -339,6 +339,12 @@ export default function EditAmenities({
                     "Club House",
                     "Bar",
                     "Lounge area",
+                    "Wellness Facilities",
+                    "Sports Facilities",
+                    "Restaurant",
+                    "Cafe",
+                    "Bar",
+
                   ].map((facility, index) => (
                     <Grid item xs={6} md={4} key={index}>
                       <FormControlLabel
@@ -393,14 +399,14 @@ export default function EditAmenities({
               </h6>
               <Grid container spacing={1}>
                 {[
-                  "Housekeeping",
+                  "House Keeping",
                   "Car Rental",
                   "Laundry",
                   "Breakfast",
-                  "24 Hours Front Desk",
+                  "24hours Front Desk",
                   "Pet Friendly",
                   "Shuttle Service",
-                  "Concierge Service",
+                  "Concierge",
                   "Room Service",
                   "Wake-up call service",
                   "Cleaning Service",
