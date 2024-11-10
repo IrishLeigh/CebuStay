@@ -65,6 +65,7 @@ function App() {
     }
   }, [location]); // Runs on mount
 
+  // Check if the token is valid 
   useEffect(() => {
     if (token) {
       axios
@@ -93,6 +94,7 @@ function App() {
     }
   }, [token]);
 
+  //Check if token is not expired or if user is logged in
   useEffect(() => {
     const handleSessionCheck = () => {
       if (!token) {
@@ -114,12 +116,12 @@ function App() {
       // Log the number of minutes left
       console.log(`Minutes left before token expiry: ${minutesLeft}`);
   
-      if (timeLeft <= 0) {
+      if (currentTime >= expiryTime) {
         handleLogout(); // Expiry time passed, log out immediately
-      } else if (timeLeft <= 30 * 60 * 1000) {
+      } else if (timeLeft <= 30 *60* 1000) {
         // 30 minutes before expiry, automatically log out
         handleLogout();
-      } else if (timeLeft <= 60 * 60 * 1000) {
+      } else if (timeLeft <= 60 *60 * 1000) {
         // 1 hour before expiry, show warning modal
         setShowWarning(true);
       }
@@ -182,9 +184,10 @@ function App() {
           
           // Optionally, reset any user-related state here if applicable
           // e.g., setUser(null); or use a context provider to reset user state
-          
+          setShowWarning(false);
           // setOpenLogoutModal(false);
           navigate("/login");
+         
         }
       }
     } catch (error) {

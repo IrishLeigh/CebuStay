@@ -94,8 +94,6 @@ const handleAddressChange = (newAddress) => {
   setIsChangesAddress(true);
 };
 
-
-
   useEffect(() => {
     // Save input data to localStorage whenever it changes
     localStorage.setItem("street", street);
@@ -124,81 +122,94 @@ const handleAddressChange = (newAddress) => {
   };
 
   const validateForm = () => {
+    // Reset errors and messages before validating
+    setErrorMessage([]);
+    setHasError(false);
+  
+    let errors = [];
+  
     if (!localState.propertyName) {
       setHasError(true);
-      errorMessage.push("Property Name is required");
-      setSnackbarMessage("Property Name is required");
+      errors.push("Property Name is required");
+      setSnackbarMessage("Property Name is required");  
       setOpenSnackbar(true);
-     
       return false;
     }
     if (!localState.description) {
       setHasError(true);
-      errorMessage.push("Description is required");
+      errors.push("Description is required");
       setSnackbarMessage("Description is required");
       setOpenSnackbar(true);
       return false;
     }
     if (!localState.directions) {
       setHasError(true);
-      errorMessage.push("Property Directions are required");
+      errors.push("Property Directions are required");
       setSnackbarMessage("Property Directions are required");
+    }
+  
+    if (errors.length > 0) {
+      setErrorMessage(errors);
+      setSnackbarMessage(errors.join(", ")); // Display all errors in Snackbar
       setOpenSnackbar(true);
       return false;
     }
+  
+    
     return true;
   };
-
+  
   const handleSave = async () => {
-    if (!validateForm()) return;
-  
-    setIsLoading(true);
-  
-    try {
-      const save_response = await axios.put(
-        `http://127.0.0.1:8000/api/updatepropertyinfo/${propertyData.propertyid}`,
-        {
-          property_name: localState.propertyName,
-          property_type: localState.propertyType,
-          property_desc: localState.description,
-          property_directions: localState.directions,
-          unit_type: localState.unitType,
-          address: street,
-          zipcode: postalCode,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-  
-      if (save_response.data.status === "success") {
-        setHasError(false);
-        setSnackbarMessage("Basic Info saved successfully!");
-        
-        // Don't exit the edit mode
-      
-        setOpenSnackbar(true);
-        onSaveStatusChange("Saved");
-  
-        // Reset hasChanges to false after saving
-        setHasChanges(false);
-      } else {
-        setHasError(true);
-        setSnackbarMessage("Failed to save Basic Info");
-        setOpenSnackbar(true);
-      }
-    } catch (error) {
-      setSnackbarMessage("Error saving property data");
-      setOpenSnackbar(true);
-      console.error("Error saving property data:", error);
-    } finally {
-      setIsLoading(false);
-      setHasChanges(false);
-      setHasError(false); // Reset errors
-      setErrorMessage([]); // Clear any error messages
+    if (!validateForm()) {
+      console.log('Form validation failed');
+      return;
     }
-  };
-  
+    console.log("Saving Basic Info");
+    setIsLoading(true);
+    setErrorMessage([]); // Clear error messages before attempting to save
+    setHasError(false);  // Reset error flag
+
+    try {
+        const save_response = await axios.put(
+            `http://127.0.0.1:8000/api/updatepropertyinfo/${propertyData.propertyid}`,
+            {
+                property_name: localState.propertyName,
+                property_type: localState.propertyType,
+                property_desc: localState.description,
+                property_directions: localState.directions,
+                unit_type: localState.unitType,
+                address: street,
+                zipcode: postalCode,
+            },
+            {
+                headers: { "Content-Type": "application/json" },
+            }
+        );
+
+        if (save_response.data.status === "success") {
+            setHasError(false);
+            setErrorMessage([]);
+            setSnackbarMessage("Basic Info saved successfully!");
+            setOpenSnackbar(true);
+            onSaveStatusChange("Saved");
+            setIsEditing(false); // Disable editing after save
+            setHasChanges(false); // Reset changes flag
+        } else {
+            setHasError(true);
+            setSnackbarMessage("Failed to save Basic Info");
+            setOpenSnackbar(true);
+        }
+    } catch (error) {
+        setSnackbarMessage("Error saving property data");
+        setOpenSnackbar(true);
+        console.error("Error saving property data:", error);
+    } finally {
+        setIsLoading(false);
+        setHasChanges(false);
+        setErrorMessage([]); // Clear any error messages
+    }
+};
+
 /**
  * Cancels any unsaved changes and resets the form to its original state.
  * If there are unsaved changes, prompts the user to confirm discarding them.
@@ -233,7 +244,7 @@ const handleAddressChange = (newAddress) => {
 // console.log ("BASIC INFO NA TRANSFER BA", propertyData);
   return (
     <div>
-       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel} hasError={hasError}/>
+       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
     <Paper
       style={{
         width: "auto",

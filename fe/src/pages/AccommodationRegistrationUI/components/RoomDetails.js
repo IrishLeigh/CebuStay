@@ -13,7 +13,7 @@ export default function RoomDetails({
   const { totalQTY } = useData();
   const [unitDetailsData, setUnitDetailsData] = useState({
     roomDetails: [
-      { roomType: "Bedspace", quantity: 0 },
+      { roomType: "Bedspace", quantity: 1 },
       { roomType: "Bathroom", quantity: 0 },
       { roomType: "Living Room", quantity: 0 },
       { roomType: "Kitchen", quantity: 0 },
@@ -33,9 +33,9 @@ export default function RoomDetails({
     }
   }, []); // Runs on mount
   
-  
+
   useEffect(() => {
-  
+
     if (parentUnitDetailsData) {
       setUnitDetailsData(parentUnitDetailsData);
     }
@@ -103,7 +103,11 @@ export default function RoomDetails({
     if (capacity === "" || capacity < 1 || capacity > 100) {
       errors.push("Guest capacity must be between 1 and 100.");
     }
-  
+     // Check if there's at least one "Bedspace" with quantity > 0
+  const hasValidBedspace = unitDetailsData.roomDetails.some(room => room.roomType === "Bedspace" && room.quantity > 0);
+  if (!hasValidBedspace) {
+    errors.push("At least 1 Bedspace is required.");
+  }
     // Check that at least one space is defined and not empty
     if (nonEmptyRooms.length === 0) {
       errors.push("Please define at least one space with a valid quantity.");
@@ -123,6 +127,7 @@ export default function RoomDetails({
           errors.push("Custom room quantity cannot be zero.");
           break;
         }
+        
       }
     }
   
@@ -229,9 +234,7 @@ export default function RoomDetails({
                   </IconButton>
                 </Box>
               ))}
-
-         
-
+            
               <Button
                 startIcon={<AddCircleIcon />}
                 onClick={addRoom}

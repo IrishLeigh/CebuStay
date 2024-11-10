@@ -335,7 +335,8 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
           style={styles.countryCodeSelect}
           label = "Country Code"
           required
-          disabled={!isEditing}
+          disabled
+          helperText=" Phone number must be in the Philippines format, starting with country code +63."
         >
           {countryCodes.map((country) => (
             <MenuItem key={country.code} value={country.code}>
@@ -362,7 +363,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
                 </InputAdornment>
               ),
             }}
-            helperText={errors.PhoneNumber}
+            helperText=" Phone number must be in the Philippines format, starting with country code +63."
             error={!!errors.PhoneNumber}
           />
         </Grid>
@@ -375,9 +376,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
               onChange={handleChange}
               style= {styles.formField}
               fullWidth
-              helperText={errors.Email}
-              error={!!errors.Email}
-              disabled={!isEditing}
+
             />
       
       {/* Location Details */}
