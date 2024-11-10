@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "../css/SinglePropertyUI.css";
-import { Avatar, Paper, Stack, Grid, Divider, Typography, Box } from "@mui/material";
+import {
+  Avatar,
+  Paper,
+  Stack,
+  Grid,
+  Divider,
+  Typography,
+  Box,
+} from "@mui/material";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import Location from "@mui/icons-material/LocationOn";
 import ArrowRight from "@mui/icons-material/KeyboardDoubleArrowRight";
-import PeopleIcon from '@mui/icons-material/People';
+import PeopleIcon from "@mui/icons-material/People";
 import HomeIcon from "@mui/icons-material/Home";
 import RoomIcon from "@mui/icons-material/NightShelter";
 import axios from "axios";
@@ -19,7 +27,7 @@ export default function PropertyOverView({ rating, propertyinfo }) {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `http://127.0.0.1:8000/api/property/hostimg/${propertyinfo.property_details.propertyid}`
+          `https://whitesmoke-shark-473197.hostingersite.com/api/property/hostimg/${propertyinfo.property_details.propertyid}`
         );
         if (res.data) {
           console.log(res.data);
@@ -42,7 +50,7 @@ export default function PropertyOverView({ rating, propertyinfo }) {
   const { property_details } = propertyDetail;
 
   console.log("Property Details:", propertyDetail);
-  
+
   return (
     <Paper className="overview-container" sx={{ borderRadius: "12px" }}>
       <Grid container spacing={2} alignItems="center">
@@ -53,30 +61,43 @@ export default function PropertyOverView({ rating, propertyinfo }) {
           </Typography>
 
           <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
-            <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+            <Box
+              className="overview-text"
+              sx={{ display: "flex", alignItems: "center", mb: 0.5 }}
+            >
               <Location sx={{ color: "#16B4DD", mr: 1 }} />
-              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+              <Typography variant="body1" sx={{ fontSize: "1rem" }}>
                 {propertyDetail.property_address.address}
               </Typography>
             </Box>
 
-            <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+            <Box
+              className="overview-text"
+              sx={{ display: "flex", alignItems: "center", mb: 0.5 }}
+            >
               <HomeIcon sx={{ color: "#16B4DD", mr: 1 }} />
-              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+              <Typography variant="body1" sx={{ fontSize: "1rem" }}>
                 {propertyDetail.property_details.property_type}
               </Typography>
             </Box>
 
-            <Box className="overview-text" sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+            <Box
+              className="overview-text"
+              sx={{ display: "flex", alignItems: "center", mb: 0.5 }}
+            >
               <PeopleIcon sx={{ color: "#16B4DD", mr: 1 }} />
-              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
-                Max Guests: {propertyDetail.property_unitdetails[0].guest_capacity}
+              <Typography variant="body1" sx={{ fontSize: "1rem" }}>
+                Max Guests:{" "}
+                {propertyDetail.property_unitdetails[0].guest_capacity}
               </Typography>
             </Box>
 
-            <Box className="overview-text" sx={{ display: "flex", alignItems: "center" }}>
+            <Box
+              className="overview-text"
+              sx={{ display: "flex", alignItems: "center" }}
+            >
               <RoomIcon sx={{ color: "#16B4DD", mr: 1 }} />
-              <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+              <Typography variant="body1" sx={{ fontSize: "1rem" }}>
                 {propertyDetail.property_details.unit_type}
               </Typography>
             </Box>
@@ -165,9 +186,10 @@ export default function PropertyOverView({ rating, propertyinfo }) {
             <Avatar
               alt={propertyDetail?.property_owner?.property_owner?.displayname}
               src={
-                propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual'
+                propertyDetail?.property_owner?.property_ownership
+                  ?.ownershiptype === "Individual"
                   ? hostimg
-                  : propertyDetail?.property_owner?.company_logo || ''
+                  : propertyDetail?.property_owner?.company_logo || ""
               }
               sx={{ width: 56, height: 56 }}
             />
@@ -179,13 +201,18 @@ export default function PropertyOverView({ rating, propertyinfo }) {
               }}
             >
               <div className="overview-title">
-                {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+                {propertyDetail?.property_owner?.property_ownership
+                  ?.ownershiptype === "Individual" ? (
                   <>
-                    {propertyDetail?.property_owner?.property_owner?.displayname}
+                    {
+                      propertyDetail?.property_owner?.property_owner
+                        ?.displayname
+                    }
                   </>
                 ) : (
                   <>
-                    {propertyDetail?.property_owner?.property_company?.legal_business_name || ''}
+                    {propertyDetail?.property_owner?.property_company
+                      ?.legal_business_name || ""}
                   </>
                 )}
               </div>
@@ -207,13 +234,13 @@ export default function PropertyOverView({ rating, propertyinfo }) {
             </div>
           </Stack>
           <div style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
-            {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
-              <>
-                {propertyDetail?.property_owner?.property_owner?.describe}
-              </>
+            {propertyDetail?.property_owner?.property_ownership
+              ?.ownershiptype === "Individual" ? (
+              <>{propertyDetail?.property_owner?.property_owner?.describe}</>
             ) : (
               <>
-                {propertyDetail?.property_owner?.property_company?.company_description || ''}
+                {propertyDetail?.property_owner?.property_company
+                  ?.company_description || ""}
               </>
             )}
           </div>
@@ -227,13 +254,18 @@ export default function PropertyOverView({ rating, propertyinfo }) {
               <tr>
                 <td>Contact</td>
                 <td>
-                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+                  {propertyDetail?.property_owner?.property_ownership
+                    ?.ownershiptype === "Individual" ? (
                     <>
-                      {propertyDetail?.property_owner?.property_owner?.contactnumber}
+                      {
+                        propertyDetail?.property_owner?.property_owner
+                          ?.contactnumber
+                      }
                     </>
                   ) : (
                     <>
-                      {propertyDetail?.property_owner?.legal_representative[0]?.phone_number || ''}
+                      {propertyDetail?.property_owner?.legal_representative[0]
+                        ?.phone_number || ""}
                     </>
                   )}
                 </td>
@@ -241,21 +273,23 @@ export default function PropertyOverView({ rating, propertyinfo }) {
               <tr>
                 <td>Email</td>
                 <td>
-                  {propertyDetail?.property_owner?.property_ownership?.ownershiptype === 'Individual' ? (
+                  {propertyDetail?.property_owner?.property_ownership
+                    ?.ownershiptype === "Individual" ? (
                     <a
-                    href={`mailto:${propertyDetail?.property_owner?.property_owner?.email}`}
-                    style={{
-                      color: '#16B4DD',
-                      fontWeight: 'bold',
-                      wordBreak: 'break-word', // Ensures that long email addresses break to next line if necessary
-                      maxWidth: '100%', // Prevents the link from overflowing the container
-                    }}
-                  >
+                      href={`mailto:${propertyDetail?.property_owner?.property_owner?.email}`}
+                      style={{
+                        color: "#16B4DD",
+                        fontWeight: "bold",
+                        wordBreak: "break-word", // Ensures that long email addresses break to next line if necessary
+                        maxWidth: "100%", // Prevents the link from overflowing the container
+                      }}
+                    >
                       {propertyDetail?.property_owner?.property_owner?.email}
                     </a>
                   ) : (
                     <>
-                      {propertyDetail?.property_owner?.legal_representative[0]?.email || ''}
+                      {propertyDetail?.property_owner?.legal_representative[0]
+                        ?.email || ""}
                     </>
                   )}
                 </td>

@@ -54,63 +54,72 @@ import PropertyRulesPolicies from "./components/PropertyRulesPolicies";
 import UnitPricingPerMonth from "./components/PropertyPricingPerMonth";
 import { useTheme } from "@emotion/react";
 
-  // Styled component for the custom step icon
-  const CustomStepIconRoot = styled("div")(({ theme, ownerState }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 32,
-    height: 32,
-    borderRadius: "50%",
-    backgroundColor: ownerState.completed ? "#A334CF" : ownerState.active ? "#16B4DD" : "#eaeaf0",
-    color: ownerState.completed || ownerState.active ? "white" : theme.palette.grey[400],
-    fontSize: 16,
-    fontWeight: "bold",
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: ownerState.active ? "#16B4DD" : theme.palette.grey[500],
-    },
-  }));
+// Styled component for the custom step icon
+const CustomStepIconRoot = styled("div")(({ theme, ownerState }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: 32,
+  height: 32,
+  borderRadius: "50%",
+  backgroundColor: ownerState.completed
+    ? "#A334CF"
+    : ownerState.active
+    ? "#16B4DD"
+    : "#eaeaf0",
+  color:
+    ownerState.completed || ownerState.active
+      ? "white"
+      : theme.palette.grey[400],
+  fontSize: 16,
+  fontWeight: "bold",
+  cursor: "pointer",
+  "&:hover": {
+    backgroundColor: ownerState.active ? "#16B4DD" : theme.palette.grey[500],
+  },
+}));
 
-  // Styled component for the connector between steps
-  const CustomConnector = styled(StepConnector)(({ theme }) => ({
-    [`& .MuiStepConnector-line`]: {
-      borderColor: theme.palette.grey[400],
-      borderTopWidth: 2,
-    },
-  }));
+// Styled component for the connector between steps
+const CustomConnector = styled(StepConnector)(({ theme }) => ({
+  [`& .MuiStepConnector-line`]: {
+    borderColor: theme.palette.grey[400],
+    borderTopWidth: 2,
+  },
+}));
 
-  function CustomStepIcon(props) {
-    const { active, completed, icon, label } = props;
-    const [isHovered, setIsHovered] = useState(false);
-  
-    return (
-      <Tooltip
-        title={label}
-        arrow
-        // open={active || isHovered} // Show tooltip when active or hovered
-        open = {isHovered}
- 
+function CustomStepIcon(props) {
+  const { active, completed, icon, label } = props;
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <Tooltip
+      title={label}
+      arrow
+      // open={active || isHovered} // Show tooltip when active or hovered
+      open={isHovered}
+    >
+      <CustomStepIconRoot
+        ownerState={{ active, completed }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <CustomStepIconRoot
-          ownerState={{ active, completed }}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          {completed ? <Check fontSize="small" /> : icon}
-        </CustomStepIconRoot>
-      </Tooltip>
-    );
-  }
-  
-  CustomStepIcon.propTypes = {
-    active: PropTypes.bool,
-    completed: PropTypes.bool,
-    icon: PropTypes.node,
-    label: PropTypes.string.isRequired,
-  };
+        {completed ? <Check fontSize="small" /> : icon}
+      </CustomStepIconRoot>
+    </Tooltip>
+  );
+}
 
-export default function AccommodationRegistration({ onPropertyListedClick , handleLogout}) {
+CustomStepIcon.propTypes = {
+  active: PropTypes.bool,
+  completed: PropTypes.bool,
+  icon: PropTypes.node,
+  label: PropTypes.string.isRequired,
+};
+
+export default function AccommodationRegistration({
+  onPropertyListedClick,
+  handleLogout,
+}) {
   const handleSubmit = async () => {
     if (isSingleUnit) {
       //For Single Unit
@@ -126,7 +135,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
     return new File([blob], fileName, { type: blob.type });
   }
 
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if the screen size is mobile
   //For Single Unit
   const [selectedPropertyType, setSelectedPropertyType] = useState("");
   const [selectedPropertyType2, setSelectedPropertyType2] = useState("");
@@ -163,7 +172,6 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
   const [openCompliance, setOpenCompliance] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null); // Reference to the main content
-
 
   // Determine if the selected property type is single or multi-unit
   // Determine if the selected property type is single or multi-unit
@@ -263,7 +271,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
   //   if (token) {
   //     const jwtToken = token.split("=")[1];
   //     axios
-  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
   //       .then((response) => {
   //         setUser(response.data["data"]);
   //         // loginUser(response.data.data);
@@ -286,19 +294,16 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
     setIsConfirmationModalOpen(false); // Close the confirmation modal
   };
   const closeSuccessModal = () => {
-    if(role == "tourist"){
+    if (role == "tourist") {
       setIsSuccessModalOpen(false); // Close the success modal
       onPropertyListedClick();
       navigate("/"); // Redirect to the homepage
       handleLogout();
-
-    }else{
+    } else {
       setIsSuccessModalOpen(false); // Close the success modal
       onPropertyListedClick();
       navigate("/admin/listings"); // Redirect to the homepage
-      
     }
-    
   };
   const handleCloseCompliance = () => {
     setOpenCompliance(false);
@@ -477,7 +482,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
         console.log("propinfo:", propertyInfo);
         console.log("proptype gawass: ", selectedPropertyType);
         const resPropertid = await axios.post(
-          "http://127.0.0.1:8000/api/propertyinfo",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/propertyinfo",
           {
             userid: userid,
             property_name: propertyInfo.propertyName,
@@ -492,7 +497,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
         const propertyId = resPropertid.data.propertyid;
         if (resPropertid.data.propertyid) {
           const resUnitid = await axios.post(
-            "http://127.0.0.1:8000/api/unitdetails",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/unitdetails",
             {
               propertyid: resPropertid.data.propertyid,
               guest_capacity: unitDetailsData.guestCapacity,
@@ -502,7 +507,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
           const unitId = resUnitid.data.unitid;
           if (resUnitid.data.unitid) {
             const resBedInsert = await axios.post(
-              "http://127.0.0.1:8000/api/bedroomtype",
+              "https://whitesmoke-shark-473197.hostingersite.com/api/bedroomtype",
               {
                 unitid: resUnitid.data.unitid,
                 bedroomDetailsData: bedroomDetails,
@@ -560,7 +565,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                 console.log(pair[0] + ":", pair[1]);
               }
               const resImgUpload = await axios.post(
-                "http://127.0.0.1:8000/api/uploadfiles",
+                "https://whitesmoke-shark-473197.hostingersite.com/api/uploadfiles",
                 formdata,
                 {
                   headers: {
@@ -579,7 +584,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   const pinloc = locationDetails.mapVal;
                   console.log("propertyId pinloc:", pinloc);
                   const propertyLoc = await axios.post(
-                    "http://127.0.0.1:8000/api/location",
+                    "https://whitesmoke-shark-473197.hostingersite.com/api/location",
                     {
                       propertyid: resPropertid.data.propertyid,
                       address: address,
@@ -594,7 +599,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                     for (const amenity of selectedAmenities["basicAmenities"]) {
                       // Make a POST request for each amenity
                       const resAmenity = await axios.post(
-                        "http://127.0.0.1:8000/api/amenities",
+                        "https://whitesmoke-shark-473197.hostingersite.com/api/amenities",
                         {
                           propertyid: resPropertid.data.propertyid,
                           amenity_name: amenity,
@@ -607,7 +612,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                     for (const service of selectedAmenities["basicServices"]) {
                       // Make a POST request for each amenity
                       const resService = await axios.post(
-                        "http://127.0.0.1:8000/api/services",
+                        "https://whitesmoke-shark-473197.hostingersite.com/api/services",
                         {
                           propertyid: resPropertid.data.propertyid,
                           service_name: service,
@@ -620,7 +625,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                     for (const facilities of selectedAmenities["facilities"]) {
                       // Make a POST request for each amenity
                       const resFacilities = await axios.post(
-                        "http://127.0.0.1:8000/api/facilities",
+                        "https://whitesmoke-shark-473197.hostingersite.com/api/facilities",
                         {
                           propertyid: resPropertid.data.propertyid,
                           facilities_name: facilities,
@@ -643,7 +648,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
 
                     console.log("HouseRules", houseRulesData);
                     const houseRules = await axios.post(
-                      "http://127.0.0.1:8000/api/houseRules",
+                      "https://whitesmoke-shark-473197.hostingersite.com/api/houseRules",
                       {
                         propertyid: resPropertid.data.propertyid,
                         smoking_allowed: smokingAllowed,
@@ -671,7 +676,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                       const modificationCharge =
                         policiesData.modificationCharge;
                       const booking_policies = await axios.post(
-                        "http://127.0.0.1:8000/api/bookingpolicy",
+                        "https://whitesmoke-shark-473197.hostingersite.com/api/bookingpolicy",
                         {
                           propertyid: resPropertid.data.propertyid,
                           isCancellationPolicy: isCancellationPolicy,
@@ -692,7 +697,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                         const min_price = unitPricing.basePrice;
                         const profit = unitPricing.profit;
                         const unit_pricing = await axios.post(
-                          "http://127.0.0.1:8000/api/propertypricing",
+                          "https://whitesmoke-shark-473197.hostingersite.com/api/propertypricing",
                           {
                             unitid: unitId,
                             max_price: max_price,
@@ -706,7 +711,8 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                             paymentData.selectedPayment === "Online"
                               ? true
                               : false;
-                          const paymentmethod = paymentData.selectedPayout || "Paypal";
+                          const paymentmethod =
+                            paymentData.selectedPayout || "Paypal";
                           const propertyid = resPropertid.data.propertyid;
                           console.log("nara", paymentData);
                           console.log(
@@ -716,7 +722,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                           console.log("isonline", isonline);
                           console.log("paymentmethod", paymentmethod);
                           const paymentres = await axios.post(
-                            "http://127.0.0.1:8000/api/propertypaymentmethod",
+                            "https://whitesmoke-shark-473197.hostingersite.com/api/propertypaymentmethod",
                             {
                               propertyid: propertyid,
                               isonline: isonline,
@@ -724,7 +730,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                             }
                           );
                           const paypal = await axios.put(
-                            "http://127.0.0.1:8000/api/users_update",
+                            "https://whitesmoke-shark-473197.hostingersite.com/api/users_update",
                             {
                               userid: userid,
                               paypalmail: paymentData.paypalInfo.email || "",
@@ -739,7 +745,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                             const hosttype = hostData.hostType;
                             console.log("hosttype", hosttype);
                             const ownership = await axios.post(
-                              "http://127.0.0.1:8000/api/propertyownership",
+                              "https://whitesmoke-shark-473197.hostingersite.com/api/propertyownership",
                               {
                                 propertyid: propertyid,
                                 ownershiptype: hosttype,
@@ -766,7 +772,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                               const describe = hostData.Describe;
                               const calendar = hostData.CalendarLink;
                               const owner = await axios.post(
-                                "http://127.0.0.1:8000/api/propertyowner",
+                                "https://whitesmoke-shark-473197.hostingersite.com/api/propertyowner",
                                 {
                                   propertyownershipid: ownershipid,
                                   firstname: firstName,
@@ -788,7 +794,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                               if (owner.data.status === "success") {
                                 console.log(owner.data.message);
                                 const manager = await axios.post(
-                                  "http://127.0.0.1:8000/api/becomeManager",
+                                  "https://whitesmoke-shark-473197.hostingersite.com/api/becomeManager",
                                   {
                                     userid: userid,
                                   }
@@ -841,7 +847,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                               formData.append("userid", userid);
                               formData.append("propertyid", propertyId);
                               const company = await axios.post(
-                                "http://127.0.0.1:8000/api/propertycompany",
+                                "https://whitesmoke-shark-473197.hostingersite.com/api/propertycompany",
                                 {
                                   propertyownershipid: ownershipid,
                                   legal_business_name: LegalBusinessName,
@@ -855,7 +861,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                                 }
                               );
                               const companyPhoto = await axios.post(
-                                "http://127.0.0.1:8000/api/uploadcomplogo",
+                                "https://whitesmoke-shark-473197.hostingersite.com/api/uploadcomplogo",
                                 formData,
                                 {
                                   headers: {
@@ -880,7 +886,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                                   } = representative;
                                   const formattedDob = formatDate(dob);
                                   await axios.post(
-                                    "http://127.0.0.1:8000/api/legalrepresentative",
+                                    "https://whitesmoke-shark-473197.hostingersite.com/api/legalrepresentative",
                                     {
                                       propertycompanyid:
                                         company.data.propertyCompany
@@ -898,20 +904,18 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                               if (company.data.status === "success") {
                                 console.log(company.data.message);
                                 const manager = await axios.post(
-                                  "http://127.0.0.1:8000/api/becomeManager",
+                                  "https://whitesmoke-shark-473197.hostingersite.com/api/becomeManager",
                                   {
                                     userid: userid,
                                   }
                                 );
                                 if (manager.data) {
                                   const res = await axios.post(
-                                    `http://127.0.0.1:8000/api/setpropertyerror/${propertyId}`,
+                                    `https://whitesmoke-shark-473197.hostingersite.com/api/setpropertyerror/${propertyId}`,
                                     {
-                                      button: 0 ,
-
+                                      button: 0,
                                     }
-                                  )
-
+                                  );
                                 }
                                 console.log("Manager:", manager.data);
                                 console.log("Successfully Registered");
@@ -976,7 +980,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
     console.log("Selected term", selectedPropertyType2);
     try {
       const resPropertid = await axios.post(
-        "http://127.0.0.1:8000/api/propertyinfo",
+        "https://whitesmoke-shark-473197.hostingersite.com/api/propertyinfo",
         {
           userid: userid,
           property_name: propertyInfo.propertyName,
@@ -993,7 +997,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
         for (const facilities of multiUnitFacilities.facilities) {
           // Make a POST request for each amenity
           const resFacilities = await axios.post(
-            "http://127.0.0.1:8000/api/facilities",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/facilities",
             {
               propertyid: resPropertid.data.propertyid,
               facilities_name: facilities,
@@ -1018,7 +1022,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
         const partiesAllowed = houseRulesData.partiesAllowed;
         const noiseRestrictions = houseRulesData.noiseRestrictions;
         const houseRules = await axios.post(
-          "http://127.0.0.1:8000/api/houseRules",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/houseRules",
           {
             propertyid: resPropertid.data.propertyid,
             smoking_allowed: smokingAllowed,
@@ -1044,7 +1048,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
           const modificationDays = policiesData.modificationDays;
           const modificationCharge = policiesData.modificationCharge;
           const booking_policies = await axios.post(
-            "http://127.0.0.1:8000/api/bookingpolicy",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/bookingpolicy",
             {
               propertyid: resPropertid.data.propertyid,
               isCancellationPolicy: isCancellationPolicy,
@@ -1066,7 +1070,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
         const lat = locationDetails.mapVal.lat;
         const lng = locationDetails.mapVal.lng;
         const propertyLoc = await axios.post(
-          "http://127.0.0.1:8000/api/location",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/location",
           {
             propertyid: propertyid,
             address: street,
@@ -1125,7 +1129,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
             console.log(pair[0] + ":", pair[1]);
           }
           const resImgUpload = await axios.post(
-            "http://127.0.0.1:8000/api/uploadfiles",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/uploadfiles",
             formdata,
             {
               headers: {
@@ -1145,7 +1149,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                 });
               }
               const resRoom = await axios.post(
-                "http://127.0.0.1:8000/api/unitdetails",
+                "https://whitesmoke-shark-473197.hostingersite.com/api/unitdetails",
                 {
                   propertyid: propertyid,
                   guest_capacity: element.guestCapacity,
@@ -1162,7 +1166,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                 const unitid = resRoom.data.unitid;
                 // for (const unitid of unitids) {
                 const unitpriceres = await axios.post(
-                  "http://127.0.0.1:8000/api/propertypricing",
+                  "https://whitesmoke-shark-473197.hostingersite.com/api/propertypricing",
                   {
                     unitid: unitid,
                     max_price: element.maxPrice,
@@ -1176,7 +1180,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   for (const amenity of element.selectedAmenities) {
                     // Make a POST request for each amenity
                     const resAmenity = await axios.post(
-                      "http://127.0.0.1:8000/api/amenities",
+                      "https://whitesmoke-shark-473197.hostingersite.com/api/amenities",
                       {
                         propertyid: resPropertid.data.propertyid,
                         amenity_name: amenity,
@@ -1193,7 +1197,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   for (const service of element.selectedServices) {
                     // Make a POST request for each amenity
                     const resService = await axios.post(
-                      "http://127.0.0.1:8000/api/services",
+                      "https://whitesmoke-shark-473197.hostingersite.com/api/services",
                       {
                         propertyid: resPropertid.data.propertyid,
                         service_name: service,
@@ -1231,7 +1235,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   console.log(pair[0] + ":", pair[1]);
                 }
                 const resImgUpload = await axios.post(
-                  "http://127.0.0.1:8000/api/upload-unit-files",
+                  "https://whitesmoke-shark-473197.hostingersite.com/api/upload-unit-files",
                   formdata,
                   {
                     headers: {
@@ -1256,7 +1260,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   ];
                   console.log("Bedroom Details Data:", bedroomDetailsData);
                   const unitroomres = await axios.post(
-                    "http://127.0.0.1:8000/api/bedroomtype",
+                    "https://whitesmoke-shark-473197.hostingersite.com/api/bedroomtype",
                     {
                       unitid: unitid,
                       bedroomDetailsData: bedroomDetailsData,
@@ -1275,7 +1279,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
             const propertyid = resPropertid.data.propertyid;
 
             const paymentres = await axios.post(
-              "http://127.0.0.1:8000/api/propertypaymentmethod",
+              "https://whitesmoke-shark-473197.hostingersite.com/api/propertypaymentmethod",
               {
                 propertyid: propertyid,
                 isonline: isonline,
@@ -1292,7 +1296,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
               const hosttype = hostData.hostType;
               console.log("hosttype", hosttype);
               const ownership = await axios.post(
-                "http://127.0.0.1:8000/api/propertyownership",
+                "https://whitesmoke-shark-473197.hostingersite.com/api/propertyownership",
                 {
                   propertyid: propertyid,
                   ownershiptype: hosttype,
@@ -1319,7 +1323,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                 const describe = hostData.Describe;
                 const calendar = hostData.CalendarLink;
                 const owner = await axios.post(
-                  "http://127.0.0.1:8000/api/propertyowner",
+                  "https://whitesmoke-shark-473197.hostingersite.com/api/propertyowner",
                   {
                     propertyownershipid: ownershipid,
                     firstname: firstName,
@@ -1341,7 +1345,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                 if (owner.data.status === "success") {
                   console.log(owner.data.message);
                   const manager = await axios.post(
-                    "http://127.0.0.1:8000/api/becomeManager",
+                    "https://whitesmoke-shark-473197.hostingersite.com/api/becomeManager",
                     {
                       userid: userid,
                     }
@@ -1387,7 +1391,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                 formData.append("userid", userid);
 
                 const company = await axios.post(
-                  "http://127.0.0.1:8000/api/propertycompany",
+                  "https://whitesmoke-shark-473197.hostingersite.com/api/propertycompany",
                   {
                     propertyownershipid: ownershipid,
                     legal_business_name: LegalBusinessName,
@@ -1401,7 +1405,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   }
                 );
                 const companyPhoto = await axios.post(
-                  "http://127.0.0.1:8000/api/uploadcomplogo",
+                  "https://whitesmoke-shark-473197.hostingersite.com/api/uploadcomplogo",
                   formData,
                   {
                     headers: { "Content-Type": "multipart/form-data" },
@@ -1418,7 +1422,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                       representative;
                     const formattedDob = formatDate(dob);
                     await axios.post(
-                      "http://127.0.0.1:8000/api/legalrepresentative",
+                      "https://whitesmoke-shark-473197.hostingersite.com/api/legalrepresentative",
                       {
                         propertycompanyid:
                           company.data.propertyCompany.propertycompanyid, // Assuming ownership ID is relevant here too
@@ -1435,22 +1439,22 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                 if (company.data.status === "success") {
                   console.log(company.data.message);
                   const manager = await axios.post(
-                    "http://127.0.0.1:8000/api/becomeManager",
+                    "https://whitesmoke-shark-473197.hostingersite.com/api/becomeManager",
                     {
                       userid: userid,
                     }
                   );
-                  if(manager.data){
+                  if (manager.data) {
                     console.log("Manager:", manager.data);
                     console.log("Successfully Registered");
                     const reserror = await axios.post(
-                      `http://127.0.0.1:8000/api/setpropertyerror/${propertyid}`,
+                      `https://whitesmoke-shark-473197.hostingersite.com/api/setpropertyerror/${propertyid}`,
                       {
                         button: 0,
                       }
-                    )
+                    );
                   }
-                  
+
                   // setModalMessage("Successfully Registered");
 
                   localStorage.removeItem("postalCode");
@@ -1489,30 +1493,30 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
     const fetchProfile = async () => {
       if (!userid) return;
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${userid}`);
+        const response = await axios.get(
+          `https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${userid}`
+        );
         console.log("Response Data sa PAYOUT:", response.data);
-    
+
         // Assuming response.data is the actual data object containing paypalmail and paypalphonenumber
         const { paypalmail, paypalphonenumber } = response.data;
-    
+
         // Update only the email and mobile in paypalInfo
         setPaymentData((prevData) => ({
           ...prevData,
           paypalInfo: {
             ...prevData.paypalInfo,
-            email: paypalmail || "",  // Use the API response or fallback to an empty string
+            email: paypalmail || "", // Use the API response or fallback to an empty string
             mobile: paypalphonenumber || "", // Use the API response or fallback to an empty string
-          }
+          },
         }));
-        
       } catch (error) {
         console.error(error);
       }
     };
-  
+
     fetchProfile();
   }, [userid]);
-  
 
   // console.log("Property Information from parent", propertyInfo);
   // console.log("Multi beds from parent", multiRoomsAndBeds);
@@ -1521,87 +1525,91 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
   // console.log("USER ID FROM LOCALSTORAGE:", userid);
 
   return (
-<ThemeProvider theme={theme}>
-  <Box className="registration-body">
-    <Grid container sx={{ height: "100vh" }}>
-
-      {/* Main content with stepper on top */}
-      <Grid
-        item
-        xs={12}
-        sx={{
-          padding: isMobile ? "0" : "2rem", // Adjust padding based on screen size
-          overflowY: "auto", // Allow scrolling in main content
-          height: "100vh", // Full height of the viewport
-        }}
-      >
-         <Box
-          sx={{
-            backgroundColor: "transparent",
-            padding: "1rem 2rem",
-            zIndex: 100,
-            marginBottom: "1rem", // Add space below stepper
-            maxWidth: "992px", // Set maxWidth for different screen sizes
-            marginX: "auto", // Center the stepper horizontally
-            display: isMobile ? "none" : "block",
-          }}
-        >
-          <Stepper activeStep={step} orientation="horizontal">
-          {steps.map((label, index) => (
-            <Step key={label}>
-               {/* <StepButton onClick={() => setStep(index)}  disabled={index > step} > */}
-                <StepLabel
-                  StepIconComponent={(props) => (
-                    <CustomStepIcon {...props} label={label} active={index === step} icon={index + 1} />
-                  )}
-                >
-                
-                </StepLabel>
-              {/* </StepButton> */}
-             
-            </Step>
-      ))}
-          </Stepper>
-        </Box>
-        <Box
-          sx={{
-            width: "100%",
-            backgroundColor: "white",
-            padding: "1rem 2rem",
-            zIndex: 100,
-            boxShadow: 1,
-            display: isMobile ? "block" : "none",
-          }}
-        >
-          {/* Step Number and Label */}
-          <Typography variant="h6" sx={{ fontWeight: "bold", textAlign: "center" }}>
-            Step {step + 1}: {steps[step]}
-          </Typography>
-
-          {/* Linear Progress Bar */}
-          <LinearProgress
-            variant="determinate"
-            value={progress}
+    <ThemeProvider theme={theme}>
+      <Box className="registration-body">
+        <Grid container sx={{ height: "100vh" }}>
+          {/* Main content with stepper on top */}
+          <Grid
+            item
+            xs={12}
             sx={{
-              height: 10,
-              borderRadius: 5,
-              mt: 2,
-              backgroundColor: "#e0e0e0", // Optional: Light background color for unfilled portion
-              "& .MuiLinearProgress-bar": {
-                backgroundColor: "#16B4DD", // Set the filled portion to #164bdd
-              },
+              padding: isMobile ? "0" : "2rem", // Adjust padding based on screen size
+              overflowY: "auto", // Allow scrolling in main content
+              height: "100vh", // Full height of the viewport
             }}
-          />
-        </Box>
+          >
+            <Box
+              sx={{
+                backgroundColor: "transparent",
+                padding: "1rem 2rem",
+                zIndex: 100,
+                marginBottom: "1rem", // Add space below stepper
+                maxWidth: "992px", // Set maxWidth for different screen sizes
+                marginX: "auto", // Center the stepper horizontally
+                display: isMobile ? "none" : "block",
+              }}
+            >
+              <Stepper activeStep={step} orientation="horizontal">
+                {steps.map((label, index) => (
+                  <Step key={label}>
+                    {/* <StepButton onClick={() => setStep(index)}  disabled={index > step} > */}
+                    <StepLabel
+                      StepIconComponent={(props) => (
+                        <CustomStepIcon
+                          {...props}
+                          label={label}
+                          active={index === step}
+                          icon={index + 1}
+                        />
+                      )}
+                    ></StepLabel>
+                    {/* </StepButton> */}
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <Box
+              sx={{
+                width: "100%",
+                backgroundColor: "white",
+                padding: "1rem 2rem",
+                zIndex: 100,
+                boxShadow: 1,
+                display: isMobile ? "block" : "none",
+              }}
+            >
+              {/* Step Number and Label */}
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: "bold", textAlign: "center" }}
+              >
+                Step {step + 1}: {steps[step]}
+              </Typography>
 
-        {/* Main content */}
-        <Box
-          sx={{
-            overflowX: "hidden", // Prevent horizontal scrolling in main content
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+              {/* Linear Progress Bar */}
+              <LinearProgress
+                variant="determinate"
+                value={progress}
+                sx={{
+                  height: 10,
+                  borderRadius: 5,
+                  mt: 2,
+                  backgroundColor: "#e0e0e0", // Optional: Light background color for unfilled portion
+                  "& .MuiLinearProgress-bar": {
+                    backgroundColor: "#16B4DD", // Set the filled portion to #164bdd
+                  },
+                }}
+              />
+            </Box>
+
+            {/* Main content */}
+            <Box
+              sx={{
+                overflowX: "hidden", // Prevent horizontal scrolling in main content
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               {step === 0 && (
                 <PropertyType
                   onSelectedTypeChange={handleSelectedTypeChange}
@@ -1641,14 +1649,13 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   )}
                   {step === 3 && (
                     <div>
-                    <RoomDetails
-                      onRoomDetailsChange={handleRoomDetailsChange}
-                      parentUnitDetailsData={unitDetailsData}
-                      handleNext={handleNext}
-                      handleBack={handleBack}
-                    />
+                      <RoomDetails
+                        onRoomDetailsChange={handleRoomDetailsChange}
+                        parentUnitDetailsData={unitDetailsData}
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                      />
                     </div>
-                    
                   )}
                   {step === 4 && (
                     <BedroomDetails2
@@ -1799,7 +1806,7 @@ export default function AccommodationRegistration({ onPropertyListedClick , hand
                   {/* Other steps for multi unit */}
                 </>
               )}
-        </Box>
+            </Box>
 
             {/* //Render circular progress indicator while loading */}
             {isLoading && (

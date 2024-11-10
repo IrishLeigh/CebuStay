@@ -55,17 +55,17 @@ export default function RoomDetailsSingleUnit({
       setUnitid(data.unitid);
       setGuestCapacity(data.guest_capacity || "");
       setUnitRooms(data.unitrooms || []);
-      
-      const mappedUnitBeds = (data.unitbeds || []).map(bed => ({
+
+      const mappedUnitBeds = (data.unitbeds || []).map((bed) => ({
         bedroomid: bed.bedroomid,
         bedroomnum: bed.bedroomnum || 0,
-        sleepingtype: bed.sleepingtype || 'room',
+        sleepingtype: bed.sleepingtype || "room",
         beds: {
           singleBed: bed.beds?.singlebed || 0,
           doubleBed: bed.beds?.doublebed || 0,
           largeBed: bed.beds?.largebed || 0,
           superLargeBed: bed.beds?.superlargebed || 0,
-        }
+        },
       }));
       setUnitBeds(mappedUnitBeds);
 
@@ -88,7 +88,7 @@ export default function RoomDetailsSingleUnit({
       }) !== JSON.stringify(originalData);
 
     setHasChanges(hasDataChanged);
-  }, [guestCapacity, unitRooms, unitBeds, originalData,hasChanges]);
+  }, [guestCapacity, unitRooms, unitBeds, originalData, hasChanges]);
 
   const handleGuestCapacityChange = (event) => {
     setHasChanges(true);
@@ -119,16 +119,15 @@ export default function RoomDetailsSingleUnit({
     updatedRooms[index].quantity = parseInt(event.target.value, 10);
     setUnitRooms(updatedRooms);
 
-  
-  // Update hasChanges after state update
-  setHasChanges(true);
-};
+    // Update hasChanges after state update
+    setHasChanges(true);
+  };
 
   const handleAddRoom = () => {
     const newRoom = { roomname: newRoomName, quantity: newRoomQuantity };
     setNewUnitRooms([...newUnitRooms, newRoom]);
     setNewRoomName("");
-    setNewRoomQuantity(1);  // Reset quantity to 1 instead of 0
+    setNewRoomQuantity(1); // Reset quantity to 1 instead of 0
     setIsAddingRoom(false);
     setHasChanges(true);
   };
@@ -139,7 +138,7 @@ export default function RoomDetailsSingleUnit({
     // setNewUnitRooms(updatedRooms);
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/deleteunitroom-singleunit/${unitid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/deleteunitroom-singleunit/${unitid}`,
         {
           unitroomid: unitroomid,
         },
@@ -163,7 +162,7 @@ export default function RoomDetailsSingleUnit({
     }
     setHasChanges(true);
   };
-    // Function to handle deleting a newly added room (not yet sent to the server)
+  // Function to handle deleting a newly added room (not yet sent to the server)
   const handleDeleteNewRoom = (index) => {
     const updatedNewRooms = newUnitRooms.filter((_, i) => i !== index);
     setNewUnitRooms(updatedNewRooms);
@@ -213,11 +212,10 @@ export default function RoomDetailsSingleUnit({
     console.log("bedroomIndex:", bedroomIndex);
     console.log("bedType:", bedType);
     console.log("bedroom:", bedroom);
-    
 
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/deletebed-singleunit/${unitid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/deletebed-singleunit/${unitid}`,
         {
           bedroomid: bedroom.bedroomid,
           bedtype: bedType,
@@ -257,7 +255,7 @@ export default function RoomDetailsSingleUnit({
     console.log("unitBeds:", unitBeds);
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/deletebedroom-singleunit/${unitid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/deletebedroom-singleunit/${unitid}`,
         {
           bedroomid: bedroom.bedroomid,
         },
@@ -303,7 +301,9 @@ export default function RoomDetailsSingleUnit({
   };
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
@@ -336,7 +336,7 @@ export default function RoomDetailsSingleUnit({
       // Replace with actual API call, e.g., saveRoomDetails({ guestCapacity, unitRooms, unitBeds });
       try {
         const res_data = await axios.put(
-          `http://127.0.0.1:8000/api/updateunitinfo-singleunit/${unitid}`,
+          `https://whitesmoke-shark-473197.hostingersite.com/api/updateunitinfo-singleunit/${unitid}`,
           {
             guest_capacity: guestCapacity,
             existingRooms: unitRooms,
@@ -365,7 +365,7 @@ export default function RoomDetailsSingleUnit({
           });
           setIsEditing(false);
           setOpenSnackbar(true);
-          onSaveStatusChange('Saved');
+          onSaveStatusChange("Saved");
           setIsLoading(false);
           alert("successfully saved pakyo ka");
         }
@@ -373,9 +373,9 @@ export default function RoomDetailsSingleUnit({
         console.log(err);
       }
     } else {
-        onSaveStatusChange('Saved');
-        setIsSaved(true);
-        setIsLoading(false);
+      onSaveStatusChange("Saved");
+      setIsSaved(true);
+      setIsLoading(false);
     }
   };
 
@@ -384,7 +384,6 @@ export default function RoomDetailsSingleUnit({
     const newUnitBeds = [...unitBeds];
     newUnitBeds[bedroomIndex].beds[bedType] = event.target.value;
     setUnitBeds(newUnitBeds);
-    
   };
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -392,24 +391,28 @@ export default function RoomDetailsSingleUnit({
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
   // console.log("Room Details:", propertyData);
   console.log("New Unit Rooms:", newUnitRooms);
   console.log("Exisitng ROoms:", unitRooms);
-console.log ("Unit beds", unitBeds);
-console.log("New Unit Beds:", newBedType);
-
+  console.log("Unit beds", unitBeds);
+  console.log("New Unit Beds:", newBedType);
 
   return (
     <>
-         <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        saved={isSaved}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+      />
       <Paper
         style={{
           width: "auto",
@@ -524,19 +527,28 @@ console.log("New Unit Beds:", newBedType);
                     justifyContent: "space-between", // Ensure spacing is consistent
                   }}
                 >
-                  <div style={{ flex: 2 }}>{room.roomname}</div> {/* Adjusted flex value for room name */}
-                  <div style={{ flex: 3, marginRight: "1rem" }}> {/* Adjusted flex and margin for TextField */}
+                  <div style={{ flex: 2 }}>{room.roomname}</div>{" "}
+                  {/* Adjusted flex value for room name */}
+                  <div style={{ flex: 3, marginRight: "1rem" }}>
+                    {" "}
+                    {/* Adjusted flex and margin for TextField */}
                     <TextField
                       id={`room-${index}`}
                       variant="outlined"
                       value={room.quantity}
-                      onChange={(event) => handleNewRoomQuantityChange(index, event)}
+                      onChange={(event) =>
+                        handleNewRoomQuantityChange(index, event)
+                      }
                       disabled={room.roomname === "Bedroom" || !isEditing} // Disable for Bedroom
                       type="number"
                       size="small"
                       fullWidth
                       inputProps={{ min: 0 }} // Ensure users can't input negative values
-                      helperText={room.roomname === "Bedroom" ? "Cannot change Bedroom quantity" : ""}
+                      helperText={
+                        room.roomname === "Bedroom"
+                          ? "Cannot change Bedroom quantity"
+                          : ""
+                      }
                       sx={{
                         "& .MuiOutlinedInput-root.Mui-focused": {
                           "& fieldset": {
@@ -546,13 +558,23 @@ console.log("New Unit Beds:", newBedType);
                       }}
                     />
                   </div>
-                {/* Conditionally render the delete button visibility based on room type */}
-                <div style={{ flex: "0 0 auto", visibility: room.roomname === 'Bedroom' || room.roomname === 'Living Room' || room.roomname === 'Kitchen' || room.roomname === 'Bathroom' ? 'hidden' : 'visible' }}>
-                  <IconButton aria-label="delete">
-                    <DeleteIcon  onClick={() => handleDeleteRoom(index)}/>
-                  </IconButton>
-                </div>
-
+                  {/* Conditionally render the delete button visibility based on room type */}
+                  <div
+                    style={{
+                      flex: "0 0 auto",
+                      visibility:
+                        room.roomname === "Bedroom" ||
+                        room.roomname === "Living Room" ||
+                        room.roomname === "Kitchen" ||
+                        room.roomname === "Bathroom"
+                          ? "hidden"
+                          : "visible",
+                    }}
+                  >
+                    <IconButton aria-label="delete">
+                      <DeleteIcon onClick={() => handleDeleteRoom(index)} />
+                    </IconButton>
+                  </div>
                 </div>
               ))}
 
@@ -571,13 +593,18 @@ console.log("New Unit Beds:", newBedType);
                       justifyContent: "space-between", // Ensure spacing is consistent
                     }}
                   >
-                    <div style={{ flex: 2 }}>{room.roomname}</div> {/* Adjusted flex value for room name */}
-                    <div style={{ flex: 3, marginRight: "1rem" }}> {/* Adjusted flex and margin for TextField */}
+                    <div style={{ flex: 2 }}>{room.roomname}</div>{" "}
+                    {/* Adjusted flex value for room name */}
+                    <div style={{ flex: 3, marginRight: "1rem" }}>
+                      {" "}
+                      {/* Adjusted flex and margin for TextField */}
                       <TextField
                         id={`room-${index}`}
                         variant="outlined"
                         value={room.quantity}
-                        onChange={(event) => handleRoomDetailChange(index, event)}
+                        onChange={(event) =>
+                          handleRoomDetailChange(index, event)
+                        }
                         disabled={!isEditing}
                         type="number"
                         size="small"
@@ -591,17 +618,19 @@ console.log("New Unit Beds:", newBedType);
                         }}
                       />
                     </div>
-
                     {/* Only show delete button for newly added rooms */}
-                    {isEditing && !["Bathroom", "Living Room", "Kitchen"].includes(room.roomname) && (
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handleDeleteNewRoom (index)}
-                        style={{ flex: "0 0 auto" }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
+                    {isEditing &&
+                      !["Bathroom", "Living Room", "Kitchen"].includes(
+                        room.roomname
+                      ) && (
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handleDeleteNewRoom(index)}
+                          style={{ flex: "0 0 auto" }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
                   </div>
                 ))}
 
@@ -647,7 +676,6 @@ console.log("New Unit Beds:", newBedType);
                         onChange={(e) => setNewRoomQuantity(e.target.value)}
                         fullWidth
                         inputProps={{ min: 1 }}
-                        
                         sx={{
                           "& .MuiOutlinedInput-root.Mui-focused": {
                             "& fieldset": {
@@ -687,7 +715,7 @@ console.log("New Unit Beds:", newBedType);
 
             {/* </Grid>
           <Grid item xs={6} sx={{ padding: "1rem" }}> */}
-          
+
             {/* Bed Details */}
             <div
               style={{
@@ -713,115 +741,118 @@ console.log("New Unit Beds:", newBedType);
               </h6>
 
               {unitBeds.map((bedroom, bedroomIndex) => (
-              <Paper
-                key={bedroomIndex}
-                style={{
-                  marginBottom: "1rem",
-                  marginLeft: "1rem",
-                  marginTop: "1rem",
-                  padding: "1rem",
-                  borderRadius: "0.8rem",
-                  backgroundColor: "#F4F8FA",
-                }}
-              >
-                <h6>Bedroom {bedroom.bedroomnum}</h6>
-                {Object.keys(bedroom.beds).map((bedType, bedIndex) => (
-                  <div
-                    key={bedIndex}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "0.5rem",
-                      marginTop: "1rem",
-                      marginLeft: "1rem",
-                    }}
-                  >
-                    <div style={{ flex: 1 }}>{bedType}</div>
-                    <div style={{ flex: 1 }}>
-                      <TextField
-                        id={`bed-${bedroomIndex}-${bedIndex}`}
-                        variant="outlined"
-                        value={bedroom.beds[bedType]}
-                        onChange={(event) => handleBedDetailChange(bedroomIndex, bedType, event)}
-                        disabled={!isEditing}
-                        inputProps={{ min: 1 }}
-                        type="number"
-                        size="small"
-                        sx={{
-                          "& .MuiOutlinedInput-root.Mui-focused": {
-                            "& fieldset": {
-                              borderColor: "#16B4DD",
-                              width: "100%",
+                <Paper
+                  key={bedroomIndex}
+                  style={{
+                    marginBottom: "1rem",
+                    marginLeft: "1rem",
+                    marginTop: "1rem",
+                    padding: "1rem",
+                    borderRadius: "0.8rem",
+                    backgroundColor: "#F4F8FA",
+                  }}
+                >
+                  <h6>Bedroom {bedroom.bedroomnum}</h6>
+                  {Object.keys(bedroom.beds).map((bedType, bedIndex) => (
+                    <div
+                      key={bedIndex}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "0.5rem",
+                        marginTop: "1rem",
+                        marginLeft: "1rem",
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>{bedType}</div>
+                      <div style={{ flex: 1 }}>
+                        <TextField
+                          id={`bed-${bedroomIndex}-${bedIndex}`}
+                          variant="outlined"
+                          value={bedroom.beds[bedType]}
+                          onChange={(event) =>
+                            handleBedDetailChange(bedroomIndex, bedType, event)
+                          }
+                          disabled={!isEditing}
+                          inputProps={{ min: 1 }}
+                          type="number"
+                          size="small"
+                          sx={{
+                            "& .MuiOutlinedInput-root.Mui-focused": {
+                              "& fieldset": {
+                                borderColor: "#16B4DD",
+                                width: "100%",
+                              },
                             },
-                          },
-                        }}
-                      />
+                          }}
+                        />
+                      </div>
+
+                      {isEditing && (
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() =>
+                            handleDeleteBed(bedroomIndex, bedType, bedroom)
+                          }
+                          disabled={Object.keys(bedroom.beds).length === 1}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
                     </div>
+                  ))}
 
-                    {isEditing && (
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handleDeleteBed(bedroomIndex, bedType, bedroom)}
-                        disabled={Object.keys(bedroom.beds).length === 1}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
-                  </div>
-                ))}
+                  {isEditing && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleOpenAddBedDialog(bedroomIndex)}
+                      sx={{
+                        marginTop: "0.5rem",
+                        borderColor: "#16B4DD",
+                        color: "#16B4DD",
+                      }}
+                    >
+                      Add Bed
+                    </Button>
+                  )}
 
-                {isEditing && (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    onClick={() => handleOpenAddBedDialog(bedroomIndex)}
-                    sx={{
-                      marginTop: "0.5rem",
-                      borderColor: "#16B4DD",
-                      color: "#16B4DD",
-                    }}
-                  >
-                    Add Bed
-                  </Button>
-                )}
+                  {isEditing && (
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      size="small"
+                      onClick={() => handleDeleteBedroom(bedroomIndex, bedroom)}
+                      sx={{
+                        marginTop: "0.5rem",
+                        borderColor: "#A334CF",
+                        color: "#A334CF",
+                        marginLeft: "0.5rem",
+                      }}
+                      disabled={bedroom.bedroomnum === "1"} // Prevent deletion of Bedroom 1
+                    >
+                      Delete Bedroom
+                    </Button>
+                  )}
+                </Paper>
+              ))}
 
-                {isEditing && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    size="small"
-                    onClick={() => handleDeleteBedroom(bedroomIndex, bedroom)}
-                    sx={{
-                      marginTop: "0.5rem",
-                      borderColor: "#A334CF",
-                      color: "#A334CF",
-                      marginLeft: "0.5rem",
-                    }}
-                    disabled={bedroom.bedroomnum === "1"} // Prevent deletion of Bedroom 1
-                  >
-                    Delete Bedroom
-                  </Button>
-                )}
-              </Paper>
-            ))}
-
-            {isEditing && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setOpenAddBedDialog(true)}
-                sx={{
-                  marginTop: "1rem",
-                  backgroundColor: "#16B4DD",
-                  color: "white",
-                  fontFamily: "Poppins, sans-serif",
-                }}
-              >
-                Add Bedroom
-              </Button>
-            )}
-
+              {isEditing && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setOpenAddBedDialog(true)}
+                  sx={{
+                    marginTop: "1rem",
+                    backgroundColor: "#16B4DD",
+                    color: "white",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                >
+                  Add Bedroom
+                </Button>
+              )}
             </div>
             {/* {isEditing && (
               <div style={{ marginTop: "1rem", textAlign: "right" }}>
@@ -839,7 +870,6 @@ console.log("New Unit Beds:", newBedType);
                 </Button>
               </div>
             )} */}
-            
           </Grid>
         </Grid>
         {/* Dialogue For New BedRoom */}
@@ -857,7 +887,6 @@ console.log("New Unit Beds:", newBedType);
               value={newBedType}
               onChange={(e) => setNewBedType(e.target.value)}
               fullWidth
-              
             >
               <MenuItem value="largebed">Large Bed</MenuItem>
               <MenuItem value="singlebed">Single Bed</MenuItem>

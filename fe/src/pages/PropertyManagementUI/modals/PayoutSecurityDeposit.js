@@ -40,13 +40,14 @@ const PayoutSecurityDeposit = ({
     console.log("Checking in: ", securityDeposit);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/refundsecurity", {
-        bhid: bookhistoryid,
-        amount: securityDeposit
-      }
+        "https://whitesmoke-shark-473197.hostingersite.com/api/refundsecurity",
+        {
+          bhid: bookhistoryid,
+          amount: securityDeposit,
+        }
       );
-      console.log('Response:', response.data);
-      if (response.data.status === 'success') {
+      console.log("Response:", response.data);
+      if (response.data.status === "success") {
         window.location.reload();
       }
     } catch (error) {

@@ -74,7 +74,7 @@
 //   //   if (token) {
 
 //   //     const res =axios
-//   //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+//   //       .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
 //   //       .then((res) => {
    
 //   //         loginUser(res.data.data);
@@ -129,7 +129,7 @@
 //     setLoginError("");
 
 //     try {
-//       const response = await axios.post("http://127.0.0.1:8000/api/login", {
+//       const response = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/login", {
 //         email,
 //         password,
 //       });
@@ -218,7 +218,7 @@
 //     console.log('Decoded Google Token:', decoded);
 
 //     try {
-//       const response = await axios.post("http://127.0.0.1:8000/api/auth/google", {
+//       const response = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/auth/google", {
 //         email: decoded.email,
 //         firstname: decoded.given_name,
 //         lastname: decoded.family_name,
@@ -488,7 +488,7 @@ const LoginUI = () => {
   //   if (token) {
 
   //     const res =axios
-  //       .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+  //       .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
   //       .then((res) => {
    
   //         loginUser(res.data.data);
@@ -543,7 +543,7 @@ const LoginUI = () => {
     setLoginError("");
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login", {
+      const response = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/login", {
         email,
         password,
       });
@@ -632,7 +632,7 @@ const LoginUI = () => {
     console.log('Decoded Google Token:', decoded);
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/auth/google", {
+      const response = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/auth/google", {
         email: decoded.email,
         firstname: decoded.given_name,
         lastname: decoded.family_name,
