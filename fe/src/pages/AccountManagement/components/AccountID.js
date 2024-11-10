@@ -59,7 +59,7 @@ export default function AccountID({ profile, onUpdateProfile }) {
 
     try {
       await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           firstname: firstName,
@@ -107,30 +107,30 @@ export default function AccountID({ profile, onUpdateProfile }) {
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ width: "100%", p: "2rem" }}>
-          <TextField
-            required
-            label="First Name"
-            value={firstName}
-            fullWidth
-            onChange={(e) => setFirstName(e.target.value)}
-            sx={{
-              mb: 2, // Add margin bottom for spacing
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                display: "flex", // Ensure flex layout for alignment
-              },
-            }}
-            InputProps={{
-              startAdornment: !isMobile && (
-                <InputAdornment position="start">
-                  <AccountCircle />
-                </InputAdornment>
-              ),
-              sx: {
-                paddingLeft: isMobile ? '8px' : '16px', // Adjust left padding to ensure alignment
-              }
-            }}
-          />
+            <TextField
+              required
+              label="First Name"
+              value={firstName}
+              fullWidth
+              onChange={(e) => setFirstName(e.target.value)}
+              sx={{
+                mb: 2, // Add margin bottom for spacing
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  display: "flex", // Ensure flex layout for alignment
+                },
+              }}
+              InputProps={{
+                startAdornment: !isMobile && (
+                  <InputAdornment position="start">
+                    <AccountCircle />
+                  </InputAdornment>
+                ),
+                sx: {
+                  paddingLeft: isMobile ? "8px" : "16px", // Adjust left padding to ensure alignment
+                },
+              }}
+            />
 
             <TextField
               required
@@ -146,10 +146,7 @@ export default function AccountID({ profile, onUpdateProfile }) {
               }}
               InputProps={{
                 startAdornment: !isMobile && (
-                  <InputAdornment
-                    position="start"
-                    
-                  >
+                  <InputAdornment position="start">
                     <AccountCircle />
                   </InputAdornment>
                 ),
