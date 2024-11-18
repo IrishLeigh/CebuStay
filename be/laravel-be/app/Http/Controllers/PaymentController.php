@@ -274,6 +274,10 @@ class PaymentController extends CORS
         $monthlyPayment = MonthlyPayment::where('bookingid', $bookingid)->first();
         $isMonthlyPayment = $monthlyPayment ? true : false;
 
+        $property = Property::find($booking->propertyid);
+        $unitDetails = UnitDetails::where('propertyid', $property->propertyid)->first();
+        $pricing = PropertyPricing::where('proppricingid', $unitDetails->proppricingid)->first();
+
         // Get request data
         $paymentId = $payment->linkid;
         $percentage = $request->input('percentage');
@@ -295,9 +299,9 @@ class PaymentController extends CORS
             if($isMonthlyPayment){
                 // $sendRefund = $monthlyPayment->amount_paid - $amountToRefund;
                 if ($dayresult === 1) { 
-                    $sendRefund =  $amountToRefund - $monthlyPayment->amount_due;
+                    $sendRefund =  $amountToRefund - $monthlyPayment->amount_due - $pricing->min_price;
                 } else {
-                    $sendRefund = $monthlyPayment->amount_paid - $amountToRefund - $monthlyPayment->amount_due;
+                    $sendRefund = $monthlyPayment->amount_paid - $amountToRefund - $monthlyPayment->amount_due - $pricing->min_price;
                 }
             }else if(!$isMonthlyPayment){
                 if ($dayresult === 1) {
@@ -307,6 +311,7 @@ class PaymentController extends CORS
                 }
             }
         } else {
+            $sendRefund = 0;
             $payment->status = 'Cancelled'; // Set the status to 'cancelled'
             $payment->save(); // Save changes to the database
 
