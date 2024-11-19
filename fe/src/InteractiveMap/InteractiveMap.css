@@ -38,7 +38,12 @@
 .map-container {
   display: flex;
   align-items: center;
+  padding: 10px;
   width: 100%;
+  flex: 1;
+  flex-direction: "row";
+  width: 100%;
+  gap: 5px;
 }
 
 .map-background {
@@ -46,7 +51,6 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  height: 111vh;
 }
 
 .map-filter-cntr {
@@ -122,18 +126,18 @@
 @media screen and (min-width: 1440px) {
   .map {
     height: 100vh;
-    width: 70%;
+    width: 100%;
     padding: 0.5rem;
   }
 }
 @media screen and (max-width: 1366px) {
   .map {
-    width: 60%;
-    height: 135vh;
+    width: 100%;
+    height: 100vh;
   }
 
   .map-background {
-    height: 155vh;
+    height: 100%;
     /* padding: 0.5rem; */
     /* transform: rotate(35deg); */
     /* transform-origin: center center; */
@@ -142,7 +146,7 @@
 /* Media query for medium screens (like tablets) */
 @media screen and (max-width: 1024px) {
   .map {
-    width: 80%;
+    width: 100%;
   }
 }
 

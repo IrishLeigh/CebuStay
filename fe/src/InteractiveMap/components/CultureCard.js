@@ -91,8 +91,8 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
       ) : (
         <Card
           sx={{
-            width: isSmallScreen ? "100vw" : 400,
-            height: isSmallScreen ? "auto" : "500",
+            width: isSmallScreen ? "100%" : "100%",
+            height: isSmallScreen ? "auto" : "70vh",
             // margin: isSmallScreen ? "1rem auto" : "1rem", // Center horizontally on small screens
             boxShadow: 3,
             position: "relative",
@@ -118,7 +118,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
           <CardMedia
             component="img"
             alt={culture.name}
-            height={isSmallScreen ? "60%" : "200"} // Responsive height
+            height={isSmallScreen ? "60%" : "50%"} // Responsive height
             image={culture.imageUrl}
             title={culture.name}
             sx={{
@@ -132,27 +132,32 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
           >
             <Typography
               gutterBottom
-              variant="h5"
               component="div"
-              sx={{ fontSize: isSmallScreen ? "1.5rem" : "1rem" }}
+              sx={{
+                fontSize: isSmallScreen ? "0.5rem" : "1.5rem",
+                fontWeight: "bold",
+              }}
             >
               {culture.name.toUpperCase()}
             </Typography>
+
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "1rem" : "0.9rem" }}
+              sx={{ fontSize: isSmallScreen ? "0.5rem" : "1rem" }}
             >
               {culture.description}
             </Typography>
-            <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+            <Box
+              sx={{ margin: "auto", display: "flex", justifyContent: "center" }}
+            >
               <Button
                 variant="contained"
                 sx={{
                   backgroundColor: "#16B4DD",
                   color: "white",
                   fontSize: isSmallScreen
-                    ? "0.8rem"
+                    ? "0.5rem"
                     : isMediumScreen
                     ? "0.8rem"
                     : "1rem",

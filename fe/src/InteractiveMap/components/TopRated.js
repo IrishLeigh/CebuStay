@@ -21,22 +21,25 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
     let maxRatingLocation = null;
 
     // Check if nearbyLocations is structured as an array of arrays
-    nearbyLocations?.forEach(locationArray => {
-        locationArray.forEach(location => {
-            const rating = location.totalReviews;
+    nearbyLocations?.forEach((locationArray) => {
+      locationArray.forEach((location) => {
+        const rating = location.totalReviews;
 
-            // Only consider valid ratings (not null)
-            if (rating !== null) {
-                if (maxRatingLocation === null || rating > maxRatingLocation.totalReviews) {
-                    maxRatingLocation = location; // Set the whole location object
-                }
-            }
-        });
+        // Only consider valid ratings (not null)
+        if (rating !== null) {
+          if (
+            maxRatingLocation === null ||
+            rating > maxRatingLocation.totalReviews
+          ) {
+            maxRatingLocation = location; // Set the whole location object
+          }
+        }
+      });
     });
 
     // Update the state with the location having the highest rating
     setHighestRatingLocation(maxRatingLocation);
-}, [nearbyLocations]);
+  }, [nearbyLocations]);
 
   console.log("Highest Rating:", highestRatingLocation);
 
@@ -46,7 +49,7 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
     rating: 4.5,
     reviewCount: 651,
     address: "123 Ocean Drive, Paradise City, Island Nation",
-    price: 8000.00,
+    price: 8000.0,
     facilities: ["Swimming Pool", "Spa", "Gym"],
   };
 
@@ -60,7 +63,7 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
   // Styles
   const styles = {
     card: {
-      maxWidth: isSmallScreen ? "100%" : 400,
+      width: isSmallScreen ? "100%" : "100%",
       margin: "0 auto",
       boxShadow: 3,
       cursor: "pointer", // Make the card clickable
@@ -120,7 +123,6 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
       color: "white",
       padding: "0.5rem 1rem",
       borderRadius: "0.5rem",
-
     },
     priceLabel: {
       fontSize: isSmallScreen ? "0.65rem" : "0.75rem",
@@ -166,45 +168,50 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
           Top Reviewed
         </Typography>
       </Box>
-      {highestRatingLocation ? (<>
-        <Box
-        sx={{
-          display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-        }}
-      >
-        <CardMedia
-          component="img"
-          alt={highestRatingLocation?.name || "Property"}
-          sx={styles.media}
-          image={highestRatingLocation?.propertyFiles?.[0]?.src || "/propertyplaceholder.jpg"}
-          title={highestRatingLocation?.name}
-        />
-        <CardContent sx={styles.content}>
+      {highestRatingLocation ? (
+        <>
           <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={0.5}
+            sx={{
+              display: "flex",
+              flexDirection: isSmallScreen ? "column" : "row",
+            }}
           >
-            <Typography sx={styles.title}>{highestRatingLocation?.name}</Typography>
-            <Typography sx={styles.reviewCount}>
-              {highestRatingLocation?.totalReviews} reviews
-            </Typography>
-          </Box>
-          {highestRatingLocation?.rating ? (
-                <>
-                  {renderStars(highestRatingLocation.rating)}
-
-                </>
+            <CardMedia
+              component="img"
+              alt={highestRatingLocation?.name || "Property"}
+              sx={styles.media}
+              image={
+                highestRatingLocation?.propertyFiles?.[0]?.src ||
+                "/propertyplaceholder.jpg"
+              }
+              title={highestRatingLocation?.name}
+            />
+            <CardContent sx={styles.content}>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={0.5}
+              >
+                <Typography sx={styles.title}>
+                  {highestRatingLocation?.name}
+                </Typography>
+                <Typography sx={styles.reviewCount}>
+                  {highestRatingLocation?.totalReviews} reviews
+                </Typography>
+              </Box>
+              {highestRatingLocation?.rating ? (
+                <>{renderStars(highestRatingLocation.rating)}</>
               ) : (
                 "No rating yet"
               )}
-          <Box display="flex" alignItems="center" mt={0.5}>
-            <LocationOnIcon sx={styles.locationIcon} />
-            <Typography sx={styles.address}>{highestRatingLocation?.address}</Typography>
-          </Box>
-          {/* <Typography sx={styles.description}>This property offers:</Typography>
+              <Box display="flex" alignItems="center" mt={0.5}>
+                <LocationOnIcon sx={styles.locationIcon} />
+                <Typography sx={styles.address}>
+                  {highestRatingLocation?.address}
+                </Typography>
+              </Box>
+              {/* <Typography sx={styles.description}>This property offers:</Typography>
           <Box sx={styles.facilityBox}>
             {hotel.facilities.map((facility, index) => (
               <Box
@@ -225,30 +232,34 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
               </Box>
             ))}
           </Box> */}
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="left"
-            margin={"0.5rem 0"}
-          
-          >
-            <Typography sx={styles.priceLabel}>Price per night</Typography>
-            <Box sx={styles.priceBox}>
-              <Typography
-                sx={{
-                  fontSize: isSmallScreen ? "0.75rem" : "1rem",
-                  fontFamily: "Poppins",
-                }}
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="left"
+                margin={"0.5rem 0"}
               >
-                ₱ {highestRatingLocation?.pricing?.min_price?.toLocaleString() || "---"}
-              </Typography>
-            </Box>
+                <Typography sx={styles.priceLabel}>Price per night</Typography>
+                <Box sx={styles.priceBox}>
+                  <Typography
+                    sx={{
+                      fontSize: isSmallScreen ? "0.75rem" : "1rem",
+                      fontFamily: "Poppins",
+                    }}
+                  >
+                    ₱{" "}
+                    {highestRatingLocation?.pricing?.min_price?.toLocaleString() ||
+                      "---"}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
           </Box>
-        </CardContent>
-      </Box>
-      </>):(<>
-      <span>No properties found</span>
-      </>)}
+        </>
+      ) : (
+        <>
+          <span>No properties found</span>
+        </>
+      )}
     </Card>
   );
 };

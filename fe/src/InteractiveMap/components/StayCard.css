@@ -2,7 +2,7 @@
   position: relative; /* Changed from absolute to relative */
   top: 20px; /* Adjust this if needed */
   right: 20px; /* Adjust this if needed */
-  width: 350px; /* Adjust as needed */
+  width: 100%; /* Adjust as needed */
   background-color: white;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -11,6 +11,7 @@
   display: flex;
   flex-direction: column;
   margin: 20px; /* Added margin for spacing */
+  height: "auto";
 }
 
 .close-btn {
@@ -44,7 +45,7 @@
 
 .tab.active {
   background-color: #ffffff;
-  border-bottom: 2px solid #16B4DD; /* Active tab indicator */
+  border-bottom: 2px solid #16b4dd; /* Active tab indicator */
   font-weight: bold;
 }
 
