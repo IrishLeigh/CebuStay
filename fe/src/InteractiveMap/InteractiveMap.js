@@ -39,7 +39,7 @@ export default function InteractiveMap() {
   const mapContainerRef = useRef(null);
   const initialCenter = [10.5, 124];
   const initialZoom = 9;
-  const [zoom, setZoom] = useState(9);
+  const [zoom, setZoom] = useState(initialZoom);
   const [foundLocations, setFoundLocations] = React.useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [nearbyLocations, setNearbyLocations] = React.useState([]);
@@ -545,192 +545,181 @@ export default function InteractiveMap() {
             See And Do
           </button>
         </div>
-        <Box
-          sx={{
-            display: "flex", // Display in a row (horizontal)
-            flexDirection: { xs: "column", sm: "row" }, // Stack items vertically on small screens
-            alignItems: "flex-start", // Align items at the top
-            width: "100%", // Make sure the box takes full width
-          }}
-        >
-          <div
-            className="map-container"
-            ref={mapContainerRef}
-            style={{
-              flex: 1,
-              width: "100%", // Ensure full width
-              height: { xs: "50vh", sm: "70vh", lg: "80vh" }, // Adjust map height based on screen size
-            }}
-          >
-            {locations.length > 0 ? (
-              <MapContainer
-                className="map"
-                center={initialCenter}
-                zoom={zoom}
-                doubleClickZoom={false}
-                touchZoom={false}
-                minZoom={9}
-                maxZoom={11}
-                onClick={() => {
-                  setSelectedCity(null);
-                  setSelectedCulture(null);
-                  setSelectedSeeAndDo(null);
-                }}
-              >
-                <SetScrollWheelZoom />
-                <ResetButton center={initialCenter} zoom={initialZoom} />
+        <Box>
+          <div className="map-container" ref={mapContainerRef}>
+            <div
+              style={{
+                width: "60%",
+              }}
+            >
+              {locations.length > 0 ? (
+                <MapContainer
+                  className="map"
+                  center={initialCenter}
+                  zoom={zoom}
+                  doubleClickZoom={false}
+                  touchZoom={false}
+                  minZoom={initialZoom}
+                  maxZoom={11}
+                  onClick={() => {
+                    setSelectedCity(null);
+                    setSelectedCulture(null);
+                    setSelectedSeeAndDo(null);
+                  }}
+                >
+                  <SetScrollWheelZoom />
+                  <ResetButton center={initialCenter} zoom={initialZoom} />
 
-                <GeoJSON
-                  data={cebuCity.features}
-                  onEachFeature={onEachCity}
-                  style={getCityStyle}
-                />
-                {selectedCategory === "Where to stay" &&
-                  filteredLocations.map((property, index) => {
-                    const lat = parseFloat(property.coordinates[0]); // Convert latitude to float
-                    const lng = parseFloat(property.coordinates[1]); // Convert longitude to float
+                  <GeoJSON
+                    data={cebuCity.features}
+                    onEachFeature={onEachCity}
+                    style={getCityStyle}
+                  />
+                  {selectedCategory === "Where to stay" &&
+                    filteredLocations.map((property, index) => {
+                      const lat = parseFloat(property.coordinates[0]); // Convert latitude to float
+                      const lng = parseFloat(property.coordinates[1]); // Convert longitude to float
 
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                      return (
-                        <Marker
-                          key={index}
-                          position={[lat, lng]}
-                          title={property.property_name}
-                          icon={customIcon("/resort.png")}
-                          eventHandlers={{
-                            click: (e) => handleMarkerClick(property, e),
-                          }}
-                        >
-                          <Popup>{property.name}</Popup>
-                        </Marker>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })}
-
-                {selectedCategory === "Culture & Experiences" &&
-                  CulturalExperiences.filter(
-                    (culture) =>
-                      !selectedCity || culture["city name"] === selectedCity
-                  ).map((culture, index) => (
-                    <Marker
-                      key={index}
-                      position={culture.coordinates}
-                      title={culture.name}
-                      icon={customIcon(culture.iconUrl)}
-                      eventHandlers={{
-                        click: (e) => handleMarkerClick(culture, e),
-                      }}
-                    >
-                      <Popup>{culture.name}</Popup>
-                    </Marker>
-                  ))}
-                {userLocation && (
-                  <Marker
-                    position={userLocation}
-                    icon={customIcon("/userPin.png")}
-                  >
-                    <Popup>You are here</Popup>
-                  </Marker>
-                )}
-                {userLocation &&
-                  nearbyLocations.map((location, index) => (
-                    <Marker
-                      key={index}
-                      position={location.coordinates}
-                      icon={
-                        location.category === "Property"
-                          ? L.icon({
-                              iconUrl: "/resort.png",
-                            })
-                          : customIcon(location.iconUrl)
+                      if (!isNaN(lat) && !isNaN(lng)) {
+                        return (
+                          <Marker
+                            key={index}
+                            position={[lat, lng]}
+                            title={property.property_name}
+                            icon={customIcon("/resort.png")}
+                            eventHandlers={{
+                              click: (e) => handleMarkerClick(property, e),
+                            }}
+                          >
+                            <Popup>{property.name}</Popup>
+                          </Marker>
+                        );
+                      } else {
+                        return null;
                       }
-                    >
-                      <Popup>{location.name}</Popup>
-                    </Marker>
-                  ))}
-                {renderPolylines()}
+                    })}
 
-                {selectedCategory === "See And Do" &&
-                  SeeAndDo.filter(
-                    (spot) =>
-                      !selectedCity || spot["city name"] === selectedCity
-                  ).map((spot, index) => (
+                  {selectedCategory === "Culture & Experiences" &&
+                    CulturalExperiences.filter(
+                      (culture) =>
+                        !selectedCity || culture["city name"] === selectedCity
+                    ).map((culture, index) => (
+                      <Marker
+                        key={index}
+                        position={culture.coordinates}
+                        title={culture.name}
+                        icon={customIcon(culture.iconUrl)}
+                        eventHandlers={{
+                          click: (e) => handleMarkerClick(culture, e),
+                        }}
+                      >
+                        <Popup>{culture.name}</Popup>
+                      </Marker>
+                    ))}
+                  {userLocation && (
                     <Marker
-                      key={index}
-                      position={spot.coordinates}
-                      title={spot.name}
-                      icon={customIcon(spot.iconUrl)}
-                      eventHandlers={{
-                        click: (e) => handleMarkerClick(spot, e),
-                      }}
+                      position={userLocation}
+                      icon={customIcon("/userPin.png")}
                     >
-                      <Popup>{spot.name}</Popup>
+                      <Popup>You are here</Popup>
                     </Marker>
-                  ))}
-              </MapContainer>
-            ) : (
-              <p>Loading map data...</p>
-            )}
-            {selectedProperty && selectedCategory === "Where to stay" && (
-              <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
-                <div>
-                  <StayCard
-                    stay={selectedProperty}
-                    onClose={() => {
-                      setSelectedProperty(null);
-                      setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the property card
-                    }}
-                  />
-                </div>
-              </ClickOutsideComponent>
-            )}
+                  )}
+                  {userLocation &&
+                    nearbyLocations.map((location, index) => (
+                      <Marker
+                        key={index}
+                        position={location.coordinates}
+                        icon={
+                          location.category === "Property"
+                            ? L.icon({
+                                iconUrl: "/resort.png",
+                              })
+                            : customIcon(location.iconUrl)
+                        }
+                      >
+                        <Popup>{location.name}</Popup>
+                      </Marker>
+                    ))}
+                  {renderPolylines()}
 
-            {selectedSeeAndDo && selectedCategory === "See And Do" && (
-              <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
-                <div>
-                  <SeeAndDoCard
-                    spot={selectedSeeAndDo}
-                    allProperties={allProperties}
-                    onClose={() => {
-                      setSelectedSeeAndDo(null);
-                      setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the "See and Do" card
-                    }}
-                  />
-                </div>
-              </ClickOutsideComponent>
-            )}
+                  {selectedCategory === "See And Do" &&
+                    SeeAndDo.filter(
+                      (spot) =>
+                        !selectedCity || spot["city name"] === selectedCity
+                    ).map((spot, index) => (
+                      <Marker
+                        key={index}
+                        position={spot.coordinates}
+                        title={spot.name}
+                        icon={customIcon(spot.iconUrl)}
+                        eventHandlers={{
+                          click: (e) => handleMarkerClick(spot, e),
+                        }}
+                      >
+                        <Popup>{spot.name}</Popup>
+                      </Marker>
+                    ))}
+                </MapContainer>
+              ) : (
+                <p>Loading map data...</p>
+              )}
+            </div>
 
-            {selectedCulture &&
-              selectedCategory === "Culture & Experiences" && (
+            <div
+              style={{
+                width: "40%",
+                margin: "5px 10px 5px 0px",
+              }}
+            >
+              {selectedProperty && selectedCategory === "Where to stay" && (
                 <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
-                  <div className="culture-card-container">
-                    <CultureCard
-                      culture={selectedCulture}
-                      allProperties={allProperties}
+                  <div>
+                    <StayCard
+                      stay={selectedProperty}
                       onClose={() => {
-                        setSelectedCulture(null);
-                        setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the "Culture & Experiences" card
+                        setSelectedProperty(null);
+                        setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the property card
                       }}
                     />
                   </div>
                 </ClickOutsideComponent>
               )}
+
+              {selectedSeeAndDo && selectedCategory === "See And Do" && (
+                <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
+                  <div>
+                    <SeeAndDoCard
+                      spot={selectedSeeAndDo}
+                      allProperties={allProperties}
+                      onClose={() => {
+                        setSelectedSeeAndDo(null);
+                        setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the "See and Do" card
+                      }}
+                    />
+                  </div>
+                </ClickOutsideComponent>
+              )}
+
+              {selectedCulture &&
+                selectedCategory === "Culture & Experiences" && (
+                  <ClickOutsideComponent
+                    onClickOutside={handleClickOutsideClose}
+                  >
+                    <div className="culture-card-container">
+                      <CultureCard
+                        culture={selectedCulture}
+                        allProperties={allProperties}
+                        onClose={() => {
+                          setSelectedCulture(null);
+                          setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the "Culture & Experiences" card
+                        }}
+                      />
+                    </div>
+                  </ClickOutsideComponent>
+                )}
+              {showWelcomeMap && <WelcomeCebuMap />}
+            </div>
           </div>
-          {showWelcomeMap && (
-            <Box
-              sx={{
-                width: { xs: "100%", sm: 400 }, // Full width on small screens, 400px on larger screens
-                margin: "auto", // Center the box horizontally
-                mr: { sm: 15 }, // Right margin on medium and up screens
-                mt: { xs: 2, sm: 20 }, // Margin on small and larger screens
-                display: isSmallScreen ? "none" : "block", // Hide map on small screens
-              }}
-            >
-              <WelcomeCebuMap />
-            </Box>
-          )}
         </Box>
       </div>
     </div>

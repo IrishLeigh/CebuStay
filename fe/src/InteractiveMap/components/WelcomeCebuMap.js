@@ -10,11 +10,10 @@ export default function WelcomeCebuMap() {
   return (
     <Card
       sx={{
-        width: isSmallScreen ? "320px" : "100%", // Width adjusts based on screen size
-        height: isSmallScreen ? "auto" : "60vh", // Height is auto for small screens
-        maxHeight: isSmallScreen ? "50vh" : "none", // Limit height for small screens
+        width: "100%",
+        height: "auto",
         mx: "auto", // Center horizontally
-        p: 2,
+
         borderRadius: 2,
         boxShadow: 3,
         backgroundColor: "rgba(0, 0, 0, 0.3)", // Black background with 33% opacity
@@ -22,13 +21,11 @@ export default function WelcomeCebuMap() {
     >
       <CardContent>
         <Typography
-          variant="h4"
-          component="div"
           sx={{
             textAlign: "center",
             color: "#F9CC41",
             fontWeight: "bold",
-            fontSize: isSmallScreen ? "1.5rem" : "2rem", // Adjust font size
+            fontSize: isSmallScreen ? "0.5rem" : "2.5rem", // Adjust font size based on screen size
           }}
         >
           Welcome to Cebu Map!
@@ -39,7 +36,7 @@ export default function WelcomeCebuMap() {
             textAlign: "center",
             color: "#FFD700",
             mb: 2,
-            fontSize: isSmallScreen ? "1rem" : "1.25rem", // Adjust font size
+            fontSize: isSmallScreen ? "0.5rem" : "1.5rem", // Adjust font size based on screen size
           }}
         >
           How to navigate the map

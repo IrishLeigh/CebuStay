@@ -25,7 +25,7 @@ const ViewNearby = ({ nearbyLocations }) => {
   return (
     <Card
       sx={{
-        maxWidth: 400,
+        maxWidth: "100%",
         margin: "1rem",
         position: "relative",
       }}

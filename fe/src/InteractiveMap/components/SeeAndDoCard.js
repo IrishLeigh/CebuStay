@@ -97,9 +97,9 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
       ) : (
         <Card
           sx={{
-            width: isSmallScreen ? "100vw" : 400,
-            height: isSmallScreen ? "auto" : "500",
-            margin: isSmallScreen ? "1rem auto" : "1rem", // Center horizontally on small screens
+            width: isSmallScreen ? "100%" : "100%",
+            height: isSmallScreen ? "auto" : "70vh",
+            // margin: isSmallScreen ? "1rem auto" : "1rem", // Center horizontally on small screens
             boxShadow: 3,
             position: "relative",
             display: "flex",

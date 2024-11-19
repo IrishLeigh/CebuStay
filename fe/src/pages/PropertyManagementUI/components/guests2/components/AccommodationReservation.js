@@ -9,7 +9,7 @@ import {
   MdMenuOpen,
   MdSearch,
   MdEdit,
-  MdWarning,
+  MdDelete,
   MdClose,
 } from "react-icons/md";
 import "../css/AccommodationReservation.css";
@@ -353,7 +353,7 @@ export default function AccommodationReservation() {
                     setModalOpen(false);
                     setEditModalOpen(false);
                     setDeleteItemId(null);
-                }}
+                  }}
                 >
                   {button}
                 </button>
@@ -520,7 +520,7 @@ export default function AccommodationReservation() {
                   <MdClose />
                 </button>
                 <CheckInCheckOut
-                category={selectedButton}
+                  category={selectedButton}
                   item={selectedReservation}
                   onClose={closeModal}
                 />
@@ -529,31 +529,53 @@ export default function AccommodationReservation() {
 
             {/* Render the table only if the modal is not open */}
             {!editModalOpen && (
-              <TableContainer
-                component={Paper}
-                style={{ maxHeight: "400px", overflowY: "auto" }}
-              >
-                <Table stickyHeader aria-label="property table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center">Booking ID</TableCell>
-                      <TableCell align="center">Firstname</TableCell>
-                      <TableCell align="center">Lastname</TableCell>
-                      <TableCell align="center">Email</TableCell>
-                      <TableCell align="center">Property Name</TableCell>
-                      <TableCell align="center">Type</TableCell>
-                      <TableCell align="center">Address</TableCell>
-                      <TableCell align="center">Date</TableCell>
-                      <TableCell align="center">Price</TableCell>
-                      <TableCell align="center">Status</TableCell>
-                      <TableCell align="center">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
+              <TableContainer component={Paper}>
+                <Table>
+                  <thead style={{ backgroundColor: "#f0f0f0" }}>
+                    <tr>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        ID
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Firstname
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Lastname
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Email
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Property Name
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Type
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Address
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Date
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Price
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Status
+                      </th>
+                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
 
-                  <TableBody>
+                  <TableBody style={{ backgroundColor: "#ffffff" }}>
                     {loading ? (
                       <TableRow>
-                        <TableCell colSpan={11} style={{ textAlign: "center" }}>
+                        <TableCell
+                          colSpan={11}
+                          style={{ textAlign: "center", padding: "1rem" }}
+                        >
                           <div
                             className="loading-container"
                             style={{
@@ -572,22 +594,23 @@ export default function AccommodationReservation() {
                       <TableRow>
                         <TableCell
                           colSpan={11}
-                          style={{ textAlign: "center", color: "gray" }}
+                          style={{
+                            textAlign: "center",
+                            color: "gray",
+                            padding: "1rem",
+                          }}
                         >
                           No data available
                         </TableCell>
                       </TableRow>
                     ) : (
                       filteredData.map((item) => (
-                        <TableRow
-                          key={item.id}
-                          style={{ borderBottom: "1px solid #e0e0e0" }}
-                        >
+                        <TableRow key={item.id} className="table-row">
                           {/* Booking ID */}
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
-                            style={{ cursor: "pointer" }}
+                            className="table-cell"
                           >
                             {item.bookingid ? item.bookingid : item.bhid}
                           </TableCell>
@@ -596,7 +619,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
-                            style={{ cursor: "pointer" }}
+                            className="table-cell"
                           >
                             {item.booker?.firstname || "N/A"}
                           </TableCell>
@@ -605,7 +628,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
-                            style={{ cursor: "pointer" }}
+                            className="table-cell"
                           >
                             {item.booker?.lastname || "N/A"}
                           </TableCell>
@@ -614,7 +637,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
-                            style={{ cursor: "pointer" }}
+                            className="table-cell"
                           >
                             {item.booker?.email || "N/A"}
                           </TableCell>
@@ -623,7 +646,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
-                            style={{ cursor: "pointer" }}
+                            className="table-cell"
                           >
                             {item.property_name || "N/A"}
                           </TableCell>
@@ -632,7 +655,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
-                            style={{ cursor: "pointer" }}
+                            className="table-cell"
                           >
                             {item.property_type || "N/A"}
                           </TableCell>
@@ -641,6 +664,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
+                            className="table-cell"
                           >
                             {item.property_address || "N/A"}
                           </TableCell>
@@ -649,6 +673,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
+                            className="table-cell"
                           >
                             {item.booking_date || "N/A"}
                           </TableCell>
@@ -657,6 +682,7 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
+                            className="table-cell"
                           >
                             {item.total_price || "N/A"}
                           </TableCell>
@@ -665,16 +691,14 @@ export default function AccommodationReservation() {
                           <TableCell
                             onClick={() => handleEdit(item)}
                             align="center"
-                            style={{
-                              color: item.status === "Active" ? "green" : "red",
-                            }}
+                            className="table-cell"
                           >
                             {item.status || "N/A"}
                           </TableCell>
 
                           {/* Actions */}
                           <TableCell align="center">
-                            <MdEdit
+                            {/* <MdEdit
                               onClick={(e) => {
                                 e.stopPropagation(); // Prevent row click event
                                 handleEdit(item.id);
@@ -684,8 +708,8 @@ export default function AccommodationReservation() {
                                 marginRight: "0.5rem",
                                 color: "blue",
                               }}
-                            />
-                            <MdWarning
+                            /> */}
+                            <MdDelete
                               onClick={(e) => {
                                 e.stopPropagation(); // Prevent row click event
                                 handleDelete(item.id);
