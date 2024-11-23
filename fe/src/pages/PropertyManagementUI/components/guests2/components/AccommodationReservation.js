@@ -21,6 +21,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import TablePagination from "@mui/material/TablePagination";
 
 export default function AccommodationReservation() {
   const [selectedButton, setSelectedButton] = useState("all");
@@ -42,6 +43,18 @@ export default function AccommodationReservation() {
   const [selectedId, setSelectedId] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to first page
+  };
 
   // Function to add a new reservation
   const addReservation = (newReservation) => {
@@ -529,200 +542,216 @@ export default function AccommodationReservation() {
 
             {/* Render the table only if the modal is not open */}
             {!editModalOpen && (
-              <TableContainer component={Paper}>
-                <Table>
-                  <thead style={{ backgroundColor: "#f0f0f0" }}>
-                    <tr>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        ID
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Firstname
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Lastname
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Email
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Property Name
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Type
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Address
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Date
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Price
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Status
-                      </th>
-                      <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
+              <Box sx={{ width: "100%" }}>
+                <Paper sx={{ width: "100%", mb: 2 }}>
+                  <TableContainer>
+                    <Table>
+                      <thead style={{ backgroundColor: "#f0f0f0" }}>
+                        <tr>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            ID
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Firstname
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Lastname
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Email
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Property Name
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Type
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Address
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Date
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Price
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Status
+                          </th>
+                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
 
-                  <TableBody style={{ backgroundColor: "#ffffff" }}>
-                    {loading ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={11}
-                          style={{ textAlign: "center", padding: "1rem" }}
-                        >
-                          <div
-                            className="loading-container"
-                            style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              margin: "2rem",
-                              height: "100%",
-                            }}
-                          >
-                            <CircularProgress />
-                            <p>Retrieving Data...</p>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ) : filteredData.length === 0 ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={11}
-                          style={{
-                            textAlign: "center",
-                            color: "gray",
-                            padding: "1rem",
-                          }}
-                        >
-                          No data available
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredData.map((item) => (
-                        <TableRow key={item.id} className="table-row">
-                          {/* Booking ID */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.bookingid ? item.bookingid : item.bhid}
-                          </TableCell>
-
-                          {/* Firstname */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.booker?.firstname || "N/A"}
-                          </TableCell>
-
-                          {/* Lastname */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.booker?.lastname || "N/A"}
-                          </TableCell>
-
-                          {/* Email */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.booker?.email || "N/A"}
-                          </TableCell>
-
-                          {/* Property Name */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.property_name || "N/A"}
-                          </TableCell>
-
-                          {/* Type */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.property_type || "N/A"}
-                          </TableCell>
-
-                          {/* Address */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.property_address || "N/A"}
-                          </TableCell>
-
-                          {/* Booking Date */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.booking_date || "N/A"}
-                          </TableCell>
-
-                          {/* Total Price */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.total_price || "N/A"}
-                          </TableCell>
-
-                          {/* Status */}
-                          <TableCell
-                            onClick={() => handleEdit(item)}
-                            align="center"
-                            className="table-cell"
-                          >
-                            {item.status || "N/A"}
-                          </TableCell>
-
-                          {/* Actions */}
-                          <TableCell align="center">
-                            {/* <MdEdit
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent row click event
-                                handleEdit(item.id);
-                              }}
+                      <TableBody style={{ backgroundColor: "#ffffff" }}>
+                        {loading ? (
+                          <TableRow>
+                            <TableCell
+                              colSpan={11}
+                              style={{ textAlign: "center", padding: "1rem" }}
+                            >
+                              <div
+                                className="loading-container"
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  margin: "2rem",
+                                  height: "100%",
+                                }}
+                              >
+                                <CircularProgress />
+                                <p>Retrieving Data...</p>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : filteredData.length === 0 ? (
+                          <TableRow>
+                            <TableCell
+                              colSpan={11}
                               style={{
-                                cursor: "pointer",
-                                marginRight: "0.5rem",
-                                color: "blue",
+                                textAlign: "center",
+                                color: "gray",
+                                padding: "1rem",
                               }}
-                            /> */}
-                            <MdDelete
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent row click event
-                                handleDelete(item.id);
-                              }}
-                              style={{ cursor: "pointer", color: "red" }}
+                            >
+                              No data available
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredData
+                            .slice(
+                              page * rowsPerPage,
+                              page * rowsPerPage + rowsPerPage
+                            )
+                            .map((item) => (
+                              <TableRow key={item.id} className="table-row">
+                                {/* Booker ID */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.bookingid ? item.bookingid : item.bhid}
+                                </TableCell>
+
+                                {/* Firstname */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.booker?.firstname || "N/A"}
+                                </TableCell>
+
+                                {/* Lastname */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.booker?.lastname || "N/A"}
+                                </TableCell>
+
+                                {/* Email */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.booker?.email || "N/A"}
+                                </TableCell>
+
+                                {/* Property Name */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.property_name || "N/A"}
+                                </TableCell>
+
+                                {/* Type */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.property_type || "N/A"}
+                                </TableCell>
+
+                                {/* Address */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.property_address || "N/A"}
+                                </TableCell>
+
+                                {/* Booking Date */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.booking_date || "N/A"}
+                                </TableCell>
+
+                                {/* Total Price */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.total_price || "N/A"}
+                                </TableCell>
+
+                                {/* Status */}
+                                <TableCell
+                                  onClick={() => handleEdit(item)}
+                                  align="center"
+                                  className="table-cell"
+                                >
+                                  {item.status || "N/A"}
+                                </TableCell>
+
+                                {/* Actions */}
+                                <TableCell align="center">
+                                  <MdDelete
+                                    onClick={(e) => {
+                                      e.stopPropagation(); // Prevent row click event
+                                      handleDelete(item.id);
+                                    }}
+                                    style={{ cursor: "pointer", color: "red" }}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))
+                        )}
+
+                        {/* Pagination within the table body */}
+                        <TableRow>
+                          <TableCell
+                            colSpan={11}
+                            style={{ textAlign: "center", padding: "0.5rem" }}
+                          >
+                            <TablePagination
+                              rowsPerPageOptions={[5, 10, 25]}
+                              component="div"
+                              count={filteredData.length}
+                              rowsPerPage={rowsPerPage}
+                              page={page}
+                              onPageChange={handleChangePage}
+                              onRowsPerPageChange={handleChangeRowsPerPage}
                             />
                           </TableCell>
                         </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Paper>
+              </Box>
             )}
           </div>
         </div>

@@ -25,8 +25,7 @@ import HelpIcon from "@mui/icons-material/Help"; // Icon for instructions
 import StayCard from "./components/StayCard";
 import ClickOutsideComponent from "./components/ClickOutsideComponent";
 import WelcomeCebuMap from "./components/WelcomeCebuMap";
-import Box from "@mui/material/Box";
-import { useMediaQuery } from "@mui/material";
+import { Dialog, IconButton, useMediaQuery, Box } from "@mui/material"; // Import Dialog and useMediaQuery
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
@@ -547,11 +546,7 @@ export default function InteractiveMap() {
         </div>
         <Box>
           <div className="map-container" ref={mapContainerRef}>
-            <div
-              style={{
-                width: "60%",
-              }}
-            >
+            <div style={{ width: "60%" }}>
               {locations.length > 0 ? (
                 <MapContainer
                   className="map"
@@ -567,18 +562,20 @@ export default function InteractiveMap() {
                     setSelectedSeeAndDo(null);
                   }}
                 >
+                  {/* Map content */}
                   <SetScrollWheelZoom />
                   <ResetButton center={initialCenter} zoom={initialZoom} />
-
                   <GeoJSON
                     data={cebuCity.features}
                     onEachFeature={onEachCity}
                     style={getCityStyle}
                   />
+
+                  {/* "Where to Stay" */}
                   {selectedCategory === "Where to stay" &&
                     filteredLocations.map((property, index) => {
-                      const lat = parseFloat(property.coordinates[0]); // Convert latitude to float
-                      const lng = parseFloat(property.coordinates[1]); // Convert longitude to float
+                      const lat = parseFloat(property.coordinates[0]);
+                      const lng = parseFloat(property.coordinates[1]);
 
                       if (!isNaN(lat) && !isNaN(lng)) {
                         return (
@@ -591,7 +588,7 @@ export default function InteractiveMap() {
                               click: (e) => handleMarkerClick(property, e),
                             }}
                           >
-                            <Popup>{property.name}</Popup>
+                            <Popup>{property.property_name}</Popup>
                           </Marker>
                         );
                       } else {
@@ -599,6 +596,7 @@ export default function InteractiveMap() {
                       }
                     })}
 
+                  {/* "Culture & Experiences" */}
                   {selectedCategory === "Culture & Experiences" &&
                     CulturalExperiences.filter(
                       (culture) =>
@@ -616,6 +614,36 @@ export default function InteractiveMap() {
                         <Popup>{culture.name}</Popup>
                       </Marker>
                     ))}
+
+                  {/* "See and Do" */}
+                  {selectedCategory === "See And Do" &&
+                    SeeAndDo.filter(
+                      (spot) =>
+                        !selectedCity || spot["city name"] === selectedCity
+                    ).map((spot, index) => {
+                      const lat = parseFloat(spot.coordinates[0]);
+                      const lng = parseFloat(spot.coordinates[1]);
+
+                      if (!isNaN(lat) && !isNaN(lng)) {
+                        return (
+                          <Marker
+                            key={index}
+                            position={[lat, lng]}
+                            title={spot.name}
+                            icon={customIcon(spot.iconUrl)}
+                            eventHandlers={{
+                              click: (e) => handleMarkerClick(spot, e),
+                            }}
+                          >
+                            <Popup>{spot.name}</Popup>
+                          </Marker>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+
+                  {/* User Location */}
                   {userLocation && (
                     <Marker
                       position={userLocation}
@@ -624,6 +652,8 @@ export default function InteractiveMap() {
                       <Popup>You are here</Popup>
                     </Marker>
                   )}
+
+                  {/* Nearby Locations */}
                   {userLocation &&
                     nearbyLocations.map((location, index) => (
                       <Marker
@@ -631,91 +661,133 @@ export default function InteractiveMap() {
                         position={location.coordinates}
                         icon={
                           location.category === "Property"
-                            ? L.icon({
-                                iconUrl: "/resort.png",
-                              })
+                            ? L.icon({ iconUrl: "/resort.png" })
                             : customIcon(location.iconUrl)
                         }
                       >
                         <Popup>{location.name}</Popup>
                       </Marker>
                     ))}
-                  {renderPolylines()}
 
-                  {selectedCategory === "See And Do" &&
-                    SeeAndDo.filter(
-                      (spot) =>
-                        !selectedCity || spot["city name"] === selectedCity
-                    ).map((spot, index) => (
-                      <Marker
-                        key={index}
-                        position={spot.coordinates}
-                        title={spot.name}
-                        icon={customIcon(spot.iconUrl)}
-                        eventHandlers={{
-                          click: (e) => handleMarkerClick(spot, e),
-                        }}
-                      >
-                        <Popup>{spot.name}</Popup>
-                      </Marker>
-                    ))}
+                  {renderPolylines()}
                 </MapContainer>
               ) : (
                 <p>Loading map data...</p>
               )}
             </div>
 
-            <div
-              style={{
-                width: "40%",
-                margin: "5px 10px 5px 0px",
-              }}
-            >
+            <div style={{ width: "40%", margin: "5px 10px 5px 0px" }}>
+              {/* "Where to Stay" Card */}
               {selectedProperty && selectedCategory === "Where to stay" && (
-                <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
-                  <div>
-                    <StayCard
-                      stay={selectedProperty}
-                      onClose={() => {
-                        setSelectedProperty(null);
-                        setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the property card
-                      }}
-                    />
-                  </div>
-                </ClickOutsideComponent>
-              )}
-
-              {selectedSeeAndDo && selectedCategory === "See And Do" && (
-                <ClickOutsideComponent onClickOutside={handleClickOutsideClose}>
-                  <div>
-                    <SeeAndDoCard
-                      spot={selectedSeeAndDo}
-                      allProperties={allProperties}
-                      onClose={() => {
-                        setSelectedSeeAndDo(null);
-                        setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the "See and Do" card
-                      }}
-                    />
-                  </div>
-                </ClickOutsideComponent>
-              )}
-
-              {selectedCulture &&
-                selectedCategory === "Culture & Experiences" && (
-                  <ClickOutsideComponent
-                    onClickOutside={handleClickOutsideClose}
-                  >
-                    <div className="culture-card-container">
-                      <CultureCard
-                        culture={selectedCulture}
-                        allProperties={allProperties}
+                <>
+                  {isSmallScreen ? (
+                    <Dialog
+                      open={Boolean(selectedProperty)}
+                      onClose={() => setSelectedProperty(null)}
+                      maxWidth="md"
+                      fullWidth
+                    >
+                      <StayCard
+                        stay={selectedProperty}
                         onClose={() => {
-                          setSelectedCulture(null);
-                          setShowWelcomeMap(true); // Show the WelcomeCebuMap when closing the "Culture & Experiences" card
+                          setSelectedProperty(null);
+                          setShowWelcomeMap(true);
                         }}
                       />
-                    </div>
-                  </ClickOutsideComponent>
+                    </Dialog>
+                  ) : (
+                    <ClickOutsideComponent
+                      onClickOutside={handleClickOutsideClose}
+                    >
+                      <div>
+                        <StayCard
+                          stay={selectedProperty}
+                          onClose={() => {
+                            setSelectedProperty(null);
+                            setShowWelcomeMap(true);
+                          }}
+                        />
+                      </div>
+                    </ClickOutsideComponent>
+                  )}
+                </>
+              )}
+
+              {/* "See and Do" Card */}
+              {selectedSeeAndDo && selectedCategory === "See And Do" && (
+                <>
+                  {isSmallScreen ? (
+                    <Dialog
+                      open={Boolean(selectedSeeAndDo)}
+                      onClose={() => setSelectedSeeAndDo(null)}
+                      maxWidth="md"
+                      fullWidth
+                    >
+                      <SeeAndDoCard
+                        spot={selectedSeeAndDo}
+                        allProperties={allProperties}
+                        onClose={() => {
+                          setSelectedSeeAndDo(null);
+                          setShowWelcomeMap(true);
+                        }}
+                      />
+                    </Dialog>
+                  ) : (
+                    <ClickOutsideComponent
+                      onClickOutside={handleClickOutsideClose}
+                    >
+                      <div>
+                        <SeeAndDoCard
+                          spot={selectedSeeAndDo}
+                          allProperties={allProperties}
+                          onClose={() => {
+                            setSelectedSeeAndDo(null);
+                            setShowWelcomeMap(true);
+                          }}
+                        />
+                      </div>
+                    </ClickOutsideComponent>
+                  )}
+                </>
+              )}
+
+              {/* "Culture & Experiences" Card */}
+              {selectedCulture &&
+                selectedCategory === "Culture & Experiences" && (
+                  <>
+                    {isSmallScreen ? (
+                      <Dialog
+                        open={Boolean(selectedCulture)}
+                        onClose={() => setSelectedCulture(null)}
+                        maxWidth="md"
+                        fullWidth
+                      >
+                        <CultureCard
+                          culture={selectedCulture}
+                          allProperties={allProperties}
+                          onClose={() => {
+                            setSelectedCulture(null);
+                            setShowWelcomeMap(true);
+                          }}
+                        />
+                      </Dialog>
+                    ) : (
+                      <ClickOutsideComponent
+                        onClickOutside={handleClickOutsideClose}
+                      >
+                        <div className="culture-card-container">
+                          <CultureCard
+                            culture={selectedCulture}
+                            allProperties={allProperties}
+                            onClose={() => {
+                              setSelectedCulture(null);
+                              setShowWelcomeMap(true);
+                            }}
+                          />
+                        </div>
+                      </ClickOutsideComponent>
+                    )}
+                  </>
                 )}
               {showWelcomeMap && <WelcomeCebuMap />}
             </div>
