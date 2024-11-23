@@ -1,0 +1,22 @@
+/* Default styles for all screens */
+.fc-toolbar-title {
+    font-size: 1.25rem; /* Adjust as needed */
+  }
+  
+  .fc-toolbar button {
+    font-size: 0.875rem; /* Smaller button text */
+    padding: 0.25rem 0.5rem; /* Smaller button size */
+  }
+  
+  /* Styles for smaller screens */
+  @media (max-width: 768px) {
+    .fc-toolbar-title {
+      font-size: .5rem; /* Smaller title size */
+    }
+  
+    .fc-toolbar button {
+      font-size: 0.75rem; /* Even smaller button text */
+      padding: 0.2rem 0.4rem; /* Adjust button padding */
+    }
+  }
+  
