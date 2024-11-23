@@ -54,7 +54,7 @@
 }
 
 .map-filter-cntr {
-  position: sticky;
+  /* position: sticky; */
   top: 0; /* Keeps the filter container at the top */
   background-color: white; /* Background for contrast */
   padding: 0.5rem; /* Container padding */
