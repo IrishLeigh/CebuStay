@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
+// import './css/CalendarComponent.css';
 
 const modalStyle = {
   position: 'absolute',
@@ -52,6 +53,52 @@ export default function CalendarComponent({ propertyTypes }) {
   const [eventInfo, setEventInfo] = useState({ title: '', bookingid: 0, description: '', start: '', end: '' });
   const [calendarHeight, setCalendarHeight] = useState('auto');
   const [marginLeft, setMarginLeft] = useState('auto');
+
+  const [headerToolbar, setHeaderToolbar] = useState({
+    left: 'prev,next',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,timeGridDay',
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        // Adjust for smaller screens
+        document.querySelector('.fc-toolbar-title').style.fontSize = '.75rem';
+        document.querySelector('.fc-toolbar-title').style.margin = '0px 5px';
+        document.querySelector('.fc-toolbar-title').style.textAlign = 'center';
+        document.querySelectorAll('.fc-prev-button, .fc-next-button, .fc-today-button').forEach(button => {
+          button.style.fontSize = '.5rem';
+          button.style.padding = '5px 8px';
+        });
+        document.querySelectorAll('.fc-dayGridMonth-button, .fc-timeGridWeek-button, .fc-timeGridDay-button').forEach(button => {
+          button.style.fontSize = '10px';
+          button.style.padding = '3px 8px';
+          button.style.margin = '5px 1px';
+        });
+      } else {
+        // Default toolbar for larger screens
+        document.querySelector('.fc-toolbar-title').style.fontSize = '1.25rem';
+        document.querySelectorAll('.fc-prev-button, .fc-next-button, .fc-today-button').forEach(button => {
+          button.style.fontSize = '14px';
+          button.style.padding = '5px 10px';
+        });
+        document.querySelectorAll('.fc-dayGridMonth-button, .fc-timeGridWeek-button, .fc-timeGridDay-button').forEach(button => {
+          button.style.fontSize = '14px';
+          button.style.padding = '5px 10px';
+        });
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup listener on unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const updateCalendarHeight = () => {
@@ -106,16 +153,12 @@ console.log( 'propertytypes',propertyTypes);
   };
 
   return (
-    <div style={{ height: '70vh', width: 'auto', marginLeft, paddingLeft: '2rem', paddingRight: '2rem' }}>
+    <div style={{ height: '70vh', width: 'auto', marginLeft, paddingLeft: '1rem', paddingRight: '1rem' }}>
       <Fullcalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         events={events}
         eventClick={handleOpen}
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        }}
+        headerToolbar={headerToolbar}
         height={calendarHeight}
         
 
