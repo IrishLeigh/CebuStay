@@ -21,8 +21,9 @@ import Phone from "@mui/icons-material/Phone";
 import axios from "axios";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateField } from '@mui/x-date-pickers/DateField'; // Import DateField for mobile view
 
 const countries = [
   { value: "USA", label: "USA", code: "+1" },
@@ -190,7 +191,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <div className="account-id-cntr">
             <div className="account-id-title">Personal Information</div>
@@ -204,97 +205,102 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ width: "100%", p: "2rem" }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Birthday"
-              value={birthday ? dayjs(birthday) : null}
-              onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  required
-                  sx={{
-                    mb: 2, // This sets the bottom margin to 2
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  
-                  }}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: !isMobile && (
-                      <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                        <CalendarToday />
-                      </InputAdornment>
-                    ),
-                  }}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {!isMobile && (
+                <DatePicker
+                  label="Birthday"
+                  value={birthday ? dayjs(birthday) : null}
+                  onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      required
+                      sx={{
+                        mb: 2, // This sets the bottom margin to 2
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "8px",
+                        },
+                      }}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: !isMobile && (
+                          <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                            <CalendarToday />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  )}
+                  maxDate={dayjs().subtract(18, "year")}
                 />
               )}
-              maxDate={dayjs().subtract(18, "year")}
+              {isMobile && (
+                <DateField
+                  label="Birthday"
+                  value={birthday ? dayjs(birthday) : null}
+                  onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
+                />
+              )}
+            </LocalizationProvider>
+
+            <TextField
+              required
+              id="outlined-required-country"
+              select
+              label="Country"
+              value={country}
+              onChange={handleCountryChange}
+              fullWidth
+              sx={{
+                mt: 2,
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  paddingRight: isMobile ? '3rem' : '1rem', // Adjust padding for mobile
+                },
+                "& .MuiSelect-select": {
+                  paddingLeft: isMobile ? '3rem' : '0rem', // Adjust padding-left for mobile
+                },
+              }}
+              InputProps={{
+                startAdornment: !isMobile && (
+                  <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                    <Public />
+                  </InputAdornment>
+                ),
+              }}
+            >
+              {countries.map((country) => (
+                <MenuItem key={country.value} value={country.value} sx={{ fontSize: "1rem" }}>
+                  {country.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+
+            <TextField
+              required
+              id="outlined-phone"
+              label="Phone Number"
+              value={phone}
+              onChange={handlePhoneChange}
+              fullWidth
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                },
+              }}
+              InputProps={{
+                startAdornment: !isMobile && (
+                  <InputAdornment position="start">
+                    {phoneNumberPrefix}
+                  
+                  </InputAdornment>
+                ),
+              
+              }}
             />
-          </LocalizationProvider>
-
-
-        <TextField
-          required
-          id="outlined-required-country"
-          select
-          label="Country"
-          value={country}
-          onChange={handleCountryChange}
-          fullWidth
-          sx={{
-            mt:2,
-            mb: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-            },
-          }}
-          InputProps={{
-            startAdornment: !isMobile && (
-              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <Public />
-              </InputAdornment>
-            ),
-          }}
-        >
-          {countries.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <TextField
-          required
-          id="outlined-required-phone"
-          label="Phone Number"
-          value={phone}
-          onChange={handlePhoneChange}
-          fullWidth
-          sx={{
-            mb: 2,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-            },
-          }}
-          InputProps={{
-            startAdornment: !isMobile && (
-              <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                <Phone sx={{ marginRight: "0.5rem" }} />
-                {phoneNumberPrefix}{" "}
-                {/* Displays the country code (+63) next to the icon */}
-              </InputAdornment>
-            ),
-          }}
-          inputProps={{
-            maxLength: 11, // Limit input to 11 digits (excluding the prefix)
-          }}
-          helperText={
-            phone && phone.length !== 10 ? "Phone number must be 10 digits" : ""
-          }
-          error={phone && phone.length > 0 && phone.length !== 10}
-        />
 
           <div >
             <button
@@ -316,28 +322,23 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
               Cancel
             </button>
           </div>
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={3000}
-            onClose={handleCloseSnackbar}
-          >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity={snackbarSeverity}
-              sx={{ width: "100%" }}
-            >
-              {snackbarMessage}
-            </Alert>
-          </Snackbar>
- 
           </Box>
-      
         </Grid>
       </Grid>
-
-
-      {/* Email, Birthday, Country, and Phone Number */}
-    
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 }

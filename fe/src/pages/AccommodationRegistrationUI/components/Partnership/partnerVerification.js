@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, Snackbar, useTheme, useMediaQuery } from '@mui/material';
+import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, Snackbar, useTheme, useMediaQuery, Alert } from '@mui/material';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
 import AnimatePage from '../AnimatedPage';
@@ -176,7 +176,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
               <Typography sx={{ fontFamily: "Poppins, sans-serif", mb: 2 }}>
                 To ensure compliance with legal and regulatory standards, we require some information about you and your property.
               </Typography>
-              <RadioGroup
+              {/* <RadioGroup
                 aria-labelledby="Host"
                 name="host"
                 value={hostType}
@@ -200,7 +200,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
                     </Typography>
                   }
                 />
-              </RadioGroup>
+              </RadioGroup> */}
               <Divider sx={{ my: 2 }} />
               {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange} />}
               {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} prevData={parentPartnerData} />}
@@ -216,8 +216,13 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
+        // message={snackbarMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

@@ -1,108 +1,105 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton';
+import HomeIcon from '@mui/icons-material/Home';
+import HotelIcon from '@mui/icons-material/Hotel';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import Button from '@mui/material/Button';
 import './NavigationBar.css';
 
 export default function HeaderAccountMgnt() {
-  const [anchorElNav, setAnchorElNav] = useState(null);
   const navigate = useNavigate();
-  const pages = ["Home", "Accommodation"];
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
+  const pagesMobile = [
+    { name: 'Home', icon: <HomeIcon />, link: '/' },
+    { name: 'Accommodation', icon: <HotelIcon />, link: '/accommodation' },
+    { name: 'List Property', icon: <AddBusinessIcon />, link: '/list-property' },
+    { name: 'Account', icon: <AccountCircleIcon />, link: '/account' },
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+  ];
 
-  const handlePageClick = (page) => {
-    if (page === 'Accommodation') {
-      window.location.href = 'accommodation';
-    } else if (page === 'Home') {
-      navigate('/');
-    } else {
-      navigate(`/${page.toLowerCase().replace(' ', '-')}`);
-    }
-    handleCloseNavMenu();
+  const pages = [
+    { name: 'Home', icon: <HomeIcon />, link: '/' },
+    { name: 'Accommodation', icon: <HotelIcon />, link: '/accommodation' },
+    { name: 'List Property', icon: <AddBusinessIcon />, link: '/list-property' },
+
+  ];
+
+  const handlePageClick = (link) => {
+    navigate(link);
   };
 
   return (
     <Box sx={{ width: '100%' }}>
       <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
-        <Toolbar sx={{ justifyContent: 'flex-end' }}>  {/* Align content to the right */}
-          {/* For mobile - shows the "Menu" button */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
-            <Button
-              onClick={handleOpenNavMenu}
-              sx={{ color: 'black', textTransform: 'none' }}
-            >
-              <Typography sx={{ fontSize: '0.9rem', color: '#16B4DD' }} fontWeight="bold">
-                Menu
-              </Typography>
-            </Button>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={() => handlePageClick(page)}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-              <MenuItem>
-                <Link to="/list-property" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  List your property
-                </Link>
-              </MenuItem>
-            </Menu>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          {/* For Mobile: Only Icons with Small Text */}
+          <Box
+            sx={{
+              display: { xs: 'flex', md: 'none' }, // Visible on mobile only
+              flexDirection: 'row', // Row layout for icons
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              width: '100%',
+              padding: 1,
+            }}
+          >
+            {pagesMobile.map((page) => (
+              <Box
+                key={page.name}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <IconButton
+                  onClick={() => handlePageClick(page.link)}
+                  sx={{ color: '#16B4DD' }}
+                >
+                  {page.icon}
+                </IconButton>
+                <Typography
+                  sx={{
+                    fontSize: '0.7rem',
+                    color: 'black',
+                    textAlign: 'center',
+                  }}
+                >
+                  {page.name}
+                </Typography>
+              </Box>
+            ))}
           </Box>
 
-          {/* For desktop - shows the menu items directly */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', flexGrow: 1 }}>
-          {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={() => handlePageClick(page)}
-                  sx={{ mx: 1, color: "black" }}
+          {/* For Desktop: Full Menu */}
+          <Box
+            sx={{
+              display: { xs: 'none', md: 'flex' }, // Visible on desktop only
+              justifyContent: 'flex-end',
+              flexGrow: 1,
+            }}
+          >
+            {pages.map((page) => (
+              <Button
+                key={page.name}
+                onClick={() => handlePageClick(page.link)}
+                sx={{ mx: 1, color: 'black' }}
+              >
+                <Typography
+                  sx={{ fontSize: '0.9rem', color: '#16B4DD' }}
+                  fontWeight="bold"
                 >
-                  <Typography
-                    sx={{ fontSize: "0.9rem", color: "#16B4DD" }}
-                    fontWeight="bold"
-                  >
-                    {page}
-                  </Typography>
-                </Button>
-              ))}
-              <button className="property-listing">
-                <Link
-                  to="/list-property"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  List your property
-                </Link>
-              </button>
-            </Box>
-
+                  {page.name}
+                </Typography>
+              </Button>
+            ))}
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>

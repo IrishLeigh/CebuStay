@@ -23,7 +23,6 @@ export default function ReservationSection({
   const [notification, setNotification] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-
   useEffect(() => {
     if (propertyinfo) {
       setPropertyInfo(propertyinfo);
@@ -36,40 +35,47 @@ export default function ReservationSection({
   useEffect(() => {
     if (!checkInDate || !checkOutDate) {
       setNotification("");
+      setError("");
       return;
     }
 
-    if (!isDaily) {
-      const diffDays = checkOutDate.diff(checkInDate, "day");
+    if (isDaily) {
+      // If isDaily is true, clear errors and notifications and exit
+      setError("");
+      setNotification("");
+      return;
+    }
 
-      if (diffDays < 31) {
-        setError("Minimum stay for monthly bookings is 31 days.");
-        setSnackbarOpen(true); // Open Snackbar for error
-        setNotification("");
-      } else {
-        setError("");
+    // Monthly booking logic
+    const diffDays = checkOutDate.diff(checkInDate, "day");
 
-        // Calculate months and remaining days
-        const currentMonths = Math.floor(diffDays / 31);
-        const remainingDays = diffDays % 31;
-
-        // Always round up for monthsToCharge
-        const monthsToCharge = Math.ceil(diffDays / 31);
-
-        // Build the notification message
-        if (remainingDays > 0) {
-          setNotification(`You set ${currentMonths} month${currentMonths > 1 ? 's' : ''} and ${remainingDays} day${remainingDays > 1 ? 's' : ''}, but you will be charged for ${monthsToCharge} month${monthsToCharge > 1 ? 's' : ''}. We recommend setting to full month.`);
-        } else {
-          setNotification("");
-        }
-      }
+    if (diffDays < 31) {
+      setError("Minimum stay for monthly bookings is 31 days.");
+      setSnackbarOpen(true);
+      setNotification("");
     } else {
-      setNotification(""); // Clear notification for daily bookings
+      setError("");
+
+      const currentMonths = Math.floor(diffDays / 31);
+      const remainingDays = diffDays % 31;
+      const monthsToCharge = Math.ceil(diffDays / 31);
+
+      if (remainingDays > 0) {
+        setNotification(
+          `You set ${currentMonths} month${currentMonths > 1 ? "s" : ""} and ${remainingDays} day${
+            remainingDays > 1 ? "s" : ""
+          }, but you will be charged for ${monthsToCharge} month${
+            monthsToCharge > 1 ? "s" : ""
+          }. We recommend setting to full month.`
+        );
+      } else {
+        setNotification("");
+      }
     }
   }, [checkInDate, checkOutDate, isDaily]);
 
   const formatPrice = (price) => {
-    const validPrice = (price && !isNaN(price)) ? price : 0; // Display 0 instead of NaN
+    const validPrice = price && !isNaN(price) ? price : 0;
     return new Intl.NumberFormat("en-PH", {
       style: "currency",
       currency: "PHP",
@@ -138,7 +144,6 @@ export default function ReservationSection({
               {error}
             </Typography>
           )}
-          {/* Only show the notification if both checkInDate and checkOutDate are set */}
           {checkInDate && checkOutDate && notification && (
             <Typography color="warning" variant="body2" sx={{ mt: 2 }}>
               {notification}
@@ -155,14 +160,13 @@ export default function ReservationSection({
         Reserve
       </button>
 
-      {/* Snackbar for error notifications */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
           {error}
         </Alert>
       </Snackbar>

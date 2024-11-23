@@ -13,6 +13,7 @@ const UserLayout = ({isPropertyListed}) => {
     "/admin/payouts",
     // "/edit-property",
     "/account",
+    "/my-bookings"
   ];
 
   // Check if the current path is one of the admin routes

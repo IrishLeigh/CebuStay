@@ -97,7 +97,7 @@ export default function EditRulesPolicies({
   useEffect(() => {
     if (policies) {
       const initialPoliciesData = {
-        isCancellationPolicy: policies.isCancellationPolicy === 1, // Convert 1/0 to true/false
+        isCancellationPolicy: policies.isCancellationPolicy === 1 , // Convert 1/0 to true/false
         isModificationPolicy: policies.isModificationPolicy === 1,  // Convert 1/0 to true/false
         cancellationDays: policies.cancellationDays || '',
         cancellationCharge: policies.CancellationCharge || '',
@@ -425,7 +425,7 @@ export default function EditRulesPolicies({
 
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel} hasError={hasError}/>
+      <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel} />
       <Paper
         style={{
           width: "auto",
