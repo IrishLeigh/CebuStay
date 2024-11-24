@@ -9,7 +9,7 @@
 #reviews-and-ratings {
   margin: 0 auto;
   padding: 1rem;
-  max-width: 1200px;
+  max-width: 100%;
 }
 
 .info-title-cntr {
@@ -190,6 +190,9 @@
   .tab-button {
     width: 100%;
   }
+  .tab-button.active{
+    color: #333;
+  }
 }
 
 @media (max-width: 576px) {
@@ -200,5 +203,135 @@
   .info-title-cntr {
     flex-direction: column;
     text-align: center;
+  }
+}
+
+
+/* Container styles */
+.summary-box {
+  max-width: 100%; /* Allows the box to scale with screen size */
+  width: 90%; /* Keeps the box responsive within the viewport */
+  margin: 0 auto; /* Centers the box */
+  padding: 16px;
+  background: #fff; /* Example background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Icon and header styling */
+.summary-icon {
+  font-size: 2rem;
+  margin-right: 8px;
+}
+
+.summary-box h3 {
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Star distribution container */
+.star-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Adds spacing between rows */
+}
+
+.star-distribution-item {
+  display: grid; /* Use grid layout for precise alignment */
+  grid-template-columns: auto 1fr auto; /* Label, stars, count */
+  align-items: center;
+  gap: 12px; /* Spacing between columns */
+}
+
+.star-rating {
+  font-size: 1rem;
+  color: #333;
+  text-align: left; /* Align labels to the left */
+}
+
+.star-visual {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-start; /* Align stars to the left */
+}
+
+.star-count {
+  font-size: 1rem;
+  color: #666;
+  text-align: right; /* Align count to the right */
+}
+
+/* Star styling */
+.star {
+  font-size: 1.25rem;
+  color: #fbc02d; /* Star color */
+}
+
+.star.filled {
+  color: #ffa726; /* Filled star color */
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .summary-box {
+    padding: 12px;
+  }
+
+  .summary-box h3 {
+    font-size: 1.25rem;
+  }
+
+  .star-distribution {
+    gap: 8px;
+  }
+
+  .star-distribution-item {
+    grid-template-columns: auto 1fr auto; /* Keep same layout */
+    gap: 8px;
+  }
+
+  .star-rating {
+    font-size: 0.9rem;
+    margin-left: 8px;
+  }
+
+  .star {
+    font-size: 1rem;
+  }
+
+  .star-count {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-box {
+    width: 95%; /* Take most of the screen */
+  }
+
+  .summary-box h3 {
+    font-size: 1rem;
+  }
+
+  .star-distribution {
+    gap: 6px;
+  }
+
+  .star-distribution-item {
+    grid-template-columns: auto 1fr auto; /* Retain alignment */
+    gap: 6px;
+  }
+
+  .star-visual {
+    gap: 2px;
+  }
+
+  .star {
+    font-size: 0.9rem;
+  }
+
+  .star-count {
+    font-size: 0.8rem;
   }
 }

@@ -9,6 +9,7 @@ import { AuthProvider } from "./components/AuthProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import TopRated from "./InteractiveMap/components/TopRated";
 import Payout from "./pages/PropertyManagementUI/components/payout/components/Payout";
+import ReviewsAndRatingsSingleUnit from "./pages/PropertyDetailsUI/components/ReviewsAndRatings/ReviewsUI/ReviewsRatings";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -18,7 +19,7 @@ root.render(
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
             <AuthProvider>
-              <App />
+              <ReviewsAndRatingsSingleUnit />
             </AuthProvider>
           </GoogleOAuthProvider>
         </UserProvider>
