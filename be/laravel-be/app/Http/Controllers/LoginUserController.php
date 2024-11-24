@@ -105,6 +105,7 @@ class LoginUserController extends CORS
                     'firstname' => $user->firstname,
                     'lastname' => $user->lastname,
                     'email' => $user->email,
+                    'role' => $user->accounttype
                 ]
             ],
             $key,
