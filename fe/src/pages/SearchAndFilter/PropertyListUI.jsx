@@ -187,7 +187,11 @@ const PropertyListUI = () => {
     <Container maxWidth="lg">
       <BannerOffers accommodations={accommodationList} setAccommodationList={setAccommodationList}  onSearchUpdate={handleSearchUpdate} originalAccommodationList={originalAccommodationList}/>
 
-      <div className="content-layout">
+      <div className="content-layout"   style={{
+    display: 'flex',
+    gap: '1rem' // Optional: space between SideBar and MainContent
+    // padding: '0.3rem', // Optional: add padding around the content layout
+  }}>
         {/* Sidebar with toggle state */}
         <SideBar 
         isSidebarOpen={isSidebarOpen} 
@@ -195,6 +199,10 @@ const PropertyListUI = () => {
           onAmenityChange={handleAmenityChange} 
           onFilterChange={handleFilterChange} 
           filters={filters} 
+             style={{
+      flexGrow: 1, // Main content will expand and take available space
+      minWidth: '300px', // Optional: minimum width for main content
+    }}
         />
 
         {/* Main content */}
@@ -205,6 +213,10 @@ const PropertyListUI = () => {
           searchData={searchData}
           setSearchData={setSearchData}
           searchUpdate = {searchUpdateData}
+          style={{
+            flexGrow: 2, // Main content will expand and take available space
+            minWidth: '300px', // Optional: minimum width for main content
+          }}
         />
       </div>
     </Container>

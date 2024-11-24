@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../css/SideBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faChevronLeft } from '@fortawesome/free-solid-svg-icons'; // Bars for opening, Chevron for closing
+import { faBars, faChevronLeft, faTimes } from '@fortawesome/free-solid-svg-icons'; // Add faTimes for the close button
+
 
 
 
@@ -165,7 +166,13 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
 >
       {/* Button to toggle sidebar visibility on mobile */}
       <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`} >
-        <button className="sidebar-close-btn" onClick={toggleSidebar}>X</button>
+      <button
+    className="sidebar-close-btn"
+    onClick={toggleSidebar}
+    style={{ position: 'absolute', right: '10px', top: '5px', fontSize: '1.5rem', border: 'none', background: 'transparent', cursor: 'pointer' }}
+>
+    <FontAwesomeIcon icon={faTimes} />
+</button>
 
       <div className="mt-6">
         <h3 className="font-semibold" style={{ textAlign: 'left' }}>Property Type</h3>
@@ -417,13 +424,26 @@ const SideBar = ({ onAmenityChange, onFilterChange, filters }) => {
       </div>
 </div>
 
-      <button 
-        className={`sidebar-toggle-btn ${isSidebarOpen ? 'open' : ''}`} 
-        onClick={toggleSidebar}
-        aria-label={isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
-      >
-        <FontAwesomeIcon icon={isSidebarOpen ? faChevronLeft : faBars} />
-      </button>
+<button 
+    className="sidebar-toggle-btn" 
+    onClick={toggleSidebar}
+    aria-label="Open Sidebar"
+    style={{
+      top: '40px', 
+      left: '5px',  // Positioned near the left edge of the screen
+      backgroundColor: '#16B4DD', // A nice blue shade
+      color: 'white',
+      padding: '10px',
+      borderRadius: '10%',
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+      transition: 'background-color 0.2s ease, transform 0.1s ease',
+      zIndex: 1000,
+      cursor: 'pointer',
+    }}
+  >
+    <FontAwesomeIcon icon={faBars} />
+  </button>
+
 
 </div>
 

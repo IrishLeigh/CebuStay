@@ -189,7 +189,7 @@
   .card {
     width: 100%; /* Single card per row on mobile */
     margin: 0.5rem 0; /* Reduce margin between cards */
-  }
+margin-left: 1rem;  }
 
   /* Adjust text and button sizes */
   .card-title {
@@ -260,9 +260,5 @@
   }
 }
 
-/* Small screens (mobile phones) */
-@media (max-width: 768px) {
-  .main-content .card {
-    width: calc(100% - 1rem); /* Show 1 card per row on small screens */
-  }
-}
+
+
