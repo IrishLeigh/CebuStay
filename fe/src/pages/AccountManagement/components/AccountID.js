@@ -142,20 +142,21 @@ export default function AccountID({ profile, onUpdateProfile }) {
                 mb: 2, // Add margin bottom for spacing
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",
+                  display: "flex", // Ensure flex layout for alignment
                 },
               }}
               InputProps={{
                 startAdornment: !isMobile && (
-                  <InputAdornment
-                    position="start"
-                    
-                  >
+                  <InputAdornment position="start">
                     <AccountCircle />
                   </InputAdornment>
                 ),
+                sx: {
+                  paddingLeft: isMobile ? '8px' : '16px', // Adjust left padding to ensure alignment
+                }
               }}
             />
-            <div>
+             <div style={{ display: "flex", justifyContent: "flex-end",gap: "1rem" }} >
               <button
                 className={`save-btn ${
                   firstName !== profile.firstname ||

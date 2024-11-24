@@ -55,14 +55,17 @@
 
 .map-filter-cntr {
   /* position: sticky; */
-  top: 0; /* Keeps the filter container at the top */
+  /* top: 0; Keeps the filter container at the top */
   background-color: white; /* Background for contrast */
   padding: 0.5rem; /* Container padding */
   z-index: 1000; /* Ensure it's on top of other elements */
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: center; /* Align buttons to the start */
+  flex-wrap: nowrap; /* Prevent wrapping */
   gap: 0.5rem; /* Space between buttons */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent the buttons from wrapping to the next line */
+  padding-bottom: 5px; /* Optional: Add some padding to the bottom for spacing */
 }
 
 .map-filter-btn {
@@ -77,7 +80,9 @@
   cursor: pointer;
   transition: transform 0.2s ease-in-out, background-color 0.3s;
   border-radius: 5px;
+  
 }
+
 
 /* Hover state */
 .map-filter-btn:hover {
@@ -155,6 +160,10 @@
   .map {
     width: 100%;
     height: 100vh;
+  }
+  .map-filter-cntr {
+    justify-content: flex-start; /* Align buttons to the start */
+   
   }
 }
 

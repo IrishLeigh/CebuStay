@@ -220,7 +220,7 @@ export default function PropertyOverView({ rating, propertyinfo }) {
         </Grid>
 
         {/* Host Details */}
-        <Grid xs={12} sm={7}>
+        <Grid xs={12} sm={7} mt={2}>
           <div className="hostdetails-cntr">Host Details</div>
           <table className="host-details-table">
             <tbody>

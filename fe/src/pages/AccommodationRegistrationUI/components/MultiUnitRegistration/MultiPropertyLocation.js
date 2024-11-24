@@ -357,7 +357,7 @@ const MultiPropertyLocation = ({ handleNext, handleBack, google }) => {
           </Box>
         </AnimatePage>
         <div className="stepperFooter">
-          <Button onClick={handleBack} className="stepperPrevious">
+          <Button onClick={handleBack} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
             Back
           </Button>
           <Button onClick={validateAndProceed} className="stepperNext">

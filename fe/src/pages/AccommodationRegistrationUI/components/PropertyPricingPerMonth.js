@@ -6,9 +6,11 @@ import { styled } from "@mui/material/styles";
 import CheckIcon from "@mui/icons-material/Check";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import { useState, useEffect } from "react";
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { Grid, Typography, useMediaQuery } from "@mui/material";
 
@@ -33,6 +35,7 @@ export default function UnitPricingPerMonth({ onUnitPricingChange, parentUnitPri
     basePrice: basePrice,
     profit: "",
   });
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" }); // Snackbar state
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   // Handle input change for price
@@ -61,21 +64,34 @@ export default function UnitPricingPerMonth({ onUnitPricingChange, parentUnitPri
     window.scrollTo(0, 0);
   }, []);
 
+  // Close Snackbar
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: "", severity: "info" });
+  };
+
   // Validate price and proceed to next step
   const validateAndProceed = () => {
     const minPrice = 566; // Minimum price limit
     if (basePrice < minPrice) {
-      alert(`Please enter a price of at least ${pesoSign}${minPrice} to sustain the platform's operational integrity.`);
+      setSnackbar({
+        open: true,
+        message: `Please enter a price of at least ${pesoSign}${minPrice} to sustain the platform's operational integrity.`,
+        severity: "warning",
+      });
     } else if (basePrice) {
       onUnitPricingChange(priceUnit); // Update parent with pricing info
       handleNext(); // Move to next step
     } else {
-      alert("Please enter a valid price.");
+      setSnackbar({
+        open: true,
+        message: "Please enter a valid price.",
+        severity: "error",
+      });
     }
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <Box className="centered-container">
         <Paper
           elevation={3}
@@ -165,7 +181,7 @@ export default function UnitPricingPerMonth({ onUnitPricingChange, parentUnitPri
                   border: "1px solid #ccc",
                   borderRadius: "0.8rem",
                   padding: "1rem",
-                  color: "#2A2A2E"
+                  color: "#2A2A2E",
                 }}
               >
                 <Typography variant="h6" mb={2} gutterBottom>
@@ -195,13 +211,23 @@ export default function UnitPricingPerMonth({ onUnitPricingChange, parentUnitPri
         </Paper>
       </Box>
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
+        <Button onClick={handleBack} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
           Back
         </Button>
         <Button onClick={validateAndProceed} className="stepperNext">
           Next
         </Button>
       </div>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

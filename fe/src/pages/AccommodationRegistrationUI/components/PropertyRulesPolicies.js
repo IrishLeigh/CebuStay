@@ -136,6 +136,14 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed) {
       errors.push("Please select at least one standard rule.");
     }
+    //Validate quite hours if selected
+    if (showTimePicker && (!houseRulesData.quietHoursStart || !houseRulesData.quietHoursEnd)) {
+      errors.push("Please specify quiet hours.");
+    }
+    //Validate quite hours the start time is before the end time
+    if (showTimePicker && houseRulesData.quietHoursStart > houseRulesData.quietHoursEnd) {
+      errors.push("Quiet hours start time cannot be after quiet hours end time.");
+    }
 
     if (!houseRulesData.customRules) {
       errors.push("Please enter your custom rules.");
@@ -144,9 +152,9 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     if (!houseRulesData.checkInFrom || !houseRulesData.checkOutFrom || !houseRulesData.checkOutUntil) {
       errors.push("Please specify check-in and check-out times.");
     }
-    if (houseRulesData.checkInFrom > houseRulesData.checkOutFrom) {
-      errors.push("Check-in time cannot be after check-out time.");
-    }
+    // if (houseRulesData.checkInFrom > houseRulesData.checkOutFrom) {
+    //   errors.push("Check-in time cannot be after check-out time.");
+    // }
     if (houseRulesData.checkOutFrom > houseRulesData.checkOutUntil) {
       errors.push("Check-out from  cannot be be after check-out until.");
     }
@@ -504,12 +512,20 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                             />
                           </Grid>
                         </Grid>
+                        { errorMessages.includes("Please specify quiet hours start and end.") && (
+                          <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify quiet hours start and end.</Typography>
+                        )}
+                        {}
                       </Box>
                     )}
                     {/* Error Message for Quiet Hours */}
-                      {errorMessages.includes("Please specify quiet hours start and end.") && (
+                      {errorMessages.includes("Please specify quiet hours.") && (
                         <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify quiet hours start and end.</Typography>
                       )}
+                     {errorMessages.includes("Quiet hours start must be before quiet hours end.") && (
+                        <Typography color="error" sx={{fontSize: "0.8rem" }}>Quiet hours start must be before quiet hours end.</Typography>
+                     )}
+   
                   </Box>
                   <Box>
                     <Typography sx={{ fontWeight: 'bold', fontSize: 18, mt: 2, mb: 1 }}>
@@ -561,7 +577,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
                       
                       </Box> */}
                     </Grid>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} mt={2}>
                       <Grid item xs={12} md={6}>
                         <DatePicker
                             title="Check-out From"
@@ -597,11 +613,11 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
               {errorMessages.includes("Please specify check-in and check-out times.") && (
                 <Typography color="error" sx={{fontSize: "0.8rem" }}>Please specify check-in and check-out times.</Typography>
               )}
-              {errorMessages.includes(" Check-in time cannot be after check-out time.") && (
+              {/* {errorMessages.includes(" Check-in time cannot be after check-out time.") && (
                 <Typography color="error" sx={{fontSize: "0.8rem" }}> Check-in time cannot be after check-out time.</Typography>
-              )}
-               {errorMessages.includes(" Check-out from time cannot be be after check-out until.") && (
-                <Typography color="error" sx={{fontSize: "0.8rem" }}> Check-out from time cannot be be after check-out until.</Typography>
+              )} */}
+               {errorMessages.includes("Check-out from  cannot be be after check-out until.") && (
+                <Typography color="error" sx={{fontSize: "0.8rem" }}>Check-out from time cannot be be after check-out until.</Typography>
               )}
               
             </Box>
@@ -610,7 +626,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
         </Box>
       </AnimatePage>
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
+        <Button onClick={handleBack} className="stepperPrevious"  sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
           Back
         </Button>
         <Button onClick={validateAndProceed} className="stepperNext">

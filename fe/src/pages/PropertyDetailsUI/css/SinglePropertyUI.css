@@ -82,16 +82,16 @@
 }
 
 .property-filter-container {
-  top: 0; /* Position them at the top of the scrolling container */
-  background-color: white; /* Ensure the background color is white for contrast */
-  padding: 0.5rem; /* Add some padding */
-  z-index: 1000; /* Ensure it's on top of other elements */
+  top: 0; 
+  background-color: white;
+  padding: 0.5rem;
+  z-index: 1000;
   display: flex;
   justify-content: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;  /* Allow buttons to wrap to the next line */
   border-radius: 12px;
-  overflow: auto;
-
+  overflow: hidden;  /* Hide horizontal scrollbar */
+  gap: 8px;  /* Optional: add space between buttons */
 }
 
 .property-filter-btn {
@@ -106,6 +106,7 @@
   cursor: pointer;
   transition: transform 0.2s ease-in-out, background-color 0.3s;
   border-radius: 5px;
+  min-width: 120px;  /* Ensure buttons have a minimum width */
 }
 
 /* Hover state */
@@ -118,4 +119,13 @@
 .property-filter-btn:active {
   transform: scale(0.95);
   opacity: 0.8;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 600px) {
+  .property-filter-btn {
+    font-size: 14px;  /* Adjust font size for smaller screens */
+    padding: 8px 16px;  /* Reduce padding on smaller screens */
+    min-width: 100px;  /* Adjust button width for smaller screens */
+  }
 }

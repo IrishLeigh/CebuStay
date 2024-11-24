@@ -17,7 +17,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Lock from "@mui/icons-material/Lock";
 import axios from "axios";
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from "@mui/material/styles";
 
 export default function AccountSignIn({ profile }) {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -32,8 +32,11 @@ export default function AccountSignIn({ profile }) {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [loading, setLoading] = useState(false);
+  const [showAllPasswords, setShowAllPasswords] = useState(false);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if the screen size is mobile
+
   // Update current password from profile
   useEffect(() => {
     if (profile) {
@@ -46,72 +49,71 @@ export default function AccountSignIn({ profile }) {
     setIsChanged(newPassword.length > 0 && newPassword === confirmNewPassword);
   }, [newPassword, confirmNewPassword]);
 
-  const handleToggleShowCurrentPassword = () =>
-    setShowCurrentPassword((prev) => !prev);
-  const handleToggleShowNewPassword = () => setShowNewPassword((prev) => !prev);
-  const handleToggleShowConfirmNewPassword = () =>
-    setShowConfirmNewPassword((prev) => !prev);
-
   const handleSavePassword = async (e) => {
     e.preventDefault();
-  
-    // Check if the new password contains at least one capital letter or symbol
-    const passwordRequirements = /^(?=.*[A-Z])(?=.*[\W_]).+$/;
-  
-    if (!newPassword.match(passwordRequirements)) {
-      setSnackbarMessage("Password must contain at least one symbol or a capital letter");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      return; // Stop further execution
+
+    const errors = [];
+    const passwordRequirements = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+
+    // Validate current password
+    if (currentPassword !== profilePassword) {
+      errors.push("Invalid current password.");
     }
-  
-    // Check if new password matches the confirm password field
+
+    // Validate new password
+    if (newPassword === currentPassword) {
+      errors.push("New password cannot be the same as the current password.");
+    }
+    if (!passwordRequirements.test(newPassword)) {
+      errors.push(
+        "New password must be at least 8 characters long, contain one uppercase letter, and one special character."
+      );
+    }
     if (newPassword !== confirmNewPassword) {
-      setSnackbarMessage("Passwords do not match");
+      errors.push("New password and confirm password do not match.");
+    }
+
+    // Display errors if any
+    if (errors.length > 0) {
+      setSnackbarMessage(errors.join(" "));
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
-      return; // Stop further execution
+      return;
     }
-  
+
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
-          old_password: currentPassword, // Assuming currentPassword is the old password
+          old_password: currentPassword,
           password: newPassword,
         }
       );
-  
-      // Password successfully changed
+
       setSnackbarMessage("Password Successfully Changed");
       setSnackbarSeverity("success");
-      setIsChanged(false); // Reset the state after saving
+      setIsChanged(false);
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
-  
     } catch (error) {
-      console.error(error.response.data.message);
-      // Handle error state or display an error message to the user
-      
-      if (error.response?.data?.status === "invalid") {
-        setSnackbarMessage("Invalid Password");
-      } else {
-        setSnackbarMessage("An error occurred while changing the password");
-      }
+      setSnackbarMessage(
+        error.response?.data?.status === "invalid"
+          ? "Invalid current password."
+          : "An error occurred while changing the password."
+      );
       setSnackbarSeverity("error");
     } finally {
-      setSnackbarOpen(true); // Always open the snackbar
+      setSnackbarOpen(true);
     }
   };
-  
 
   const handleCancel = () => {
     setCurrentPassword(profile.currentPassword);
     setNewPassword("");
     setConfirmNewPassword("");
-    setIsChanged(false); // Reset the state after cancelling
+    setIsChanged(false);
   };
 
   const handleCloseSnackbar = () => {
@@ -120,7 +122,6 @@ export default function AccountSignIn({ profile }) {
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
-
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <div className="account-id-cntr">
@@ -133,96 +134,54 @@ export default function AccountSignIn({ profile }) {
         </Grid>
         <Grid item xs={12} md={6}>
           <Box sx={{ width: "100%", p: "2rem" }}>
-                <Typography
-                variant="h6"
-                sx={{
-                  marginBottom: "1rem",
-                  fontWeight: "bold",
-                  fontSize: "20px",
-                  color: "#6A6A6A",
-                }}
-              >
-                Change Password
-              </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                marginBottom: "1rem",
+                fontWeight: "bold",
+                fontSize: "20px",
+                color: "#6A6A6A",
+              }}
+            >
+              Change Password
+            </Typography>
 
+            {[
+              {
+                id: "current-password",
+                label: "Current Password",
+                value: currentPassword,
+                setValue: setCurrentPassword,
+                show: showCurrentPassword || showAllPasswords,
+                toggle: () => setShowCurrentPassword((prev) => !prev),
+              },
+              {
+                id: "new-password",
+                label: "New Password",
+                value: newPassword,
+                setValue: setNewPassword,
+                show: showNewPassword || showAllPasswords,
+                toggle: () => setShowNewPassword((prev) => !prev),
+              },
+              {
+                id: "confirm-new-password",
+                label: "Confirm New Password",
+                value: confirmNewPassword,
+                setValue: setConfirmNewPassword,
+                show: showConfirmNewPassword || showAllPasswords,
+                toggle: () => setShowConfirmNewPassword((prev) => !prev),
+              },
+            ].map((field) => (
               <TextField
                 required
-                id="current-password"
-                label="Current Password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                type={showCurrentPassword ? "text" : "password"}
+                id={field.id}
+                label={field.label}
+                value={field.value}
+                onChange={(e) => field.setValue(e.target.value)}
+                type={field.show ? "text" : "password"}
                 fullWidth
                 sx={{
-                  mb: 2,
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                }}
-                InputProps={{
-                  startAdornment:!isMobile && (
-                    <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                      <Lock />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleToggleShowCurrentPassword}
-                        edge="end"
-                      >
-                        {showCurrentPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <TextField
-                required
-                id="new-password"
-                label="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                fullWidth
-                type={showNewPassword ? "text" : "password"}
-                sx={{
-                  mb: 2,
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                }}
-                InputProps={{
-                  startAdornment:!isMobile && (
-                    <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                      <Lock />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleToggleShowNewPassword}
-                        edge="end"
-                      >
-                        {showNewPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <TextField
-                required
-                id="confirm-new-password"
-                label="Confirm New Password"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                type={showConfirmNewPassword ? "text" : "password"}
-                fullWidth
-                sx={{
-                  mb: 2,
+                  p: isMobile ? "8px" : "16px",
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "8px",
                   },
@@ -233,55 +192,72 @@ export default function AccountSignIn({ profile }) {
                       <Lock />
                     </InputAdornment>
                   ),
-                  endAdornment: (
+                  endAdornment: !isMobile && (
                     <InputAdornment position="end">
                       <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleToggleShowConfirmNewPassword}
+                        aria-label={`toggle ${field.label.toLowerCase()} visibility`}
+                        onClick={field.toggle}
                         edge="end"
                       >
-                        {showConfirmNewPassword ? <Visibility /> : <VisibilityOff />}
+                        {field.show ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                     </InputAdornment>
                   ),
+                  sx: {
+                    paddingLeft: isMobile ? '8px' : '16px', // Adjust left padding to ensure alignment
+                  }
                 }}
               />
+            ))}
 
-              <div >
-                <button
-                  className={`save-btn ${
-                    isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
-                  }`}
-                  onClick={handleSavePassword}
-                  disabled={!isChanged}
-                >
-                  Save
-                </button>
-                <button
-                  className={`cancel-btn ${
-                    isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
-                  }`}
-                  onClick={handleCancel}
-                  disabled={!isChanged}
-                >
-                  Cancel
-                </button>
-              </div>
+            {isMobile && (
+              <Box sx={{ mb: 2 , ml: 1}}>
+                <Typography component="label">
+                  <input
+                    type="checkbox"
+                    checked={showAllPasswords}
+                    onChange={(e) => setShowAllPasswords(e.target.checked)}
+                  />{" "}
+                  Show All Passwords
+                </Typography>
+              </Box>
+            )}
 
-              <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={3000}
-                onClose={handleCloseSnackbar}
+            <div style={{ display: "flex", justifyContent: "flex-end",gap: "1rem" }} >
+              <button
+                className={`save-btn ${
+                  isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+                }`}
+                onClick={handleSavePassword}
+                disabled={!isChanged}
               >
-                <Alert
-                  onClose={handleCloseSnackbar}
-                  severity={snackbarSeverity}
-                  sx={{ width: "100%" }}
-                >
-                  {snackbarMessage}
-                </Alert>
-              </Snackbar>
+                Save
+              </button>
+              <button
+                className={`cancel-btn ${
+                  isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+                }`}
+                onClick={handleCancel}
+                disabled={!isChanged}
+              >
+                Cancel
+              </button>
+            </div>
 
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={3000}
+              onClose={handleCloseSnackbar}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+              <Alert
+                onClose={handleCloseSnackbar}
+                severity={snackbarSeverity}
+                sx={{ width: "100%" }}
+              >
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
           </Box>
         </Grid>
       </Grid>

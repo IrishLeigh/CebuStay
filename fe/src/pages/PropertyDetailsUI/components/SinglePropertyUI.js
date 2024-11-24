@@ -182,7 +182,7 @@ export default function SinglePropertyUI({ propertyid }) {
   };
 
   console.log("GALLERY IMAGES IN PARENT", galleryImages);
-  console.log("Property info", propertyInfo);
+  console.log("Property info in property details parent", propertyInfo);
 
   return (
     <div>

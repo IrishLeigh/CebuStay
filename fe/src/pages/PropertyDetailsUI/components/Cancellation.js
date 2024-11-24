@@ -9,42 +9,57 @@ import {
   NaturePeople,
   NoMeetingRoom,
 } from "@mui/icons-material";
-import "../css/PropertyBenefits.css";
-
-// Constants for cancellation policy properties
-const bookingpolicyid = "bookingpolicyid";
-const cancel_days = "cancel_days";
-const is_cancel_plan = "is_cancel_plan";
-const modification_plan = "modification_plan";
-const non_refundable = "non_refundable";
 
 // Icon mapping for cancellation policies
 const iconMap = {
-  [bookingpolicyid]: <NoMeetingRoom sx={{ color: "#16B4DD" }} />,
-  [cancel_days]: <AccessTime sx={{ color: "#16B4DD" }} />,
-  [is_cancel_plan]: <EventNote sx={{ color: "#16B4DD" }} />,
-  [modification_plan]: <EventNote sx={{ color: "#16B4DD" }} />,
-  [non_refundable]: <NaturePeople sx={{ color: "#16B4DD" }} />,
+  cancellationDays: <AccessTime sx={{ color: "#16B4DD" }} />,
+  CancellationCharge: <NoMeetingRoom sx={{ color: "#16B4DD" }} />,
+  isCancellationPolicy: <EventNote sx={{ color: "#16B4DD" }} />,
+  isModificationPolicy: <EventNote sx={{ color: "#16B4DD" }} />,
+  modificationCharge: <NaturePeople sx={{ color: "#16B4DD" }} />,
 };
 
 const Cancellation = ({ cancellation = {} }) => {
-  // Combine Cancellation / Refund Policy with a single word
-  const cancellationRefundPolicy =
-    cancellation[is_cancel_plan] === 0 ? "Not Available" : "Available";
-
+  // Rules for cancellation policies
   const rulesArray = [
     {
-      label: "Cancellation / Refund Policy",
-      value: cancellationRefundPolicy, // Use the combined policy here
-      icon: iconMap[bookingpolicyid],
+      label: "Can guests cancel their booking?",
+      value:
+        cancellation.isCancellationPolicy === 1
+          ? "Yes, Allowed"
+          : "No, Not Allowed",
+      icon: iconMap["isCancellationPolicy"],
     },
     {
-      label: "Modification Policy",
-      value: cancellation[modification_plan] === 0 ? "Not Allowed" : "Allowed",
-      icon: iconMap[modification_plan],
+      label: "Free Cancellation: Number of Days Before Check-in",
+      value: cancellation.cancellationDays ?? "Not Specified",
+      icon: iconMap["cancellationDays"],
+    },
+    {
+      label: "Cancellation Fee (If cancelled after the free period)",
+      value: cancellation.CancellationCharge ?? "Not Specified",
+      icon: iconMap["CancellationCharge"],
+    },
+    {
+      label: "Can guests modify their booking?",
+      value:
+        cancellation.isModificationPolicy === 1
+          ? "Yes, Allowed"
+          : "No, Not Allowed",
+      icon: iconMap["isModificationPolicy"],
+    },
+    {
+      label: "Free Modification: Number of Days Before Check-in",
+      value: cancellation.modificationDays ?? "Not Specified",
+      icon: iconMap["isModificationPolicy"],
+    },
+    {
+      label: "Modification Fee (If modified after the free period)",
+      value: cancellation.modificationCharge ?? "Not Specified",
+      icon: iconMap["modificationCharge"],
     },
   ];
-
+  
   const chunkedRules = [];
   for (let i = 0; i < rulesArray.length; i += 3) {
     chunkedRules.push(rulesArray.slice(i, i + 3));
@@ -60,7 +75,7 @@ const Cancellation = ({ cancellation = {} }) => {
         <div
           style={{ marginLeft: "8px", fontSize: "18px", fontWeight: "bold" }}
         >
-          Cancellation
+          Cancellation Policies
         </div>
       </div>
       <Divider sx={{ width: "100%", color: "#ccc", marginY: "16px" }} />
@@ -69,19 +84,17 @@ const Cancellation = ({ cancellation = {} }) => {
           <Grid container spacing={3}>
             {chunkedRules.map((ruleChunk, index) => (
               <Grid key={index} item xs={12} md={6}>
-                {" "}
-                {/* Adjust width using md and xs values */}
                 <Paper
                   sx={{
                     padding: "16px",
                     borderRadius: "8px",
-                    height: "auto", // Set to auto to adjust based on content
+                    height: "auto",
                     minHeight: 150,
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark" ? "#1A2027" : "#fff",
                     border: "1px solid #DDDDDD",
-                    boxShadow: "none", // Remove box shadow
-                    width: "100%", // Ensure the box takes full width of the grid column
+                    boxShadow: "none",
+                    width: "100%",
                   }}
                 >
                   {ruleChunk.map((rule, subIndex) => (
@@ -116,7 +129,7 @@ const Cancellation = ({ cancellation = {} }) => {
             ))}
           </Grid>
         ) : (
-          <Typography>No Cancellation Available</Typography>
+          <Typography>No Cancellation Policies Available</Typography>
         )}
       </div>
     </Paper>
@@ -133,7 +146,7 @@ export default function PropertyCancellation({ propertyinfo }) {
         setPropertyInfo(propertyinfo);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }

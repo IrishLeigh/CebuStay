@@ -16,6 +16,7 @@ import countryCodesWithPatterns from '../../../components/Booking/countryCodes';
 
 
 
+
 export default function PaymentMethods({ onPaymentDataChange, parentPaymentData, handleNext, handleBack }) {
   const [paymentData, setPaymentData] = useState({
     selectedPayment: 'Online',
@@ -50,6 +51,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
       }));
     }
   }, [parentPaymentData]);
+  const isPaypalInfoAvailable = paymentData.paypalInfo.email || paymentData.paypalInfo.mobile;
 
   // Handle country code change
   const handleCountryCodeChange = (event) => {
@@ -124,7 +126,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
   // Validate and proceed to the next step
   const validateAndProceed = () => {
     const { email, mobile } = paymentData.paypalInfo;
-
+    if( paymentData.hasPaypal === 'no') return handleNext();
     // Validate email and mobile number
     if (!email) {
       setSnackbarMessage("Email is required.");
@@ -168,19 +170,59 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
           <Typography sx={{ fontSize: "1.125rem" }} mb={2} fontWeight="bold">
             How can your guests pay for their stay?
           </Typography>
+          <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      backgroundColor: "#16B4DD",
+                      height: "100%",
+                      borderRadius: "0.8rem",
+                      padding: "1rem",
+                      color: "white",
+                    }}
+                  >
+            <Box sx={{ my: 1, display: 'flex', alignItems: 'center' }}>
+              <PaymentIcon sx={{ fontSize: '1.125rem', color: '#fff', mr: 2 }} />
+              <Typography  sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                Guests can pay through our secure payment gateway for their stay. 
+                Payments will be processed securely and can be claimed via your PayPal account.
+              </Typography>
+            </Box>
+
+            <Box sx={{ my: 1, display: 'flex', alignItems: 'center' }}>
+              <LocalOfferIcon sx={{ fontSize: '1.125rem', color: '#fff', mr: 2 }} />
+              <Typography  sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                Payouts will be released after guest checkout, ensuring a smooth and reliable transaction process.
+              </Typography>
+            </Box>
+
+            <Box sx={{ my: 1, display: 'flex', alignItems: 'center' }}>
+              <DarkModeIcon sx={{ fontSize: '1.125rem', color: '#fff', mr: 2 }} />
+              <Typography  sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                No PayPal account yet? No worries! You can set this up later at your convenience.
+              </Typography>
+            </Box>
+
+          </Box>
+          
 
           {/* PayPal Account Section */}
-          <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">PayPal Payout Account</Typography>
+          <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">Do you have PayPal Payout Account?</Typography>
+
+           
 
           <RadioGroup
             aria-labelledby="PaypalAccount"
             name="PaypalAccount"
             value={paymentData.hasPaypal}
             onChange={handlePaypalChange}
+            
           >
-            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel value="no" control={<Radio />} label="No" />
+            <FormControlLabel value="yes" control={<Radio  disabled={isPaypalInfoAvailable}/>} label="Yes" />
+            <FormControlLabel value="no" control={<Radio disabled={isPaypalInfoAvailable}/>} label="No" />
+            
           </RadioGroup>
+
 
           {paymentData.hasPaypal === "yes" && (
             <div>
@@ -192,6 +234,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
                 fullWidth
                 margin="normal"
                 required
+                disabled={isPaypalInfoAvailable}
               />
                 {snackbarMessage.includes("Invalid email address.") && (
                 <Typography  color="error" sx ={{ fontSize: "0.875rem"}}>
@@ -200,12 +243,13 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
               )}
               <Box display="flex" alignItems="center" marginBottom={2}>
                 <FormControl fullWidth margin="normal">
-                  <InputLabel id="country-code-label">Country Code</InputLabel>
+                  <InputLabel id="country-code-label" sx={{ backgroundColor: "white" }}>Country Code</InputLabel>
                   <Select
                     labelId="country-code-label"
                     value={paymentData.paypalInfo.countryCode}
                     onChange={handleCountryCodeChange}
                     required
+                    disabled={isPaypalInfoAvailable}
                   >
                     {Object.entries(countryCodesWithPatterns).map(([code, { name }]) => (
                       <MenuItem key={code} value={code}>
@@ -222,6 +266,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
                   fullWidth
                   margin="normal"
                   required
+                  disabled={isPaypalInfoAvailable}
                 />
               </Box>
               {paymentData.paypalInfo.mobile && !validateMobileNumber(paymentData.paypalInfo.mobile) && (
@@ -230,6 +275,12 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
                 </Typography>
               )}
             </div>
+          )}
+          {/* Add existing PayPal message and disable fields if already set */}
+          {isPaypalInfoAvailable && (
+            <Typography color="warning" sx={{ fontSize: "1rem", mt: 2 }}>
+              There is already an existing PayPal account. If you want to change it, edit in Host Settings {'>'} Payouts {'>'} PayPal Accounts.
+            </Typography>
           )}
           {paymentData.hasPaypal === "no" && (
             <Typography sx={{ mt: 2 }}>
@@ -240,7 +291,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
       </Paper>
 
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">Back</Button>
+        <Button onClick={handleBack} className="stepperPrevious"  sx={{ backgroundColor: '#6c757d', color: '#fff' }}>Back</Button>
         <Button onClick={validateAndProceed} className="stepperNext">Next</Button>
       </div>
 

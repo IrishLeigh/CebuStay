@@ -39,7 +39,7 @@ export default function Sample({ propertyData, onSaveStatusChange }) {
     {
       bedroom : 1,
       bedroomnum: 1,
-      sleepingtype: "room", // sleepingtype included only in beds
+      sleepingtype: "", // sleepingtype included only in beds
       beds: {
         singleBed: 0,
         doubleBed: 0,
@@ -70,8 +70,6 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
   const [hasError, setHasError] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
  
-
- 
   useEffect(() => {
     if (propertyData && propertyData.length > 0) {
       const data = propertyData[0];
@@ -86,7 +84,7 @@ const [newUnitBeds, setNewUnitBeds] = useState([]);
         bedroomnum: bed.bedroomnum || 0, // Ensure bedroomnum exists
         beds: {
           singleBed: bed.beds?.singlebed ?? 0,   // Default to 0 if singlebed is undefined
-          doubleBed: bed.beds?.doublebed ?? 0,   // Default to 0 if doublebed is undefined
+          doubleBed: bed.beds?.bunkbed ?? 0,   // Default to 0 if doublebed is undefined
           largeBed: bed.beds?.largebed ?? 0,     // Default to 0 if largebed is undefined
           superLargeBed: bed.beds?.superlargebed ?? 0,  // Default to 0 if superlargebed is undefined
         }
@@ -246,18 +244,7 @@ if (newUnitBeds.length > 0) {
   // 5. Update sleeping types
   setSleepingTypes((prevSleepingTypes) => [...prevSleepingTypes, 'room']); // Add default sleeping type for the new bedroom
 
-  // 6. Increment the quantity in unitRooms for the "Bedroom"
-  // setUnitRooms((prevUnitRooms) =>
-  //   prevUnitRooms.map((room) => {
-  //     // Increment the quantity if the roomname is "Bedroom"
-  //     if (room.roomname === "Bedspace") {
-  //       return { ...room, quantity: room.quantity + 1 }; // Increment the room quantity
-  //     }
-  //     return room; // Return unchanged room
-  //   })
-  // );
 
-  // 7. Mark changes as true
   setHasChanges(true);
 };
 // Effect to log updated unitRooms and newUnitBeds
@@ -374,22 +361,14 @@ const removeUnitBed = async (index) => {
       console.log("Error deleting bedroom:", error);
     }
 
-    // // Decrement the quantity in unitRooms for the corresponding bedroom
-    // setUnitRooms((prevUnitRooms) =>
-    //   prevUnitRooms.map((room, idx) =>
-    //     room.roomname === "Bedspace" // Find the room by name
-    //       ? { ...room, quantity: Math.max(0, room.quantity - 1) } // Decrement bedroom quantity
-    //       : room
-    //   )
-    // );
+
   }
 
   updatedBeds.splice(index, 1); // Remove the bed at the specified index
   setUnitBeds(updatedBeds); // Update the state with the new list
   setHasChanges(true); // Mark changes as true after updating unitBeds
 };
-//remove new unit bedrom
-// Function to remove a bed and decrement the bedroom quantity
+
 const removeNewUnitBed = (bedroomIndex) => {
   const updatedNewBeds = [...newUnitBeds]; // Copy the existing newUnitBeds state
   const bedroom = updatedNewBeds[bedroomIndex];
@@ -404,14 +383,6 @@ const removeNewUnitBed = (bedroomIndex) => {
       }
     }
 
-    // // Decrement the quantity in unitRooms for the corresponding bedroom
-    // setUnitRooms((prevUnitRooms) =>
-    //   prevUnitRooms.map((room, idx) =>
-    //     idx === bedroomIndex
-    //       ? { ...room, quantity: Math.max(0, room.quantity - 1) } // Decrement bedroom quantity
-    //       : room
-    //   )
-    // );
   }
 
   updatedNewBeds.splice(bedroomIndex, 1); // Remove the new bed at the specified index
@@ -510,94 +481,11 @@ if (!isValidNewUnitBeds) {
   setOpenSnackbar(true);
   return false;
 }
-
-
-
-
-
-
- 
-
-
   return true;
 }
-// const validateForm = () => {
-//   if (!guestCapacity) {
-//     setHasError(true);
-//     errorMessage.push("Guest Capacity is required");
-//     setSnackbarMessage("Guest Capacity is required");
-//     setOpenSnackbar(true);
-//     return false;
-//   }
-//   if (guestCapacity < 0 || guestCapacity > 100) {
-//     setHasError(true);
-//     errorMessage.push("Guest Capacity must be between 0 and 100");
-//     setSnackbarMessage("Guest Capacity must be between 0 and 100");
-//     setOpenSnackbar(true);
-//     return false;
-//   }
-//  // unitrooms roomname is empty and quantity is below 0 or 0 put error
-//  if ( unitRooms.every((room) =>  room.quantity < 0 || room.quantity === 0)) {
-//   setHasError(true);
-//   errorMessage.push("Room quantity must be greater than 0");
-//   setSnackbarMessage("Room quantity must be greater than 0");
-//   setOpenSnackbar(true);
-//   return false;
-//  }
 
-//  // newunitrooms roomname is empty and quantity is below 0 or 0 put error
-//  if ( newUnitRooms.some((room) => !room.roomname || room.quantity < 0 || room.quantity === 0)) {
-//   setHasError(true);
-//   errorMessage.push("Room name is required and quantity must be greater than 0");
-//   setSnackbarMessage("Room name is required and quantity must be greater than 0");
-//   setOpenSnackbar(true);
-//   return false;
-//  }
-// // Validation to check that at least one bed quantity is greater than 0 in each bedroom
-// const isValidUnitBeds = unitBeds.every((bedroom) =>
-//   Object.values(bedroom.beds).some((quantity) => quantity > 0)
-// );
-
-// if (!isValidUnitBeds) {
-//   setHasError(true);
-//   errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
-//   setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
-//   setOpenSnackbar(true);
-//   return false;
-// }
-
-// // Validation to check that at least one bed quantity is greater than 0 in each bedroom
-// const isValidNewUnitBeds = newUnitBeds.every((bedroom) =>
-//   Object.values(bedroom.beds).some((quantity) => quantity > 0)
-// );
-
-// if (!isValidNewUnitBeds) {
-//   setHasError(true);
-//   errorMessage.push("Each bedroom must have at least one bed with a quantity greater than 0");
-//   setSnackbarMessage("Each bedroom must have at least one bed with a quantity greater than 0");
-//   setOpenSnackbar(true);
-//   return false;
-// }
-
-
-
-
-
-
- 
-
-
-//   return true;
-// }
-  // Handle save
   const handleSave = async () => {
 
-    // console.log("SENT Unit Id", unitid);
-    // console.log("SENT Guest Capacity:", guestCapacity);
-    // console.log("SENT Unit Rooms:", unitRooms);
-    // console.log("SENTUnit Beds:", unitBeds);
-    // console.log("SENT New Unit Rooms:", newUnitRooms);
-    // console.log("SENT New Unit Beds:", newUnitBeds);
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -694,7 +582,7 @@ if (!isValidNewUnitBeds) {
     setOpenSnackbar(false);
   };
   
-  // console.log("PROPERTY DTA FROM PARENT", propertyData);
+  console.log("PROPERTY DTA FROM PARENT", propertyData);
 console.log("HAS CHANGES?", hasChanges);
 
   return (

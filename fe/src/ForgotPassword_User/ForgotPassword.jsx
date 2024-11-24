@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     setIsLoading(true);
     if (!email) {
       showSnackbar("Please enter an email");
-      setLoading(false);
+      setIsLoading(false);
       setTimeout(() => {
         showSnackbar("");
       }, 2500);
@@ -66,7 +66,7 @@ const ForgotPassword = () => {
     showSnackbar("");
     if (!email) {
       showSnackbar("Please enter an email");
-      setLoading(false);
+      setIsLoading (false);
       setTimeout(() => {
         showSnackbar("");
       }, 2500);

@@ -96,18 +96,18 @@ export default function EditPropertyUI() {
         setPropertyAddress(data.property_address);
         setAmenities(
           data.property_amenities.map((a) =>
-            a.amenity_name.replace(/\s+/g, "")
-          )
+            a.amenity_name)
+          
         );
         setFacilities(
           data.property_facilities.map((f) =>
-            f.facilities_name.replace(/\s+/g, "")
-          )
+            f.facilities_name)
+          
         );
         setServices(
           data.property_services.map((s) =>
-            s.service_name.replace(/\s+/g, "")
-          )
+            s.service_name)
+          
         );
         setHouseRules(data.property_houserules[0]);
         setPolicies(data.property_bookingpolicy);

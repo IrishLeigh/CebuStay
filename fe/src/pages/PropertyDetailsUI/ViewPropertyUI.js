@@ -325,9 +325,9 @@ export default function ViewPropertyUI() {
       <div style={{ backgroundColor: "#F4F7FA" }}>
         <Container maxWidth="xl" >
           <CssBaseline />
-          {loading ? (
+          {/* {loading ? (
             <div>Loading...</div>
-          ) : (
+          ) : ( */}
             <div>
               {/* <div>
                 <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
@@ -387,7 +387,7 @@ export default function ViewPropertyUI() {
                 <SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/>
             </div>
 
-          )}
+          {/* )} */}
         </Container>
       </div>
     </div>

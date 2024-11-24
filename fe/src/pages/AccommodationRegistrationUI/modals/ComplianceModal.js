@@ -17,7 +17,7 @@ const ModalContent = styled(Box)(({ theme }) => ({
   left: '50%',
   transform: 'translate(-50%, -50%)',
   overflowY: 'auto',
-  maxHeight: '90vh', // Allow scrolling if content overflows
+  maxHeight: '90vh',
   [theme.breakpoints.down('md')]: {
     padding: '1.5rem',
     maxWidth: '80%',
@@ -68,6 +68,9 @@ const ComplianceModal = ({ open, onClose }) => {
       onClose={onClose}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
+      BackdropProps={{
+        onClick: () => null, // Disable closing modal when clicking on the backdrop
+      }}
     >
       <ModalContent>
         <ModalTitle>

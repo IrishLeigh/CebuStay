@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Container from "@mui/material/Container";
-import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, Snackbar, useTheme, useMediaQuery } from '@mui/material';
+import { Divider, Grid, RadioGroup, FormControlLabel, Radio, Button, Snackbar, useTheme, useMediaQuery, Alert } from '@mui/material';
 import IndividualHost from './individualHost';
 import CompanyHost from './companyHost';
 import AnimatePage from '../AnimatedPage';
@@ -151,7 +151,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   
 
   return (
-    <Container maxWidth="lg" className="centered-container">
+    <Container maxWidth="md" className="centered-container">
       <AnimatePage>
         <Grid container spacing={2} >
           <Grid item xs={6} sx={{ textAlign: "left" }}></Grid>
@@ -176,7 +176,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
               <Typography sx={{ fontFamily: "Poppins, sans-serif", mb: 2 }}>
                 To ensure compliance with legal and regulatory standards, we require some information about you and your property.
               </Typography>
-              <RadioGroup
+              {/* <RadioGroup
                 aria-labelledby="Host"
                 name="host"
                 value={hostType}
@@ -200,7 +200,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
                     </Typography>
                   }
                 />
-              </RadioGroup>
+              </RadioGroup> */}
               <Divider sx={{ my: 2 }} />
               {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange} />}
               {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} prevData={parentPartnerData} />}
@@ -209,15 +209,20 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
         </Grid>
       </AnimatePage>
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">Back</Button>
+        <Button onClick={handleBack} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>Back</Button>
         <Button onClick={validateAndProceed} className="stepperNext" sx={{ backgroundColor: "#A334CF", }}>Finish</Button>
       </div>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
+        // message={snackbarMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

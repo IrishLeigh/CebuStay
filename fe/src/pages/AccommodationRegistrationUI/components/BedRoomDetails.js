@@ -254,7 +254,7 @@ export default function BedroomDetails2({ onBedroomDetailsChange, parentBedroomD
       </AnimatePage>
 
       <div className="stepperFooter">
-        <Button onClick={handleBackClick} className="stepperPrevious">
+        <Button onClick={handleBackClick} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
           Back
         </Button>
         <Button onClick={handleNextStep} className="stepperNext">
