@@ -94,6 +94,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
   const [rating, setRating] = useState(0);
   // const [reviews, setReviews] = useState(generateDummyReviews(50));
   const [reviews, setReviews] = useState([]);
+  const [reviewCount, setReviewCount] = useState(0);
   const [dummyReviews, setDummyReview] = useState([]);
   const [view, setView] = useState('All'); // Tab view: All, Latest, Oldest
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -153,9 +154,11 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
           }
         });
         console.log("reviews", res.data);
-
-        setRatingg(res.data.propertyrating);
-        setDummyReview(res.data.reviews);
+        setRating(res.data.propertyrating); //rating data for component
+        setReviewCount(res.data.reviews.length); //review count 
+        setRatingg(res.data.propertyrating); //rating data for parent
+        setDummyReview(res.data.reviews); //review data for pagination
+        setReviews(res.data.reviews); // review data for some else
       } catch (err) {
         console.log(err);
       }
@@ -231,7 +234,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
         <div className="summary-box">
           <FaUsers className="summary-icon" />
           <h3>Total Reviews</h3>
-          <p className="summary-number">{reviews.length}</p>
+          <p className="summary-number">{reviewCount}</p>
           <p>People's experiences</p>
         </div>
 
