@@ -69,8 +69,8 @@ export default function FooterNew() {
             </Typography>
           </div>
         </div>
-        <div className="footer-r2">
-          <XIcon
+        {/* <div className="footer-r2"> */}
+        {/* <XIcon
             sx={{ color: "#52525B", fontSize: "2.0rem", cursor: "pointer" }}
           />
           <FacebookIcon
@@ -78,11 +78,11 @@ export default function FooterNew() {
           />
           <InstagramIcon
             sx={{ color: "#52525B", fontSize: "2.0rem", cursor: "pointer" }}
-          />
-          {/* <GitHubIcon
+          /> */}
+        {/* <GitHubIcon
             sx={{ color: "#52525B", fontSize: "2.0rem", cursor: "pointer" }}
           /> */}
-        </div>
+        {/* </div> */}
         <div className="footer-r3">
           <div className="footer-r3-left">
             <Typography
