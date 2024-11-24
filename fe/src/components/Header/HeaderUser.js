@@ -33,6 +33,7 @@ function HeaderUser( {isPropertyListed}) {
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
   const [user ,setUser] = useState(null);
+ 
 
   const handleImageError = (e) => {
     // Fallback to another image or initials
@@ -45,6 +46,7 @@ function HeaderUser( {isPropertyListed}) {
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchUserImage = async () => {
       try {
         const jwtToken = token.split("=")[1];
@@ -61,11 +63,13 @@ function HeaderUser( {isPropertyListed}) {
         }
       } catch (error) {
         console.error("Error fetching image:", error.message || error);
+      } finally {
+        setLoading(false); // Ensure this happens even in case of error
       }
     };
-
     fetchUserImage();
   }, []);
+  
 
 
   useEffect(() => {
@@ -320,12 +324,22 @@ console.log ("USER FROM HEADER NI SYA HA", user);
               {/* User profile settings */}
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <IconButton
+                    onClick={handleOpenUserMenu}
+                    sx={{
+                      p: 0,
+                      color: "#16B4DD",
+                      //If loading is true, hide the icon, remove this line if not needed
+                      visibility: loading ? "hidden" : "visible",
+                    }}
+                  >
                     <Avatar
                       src={profileImage}
                       onError={(e) => handleImageError(e)}
                     />
                   </IconButton>
+
+
                 </Tooltip>
                 <Menu
                   sx={{ mt: "45px" }}

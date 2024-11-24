@@ -6,8 +6,10 @@ import { styled } from "@mui/material/styles";
 import CheckIcon from "@mui/icons-material/Check";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
+import Snackbar from "@mui/material/Snackbar"; // Import Snackbar
+import Alert from "@mui/material/Alert"; // Import Alert for Snackbar
 import { useState, useEffect } from "react";
-import { useMediaQuery } from "@mui/material"; // Import useMediaQuery
+import { useMediaQuery } from "@mui/material";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -29,6 +31,8 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
     basePrice: basePrice,
     profit: "",
   });
+
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" }); // State for Snackbar
 
   const handleChange = (event) => {
     const numericValue = event.target.value.replace(/\D/g, "");
@@ -53,27 +57,38 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
   }, []);
 
   const validateAndProceed = () => {
-    const minPrice = 566; // Minimum price limit
+    const minPrice = 558; // Minimum price limit
     if (basePrice < minPrice) {
-      alert(`Please enter a price of at least ${pesoSign}${minPrice} to sustain the platform's operational integrity.`);
+      setSnackbar({
+        open: true,
+        message: `Please enter a price of at least ${pesoSign}${minPrice} to sustain the platform's operational integrity.`,
+        severity: "error",
+      });
     } else if (basePrice) {
       onUnitPricingChange(priceUnit);
       handleNext();
     } else {
-      alert("Please enter a valid price.");
+      setSnackbar({
+        open: true,
+        message: "Please enter a valid price.",
+        severity: "error",
+      });
     }
   };
 
-  // Check if the screen size is mobile
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <Box className="centered-container">
         <Paper
           elevation={3}
           sx={{
-            width: isMobile ? "95%" : "80%", // Responsive width
+            width: isMobile ? "95%" : "80%",
             padding: 2,
             justifyContent: "center",
             alignItems: "center",
@@ -84,7 +99,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
             component="form"
             autoComplete="off"
             sx={{
-              width: "100%", // Use full width
+              width: "100%",
               padding: 2,
               justifyContent: "center",
               alignItems: "center",
@@ -100,7 +115,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
             <div
               style={{
                 display: "flex",
-                fontSize: isMobile ? "40px" : "74px", // Adjust font size for mobile
+                fontSize: isMobile ? "40px" : "74px",
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -108,7 +123,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
               <div>{pesoSign}</div>
               <input
                 id="base_price"
-                placeholder={`566`}
+                placeholder={`558`}
                 type="text"
                 value={basePrice}
                 onChange={handleChange}
@@ -118,7 +133,7 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
                   outline: "none",
                   textAlign: "center",
                   fontSize: "inherit",
-                  width: isMobile ? "150px" : "350px", // Adjust width for mobile
+                  width: isMobile ? "150px" : "350px",
                 }}
               />
             </div>
@@ -159,13 +174,23 @@ export default function UnitPricing({ onUnitPricingChange, parentUnitPricing, ha
         </Paper>
       </Box>
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
+        <Button onClick={handleBack} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
           Back
         </Button>
         <Button onClick={validateAndProceed} className="stepperNext">
           Next
         </Button>
       </div>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

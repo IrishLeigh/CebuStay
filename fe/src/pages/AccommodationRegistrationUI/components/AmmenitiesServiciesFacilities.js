@@ -208,7 +208,7 @@ const AmenitiesFacilitiesServices = ({ onAmenitiesChange, parentAmenities, handl
           initialSelectedItems={selectedAmenities.facilities}
         />
         <div className="stepperFooter" style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
-          <Button onClick={handleBack} className="stepperPrevious" sx={{ marginRight: 1 }}>
+          <Button onClick={handleBack} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
             Back
           </Button>
           <Button onClick={handleSave} className="stepperNext">

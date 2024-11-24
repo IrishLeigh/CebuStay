@@ -223,7 +223,7 @@ export default function AccountSignIn({ profile }) {
               </Box>
             )}
 
-            <div>
+            <div style={{ display: "flex", justifyContent: "flex-end",gap: "1rem" }} >
               <button
                 className={`save-btn ${
                   isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"

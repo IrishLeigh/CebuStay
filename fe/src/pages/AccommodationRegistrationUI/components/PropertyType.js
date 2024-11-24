@@ -231,7 +231,7 @@ export default function PropertyType({ onSelectedTypeChange, parentSelectedData,
         )}
       </AnimatePage>
       <div className="stepperFooter">
-        <Button disabled className="stepperPrevious" onClick={handleBack}>
+        <Button disabled className="stepperPrevious" onClick={handleBack} sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
           Back
         </Button>
 

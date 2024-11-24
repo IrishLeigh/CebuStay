@@ -11,7 +11,7 @@ import { Hotel } from '@mui/icons-material';
 import { set } from 'date-fns';
 import { yellow } from '@mui/material/colors'; // Import yellow color
 
-function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity, checkin_date, checkout_date, address , details, facilities, houseRules}) {
+function BookingDetails({ lengthStay, onPriceChange, PropertyData, propertyData2, guestCapacity, checkin_date, checkout_date, address , details, facilities, houseRules}) {
   const [price, setPrice] = useState(0);
   const [vatDaily, setVatDaily] = useState(0);
   const [vatMonthly, setVatMonthly] = useState(0);
@@ -81,9 +81,6 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
         }
     }
   }, [unitData, onPriceChange, lengthStay, isDaily]);
-
-
-  
   
   useEffect(() => {
     const services = [
@@ -102,9 +99,9 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
     return twelveHourFormat;
   };
 
-  console.log("house rules", houseRules);
-  console.log("PropertyData sa BOOKING", PropertyData);
-  console.log("isDaily", isDaily);
+  // console.log("house rules", houseRules);
+  console.log("PropertyData sa BOOKING DETAILS UI", propertyData2);
+  // console.log("isDaily", isDaily);
 
   return (
     <ThemeProvider theme={BookingDetailsTheme}>
@@ -329,37 +326,71 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, guestCapacity
 
         )}
 
-        {/* <Card sx={{ p: 3, mt: 3 }}>
-          <Typography variant="h6" color="primary" ml={1} pt={0.5}>
-            <CancelIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
-            Cancellation Policy:
-          </Typography>
-          <Box ml={1} mt={1}>
-            <Typography variant="body1" fontWeight="bold">
-              {PropertyData?.property_bookingpolicy?.is_cancel_plan ? 'Cancellation Plan Available' : 'No Cancellation Plan'}
-            </Typography>
-            {PropertyData?.property_bookingpolicy?.is_cancel_plan && (
-              <Typography variant="body1" color="textSecondary" mt={1}>
-                Cancel within {PropertyData.property_bookingpolicy.cancel_days} days for a refund.
-              </Typography>
-            )}
-            {PropertyData?.property_bookingpolicy?.non_refundable && (
-              <Typography variant="body1" color="textSecondary" mt={1}>
-                Please note that this booking is non-refundable.
-              </Typography>
-            )}
-            {PropertyData?.property_bookingpolicy?.modification_plan && (
-              <Typography variant="body1" color="textSecondary" mt={1}>
-                Modifications are allowed up to {PropertyData.property_bookingpolicy.cancel_days} days before check-in.
-              </Typography>
-            )}
-            {PropertyData?.property_bookingpolicy?.offer_discount && (
-              <Typography variant="body1" color="textSecondary" mt={1}>
-                Discounts may apply based on the booking policy.
-              </Typography>
-            )}
-          </Box>
-        </Card> */}
+<Card sx={{ p: 3, mt: 3 }}>
+  <Typography variant="h6" color="primary" ml={1} pt={0.5}>
+    <CancelIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
+    Cancellation Policies
+  </Typography>
+  <Box ml={1} mt={2} display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+    {/* Cancellation Policy */}
+    <Typography variant="body1" fontWeight="bold">
+      Can guests cancel their booking?
+    </Typography>
+    <Typography variant="body1">
+      {propertyData2?.property_bookingpolicy?.isCancellationPolicy === 1
+        ? 'Yes, Allowed'
+        : 'No, Not Allowed'}
+    </Typography>
+
+    {propertyData2?.property_bookingpolicy?.isCancellationPolicy === 1 && (
+      <>
+        <Typography variant="body1" fontWeight="bold">
+          Free Cancellation: Number of Days Before Check-in
+        </Typography>
+        <Typography variant="body1">
+          {propertyData2.property_bookingpolicy.cancellationDays}
+        </Typography>
+
+        <Typography variant="body1" fontWeight="bold">
+          Cancellation Fee (If cancelled after the free period)
+        </Typography>
+        <Typography variant="body1">
+          ${propertyData2.property_bookingpolicy.CancellationCharge}
+        </Typography>
+      </>
+    )}
+
+    {/* Modification Policy */}
+    <Typography variant="body1" fontWeight="bold">
+      Can guests modify their booking?
+    </Typography>
+    <Typography variant="body1">
+      {propertyData2?.property_bookingpolicy?.isModificationPolicy === 1
+        ? 'Yes, Allowed'
+        : 'No, Not Allowed'}
+    </Typography>
+
+    {propertyData2?.property_bookingpolicy?.isModificationPolicy === 1 && (
+      <>
+        <Typography variant="body1" fontWeight="bold">
+          Free Modification: Number of Days Before Check-in
+        </Typography>
+        <Typography variant="body1">
+          {propertyData2.property_bookingpolicy.modificationDays}
+        </Typography>
+
+        <Typography variant="body1" fontWeight="bold">
+          Modification Fee (If modified after the free period)
+        </Typography>
+        <Typography variant="body1">
+          ${propertyData2.property_bookingpolicy.modificationCharge}
+        </Typography>
+      </>
+    )}
+  </Box>
+</Card>
+
+
       </Box>
     </ThemeProvider>
   );

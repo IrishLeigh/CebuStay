@@ -13,6 +13,8 @@ import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import SmartphoneRoundedIcon from '@mui/icons-material/SmartphoneRounded';
 import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 const Avatar = styled(MuiAvatar)(({ theme }) => ({
   width: 28,
@@ -30,7 +32,8 @@ const ListItemAvatar = styled(MuiListItemAvatar)({
 export default function SelectContent({ property, onPropertyChange }) {
   const [selectedProperty, setSelectedProperty] = React.useState('');
   const [loading, setLoading] = React.useState(true);
-  console.log('property', property);
+  const navigate = useNavigate();
+  // console.log('property', property);
 
   useEffect(() => {
     if (property) {
@@ -39,7 +42,10 @@ export default function SelectContent({ property, onPropertyChange }) {
       setLoading(true);
     }
   }, [property]);
-
+ // Handle the "Add Property" click
+ const handleAddPropertyClick = () => {
+  navigate('/list-property'); // Navigate to the /admin route
+};
   const handleChange = (event) => {
     const propertyId = event.target.value;
     setSelectedProperty(propertyId);
@@ -90,11 +96,11 @@ export default function SelectContent({ property, onPropertyChange }) {
         <MenuItem disabled>No properties available</MenuItem>
       )}
       <Divider sx={{ mx: -1 }} />
-      <MenuItem value="add-product">
+      <MenuItem onClick={handleAddPropertyClick}> {/* Add onClick to navigate */}
         <ListItemIcon>
           <AddRoundedIcon />
         </ListItemIcon>
-        <ListItemText primary="Add product" secondary="Web app" />
+        <ListItemText primary="Add Property" secondary="Add Property" />
       </MenuItem>
     </Select>
   );

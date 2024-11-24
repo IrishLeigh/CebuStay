@@ -233,6 +233,7 @@ const validatePhoneNumber = (countryCode, phoneNumber) => {
             setLengthStay={setLengthStay}
             onPriceChange={setPrice}
             PropertyData={propertyUnitDetails}
+            propertyData2 = {propertyData}
             checkin_date={checkin_date}
             checkout_date={checkout_date}
             guestCapacity={guestCount}

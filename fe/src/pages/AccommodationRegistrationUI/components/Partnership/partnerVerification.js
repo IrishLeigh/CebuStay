@@ -151,7 +151,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   
 
   return (
-    <Container maxWidth="lg" className="centered-container">
+    <Container maxWidth="md" className="centered-container">
       <AnimatePage>
         <Grid container spacing={2} >
           <Grid item xs={6} sx={{ textAlign: "left" }}></Grid>
@@ -209,7 +209,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
         </Grid>
       </AnimatePage>
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">Back</Button>
+        <Button onClick={handleBack} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>Back</Button>
         <Button onClick={validateAndProceed} className="stepperNext" sx={{ backgroundColor: "#A334CF", }}>Finish</Button>
       </div>
       <Snackbar

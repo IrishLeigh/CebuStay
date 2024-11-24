@@ -21,17 +21,10 @@ import Phone from "@mui/icons-material/Phone";
 import axios from "axios";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateField } from '@mui/x-date-pickers/DateField'; // Import DateField for both desktop and mobile
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateField } from '@mui/x-date-pickers/DateField'; // Import DateField for mobile view
+import countryCodesWithPatterns from "../../../components/Booking/countryCodes";
 
-const countries = [
-  { value: "USA", label: "USA", code: "+1" },
-  { value: "Canada", label: "Canada", code: "+1" },
-  { value: "Mexico", label: "Mexico", code: "+52" },
-  { value: "Philippines", label: "Philippines", code: "+63" },
-  // Add more countries as needed
-];
 
 export default function PersonalInformation({ profile, onUpdateProfile }) {
   const [country, setCountry] = useState("");
@@ -64,10 +57,11 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
       setCountry(profile.country);
       setPhone(profile.cellnumber);
       const countryCode =
-        countries.find((c) => c.value === profile.country)?.code || "";
+        Object.keys(countryCodesWithPatterns).find((key) => key === profile.country) || "";
       setPhoneNumberPrefix(countryCode);
     }
   }, [profile]);
+
 
   useEffect(() => {
     if (profile) {
@@ -88,7 +82,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   const handleCountryChange = (e) => {
     const selectedCountry = e.target.value;
     const countryCode =
-      countries.find((c) => c.value === selectedCountry)?.code || "";
+      Object.keys(countryCodesWithPatterns).find((key) => countryCodesWithPatterns[key].name === selectedCountry) || "";
     setCountry(selectedCountry);
     setPhoneNumberPrefix(countryCode);
     setPhone(""); // Reset phone number when country changes
@@ -107,21 +101,13 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     e.preventDefault();
 
     let phoneRegex;
-    switch (country) {
-      case "USA":
-      case "Canada":
-        phoneRegex = /^[2-9]\d{2}[2-9]\d{2}\d{4}$/; // Matches 10-digit numbers without country code (e.g., 2125551234)
-        break;
-      case "Mexico":
-        phoneRegex = /^\d{10}$/; // Matches 10-digit numbers without the country code (e.g., 1234567890)
-        break;
-      case "Philippines":
-        phoneRegex = /^9\d{9}$/; // Matches 11-digit numbers starting with 9 (e.g., 9123456789)
-        break;
-      default:
-        phoneRegex = /^\d+$/; // Default regex that only allows digits
-        break;
+    const countryData = countryCodesWithPatterns[phoneNumberPrefix];
+    if (countryData) {
+      phoneRegex = countryData.pattern; // Get pattern from country codes
+    } else {
+      phoneRegex = /^\d+$/; // Default regex
     }
+
     if (!phoneRegex.test(phone)) {
       setSnackbarMessage(
         `Invalid phone number format for ${country}. Please enter a valid number.`
@@ -206,41 +192,12 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
         <Grid item xs={12} md={6}>
           <Box sx={{ width: "100%", p: "2rem" }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {!isMobile && (
-                <DatePicker
-                  label="Birthday"
-                  value={birthday ? dayjs(birthday) : null}
-                  onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      required
-                      sx={{
-                        mb: 2, // This sets the bottom margin to 2
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "8px",
-                        },
-                      }}
-                      InputProps={{
-                        ...params.InputProps,
-                        startAdornment: !isMobile && (
-                          <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
-                            <CalendarToday />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                  maxDate={dayjs().subtract(18, "year")}
-                />
-              )}
-              {isMobile && (
-                <DateField
-                  label="Birthday"
-                  value={birthday ? dayjs(birthday) : null}
-                  onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
-                />
-              )}
+              <DateField
+                label="Birthday"
+                value={birthday ? dayjs(birthday) : null}
+                onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
+                fullWidth
+              />
             </LocalizationProvider>
 
             <TextField
@@ -270,13 +227,15 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
                 ),
               }}
             >
-              {countries.map((country) => (
-                <MenuItem key={country.value} value={country.value} sx={{ fontSize: "1rem" }}>
-                  {country.label}
+             {Object.keys(countryCodesWithPatterns).map((key) => {
+              const countryName = countryCodesWithPatterns[key].name;
+              return (
+                <MenuItem key={key} value={countryName}>
+                  {countryName}
                 </MenuItem>
-              ))}
+              );
+            })}
             </TextField>
-
 
             <TextField
               required
@@ -293,38 +252,38 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
               }}
               InputProps={{
                 startAdornment: !isMobile && (
-                  <InputAdornment position="start">
+                  <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
                     {phoneNumberPrefix}
-                  
                   </InputAdornment>
                 ),
-              
+                inputMode: "numeric",
               }}
             />
 
-          <div >
-            <button
-              className={`save-btn ${
-                isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
-              }`}
-              onClick={handleSaveInfo}
-              disabled={!isChanged}
-            >
-              Save
-            </button>
-            <button
-              className={`cancel-btn ${
-                isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
-              }`}
-              onClick={handleCancel}
-              disabled={!isChanged}
-            >
-              Cancel
-            </button>
-          </div>
+            <div style={{ display: "flex", justifyContent: "flex-end",gap: "1rem" }} >
+              <button
+                className={`save-btn ${
+                  isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
+                }`}
+                onClick={handleSaveInfo}
+                disabled={!isChanged}
+              >
+                Save
+              </button>
+              <button
+                className={`cancel-btn ${
+                  isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+                }`}
+                onClick={handleCancel}
+                disabled={!isChanged}
+              >
+                Cancel
+              </button>
+            </div>
           </Box>
         </Grid>
       </Grid>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}

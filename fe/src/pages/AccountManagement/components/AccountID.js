@@ -156,7 +156,7 @@ export default function AccountID({ profile, onUpdateProfile }) {
                 }
               }}
             />
-            <div>
+             <div style={{ display: "flex", justifyContent: "flex-end",gap: "1rem" }} >
               <button
                 className={`save-btn ${
                   firstName !== profile.firstname ||

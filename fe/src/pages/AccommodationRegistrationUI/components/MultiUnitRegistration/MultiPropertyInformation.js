@@ -243,10 +243,10 @@ export default function MultiPropertyInformation({
         </Box>
       </AnimatePage>
       <div className="stepperFooter">
-        <Button onClick={handleBack} className="stepperPrevious">
+        <Button onClick={handleBack} className="stepperPrevious" sx={{ backgroundColor: '#6c757d', color: '#fff' }}>
           Back
         </Button>
-        <Button onClick={validateAndProceed} className="stepperNext">
+        <Button onClick={validateAndProceed} className="stepperNext" >
           Next
         </Button>
       </div>
@@ -254,7 +254,7 @@ export default function MultiPropertyInformation({
         open={snackbarOpen} 
         autoHideDuration={6000} 
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Position at top right
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Position at top right
       >
         <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
           Please fill in all fields.
