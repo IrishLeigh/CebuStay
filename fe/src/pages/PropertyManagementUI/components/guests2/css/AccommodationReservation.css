@@ -326,3 +326,62 @@
     margin-top: 2rem; /* Reduces margin on small screens */
   }
 }
+
+/* Ensure buttons are horizontal by default */
+.buttons {
+  display: flex;
+  justify-content: flex-start; /* Align buttons to the left */
+  align-items: center;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  gap: 0.5rem; /* Space between buttons */
+  width: 100%; /* Take up the full available width */
+  max-width: 100%; /* Prevent overflow */
+  margin-left: -1rem; /* Push buttons further left */
+}
+
+/* Style for the individual buttons */
+.btn {
+  padding: 0.6rem 1.2rem; /* Adjusted padding to fit buttons */
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #ccc;
+  transition: background-color 0.3s ease;
+  font-size: 1rem; /* Default font size */
+  flex-grow: 0; /* Prevent buttons from growing too wide */
+  white-space: nowrap; /* Prevent text from wrapping */
+  min-width: 0; /* Prevent buttons from overflowing */
+}
+
+/* Underline style for selected buttons */
+.underline-purple {
+  border-bottom: 2px solid #a334cf;
+  color: #a334cf;
+}
+
+/* Adjust font size for small screens */
+@media (max-width: 768px) {
+  .buttons {
+    justify-content: flex-start; /* Align buttons to the left */
+    margin-left: -1rem; /* Push further left */
+  }
+
+  .btn {
+    font-size: 0.9rem; /* Smaller font size */
+    flex-grow: 0; /* Prevent buttons from growing too wide */
+  }
+}
+
+/* Adjust font size for very small screens (under 480px) */
+@media (max-width: 480px) {
+  .buttons {
+    flex-direction: row; /* Keep horizontal layout */
+    justify-content: flex-start; /* Align buttons to the left */
+    margin-left: -1.5rem; /* Push further left */
+  }
+
+  .btn {
+    width: auto; /* Allow buttons to have natural width */
+    font-size: 0.8rem; /* Even smaller font size for small screens */
+  }
+}
