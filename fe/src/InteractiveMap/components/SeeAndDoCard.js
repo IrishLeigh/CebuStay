@@ -18,10 +18,11 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
   const [nearbyLocations, setNearbyLocations] = useState([]);
   const isSmallScreen = useMediaQuery("(max-width:600px)"); // Define breakpoint for small screens
   const isMediumScreen = useMediaQuery("(max-width:768px)"); // Define for medium screens
+
   const handleViewNearbyButton = (event) => {
     if (event) {
       event.preventDefault();
-      event.stopPropagation();
+      event.stopPropagation(); // Prevent event from bubbling up
     }
     myLocation();
     setShowNearby(true);
@@ -69,7 +70,7 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
   const handleGoBack = (event) => {
     if (event) {
       event.preventDefault();
-      event.stopPropagation();
+      event.stopPropagation(); // Prevent event from bubbling up
     }
     setShowNearby(false); // To go back to the original SeeAndDoCard view
   };
@@ -97,15 +98,15 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
       ) : (
         <Card
           sx={{
-            width: isSmallScreen ? "100%" : "100%",
-            height: isSmallScreen ? "auto" : "70vh",
-            // margin: isSmallScreen ? "1rem auto" : "1rem", // Center horizontally on small screens
+            width: "100%",
             boxShadow: 3,
             position: "relative",
             display: "flex",
             flexDirection: "column",
-            alignSelf: isSmallScreen ? "center" : "flex-start", // Center on small screens
+            alignSelf: "center", // Center on all screens
+            flexGrow: 1, // Allow the card to grow based on content
           }}
+          onClick={(event) => event.stopPropagation()} // Prevent closing when clicking inside the card
         >
           <Box
             sx={{
@@ -119,56 +120,55 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
           >
             <IconButton onClick={onClose}>
               <CloseIcon sx={{ color: "white" }} />
-              {/* Adjust color as needed */}
             </IconButton>
           </Box>
           <CardMedia
             component="img"
             alt={spot.name}
-            height={isSmallScreen ? "60%" : "200"} // Responsive height
+            height="auto" // Allow height to adjust based on content
             image={spot.imageUrl}
             title={spot.name}
             sx={{
               objectFit: "cover", // Ensure image covers the space
-              width: isSmallScreen ? "100%" : "auto", // Make sure it takes full width on small screens
-              height: isSmallScreen ? "30%" : "200", // Adjust height for small screens
+              width: "100%", // Make sure it takes full width
             }}
           />
 
-          <CardContent sx={{ padding: isSmallScreen ? "0.5rem" : "1rem" }}>
+          <CardContent sx={{ padding: "1rem", flexGrow: 1 }}>
+            {" "}
+            {/* Flex grow to allow content to expand */}
             <Typography
               gutterBottom
               variant="h5"
               component="div"
-              sx={{ fontSize: isSmallScreen ? "1rem" : "1rem" }}
+              sx={{ fontSize: isSmallScreen ? "1rem" : "1.25rem" }}
             >
               {spot.name.toUpperCase()}
             </Typography>
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "0.9rem" : "0.9rem" }}
+              sx={{ fontSize: isSmallScreen ? "0.9rem" : "1rem" }}
             >
               {spot.description}
             </Typography>
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "0.9rem" : "0.9rem" }}
+              sx={{ fontSize: isSmallScreen ? "0.9rem" : "1rem" }}
             >
               {spot.activities}
             </Typography>
             <Typography variant="h6" sx={{ mt: 2 }}>
               More Info:
             </Typography>
-            <List sx={{ padding: isSmallScreen ? "0.5rem" : "1rem" }}>
+            <List sx={{ padding: 0 }}>
               {moreInfo.map((info, index) => (
                 <ListItem key={index}>
                   <ListItemText primary={info} />
                 </ListItem>
               ))}
             </List>
-
             <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
               <Button
                 variant="contained"

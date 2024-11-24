@@ -6,25 +6,25 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import ViewNearby from "./ViewNearby";
-import useMediaQuery from "@mui/material/useMediaQuery"; // Import useMediaQuery hook
+import useMediaQuery from "@mui/material/useMediaQuery";
 import * as turf from "@turf/turf";
-import IconButton from "@mui/material/IconButton"; // Import IconButton
-import CloseIcon from "@mui/icons-material/Close"; // Import Close icon
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 const CultureCard = ({ culture, allProperties, onClose }) => {
   const [showNearby, setShowNearby] = useState(false);
-  const isSmallScreen = useMediaQuery("(max-width:600px)"); // Define breakpoint for small screens
-  const isMediumScreen = useMediaQuery("(max-width:768px)"); // Define for medium screens
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const isMediumScreen = useMediaQuery("(max-width:768px)");
 
   const [nearbyLocations, setNearbyLocations] = useState([]);
 
   const myLocation = () => {
-    const [latitude, longitude] = culture.coordinates; // Extract latitude and longitude from culture.coordinates
+    const [latitude, longitude] = culture.coordinates;
     findNearbyLocations([latitude, longitude]);
   };
 
   const findNearbyLocations = (userLocation) => {
-    if (!allProperties.length) return; // No filtered locations
+    if (!allProperties.length) return;
     const userPoint = turf.point(userLocation);
 
     const nearby = allProperties
@@ -35,7 +35,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
           coordinates[0] === null ||
           coordinates[1] === null
         ) {
-          return null; // Skip this location
+          return null;
         }
 
         const locPoint = turf.point(coordinates);
@@ -44,34 +44,34 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
         });
         return { ...loc, distance };
       })
-      .filter((loc) => loc !== null && loc.distance <= 20) // Only include valid locations within 20 km
-      .sort((a, b) => a.distance - b.distance) // Sort by distance
-      .slice(0, 5); // Take the nearest 5 locations
+      .filter((loc) => loc !== null && loc.distance <= 20)
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 5);
 
     setNearbyLocations(nearby);
   };
 
   const handleViewNearbyButton = (event) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    event.preventDefault();
+    event.stopPropagation();
     myLocation();
     setShowNearby(true);
   };
 
   const handleGoBack = (event) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    setShowNearby(false); // To go back to the original CultureCard view
+    event.preventDefault();
+    event.stopPropagation();
+    setShowNearby(false);
+  };
+
+  const preventCloseOnCardClick = (event) => {
+    event.stopPropagation();
   };
 
   return (
     <div>
       {showNearby ? (
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative" }} onClick={preventCloseOnCardClick}>
           <Box
             sx={{
               display: "flex",
@@ -92,14 +92,15 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
         <Card
           sx={{
             width: isSmallScreen ? "100%" : "100%",
-            height: isSmallScreen ? "auto" : "70vh",
-            // margin: isSmallScreen ? "1rem auto" : "1rem", // Center horizontally on small screens
+            height: "auto", // Adjust height based on content
             boxShadow: 3,
             position: "relative",
             display: "flex",
             flexDirection: "column",
-            alignSelf: isSmallScreen ? "center" : "flex-start", // Center on small screens
+            alignSelf: isSmallScreen ? "center" : "flex-start",
+            pointerEvents: showNearby ? "none" : "auto", // Disable interaction when showNearby is true
           }}
+          onClick={preventCloseOnCardClick} // Prevent close when clicking inside the card
         >
           <Box
             sx={{
@@ -118,17 +119,23 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
           <CardMedia
             component="img"
             alt={culture.name}
-            height={isSmallScreen ? "60%" : "50%"} // Responsive height
+            height={isSmallScreen ? "60%" : "50%"}
             image={culture.imageUrl}
             title={culture.name}
             sx={{
-              objectFit: "cover", // Ensure image covers the space
-              width: isSmallScreen ? "100%" : "auto", // Make sure it takes full width on small screens
-              height: isSmallScreen ? "30%" : "200", // Adjust height for small screens
+              objectFit: "cover",
+              width: isSmallScreen ? "100%" : "auto",
+              height: isSmallScreen ? "30%" : "200px",
             }}
           />
           <CardContent
-            sx={{ padding: isSmallScreen ? "0.5rem" : "1rem", flexGrow: 1 }}
+            sx={{
+              padding: isSmallScreen ? "0.5rem" : "1rem",
+              flexGrow: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between", // Space out content evenly
+            }}
           >
             <Typography
               gutterBottom
@@ -136,6 +143,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
               sx={{
                 fontSize: isSmallScreen ? "0.5rem" : "1.5rem",
                 fontWeight: "bold",
+                overflowWrap: "break-word", // Break long words to prevent overflow
               }}
             >
               {culture.name.toUpperCase()}
@@ -144,7 +152,10 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "0.5rem" : "1rem" }}
+              sx={{
+                fontSize: isSmallScreen ? "0.5rem" : "1rem",
+                overflowWrap: "break-word", // Ensure text wraps properly
+              }}
             >
               {culture.description}
             </Typography>

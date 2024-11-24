@@ -30,3 +30,31 @@
 button {
   margin: 0 4px; /* Adjust spacing between buttons */
 }
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%; /* Slightly reduce the width on tablets */
+    max-width: 90%; /* Ensure it doesn't take up too much space */
+  }
+
+  .modal-image {
+    max-height: 300px; /* Adjust the max height of the image on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 100%; /* Make the modal take up more space on very small screens */
+    max-width: 100%;
+    padding: 10px; /* Reduce padding on small screens */
+  }
+
+  .modal-image {
+    max-height: 250px; /* Further adjust the image size */
+  }
+
+  .modal-buttons {
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    gap: 5px;
+  }
+}

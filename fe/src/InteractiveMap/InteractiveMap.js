@@ -790,6 +790,23 @@ export default function InteractiveMap() {
                   </>
                 )}
               {showWelcomeMap && <WelcomeCebuMap />}
+              {/* Show WelcomeCebuMap in Modal on Small Screens
+              {showWelcomeMap && isSmallScreen ? (
+                <Dialog
+                  open={showWelcomeMap}
+                  onClose={() => setShowWelcomeMap(false)}
+                  maxWidth="md"
+                  fullWidth
+                >
+                  <WelcomeCebuMap />
+                </Dialog>
+              ) : (
+                showWelcomeMap && (
+                  <div className="welcome-map-container">
+                    <WelcomeCebuMap />
+                  </div>
+                )
+              )} */}
             </div>
           </div>
         </Box>
