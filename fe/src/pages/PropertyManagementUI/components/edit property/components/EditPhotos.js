@@ -33,15 +33,15 @@ import {
   ArrowRight,
 } from "@mui/icons-material";
 import TemplateFrameEdit from "./TemplateFrame";
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Cancel";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LoadingModal from "../modal/LoadingModal";
-import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
+import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 
 export default function EditPhotos({
   isSingleUnit,
@@ -86,31 +86,31 @@ export default function EditPhotos({
       },
     },
   });
-  
-  const isSmallScreen =  useMediaQuery(theme.breakpoints.down('sm'));
-  const isMediumScreen =  useMediaQuery(theme.breakpoints.down('md'));;
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   // Determine the number of columns based on screen size
   const cols = isSmallScreen ? 1 : isMediumScreen ? 2 : 5;
-  
-    // Initialize originalData and sync with props
-    useEffect(() => {
-      setIsSaved(false);
-      setOriginalData({
-        coverPhotos: propertyImages ? [...propertyImages] : [],
-        galleryPhotos: galleryImages ? [...galleryImages] : [],
-      });
-      setCoverPhotos(propertyImages);
-      setGalleryPhotos(galleryImages);
-    }, [propertyImages, galleryImages]);
-  
-    // Check for changes between current and original data
-    useEffect(() => {
-      const hasDataChanged =
-        JSON.stringify({ coverPhotos, galleryPhotos }) !==
-        JSON.stringify(originalData);
-      setHasChanges(hasDataChanged);
-    }, [coverPhotos, galleryPhotos, originalData]);
+
+  // Initialize originalData and sync with props
+  useEffect(() => {
+    setIsSaved(false);
+    setOriginalData({
+      coverPhotos: propertyImages ? [...propertyImages] : [],
+      galleryPhotos: galleryImages ? [...galleryImages] : [],
+    });
+    setCoverPhotos(propertyImages);
+    setGalleryPhotos(galleryImages);
+  }, [propertyImages, galleryImages]);
+
+  // Check for changes between current and original data
+  useEffect(() => {
+    const hasDataChanged =
+      JSON.stringify({ coverPhotos, galleryPhotos }) !==
+      JSON.stringify(originalData);
+    setHasChanges(hasDataChanged);
+  }, [coverPhotos, galleryPhotos, originalData]);
 
   const handleClickOpen = (index, type) => {
     setSelectedImageIndex(index);
@@ -234,11 +234,14 @@ export default function EditPhotos({
     console.log("id, caption:", id, caption);
     if (isCoverPhoto) {
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/addcaption", {
-          id,
-          caption,
-          iscover: 1,
-        });
+        const res = await axios.post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/addcaption",
+          {
+            id,
+            caption,
+            iscover: 1,
+          }
+        );
         console.log(res.data);
         if (res.data.status === "success") {
           setHasError(false);
@@ -255,21 +258,23 @@ export default function EditPhotos({
         setHasError(true);
         setSnackbarMessage("Save the Images first before adding captions");
         setOpenSnackbar(true);
-        
       }
     } else {
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/addcaption", {
-          id,
-          caption,
-          iscover: 0,
-        });
+        const res = await axios.post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/addcaption",
+          {
+            id,
+            caption,
+            iscover: 0,
+          }
+        );
         console.log(res.data);
         if (res.data.status === "success") {
           setHasError(false);
           setSnackbarMessage("Caption added successfully");
           setOpenSnackbar(true);
-          
+
           setGalleryPhotos(res.data.coverPhotos);
           setGalleryP(res.data.coverPhotos);
           setTimeout(() => {
@@ -294,8 +299,6 @@ export default function EditPhotos({
     // }
 
     // setIsEditingCaption(false);
-
-  
   };
 
   const handlePhotoTypeChange = (type) => {
@@ -309,39 +312,39 @@ export default function EditPhotos({
       setOpenSnackbar(true);
       return false; // Validation failed
     } else if (coverPhotos.length > 5) {
-     setHasError(true);
-     setSnackbarMessage("You can only upload up to 5 cover photos.");
-     setOpenSnackbar(true);
+      setHasError(true);
+      setSnackbarMessage("You can only upload up to 5 cover photos.");
+      setOpenSnackbar(true);
       return false; // Validation failed
     }
     return true; // Validation passed
   };
-  
+
   const handleSave = async () => {
     if (!validateForm()) {
       return; // Stop save process if validation fails
     }
-    
+
     setIsLoading(true); // Start loading
-  
+
     console.log("Gallery Photos list", galleryPhotos);
-  
+
     if (toDeleteCP.length === toAddCP.length) {
       console.log(coverPhotos);
       console.log("To be deleted cover Photos", toDeleteCP);
       console.log("To be added cover Photos", toAddCP);
-  
+
       const formdata = new FormData();
       formdata.append("toDelete", JSON.stringify(toDeleteCP));
-  
+
       for (const item of toAddCP) {
         const file = await fetchBlobAsFile(item.src, "photo.jpg");
         formdata.append("files[]", file);
       }
-  
+
       try {
         const res = await axios.post(
-          `http://127.0.0.1:8000/api/updatepropertyfiles-singleunit/${propertyid}`,
+          `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertyfiles-singleunit/${propertyid}`,
           formdata,
           {
             headers: {
@@ -349,18 +352,18 @@ export default function EditPhotos({
             },
           }
         );
-        
+
         if (res.data) {
           const formdata = new FormData();
           formdata.append("toDelete", JSON.stringify(toDeleteGP));
-          
+
           for (const item of toAddGP) {
             const file = await fetchBlobAsFile(item.src, "photo.jpg");
             formdata.append("files[]", file);
           }
-          
+
           const res2 = await axios.post(
-            `http://127.0.0.1:8000/api/updatepropertyfiles-gallerysingleunit/${propertyid}`,
+            `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertyfiles-gallerysingleunit/${propertyid}`,
             formdata,
             {
               headers: {
@@ -368,13 +371,18 @@ export default function EditPhotos({
               },
             }
           );
-  
-          if (res2.data && (res.data.status === "success" || res2.data.status === "success")) {
+
+          if (
+            res2.data &&
+            (res.data.status === "success" || res2.data.status === "success")
+          ) {
             setIsSaved(true);
             setHasError(false);
             setSnackbarMessage("Photos updated successfully");
-           
-          } else if (res2.data.status === "null" && res.data.status === "null") {
+          } else if (
+            res2.data.status === "null" &&
+            res.data.status === "null"
+          ) {
             console.log("No changes made");
             setSnackbarMessage("No changes made");
           }
@@ -382,7 +390,7 @@ export default function EditPhotos({
       } catch (error) {
         console.log(error);
       } finally {
-        onSaveStatusChange('Saved');
+        onSaveStatusChange("Saved");
         setIsSaved(true);
         setIsLoading(false);
         setOpenSnackbar(true);
@@ -410,16 +418,15 @@ export default function EditPhotos({
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
- const handleCloseSnackbar  = () => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
 
   // const photosToDisplay =
   //   currentPhotoType === "coverPhotos" ? coverPhotos : galleryPhotos;
@@ -432,7 +439,13 @@ export default function EditPhotos({
 
   return (
     <ThemeProvider theme={theme}>
-    <TemplateFrameEdit onEditChange={handleEditingChange} saved={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        saved={isSaved}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+      />
       <Paper
         style={{
           width: "auto",
@@ -466,148 +479,48 @@ export default function EditPhotos({
             marginBottom: "2rem",
           }}
         >
-          Manage your property's cover and gallery photos here. You can add, edit,
-          and delete images, as well as adjust captions. Ensure your photos are
-          up-to-date to attract more guests.
+          Manage your property's cover and gallery photos here. You can add,
+          edit, and delete images, as well as adjust captions. Ensure your
+          photos are up-to-date to attract more guests.
         </Typography>
 
         <Grid container spacing={2}>
-      {/* Cover Photos */}
-      <Grid item xs={12} sx={{ padding: '1rem' }}>
-        <div
-          className="info-title-cntr"
-          onClick={() => handlePhotoTypeChange('coverPhotos')}
-        >
-          <ArrowRight sx={{ color: '#16B4DD' }} />
-          <div style={{ fontSize: '1.125rem' }}>Cover Photos</div>
-        </div>
-        <Divider sx={{ width: '100%', color: '#ccc' }} />
-        <ImageList variant="masonry" cols={cols} gap={5}>
-          {coverPhotos.map((image, index) => (
-            <ImageListItem
-              key={image.id}
-              onClick={() => handleClickOpen(index, 'coverPhotos')}
-              style={{ position: 'relative', cursor: 'pointer' }}
+          {/* Cover Photos */}
+          <Grid item xs={12} sx={{ padding: "1rem" }}>
+            <div
+              className="info-title-cntr"
+              onClick={() => handlePhotoTypeChange("coverPhotos")}
             >
-              <img
-                src={image.src}
-                alt={`Cover ${image.id}`}
-                style={{ objectFit: 'cover', height: '200px' }}
-              />
-              {isEditing && (
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
-                    handleDeleteCoverPhoto(index, image);
-                  }}
-                  sx={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    color: 'white',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    '&:hover': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    },
-                  }}
-                >
-                  <Delete />
-                </IconButton>
-              )}
-              <ImageListItemBar title={image.caption} position="below" />
-            </ImageListItem>
-          ))}
-        </ImageList>
-        {isEditing && (
-          <div style={{ marginTop: '1rem' }}>
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="upload-cover-button"
-              multiple
-              type="file"
-              onChange={(e) => handleAddPhotos(e, 'coverPhotos')}
-            />
-            <label htmlFor="upload-cover-button">
-              <Button
-                variant="contained"
-                color="primary"
-                component="span"
-                startIcon={<AddAPhoto />}
-              >
-                Add Cover Photos
-              </Button>
-            </label>
-          </div>
-        )}
-      </Grid>
-
-      
-      <Grid item xs={12} sx={{ padding: '1rem' }}>
-        <div
-          className="info-title-cntr"
-          onClick={() => handlePhotoTypeChange('galleryPhotos')}
-        >
-          <ArrowRight sx={{ color: '#16B4DD' }} />
-          <div>Gallery Photos</div>
-        </div>
-        <Divider sx={{ width: '100%', color: '#ccc', marginBottom: '1rem' }} />
-
-        {galleryPhotos.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '2rem', color: '#888', border: '1px solid #ccc', height: 'fit-content', borderRadius: '0.8rem' }}>
-            No Photos Added, Please Add Photos
-            {isEditing && (
-              <div style={{ marginTop: '1rem' }}>
-                <input
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  id="upload-gallery-button"
-                  multiple
-                  type="file"
-                  onChange={(e) => handleAddPhotos(e, 'galleryPhotos')}
-                />
-                <label htmlFor="upload-gallery-button">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    component="span"
-                    fullWidth
-                    startIcon={<AddAPhoto />}
-                  >
-                    Add Gallery Photos
-                  </Button>
-                </label>
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
+              <ArrowRight sx={{ color: "#16B4DD" }} />
+              <div style={{ fontSize: "1.125rem" }}>Cover Photos</div>
+            </div>
+            <Divider sx={{ width: "100%", color: "#ccc" }} />
             <ImageList variant="masonry" cols={cols} gap={5}>
-              {galleryPhotos.map((image, index) => (
+              {coverPhotos.map((image, index) => (
                 <ImageListItem
                   key={image.id}
-                  onClick={() => handleClickOpen(index, 'galleryPhotos')}
-                  style={{ position: 'relative', cursor: 'pointer' }}
+                  onClick={() => handleClickOpen(index, "coverPhotos")}
+                  style={{ position: "relative", cursor: "pointer" }}
                 >
                   <img
                     src={image.src}
-                    alt={`Gallery ${image.id}`}
-                    style={{ objectFit: 'cover', height: '200px' }}
+                    alt={`Cover ${image.id}`}
+                    style={{ objectFit: "cover", height: "200px" }}
                   />
                   {isEditing && (
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
-                        handleDeleteGalleryPhoto(index, image);
+                        handleDeleteCoverPhoto(index, image);
                       }}
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 8,
                         right: 8,
-                        color: 'white',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        '&:hover': {
-                          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        color: "white",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        "&:hover": {
+                          backgroundColor: "rgba(0, 0, 0, 0.7)",
                         },
                       }}
                     >
@@ -619,32 +532,144 @@ export default function EditPhotos({
               ))}
             </ImageList>
             {isEditing && (
-              <div style={{ marginTop: '1rem' }}>
+              <div style={{ marginTop: "1rem" }}>
                 <input
                   accept="image/*"
-                  style={{ display: 'none' }}
-                  id="upload-gallery-button"
+                  style={{ display: "none" }}
+                  id="upload-cover-button"
                   multiple
                   type="file"
-                  onChange={(e) => handleAddPhotos(e, 'galleryPhotos')}
+                  onChange={(e) => handleAddPhotos(e, "coverPhotos")}
                 />
-                <label htmlFor="upload-gallery-button">
+                <label htmlFor="upload-cover-button">
                   <Button
                     variant="contained"
                     color="primary"
                     component="span"
                     startIcon={<AddAPhoto />}
                   >
-                    Add Gallery Photos
+                    Add Cover Photos
                   </Button>
                 </label>
               </div>
             )}
-          </>
-        )}
-      </Grid>
-      
-    </Grid>
+          </Grid>
+
+          <Grid item xs={12} sx={{ padding: "1rem" }}>
+            <div
+              className="info-title-cntr"
+              onClick={() => handlePhotoTypeChange("galleryPhotos")}
+            >
+              <ArrowRight sx={{ color: "#16B4DD" }} />
+              <div>Gallery Photos</div>
+            </div>
+            <Divider
+              sx={{ width: "100%", color: "#ccc", marginBottom: "1rem" }}
+            />
+
+            {galleryPhotos.length === 0 ? (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "2rem",
+                  color: "#888",
+                  border: "1px solid #ccc",
+                  height: "fit-content",
+                  borderRadius: "0.8rem",
+                }}
+              >
+                No Photos Added, Please Add Photos
+                {isEditing && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <input
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      id="upload-gallery-button"
+                      multiple
+                      type="file"
+                      onChange={(e) => handleAddPhotos(e, "galleryPhotos")}
+                    />
+                    <label htmlFor="upload-gallery-button">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        component="span"
+                        fullWidth
+                        startIcon={<AddAPhoto />}
+                      >
+                        Add Gallery Photos
+                      </Button>
+                    </label>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <ImageList variant="masonry" cols={cols} gap={5}>
+                  {galleryPhotos.map((image, index) => (
+                    <ImageListItem
+                      key={image.id}
+                      onClick={() => handleClickOpen(index, "galleryPhotos")}
+                      style={{ position: "relative", cursor: "pointer" }}
+                    >
+                      <img
+                        src={image.src}
+                        alt={`Gallery ${image.id}`}
+                        style={{ objectFit: "cover", height: "200px" }}
+                      />
+                      {isEditing && (
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevents the click event from firing on the ImageListItem
+                            handleDeleteGalleryPhoto(index, image);
+                          }}
+                          sx={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            color: "white",
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            "&:hover": {
+                              backgroundColor: "rgba(0, 0, 0, 0.7)",
+                            },
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                      )}
+                      <ImageListItemBar
+                        title={image.caption}
+                        position="below"
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+                {isEditing && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <input
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      id="upload-gallery-button"
+                      multiple
+                      type="file"
+                      onChange={(e) => handleAddPhotos(e, "galleryPhotos")}
+                    />
+                    <label htmlFor="upload-gallery-button">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        component="span"
+                        startIcon={<AddAPhoto />}
+                      >
+                        Add Gallery Photos
+                      </Button>
+                    </label>
+                  </div>
+                )}
+              </>
+            )}
+          </Grid>
+        </Grid>
 
         {/* Cover Photo Dialog */}
 
@@ -676,41 +701,41 @@ export default function EditPhotos({
           <DialogContent
             sx={{
               padding: 0,
-              display: 'flex',
-              height: '100vh',
-              overflow: 'hidden',
-              flexDirection: { xs: 'column', md: 'row' }, // Stack on small screens
+              display: "flex",
+              height: "100vh",
+              overflow: "hidden",
+              flexDirection: { xs: "column", md: "row" }, // Stack on small screens
             }}
           >
             <Box
               sx={{
-                flex: { xs: '1 1 auto', md: '1 1 70%' },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: { xs: '50vh', md: '100%' }, // Adjust height for smaller screens
-                overflow: 'hidden',
+                flex: { xs: "1 1 auto", md: "1 1 70%" },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: { xs: "50vh", md: "100%" }, // Adjust height for smaller screens
+                overflow: "hidden",
               }}
             >
               <img
                 src={coverPhotos[selectedImageIndex]?.src}
                 alt="Selected Cover Photo"
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
                 }}
               />
             </Box>
             <Box
               sx={{
-                flex: { xs: '1 1 auto', md: '1 1 30%' },
-                display: 'flex',
-                flexDirection: 'column',
-                padding: { xs: '1rem', md: '2rem' }, // Smaller padding on small screens
-                borderLeft: { xs: 'none', md: '1px solid #ccc' }, // Remove border on small screens
-                borderTop: { xs: '1px solid #ccc', md: 'none' }, // Add top border for stacked view
-                overflowY: 'auto',
+                flex: { xs: "1 1 auto", md: "1 1 30%" },
+                display: "flex",
+                flexDirection: "column",
+                padding: { xs: "1rem", md: "2rem" }, // Smaller padding on small screens
+                borderLeft: { xs: "none", md: "1px solid #ccc" }, // Remove border on small screens
+                borderTop: { xs: "1px solid #ccc", md: "none" }, // Add top border for stacked view
+                overflowY: "auto",
               }}
             >
               {isEditingCaption ? (
@@ -722,11 +747,13 @@ export default function EditPhotos({
                     value={editedCaption}
                     onChange={handleCaptionChange}
                     variant="outlined"
-                    sx={{ marginBottom: '1rem' }}
+                    sx={{ marginBottom: "1rem" }}
                   />
-                  <Box sx={{ display: 'flex', gap: '8px' }}>
+                  <Box sx={{ display: "flex", gap: "8px" }}>
                     <Button
-                      onClick={() => handleSaveCaption(coverPhotos[selectedImageIndex], true)}
+                      onClick={() =>
+                        handleSaveCaption(coverPhotos[selectedImageIndex], true)
+                      }
                       color="primary"
                       variant="contained"
                       startIcon={<SaveIcon />}
@@ -750,16 +777,17 @@ export default function EditPhotos({
                     variant="h6"
                     paragraph
                     sx={{
-                      padding: '16px',
-                      backgroundColor: '#f9f9f9',
-                      borderRadius: '8px',
-                      fontStyle: 'italic',
-                      color: '#333',
+                      padding: "16px",
+                      backgroundColor: "#f9f9f9",
+                      borderRadius: "8px",
+                      fontStyle: "italic",
+                      color: "#333",
                     }}
                   >
-                    {coverPhotos[selectedImageIndex]?.caption || "No caption available"}
+                    {coverPhotos[selectedImageIndex]?.caption ||
+                      "No caption available"}
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                  <Box sx={{ display: "flex", gap: "8px", marginTop: "16px" }}>
                     <Button
                       onClick={() => setIsEditingCaption(true)}
                       variant="outlined"
@@ -784,16 +812,16 @@ export default function EditPhotos({
           <DialogActions
             sx={{
               justifyContent: "space-between",
-              padding: '1rem',
-              backgroundColor: '#f5f5f5',
-              borderTop: '1px solid #ccc',
+              padding: "1rem",
+              backgroundColor: "#f5f5f5",
+              borderTop: "1px solid #ccc",
             }}
           >
             <Button
               onClick={handlePrev}
               variant="contained"
               startIcon={<ArrowBackIcon />}
-              sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+              sx={{ backgroundColor: "#1976d2", color: "#fff" }}
             >
               Previous
             </Button>
@@ -801,177 +829,183 @@ export default function EditPhotos({
               onClick={handleNext}
               variant="contained"
               endIcon={<ArrowForwardIcon />}
-              sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+              sx={{ backgroundColor: "#1976d2", color: "#fff" }}
             >
               Next
             </Button>
           </DialogActions>
         </Dialog>
 
-      {/* Gallery Photo Dialog 1 */}
+        {/* Gallery Photo Dialog 1 */}
 
-      <Dialog
-        open={openGalleryPhotoDialog}
-        onClose={handleClose}
-        fullScreen
-        sx={{ padding: 0 }}
-      >
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "1rem",
-            borderBottom: "1px solid #ccc",
-          }}
+        <Dialog
+          open={openGalleryPhotoDialog}
+          onClose={handleClose}
+          fullScreen
+          sx={{ padding: 0 }}
         >
-          Gallery Photo
-          <IconButton
-            edge="end"
-            color="inherit"
-            onClick={handleClose}
-            sx={{ position: "absolute", right: 16, top: 16 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            padding: 0,
-            display: 'flex',
-            height: '100vh',
-            overflow: 'hidden',
-            flexDirection: { xs: 'column', md: 'row' }, // Stack on small screens
-          }}
-        >
-          <Box
+          <DialogTitle
             sx={{
-              flex: { xs: '1 1 auto', md: '1 1 70%' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: { xs: '50vh', md: '100%' }, // Adjust height for smaller screens
-              overflow: 'hidden',
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "1rem",
+              borderBottom: "1px solid #ccc",
             }}
           >
-            <img
-              src={galleryPhotos[selectedImageIndex]?.src}
-              alt="Selected Gallery Photo"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+            Gallery Photo
+            <IconButton
+              edge="end"
+              color="inherit"
+              onClick={handleClose}
+              sx={{ position: "absolute", right: 16, top: 16 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent
+            sx={{
+              padding: 0,
+              display: "flex",
+              height: "100vh",
+              overflow: "hidden",
+              flexDirection: { xs: "column", md: "row" }, // Stack on small screens
+            }}
+          >
+            <Box
+              sx={{
+                flex: { xs: "1 1 auto", md: "1 1 70%" },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: { xs: "50vh", md: "100%" }, // Adjust height for smaller screens
+                overflow: "hidden",
               }}
-            />
-          </Box>
-          <Box
+            >
+              <img
+                src={galleryPhotos[selectedImageIndex]?.src}
+                alt="Selected Gallery Photo"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                flex: { xs: "1 1 auto", md: "1 1 30%" },
+                display: "flex",
+                flexDirection: "column",
+                padding: { xs: "1rem", md: "2rem" }, // Smaller padding on small screens
+                borderLeft: { xs: "none", md: "1px solid #ccc" }, // Remove border on small screens
+                borderTop: { xs: "1px solid #ccc", md: "none" }, // Add top border for stacked view
+                overflowY: "auto",
+              }}
+            >
+              {isEditingCaption ? (
+                <>
+                  <InputLabel htmlFor="caption">Edit Caption</InputLabel>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    value={editedCaption}
+                    onChange={handleCaptionChange}
+                    variant="outlined"
+                    sx={{ marginBottom: "1rem" }}
+                  />
+                  <Box sx={{ display: "flex", gap: "8px" }}>
+                    <Button
+                      onClick={() =>
+                        handleSaveCaption(
+                          galleryPhotos[selectedImageIndex],
+                          true
+                        )
+                      }
+                      color="primary"
+                      variant="contained"
+                      startIcon={<SaveIcon />}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      onClick={() => setIsEditingCaption(false)}
+                      color="secondary"
+                      variant="contained"
+                      startIcon={<CancelIcon />}
+                    >
+                      Cancel
+                    </Button>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <InputLabel htmlFor="caption">Caption</InputLabel>
+                  <Typography
+                    variant="h6"
+                    paragraph
+                    sx={{
+                      padding: "16px",
+                      backgroundColor: "#f9f9f9",
+                      borderRadius: "8px",
+                      fontStyle: "italic",
+                      color: "#333",
+                    }}
+                  >
+                    {galleryPhotos[selectedImageIndex]?.caption ||
+                      "No caption available"}
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: "8px", marginTop: "16px" }}>
+                    <Button
+                      onClick={() => setIsEditingCaption(true)}
+                      variant="outlined"
+                      color="primary"
+                      startIcon={<EditIcon />}
+                    >
+                      Edit Caption
+                    </Button>
+                    <Button
+                      onClick={handleDeleteImage}
+                      variant="outlined"
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                    >
+                      Delete Photo
+                    </Button>
+                  </Box>
+                </>
+              )}
+            </Box>
+          </DialogContent>
+          <DialogActions
             sx={{
-              flex: { xs: '1 1 auto', md: '1 1 30%' },
-              display: 'flex',
-              flexDirection: 'column',
-              padding: { xs: '1rem', md: '2rem' }, // Smaller padding on small screens
-              borderLeft: { xs: 'none', md: '1px solid #ccc' }, // Remove border on small screens
-              borderTop: { xs: '1px solid #ccc', md: 'none' }, // Add top border for stacked view
-              overflowY: 'auto',
+              justifyContent: "space-between",
+              padding: "1rem",
+              backgroundColor: "#f5f5f5",
+              borderTop: "1px solid #ccc",
             }}
           >
-            {isEditingCaption ? (
-              <>
-                <InputLabel htmlFor="caption">Edit Caption</InputLabel>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  value={editedCaption}
-                  onChange={handleCaptionChange}
-                  variant="outlined"
-                  sx={{ marginBottom: '1rem' }}
-                />
-                <Box sx={{ display: 'flex', gap: '8px' }}>
-                  <Button
-                    onClick={() => handleSaveCaption(galleryPhotos[selectedImageIndex], true)}
-                    color="primary"
-                    variant="contained"
-                    startIcon={<SaveIcon />}
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    onClick={() => setIsEditingCaption(false)}
-                    color="secondary"
-                    variant="contained"
-                    startIcon={<CancelIcon />}
-                  >
-                    Cancel
-                  </Button>
-                </Box>
-              </>
-            ) : (
-              <>
-                <InputLabel htmlFor="caption">Caption</InputLabel>
-                <Typography
-                  variant="h6"
-                  paragraph
-                  sx={{
-                    padding: '16px',
-                    backgroundColor: '#f9f9f9',
-                    borderRadius: '8px',
-                    fontStyle: 'italic',
-                    color: '#333',
-                  }}
-                >
-                  {galleryPhotos[selectedImageIndex]?.caption || "No caption available"}
-                </Typography>
-                <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                  <Button
-                    onClick={() => setIsEditingCaption(true)}
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<EditIcon />}
-                  >
-                    Edit Caption
-                  </Button>
-                  <Button
-                    onClick={handleDeleteImage}
-                    variant="outlined"
-                    color="error"
-                    startIcon={<DeleteIcon />}
-                  >
-                    Delete Photo
-                  </Button>
-                </Box>
-              </>
-            )}
-          </Box>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "space-between",
-            padding: '1rem',
-            backgroundColor: '#f5f5f5',
-            borderTop: '1px solid #ccc',
-          }}
-        >
-          <Button
-            onClick={handlePrev}
-            variant="contained"
-            startIcon={<ArrowBackIcon />}
-            sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={handleNext}
-            variant="contained"
-            endIcon={<ArrowForwardIcon />}
-            sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-          >
-            Next
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <Button
+              onClick={handlePrev}
+              variant="contained"
+              startIcon={<ArrowBackIcon />}
+              sx={{ backgroundColor: "#1976d2", color: "#fff" }}
+            >
+              Previous
+            </Button>
+            <Button
+              onClick={handleNext}
+              variant="contained"
+              endIcon={<ArrowForwardIcon />}
+              sx={{ backgroundColor: "#1976d2", color: "#fff" }}
+            >
+              Next
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-      {/* Gallery Photo Dialog 2 */}
-      {/* <Dialog
+        {/* Gallery Photo Dialog 2 */}
+        {/* <Dialog
   open={openCoverPhotoDialog}
   onClose={handleClose}
   fullScreen
@@ -1130,24 +1164,22 @@ export default function EditPhotos({
     </Button>
   </DialogActions>
 </Dialog> */}
- 
-
       </Paper>
       <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
           onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          severity={hasError ? "error" : "success"}
+          sx={{ width: "100%" }}
+          variant="filled"
         >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity={hasError ? "error" : "success"}
-            sx={{ width: "100%" }}
-            variant="filled"
-          >
-         {snackbarMessage}
-          </Alert>
-        </Snackbar>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <LoadingModal open={isLoading} />
     </ThemeProvider>
   );

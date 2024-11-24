@@ -75,7 +75,7 @@ export default function BannerOffers({
 
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/getavailableproperties",
+        "https://whitesmoke-shark-473197.hostingersite.com/api/getavailableproperties",
         {
           params: {
             checkin_date: formattedCheckinDate,

@@ -19,7 +19,7 @@ const AccountManagement = () => {
         const token = localStorage.getItem("auth_token");
         if (token) {
             axios
-                .post("http://127.0.0.1:8000/api/decodetoken", { token: token })
+                .post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token: token })
                 .then((response) => {
                     setUser(response.data["data"]);
                 })
@@ -36,9 +36,9 @@ const AccountManagement = () => {
         setLoading(true);
         try {
             if (token) {
-                const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", { token });
+                const res1 = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", { token });
                 if (res1.data) {
-                    await axios.post("http://127.0.0.1:8000/api/logout", { userid: res1.data.data.userid });
+                    await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/logout", { userid: res1.data.data.userid });
                     localStorage.removeItem("auth_token");
                     navigate("/login");
                 }
@@ -56,7 +56,7 @@ const AccountManagement = () => {
         const fetchProfile = async () => {
             if (!user) return;
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+                const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
                 setProfile(response.data);
                 setLoading(false);
             } catch (error) {

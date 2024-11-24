@@ -21,10 +21,9 @@ import Phone from "@mui/icons-material/Phone";
 import axios from "axios";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateField } from '@mui/x-date-pickers/DateField'; // Import DateField for both desktop and mobile
+import { DateField } from "@mui/x-date-pickers/DateField"; // Import DateField for both desktop and mobile
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import countryCodesWithPatterns from "../../../components/Booking/countryCodes";
-
 
 export default function PersonalInformation({ profile, onUpdateProfile }) {
   const [country, setCountry] = useState("");
@@ -57,11 +56,12 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
       setCountry(profile.country);
       setPhone(profile.cellnumber);
       const countryCode =
-        Object.keys(countryCodesWithPatterns).find((key) => key === profile.country) || "";
+        Object.keys(countryCodesWithPatterns).find(
+          (key) => key === profile.country
+        ) || "";
       setPhoneNumberPrefix(countryCode);
     }
   }, [profile]);
-
 
   useEffect(() => {
     if (profile) {
@@ -82,7 +82,9 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   const handleCountryChange = (e) => {
     const selectedCountry = e.target.value;
     const countryCode =
-      Object.keys(countryCodesWithPatterns).find((key) => countryCodesWithPatterns[key].name === selectedCountry) || "";
+      Object.keys(countryCodesWithPatterns).find(
+        (key) => countryCodesWithPatterns[key].name === selectedCountry
+      ) || "";
     setCountry(selectedCountry);
     setPhoneNumberPrefix(countryCode);
     setPhone(""); // Reset phone number when country changes
@@ -135,7 +137,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
     try {
       const formattedDate = selectedDate.toISOString().split("T")[0];
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           birthday: formattedDate || null,
@@ -182,10 +184,11 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
           <div className="account-id-cntr">
             <div className="account-id-title">Personal Information</div>
             <div className="account-id-desc">
-              Your email address is essential for managing your Cebustay account. It
-              enables you to access your profile, receive booking confirmations, and
-              stay informed with the latest updates and offers. Keeping your email
-              current ensures you don't miss any important communications.
+              Your email address is essential for managing your Cebustay
+              account. It enables you to access your profile, receive booking
+              confirmations, and stay informed with the latest updates and
+              offers. Keeping your email current ensures you don't miss any
+              important communications.
             </div>
           </div>
         </Grid>
@@ -195,7 +198,9 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
               <DateField
                 label="Birthday"
                 value={birthday ? dayjs(birthday) : null}
-                onChange={(date) => setBirthday(date ? date.format("YYYY-MM-DD") : "")}
+                onChange={(date) =>
+                  setBirthday(date ? date.format("YYYY-MM-DD") : "")
+                }
                 fullWidth
               />
             </LocalizationProvider>
@@ -213,10 +218,10 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
                 mb: 2,
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",
-                  paddingRight: isMobile ? '3rem' : '1rem', // Adjust padding for mobile
+                  paddingRight: isMobile ? "3rem" : "1rem", // Adjust padding for mobile
                 },
                 "& .MuiSelect-select": {
-                  paddingLeft: isMobile ? '3rem' : '0rem', // Adjust padding-left for mobile
+                  paddingLeft: isMobile ? "3rem" : "0rem", // Adjust padding-left for mobile
                 },
               }}
               InputProps={{
@@ -227,14 +232,14 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
                 ),
               }}
             >
-             {Object.keys(countryCodesWithPatterns).map((key) => {
-              const countryName = countryCodesWithPatterns[key].name;
-              return (
-                <MenuItem key={key} value={countryName}>
-                  {countryName}
-                </MenuItem>
-              );
-            })}
+              {Object.keys(countryCodesWithPatterns).map((key) => {
+                const countryName = countryCodesWithPatterns[key].name;
+                return (
+                  <MenuItem key={key} value={countryName}>
+                    {countryName}
+                  </MenuItem>
+                );
+              })}
             </TextField>
 
             <TextField
@@ -260,7 +265,13 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
               }}
             />
 
-            <div style={{ display: "flex", justifyContent: "flex-end",gap: "1rem" }} >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "1rem",
+              }}
+            >
               <button
                 className={`save-btn ${
                   isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
@@ -272,7 +283,9 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
               </button>
               <button
                 className={`cancel-btn ${
-                  isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+                  isChanged
+                    ? "cancel-btn-withChanges"
+                    : "cancel-btn-withoutChanges"
                 }`}
                 onClick={handleCancel}
                 disabled={!isChanged}

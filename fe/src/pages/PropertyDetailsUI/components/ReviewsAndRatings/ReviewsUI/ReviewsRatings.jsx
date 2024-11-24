@@ -147,7 +147,7 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/getallreviewsandratings`, {
+        const res = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getallreviewsandratings`, {
           params: {
             propertyid: propertyId
           }
@@ -168,14 +168,14 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
   const handleSubmit = async () => {
     if (comment && rating) {
       try {
-        await axios.post('http://127.0.0.1:8000/api/reviewsandratings', {
+        await axios.post('https://whitesmoke-shark-473197.hostingersite.com/api/reviewsandratings', {
           userid: user.userid,
           propertyid: propertyId,
           rating,
           review: comment
         });
         // Refetch the reviews after successful submission
-        const res = await axios.get('http://127.0.0.1:8000/api/getallreviewsandratings', {
+        const res = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getallreviewsandratings', {
           params: {
             propertyid: propertyId
           }

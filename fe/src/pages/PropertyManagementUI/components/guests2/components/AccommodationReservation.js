@@ -72,7 +72,10 @@ export default function AccommodationReservation() {
     const token = localStorage.getItem("auth_token");
     if (token) {
       axios
-        .post("http://127.0.0.1:8000/api/decodetoken", { token })
+        .post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
+          { token }
+        )
         .then((response) => {
           setUser(response.data["data"]);
         })
@@ -90,7 +93,7 @@ export default function AccommodationReservation() {
       if (!user) return;
       try {
         const propertyRes = await axios.get(
-          "http://127.0.0.1:8000/api/property/bookings",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/property/bookings",
           {
             params: {
               userid: user.userid,
@@ -121,7 +124,7 @@ export default function AccommodationReservation() {
       if (!user) return;
       try {
         const checkoutRes = await axios.get(
-          "http://127.0.0.1:8000/api/allbookinghistory",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/allbookinghistory",
           {
             params: {
               userid: user.userid,
@@ -174,7 +177,9 @@ export default function AccommodationReservation() {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/property/${deleteItemId}`);
+      await axios.delete(
+        `https://whitesmoke-shark-473197.hostingersite.com/api/property/${deleteItemId}`
+      );
       // Remove item from propertyData, checkIns, or checkOut based on which section it is in
       setPropertyData((prevData) =>
         prevData.filter((item) => item.id !== deleteItemId)
@@ -198,7 +203,7 @@ export default function AccommodationReservation() {
     const token = localStorage.getItem("auth_token");
     try {
       const res = await axios.put(
-        "http://127.0.0.1:8000/api/activateproperty",
+        "https://whitesmoke-shark-473197.hostingersite.com/api/activateproperty",
         {
           propertyid: id,
         },
@@ -213,7 +218,7 @@ export default function AccommodationReservation() {
         // alert(res.data.message);
         try {
           const propertyres = await axios.get(
-            "http://127.0.0.1:8000/api/user/properties",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/user/properties",
             {
               params: {
                 userid: user.userid,

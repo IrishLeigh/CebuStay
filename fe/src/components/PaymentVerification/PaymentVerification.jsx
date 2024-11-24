@@ -30,21 +30,21 @@ const PaymentVerification = () => {
             setLoading(true);
             try {
                 if (bookingId !== null) {
-                    const bookstatus = await axios.put('http://127.0.0.1:8000/api/bookingStatus', {
+                    const bookstatus = await axios.put('https://whitesmoke-shark-473197.hostingersite.com/api/bookingStatus', {
                         bookingid: bookingId,
                         status: 'Confirmed'
                     });
-                    const paymentstatus = await axios.put('http://127.0.0.1:8000/api/update-payment-status', {
+                    const paymentstatus = await axios.put('https://whitesmoke-shark-473197.hostingersite.com/api/update-payment-status', {
                         bookingid: bookingId,
                         status: 'Paid'
                     });
-                    const getDetails = await axios.get('http://127.0.0.1:8000/api/property/bookingId', {
+                    const getDetails = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/property/bookingId', {
                         params: { bookingid: bookingId }
                     });
-                    const getPayment = await axios.get('http://127.0.0.1:8000/api/getpayments', {
+                    const getPayment = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getpayments', {
                         params: { bookingid: bookingId }
                     });
-                    const getpaymentid = await axios.get('http://127.0.0.1:8000/api/getpaymentid', {
+                    const getpaymentid = await axios.get('https://whitesmoke-shark-473197.hostingersite.com/api/getpaymentid', {
                         params: { bookingid: bookingId }
                     });
                     setPayment(getPayment.data);

@@ -14,10 +14,13 @@ export default function AdminLoginUI() {
     setLoading(true);
     console.log("Username: ", username);
     console.log("Password: ", password);
-    const res = await axios.post("http://127.0.0.1:8000/api/loginadmin", {
-      username: username,
-      password: password,
-    });
+    const res = await axios.post(
+      "https://whitesmoke-shark-473197.hostingersite.com/api/loginadmin",
+      {
+        username: username,
+        password: password,
+      }
+    );
     if (res.data && res.data.status === "success") {
       //   alert(res.data.message);
       console.log(res.data);
