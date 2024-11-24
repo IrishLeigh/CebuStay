@@ -44,6 +44,16 @@
   flex-direction: "row";
   width: 100%;
   gap: 5px;
+  overflow: auto;
+}
+
+.welcome-map-container {
+  position: relative;
+  z-index: 9998; /* Ensure it doesn't overlap the modal */
+}
+
+.MuiDialog-root {
+  z-index: 9999 !important; /* Ensure modal stays on top */
 }
 
 .map-background {
