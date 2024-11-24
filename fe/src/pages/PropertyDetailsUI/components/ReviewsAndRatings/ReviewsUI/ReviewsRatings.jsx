@@ -7,72 +7,72 @@ import ArrowRight from "@mui/icons-material/Send";
 import Divider from "@mui/material/Divider";
 import { Paper } from '@mui/material';
 
-const dummyReviews = [
-  {
-    firstname: "John",
-    lastname: "Doe",
-    created_at: "2024-11-01T10:00:00Z",
-    rating: 5,
-    review: "Fantastic product! Highly recommend to anyone looking for quality.",
-    isPositive: true,
-  },
-  {
-    firstname: "Jane",
-    lastname: "Smith",
-    created_at: "2024-11-15T14:30:00Z",
-    rating: 4,
-    review: "Great value for money, but could use some minor improvements.",
-    isPositive: true,
-  },
-  {
-    firstname: "Robert",
-    lastname: "Brown",
-    created_at: "2024-10-30T08:20:00Z",
-    rating: 3,
-    review: "It’s okay. Does the job but not exceptional.",
-    isPositive: false,
-  },
-  {
-    firstname: "Emily",
-    lastname: "Johnson",
-    created_at: "2024-11-05T12:15:00Z",
-    rating: 5,
-    review: "Exceeded my expectations! Great service and product quality.",
-    isPositive: true,
-  },
-  {
-    firstname: "Michael",
-    lastname: "Lee",
-    created_at: "2024-11-07T16:45:00Z",
-    rating: 2,
-    review: "Not satisfied with the quality. I had higher expectations.",
-    isPositive: false,
-  },
-  {
-    firstname: "Sarah",
-    lastname: "Wilson",
-    created_at: "2024-11-19T11:00:00Z",
-    rating: 4,
-    review: "Good product, but delivery took longer than expected.",
-    isPositive: true,
-  },
-  {
-    firstname: "David",
-    lastname: "Taylor",
-    created_at: "2024-11-10T09:10:00Z",
-    rating: 1,
-    review: "Terrible experience. Would not recommend.",
-    isPositive: false,
-  },
-  {
-    firstname: "Sophia",
-    lastname: "Martinez",
-    created_at: "2024-11-20T18:00:00Z",
-    rating: 5,
-    review: "Absolutely love it! Will buy again for sure.",
-    isPositive: true,
-  },
-];
+// const dummyReviews = [
+//   {
+//     firstname: "John",
+//     lastname: "Doe",
+//     created_at: "2024-11-01T10:00:00Z",
+//     rating: 5,
+//     review: "Fantastic product! Highly recommend to anyone looking for quality.",
+//     isPositive: true,
+//   },
+//   {
+//     firstname: "Jane",
+//     lastname: "Smith",
+//     created_at: "2024-11-15T14:30:00Z",
+//     rating: 4,
+//     review: "Great value for money, but could use some minor improvements.",
+//     isPositive: true,
+//   },
+//   {
+//     firstname: "Robert",
+//     lastname: "Brown",
+//     created_at: "2024-10-30T08:20:00Z",
+//     rating: 3,
+//     review: "It’s okay. Does the job but not exceptional.",
+//     isPositive: false,
+//   },
+//   {
+//     firstname: "Emily",
+//     lastname: "Johnson",
+//     created_at: "2024-11-05T12:15:00Z",
+//     rating: 5,
+//     review: "Exceeded my expectations! Great service and product quality.",
+//     isPositive: true,
+//   },
+//   {
+//     firstname: "Michael",
+//     lastname: "Lee",
+//     created_at: "2024-11-07T16:45:00Z",
+//     rating: 2,
+//     review: "Not satisfied with the quality. I had higher expectations.",
+//     isPositive: false,
+//   },
+//   {
+//     firstname: "Sarah",
+//     lastname: "Wilson",
+//     created_at: "2024-11-19T11:00:00Z",
+//     rating: 4,
+//     review: "Good product, but delivery took longer than expected.",
+//     isPositive: true,
+//   },
+//   {
+//     firstname: "David",
+//     lastname: "Taylor",
+//     created_at: "2024-11-10T09:10:00Z",
+//     rating: 1,
+//     review: "Terrible experience. Would not recommend.",
+//     isPositive: false,
+//   },
+//   {
+//     firstname: "Sophia",
+//     lastname: "Martinez",
+//     created_at: "2024-11-20T18:00:00Z",
+//     rating: 5,
+//     review: "Absolutely love it! Will buy again for sure.",
+//     isPositive: true,
+//   },
+// ];
 
 const generateDummyReviews = (count) => {
   const names = ['Charlie Davis', 'Emma Frost', 'George Hill', 'Isabella Johnson', 'Kevin Lee', 'Liam Brown', 'Sophia Clark', 'James White', 'Olivia Lewis', 'Noah Walker', 'Mia Harris', 'Ethan Young', 'Ava King', 'Mason Wright', 'Isabella Lopez', 'Lucas Scott', 'Charlotte Adams', 'Jackson Nelson', 'Amelia Carter', 'Oliver Mitchell', 'Harper Perez', 'Henry Turner', 'Ella Collins', 'Sebastian Hall', 'Zoe Rivera', 'Leo Jenkins', 'Aria Sanchez', 'Jack Morris', 'Lily Price', 'Benjamin Morgan', 'Nora Cooper', 'Alexander Hughes', 'Emily Bell', 'William Murphy', 'Abigail Kelly', 'Daniel Ross', 'Madison Cooper', 'Matthew Bailey', 'Ella Turner', 'Michael Barnes', 'Hannah Rivera', 'James Martinez', 'Grace Cooper', 'David Lee', 'Chloe Adams', 'Gavin Thompson', 'Addison Roberts', 'Eli Johnson', 'Sofia Martinez', 'Samuel Anderson', 'Evelyn Miller'];
@@ -93,7 +93,8 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
   // const [reviews, setReviews] = useState(generateDummyReviews(50));
-  const [reviews, setReviews] = useState(dummyReviews);
+  const [reviews, setReviews] = useState([]);
+  const [dummyReviews, setDummyReview] = useState([]);
   const [view, setView] = useState('All'); // Tab view: All, Latest, Oldest
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -152,8 +153,9 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
           }
         });
         console.log("reviews", res.data);
+
         setRatingg(res.data.propertyrating);
-        setReviews(res.data.reviews);
+        setDummyReview(res.data.reviews);
       } catch (err) {
         console.log(err);
       }
@@ -294,32 +296,44 @@ const ReviewsAndRatingsSingleUnit = ({ propertyId, setRatingg }) => {
           {view} Reviews
         </h2>
         <div className="reviews-list">
-          {currentReviews.map((review, index) => (
-            <div key={index} className={`review-card ${review.isPositive ? "positive" : "negative"}`}>
-              <div className="review-header">
-                <div className="review-avatar">
-                  {`${review.firstname?.charAt(0) || ""}${review.lastname?.charAt(0) || ""}`}
+          {currentReviews.length > 0 ? (
+            currentReviews.map((review, index) => (
+              <div
+                key={index}
+                className={`review-card ${review.isPositive ? "positive" : "negative"}`}
+              >
+                <div className="review-header">
+                  <div className="review-avatar">
+                    {`${review.firstname?.charAt(0) || ""}${review.lastname?.charAt(0) || ""}`}
+                  </div>
+                  <div className="review-info">
+                    <div className="review-name">
+                      {review.firstname} {review.lastname}
+                    </div>
+                    <div className="review-location">Unknown Location</div>
+                  </div>
+                  <div className="review-date">
+                    Reviewed: {new Date(review.created_at).toLocaleDateString()}
+                  </div>
                 </div>
-                <div className="review-info">
-                  <div className="review-name">{review.firstname} {review.lastname}</div>
-                  <div className="review-location">Unknown Location</div>
+                <div className="review-rating">
+                  {[...Array(review.rating)].map((_, idx) => (
+                    <FaStar key={idx} className="star filled" />
+                  ))}
+                  {[...Array(5 - review.rating)].map((_, idx) => (
+                    <FaRegStar key={idx} className="star" />
+                  ))}
                 </div>
-                <div className="review-date">Reviewed: {new Date(review.created_at).toLocaleDateString()}</div>
+                <div className="review-content">
+                  <div>{review.review}</div>
+                </div>
               </div>
-              <div className="review-rating">
-                {[...Array(review.rating)].map((_, idx) => (
-                  <FaStar key={idx} className="star filled" />
-                ))}
-                {[...Array(5 - review.rating)].map((_, idx) => (
-                  <FaRegStar key={idx} className="star" />
-                ))}
-              </div>
-              <div className="review-content">
-                <div>{review.review}</div>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="no-reviews">No reviews available at the moment.</div>
+          )}
         </div>
+
 
         <div className="pagination">
           <button
