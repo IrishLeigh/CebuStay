@@ -39,7 +39,7 @@ export default function Dashboard() {
       const systemPrefersDark = window.matchMedia(
         "(prefers-color-scheme: light)"
       ).matches;
-      setMode(systemPrefersDark ? "dark" : "light");
+      setMode(systemPrefersDark ? "light" : "light");
     }
   }, []);
 
