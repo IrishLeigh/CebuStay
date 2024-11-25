@@ -13,14 +13,14 @@ import getDashboardTheme from "./theme/getDashboardTheme";
 import MainGrid from "./components/MainGrid"; // Default content
 import SideMenu from "./components/SideMenu";
 import TemplateFrame from "./TemplateFrame";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import axios from 'axios';
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import axios from "axios";
 import { Alert, Snackbar } from "@mui/material";
 
 export default function Dashboard() {
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
-  const [selectedMenuItem, setSelectedMenuItem] = React.useState("mainGrid"); 
+  const [selectedMenuItem, setSelectedMenuItem] = React.useState("mainGrid");
   const [openLogoutModal, setOpenLogoutModal] = React.useState(false); // Logout modal state
   const [token, setToken] = React.useState(localStorage.getItem("auth_token"));
   const dashboardTheme = createTheme(getDashboardTheme(mode));
@@ -29,7 +29,6 @@ export default function Dashboard() {
   const [user, setUser] = React.useState(null);
   const navigate = useNavigate();
   const [openDrawer, setOpenDrawer] = React.useState(false);
-  
 
   React.useEffect(() => {
     const savedMode = localStorage.getItem("themeMode");
@@ -42,7 +41,6 @@ export default function Dashboard() {
       setMode(systemPrefersDark ? "light" : "light");
     }
   }, []);
-
 
   const handleDrawerClose = () => {
     setOpenDrawer(false);
@@ -68,7 +66,6 @@ export default function Dashboard() {
   };
 
   const cancelLogout = () => {
-
     setOpenLogoutModal(false);
   };
   const handleSnackbarClose = () => {
@@ -77,22 +74,28 @@ export default function Dashboard() {
   const confirmLogout = async () => {
     try {
       console.log("token FROM HEADER", token);
-      const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-        token: token,
-      });
+      const res1 = await axios.post(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
+        {
+          token: token,
+        }
+      );
       if (res1.data) {
-        const res = await axios.post("http://127.0.0.1:8000/api/logout", {
-          userid: res1.data.data.userid,
-        });
+        const res = await axios.post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/logout",
+          {
+            userid: res1.data.data.userid,
+          }
+        );
         if (res.data) {
           console.log(res.data);
           // Remove the token from local storage
           localStorage.removeItem("auth_token");
-  
+
           // Optionally, reset any user-related state here if applicable
-          setOpenSnackbar(true); 
+          setOpenSnackbar(true);
           setOpenLogoutModal(false);
-  
+
           // Delay navigation by 2 seconds to allow snackbar to show
           setTimeout(() => {
             navigate("/login");
@@ -105,7 +108,6 @@ export default function Dashboard() {
       setOpenLogoutModal(false);
     }
   };
-  
 
   return (
     <TemplateFrame
@@ -118,12 +120,12 @@ export default function Dashboard() {
       <ThemeProvider theme={showCustomTheme ? dashboardTheme : defaultTheme}>
         <CssBaseline enableColorScheme />
         <Box sx={{ display: "flex", position: "relative" }}>
-          <SideMenu 
-            open={openDrawer} 
-            onClose={handleDrawerClose} 
+          <SideMenu
+            open={openDrawer}
+            onClose={handleDrawerClose}
             onLogout={handleLogout} // Pass the logout handler
             user={user}
-          /> 
+          />
           <Box
             component="main"
             sx={(theme) => ({
@@ -147,10 +149,7 @@ export default function Dashboard() {
         </Box>
 
         {/* Log out confirmation modal */}
-        <Dialog
-          open={openLogoutModal}
-          onClose={cancelLogout}
-        >
+        <Dialog open={openLogoutModal} onClose={cancelLogout}>
           <DialogTitle>Confirm Logout</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -166,12 +165,12 @@ export default function Dashboard() {
             </Button>
           </DialogActions>
         </Dialog>
-         {/* Snackbar for logout success */}
-         <Snackbar
+        {/* Snackbar for logout success */}
+        <Snackbar
           open={openSnackbar}
           autoHideDuration={3000} // Closes automatically after 3 seconds
           onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
           <Alert onClose={handleSnackbarClose} severity="success">
             You have successfully logged out.

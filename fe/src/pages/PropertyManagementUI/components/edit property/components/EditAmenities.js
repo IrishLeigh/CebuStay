@@ -24,7 +24,7 @@ export default function EditAmenities({
   isSingleUnit,
   onAmenitiesChange,
   propertyid,
-  onSaveStatusChange
+  onSaveStatusChange,
 }) {
   const [selectedAmenities, setSelectedAmenities] = useState(amenities || []);
   const [selectedFacilities, setSelectedFacilities] = useState(
@@ -36,9 +36,9 @@ export default function EditAmenities({
   const [hasChanges, setHasChanges] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [ isSaved, setIsSaved ] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [hasError, setHasError] = useState(false);
 
@@ -86,56 +86,61 @@ export default function EditAmenities({
   };
 
   const validateForm = () => {
-    const totalSelected = selectedAmenities.length + selectedFacilities.length + selectedServices.length;
+    const totalSelected =
+      selectedAmenities.length +
+      selectedFacilities.length +
+      selectedServices.length;
     if (totalSelected < 3) {
-      setSnackbarMessage("Please select at least 3 amenities, facilities, and services.");
+      setSnackbarMessage(
+        "Please select at least 3 amenities, facilities, and services."
+      );
       setOpenSnackbar(true);
       return false;
     }
-   return true;
+    return true;
   };
-  
+
   const handleSave = async () => {
     if (!validateForm()) {
-      return;  // Exit early if validation fails
+      return; // Exit early if validation fails
     }
-  
+
     // Clear error as validation has passed
     setHasError(false);
     setIsLoading(true);
-  
+
     console.log("Selected Amenities:", selectedAmenities);
     console.log("Selected Facilities:", selectedFacilities);
     console.log("Selected Services:", selectedServices);
-  
+
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/updatepropertybenefits-single/${propertyid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updatepropertybenefits-single/${propertyid}`,
         {
           updated_amenities: selectedAmenities,
           updated_facilities: selectedFacilities,
           updated_services: selectedServices,
         }
       );
-  
+
       if (res.data.status === "success") {
         console.log(res.data);
         const updated_A = res.data.updatedAmenities;
         const updated_F = res.data.updatedFacilities;
         const updated_S = res.data.updatedServices;
-  
+
         // Update selected items with the response data
         setSelectedAmenities(updated_A);
         setSelectedFacilities(updated_F);
         setSelectedServices(updated_S);
-  
+
         // Notify parent about changes
         onAmenitiesChange(updated_A, updated_F, updated_S);
-  
+
         // Mark the save status as successful
         setIsSaved(true);
-        onSaveStatusChange('Saved');
-        
+        onSaveStatusChange("Saved");
+
         // Clear any changes tracking and close snackbar
         setHasChanges(false);
         setSnackbarMessage("Changes saved successfully!");
@@ -149,12 +154,12 @@ export default function EditAmenities({
       setIsLoading(false); // Reset loading state regardless of outcome
     }
   };
-  
-  
 
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
@@ -164,28 +169,33 @@ export default function EditAmenities({
     setSelectedServices(originalData.services || []);
     setIsEditing(false);
     setHasChanges(false);
-   
   };
-  
+
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
-  const handleCloseSnackbar  = () => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
 
   // console.log ("isSIngleUnit:", isSingleUnit);
 
   return (
     <>
-       <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel} hasError={hasError}/>
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        saved={isSaved}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+        hasError={hasError}
+      />
       <Paper
         style={{
           width: "auto",
@@ -241,136 +251,130 @@ export default function EditAmenities({
 
         <Grid container spacing={2}>
           {/* Amenities Section */}
-         
-            <Grid item xs={12}>
-              <div
-                style={{
-                  marginBottom: "1rem",
-                  padding: "0 2rem 2rem 2rem",
-                  border: "1px solid #ccc",
-                  borderRadius: "0.8rem",
-                  paddingTop: "1rem",
-                }}
-              >
-                <h6
-                  style={{
-                    marginBottom: "1rem",
-                    fontWeight: "bold",
-                    top: "-1.5rem",
-                    left: "0.1rem",
-                    position: "relative",
-                    backgroundColor: "#fff",
-                    width: "fit-content",
-                  }}
-                >
-                  Amenities
-                </h6>
-                <Grid container spacing={1}>
-                  {[
-                    "Toiletries",
-                    "Mini Bar",
-                    "Refrigerator",
-                    "Air Conditioning",
-                    "Workspace",
-                    "Microwave",
-                    "Wi-Fi",
-                    "Television",
-                  ].map((amenity, index) => (
-                    <Grid item xs={6} md={4} key={index}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            name={amenity}
-                            checked={selectedAmenities.includes(
-                              amenity
-                            )}
-                            onChange={handleAmenityChange}
-                            disabled={!isEditing}
-                            sx={{
-                              "&.Mui-checked": {
-                                color: "#A334CF",
-                              },
-                            }}
-                          />
-                        }
-                        label={amenity}
-                        sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
-                      />
-                    </Grid>
-                  ))}
-                </Grid>
-              </div>
-            </Grid>
-    
-          {/* Facilities Section */}
-        
-            <Grid item xs={12}>
-              <div
-                style={{
-                  marginBottom: "1rem",
-                  padding: "0 2rem 2rem 2rem",
-                  border: "1px solid #ccc",
-                  borderRadius: "0.8rem",
-                  paddingTop: "1rem",
-                }}
-              >
-                <h6
-                  style={{
-                    marginBottom: "1rem",
-                    fontWeight: "bold",
-                    top: "-1.5rem",
-                    left: "0.1rem",
-                    position: "relative",
-                    backgroundColor: "#fff",
-                    width: "fit-content",
-                  }}
-                >
-                  Facilities
-                </h6>
-                <Grid container spacing={1}>
-                  {[
-                    "Swimming Pool",
-                    "Game Room",
-                    "Business Center",
-                    "Gym",
-                    "Sports Facility",
-                    "Wellness Center",
-                    "Parking",
-                    "Club House",
-                    "Bar",
-                    "Lounge area",
-                    "Wellness Facilities",
-                    "Sports Facilities",
-                    "Restaurant",
-                    "Cafe",
 
-                  ].map((facility, index) => (
-                    <Grid item xs={6} md={4} key={index}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            name={facility}
-                            checked={selectedFacilities.includes(
-                              facility
-                            )}
-                            onChange={handleFacilityChange}
-                            disabled={!isEditing}
-                            sx={{
-                              "&.Mui-checked": {
-                                color: "#A334CF",
-                              },
-                            }}
-                          />
-                        }
-                        label={facility}
-                        sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
-                      />
-                    </Grid>
-                  ))}
-                </Grid>
-              </div>
-            </Grid>
-      
+          <Grid item xs={12}>
+            <div
+              style={{
+                marginBottom: "1rem",
+                padding: "0 2rem 2rem 2rem",
+                border: "1px solid #ccc",
+                borderRadius: "0.8rem",
+                paddingTop: "1rem",
+              }}
+            >
+              <h6
+                style={{
+                  marginBottom: "1rem",
+                  fontWeight: "bold",
+                  top: "-1.5rem",
+                  left: "0.1rem",
+                  position: "relative",
+                  backgroundColor: "#fff",
+                  width: "fit-content",
+                }}
+              >
+                Amenities
+              </h6>
+              <Grid container spacing={1}>
+                {[
+                  "Toiletries",
+                  "Mini Bar",
+                  "Refrigerator",
+                  "Air Conditioning",
+                  "Workspace",
+                  "Microwave",
+                  "Wi-Fi",
+                  "Television",
+                ].map((amenity, index) => (
+                  <Grid item xs={6} md={4} key={index}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          name={amenity}
+                          checked={selectedAmenities.includes(amenity)}
+                          onChange={handleAmenityChange}
+                          disabled={!isEditing}
+                          sx={{
+                            "&.Mui-checked": {
+                              color: "#A334CF",
+                            },
+                          }}
+                        />
+                      }
+                      label={amenity}
+                      sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </Grid>
+
+          {/* Facilities Section */}
+
+          <Grid item xs={12}>
+            <div
+              style={{
+                marginBottom: "1rem",
+                padding: "0 2rem 2rem 2rem",
+                border: "1px solid #ccc",
+                borderRadius: "0.8rem",
+                paddingTop: "1rem",
+              }}
+            >
+              <h6
+                style={{
+                  marginBottom: "1rem",
+                  fontWeight: "bold",
+                  top: "-1.5rem",
+                  left: "0.1rem",
+                  position: "relative",
+                  backgroundColor: "#fff",
+                  width: "fit-content",
+                }}
+              >
+                Facilities
+              </h6>
+              <Grid container spacing={1}>
+                {[
+                  "Swimming Pool",
+                  "Game Room",
+                  "Business Center",
+                  "Gym",
+                  "Sports Facility",
+                  "Wellness Center",
+                  "Parking",
+                  "Club House",
+                  "Bar",
+                  "Lounge area",
+                  "Wellness Facilities",
+                  "Sports Facilities",
+                  "Restaurant",
+                  "Cafe",
+                ].map((facility, index) => (
+                  <Grid item xs={6} md={4} key={index}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          name={facility}
+                          checked={selectedFacilities.includes(facility)}
+                          onChange={handleFacilityChange}
+                          disabled={!isEditing}
+                          sx={{
+                            "&.Mui-checked": {
+                              color: "#A334CF",
+                            },
+                          }}
+                        />
+                      }
+                      label={facility}
+                      sx={{ fontFamily: "Poppins, sans-serif", margin: "0" }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </Grid>
 
           {/* Services Section */}
           <Grid item xs={12}>
@@ -415,9 +419,7 @@ export default function EditAmenities({
                       control={
                         <Checkbox
                           name={service}
-                          checked={selectedServices.includes(
-                            service
-                          )}
+                          checked={selectedServices.includes(service)}
                           onChange={handleServiceChange}
                           disabled={!isEditing}
                           sx={{
@@ -436,13 +438,16 @@ export default function EditAmenities({
             </div>
           </Grid>
         </Grid>
-        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
-          <Alert 
-            onClose={handleCloseSnackbar} 
-            severity={hasError ? "error" : "success"} 
-            sx={{ width: '100%' }}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={hasError ? "error" : "success"}
+            sx={{ width: "100%" }}
             variant="filled"
           >
             {snackbarMessage}
