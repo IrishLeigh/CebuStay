@@ -352,7 +352,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
       <Typography style= {styles.sectionTitle}  mt={1} fontWeight="bold">
           Contact Details
         </Typography>
-      <Grid container spacing={1}>
+      <Grid container >
         <Grid item xs={12} sm={6}>
         <Select
           value={data.countryCode}
@@ -361,6 +361,8 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
           style={styles.countryCodeSelect}
           label = "Country Code"
           required
+          disabled
+          
         >
           {countryCodes.map((country) => (
             <MenuItem key={country.code} value={country.code}>
@@ -390,6 +392,7 @@ const handleCropComplete = useCallback((_, croppedAreaPixels) => {
             error={!!errors.PhoneNumber}
           />
         </Grid>
+
       </Grid>
  
     

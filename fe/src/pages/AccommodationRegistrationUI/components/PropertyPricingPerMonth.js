@@ -71,7 +71,7 @@ export default function UnitPricingPerMonth({ onUnitPricingChange, parentUnitPri
 
   // Validate price and proceed to next step
   const validateAndProceed = () => {
-    const minPrice = 566; // Minimum price limit
+    const minPrice = 558; // Minimum price limit
     if (basePrice < minPrice) {
       setSnackbar({
         open: true,
@@ -125,7 +125,7 @@ export default function UnitPricingPerMonth({ onUnitPricingChange, parentUnitPri
                   <div>{pesoSign}</div>
                   <input
                     id="base_price"
-                    placeholder={`566`}
+                    placeholder={`558`}
                     type="text"
                     value={basePrice}
                     onChange={handleChange}

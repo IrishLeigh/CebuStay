@@ -759,24 +759,28 @@ export default function EditPhotos({
                   >
                     {coverPhotos[selectedImageIndex]?.caption || "No caption available"}
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                    <Button
-                      onClick={() => setIsEditingCaption(true)}
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<EditIcon />}
-                    >
-                      Edit Caption
-                    </Button>
-                    {/* <Button
-                      onClick={handleDeleteImage}
-                      variant="outlined"
-                      color="error"
-                      startIcon={<DeleteIcon />}
-                    >
-                      Delete Photo
-                    </Button> */}
-                  </Box>
+                    {isEditing && (
+                      <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                      <Button
+                        onClick={() => setIsEditingCaption(true)}
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<EditIcon />}
+                      >
+                        Edit Caption
+                      </Button>
+                      <Button
+                        onClick={handleDeleteImage}
+                        variant="outlined"
+                        color="error"
+                        startIcon={<DeleteIcon />}
+                      >
+                        Delete Photo
+                      </Button>
+                    </Box>
+                    
+                  )}
+                  
                 </>
               )}
             </Box>
@@ -921,24 +925,27 @@ export default function EditPhotos({
                 >
                   {galleryPhotos[selectedImageIndex]?.caption || "No caption available"}
                 </Typography>
-                <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                  <Button
-                    onClick={() => setIsEditingCaption(true)}
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<EditIcon />}
-                  >
-                    Edit Caption
-                  </Button>
-                  <Button
-                    onClick={handleDeleteImage}
-                    variant="outlined"
-                    color="error"
-                    startIcon={<DeleteIcon />}
-                  >
-                    Delete Photo
-                  </Button>
-                </Box>
+                {isEditing && (
+                  <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                    <Button
+                      onClick={() => setIsEditingCaption(true)}
+                      variant="outlined"
+                      color="primary"
+                      startIcon={<EditIcon />}
+                    >
+                      Edit Caption
+                    </Button>
+                    <Button
+                      onClick={handleDeleteImage}
+                      variant="outlined"
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                    >
+                      Delete Photo
+                    </Button>
+                  </Box>
+                )}
+
               </>
             )}
           </Box>
@@ -970,167 +977,6 @@ export default function EditPhotos({
         </DialogActions>
       </Dialog>
 
-      {/* Gallery Photo Dialog 2 */}
-      {/* <Dialog
-  open={openCoverPhotoDialog}
-  onClose={handleClose}
-  fullScreen
-  sx={{ padding: 0 }}
->
-  <DialogTitle
-    sx={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: "1rem",
-      borderBottom: "1px solid #ccc",
-    }}
-  >
-    Cover Photo
-    <IconButton
-      edge="end"
-      color="inherit"
-      onClick={handleClose}
-      sx={{ position: "absolute", right: 16, top: 16 }}
-    >
-      <CloseIcon />
-    </IconButton>
-  </DialogTitle>
-  <DialogContent
-    sx={{
-      padding: 0,
-      display: 'flex',
-      height: '100vh',
-      overflow: 'hidden',
-      flexDirection: { xs: 'column', md: 'row' }, // Stack on small screens
-    }}
-  >
-    <Box
-      sx={{
-        flex: { xs: '1 1 auto', md: '1 1 70%' },
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: { xs: '50vh', md: '100%' }, // Adjust height for smaller screens
-        overflow: 'hidden',
-      }}
-    >
-      <img
-        src={coverPhotos[selectedImageIndex]?.src}
-        alt="Selected Cover Photo"
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
-      />
-    </Box>
-    <Box
-      sx={{
-        flex: { xs: '1 1 auto', md: '1 1 30%' },
-        display: 'flex',
-        flexDirection: 'column',
-        padding: { xs: '1rem', md: '2rem' }, // Smaller padding on small screens
-        borderLeft: { xs: 'none', md: '1px solid #ccc' }, // Remove border on small screens
-        borderTop: { xs: '1px solid #ccc', md: 'none' }, // Add top border for stacked view
-        overflowY: 'auto',
-      }}
-    >
-      {isEditingCaption ? (
-        <>
-          <InputLabel htmlFor="caption">Edit Caption</InputLabel>
-          <TextField
-            autoFocus
-            fullWidth
-            value={editedCaption}
-            onChange={handleCaptionChange}
-            variant="outlined"
-            sx={{ marginBottom: '1rem' }}
-          />
-          <Box sx={{ display: 'flex', gap: '8px' }}>
-            <Button
-              onClick={() => handleSaveCaption(coverPhotos[selectedImageIndex], true)}
-              color="primary"
-              variant="contained"
-              startIcon={<SaveIcon />}
-            >
-              Save
-            </Button>
-            <Button
-              onClick={() => setIsEditingCaption(false)}
-              color="secondary"
-              variant="contained"
-              startIcon={<CancelIcon />}
-            >
-              Cancel
-            </Button>
-          </Box>
-        </>
-      ) : (
-        <>
-          <InputLabel htmlFor="caption">Caption</InputLabel>
-          <Typography
-            variant="h6"
-            paragraph
-            sx={{
-              padding: '16px',
-              backgroundColor: '#f9f9f9',
-              borderRadius: '8px',
-              fontStyle: 'italic',
-              color: '#333',
-            }}
-          >
-            {coverPhotos[selectedImageIndex]?.caption || "No caption available"}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-            <Button
-              onClick={() => setIsEditingCaption(true)}
-              variant="outlined"
-              color="primary"
-              startIcon={<EditIcon />}
-            >
-              Edit Caption
-            </Button>
-            <Button
-              onClick={handleDeleteImage}
-              variant="outlined"
-              color="error"
-              startIcon={<DeleteIcon />}
-            >
-              Delete Photo
-            </Button>
-          </Box>
-        </>
-      )}
-    </Box>
-  </DialogContent>
-  <DialogActions
-    sx={{
-      justifyContent: "space-between",
-      padding: '1rem',
-      backgroundColor: '#f5f5f5',
-      borderTop: '1px solid #ccc',
-    }}
-  >
-    <Button
-      onClick={handlePrev}
-      variant="contained"
-      startIcon={<ArrowBackIcon />}
-      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-    >
-      Previous
-    </Button>
-    <Button
-      onClick={handleNext}
-      variant="contained"
-      endIcon={<ArrowForwardIcon />}
-      sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-    >
-      Next
-    </Button>
-  </DialogActions>
-</Dialog> */}
- 
 
       </Paper>
       <Snackbar

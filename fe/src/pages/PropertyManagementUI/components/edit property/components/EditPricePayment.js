@@ -154,6 +154,14 @@ export default function PricePayment({
       return false;
     }
 
+    if (basePrice < 558) {
+      setHasError(true);
+      setSnackbarMessage("Price of the unit must be greater than or equal to 558 to retain the integrity of the platform");
+      setErrorMessage((prev) => [...prev, "Price of the unit must be greater than 558 to retain the integrity of the platform"]);
+      setOpenSnackbar(true);
+      return false;
+    }
+
     return true;
   };
   // const validateForm = () => {
@@ -332,7 +340,7 @@ export default function PricePayment({
                       <Typography variant="h6">{pesoSign}</Typography>
                       <TextField
                         id="base_price"
-                        placeholder="566"
+                        placeholder="558"
                         type="text"
                         value={basePrice}
                         onChange={handlePriceChange}

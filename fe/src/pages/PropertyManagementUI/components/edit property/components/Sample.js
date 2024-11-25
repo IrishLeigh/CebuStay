@@ -659,6 +659,11 @@ console.log("HAS CHANGES?", hasChanges);
           <Typography variant="h6" sx={{ mb: 2 }}>
             List of Spaces Available
           </Typography>
+          <Typography variant="subtitle1" color="textSecondary" mb={2}>
+            You can add and remove available spaces here. If you want to add or remove bedspaces proceed to the bedspace configuration.
+          </Typography>
+          
+
           {unitRooms.map((room, index) => (
             <Box
               key={index}
@@ -772,7 +777,7 @@ console.log("HAS CHANGES?", hasChanges);
               Bed Configuration
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" mb={2}>
-              Please select the number of beds for each bedroom or bed area.
+             You can add and remove bedspaces in this section. Please select the number of beds for each bedroom or bed area.
             </Typography>
 
             <Button
@@ -791,6 +796,8 @@ console.log("HAS CHANGES?", hasChanges);
             >
               Add Sleeping Area
             </Button>
+
+           
 
             {/* Old Bedroom List */}
             {unitBeds.map((bedroom, index) => (
@@ -1055,7 +1062,23 @@ console.log("HAS CHANGES?", hasChanges);
                 </Grid>
               </Paper>
             ))}
-
+            <Button
+              startIcon={<AddCircleIcon />}
+              onClick={handleAddNewBed }
+              sx={{
+                color: "grey",
+                backgroundColor: "transparent",
+                "&:hover": {
+                  color: "#ADC939",
+                  backgroundColor: "transparent",
+                },
+                mb: 3,
+              }}
+              disabled={!isEditing}
+            >
+              Add Sleeping Area
+            </Button>
+        
           </Box>
            {/* Snackbar */}
         <Snackbar
