@@ -42,7 +42,7 @@
   width: 100%;
   flex: 1;
   flex-direction: "row";
-  width: 100%;
+  height: 100%;
   gap: 5px;
   overflow: auto;
 }
@@ -90,9 +90,7 @@
   cursor: pointer;
   transition: transform 0.2s ease-in-out, background-color 0.3s;
   border-radius: 5px;
-  
 }
-
 
 /* Hover state */
 .map-filter-btn:hover {
@@ -173,13 +171,12 @@
   }
   .map-filter-cntr {
     justify-content: flex-start; /* Align buttons to the start */
-   
   }
 }
 
 @media (max-width: 768px) {
   .map-container {
-    width: 100%;
+    width: 70vh;
     /* Add any other styles specific for small screens if needed */
   }
 }
