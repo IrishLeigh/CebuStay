@@ -9,13 +9,22 @@ import PropertyViewServices from "./PropertyViewServices";
 import PropertyHouseRules from "./PropertyHouseRules";
 import PropertyCancellation from "./Cancellation";
 
-export default function PropertyInfo({ propertyImages, propertyInfo, galleryImages }) {
+export default function PropertyInfo({
+  propertyImages,
+  propertyInfo,
+  galleryImages,
+}) {
   const [propertyImg, setPropertyImg] = useState([]);
   const [rooms, setTransformedRooms] = useState([]);
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    if (propertyImages && galleryImages && propertyInfo && propertyInfo.property_unitdetails) {
+    if (
+      propertyImages &&
+      galleryImages &&
+      propertyInfo &&
+      propertyInfo.property_unitdetails
+    ) {
       setPropertyImg(propertyImages);
 
       const allRooms = [];
@@ -25,20 +34,22 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
         const unitbeds = unit.unitbeds || [];
 
         const detailedRooms = unitbeds.map((bedroom, index) => {
-          const bedTypes = Object.entries(bedroom.beds || {}).map(([type, count]) => (
-            <div key={type}>
-              {count} {type}
-            </div>
-          ));
+          const bedTypes = Object.entries(bedroom.beds || {}).map(
+            ([type, count]) => (
+              <div key={type}>
+                {count} {type}
+              </div>
+            )
+          );
           const bedtype =
-          bedroom.sleepingtype === "room" ? "Bedroom" : "Bedspace";
-           const name = `${bedtype} #${index + 1}`;
+            bedroom.sleepingtype === "room" ? "Bedroom" : "Bedspace";
+          const name = `${bedtype} #${index + 1}`;
           return { name, details: bedTypes };
         });
 
         const nonBedroomRooms = unitrooms
           .map((room) => {
-            if (room.roomname === "Bedroom") {
+            if (room.roomname === "Bedroom" || room.roomname === "Bedspace") {
               return null;
             }
             return { name: room.roomname };
@@ -52,7 +63,9 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
     }
   }, [propertyImages, propertyInfo]);
 
-  const isSingleUnit = propertyInfo?.property_unitdetails && propertyInfo.property_unitdetails.length === 1;
+  const isSingleUnit =
+    propertyInfo?.property_unitdetails &&
+    propertyInfo.property_unitdetails.length === 1;
 
   useEffect(() => {
     if (isSingleUnit) {
@@ -66,7 +79,12 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
     if (isSingleUnit) {
       switch (activeSection) {
         case "gallery":
-          return <RoomGallery propertyImages={propertyImg} galleryImages={galleryImages} />;
+          return (
+            <RoomGallery
+              propertyImages={propertyImg}
+              galleryImages={galleryImages}
+            />
+          );
         case "details":
           return <RoomDetails rooms={rooms} />;
         case "amenities":
@@ -128,7 +146,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
           </div>
           Gallery
         </button>
-        
+
         {isSingleUnit && (
           <button
             className="map-filter-btn"
@@ -180,7 +198,7 @@ export default function PropertyInfo({ propertyImages, propertyInfo, galleryImag
           </div>
           Property Amenities
         </button>
-        
+
         <button
           className="property-filter-btn"
           style={{
