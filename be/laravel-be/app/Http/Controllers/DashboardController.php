@@ -570,7 +570,9 @@ class DashboardController extends CORS
         $userId = $request->input('userid');
     
         // Fetch properties owned by the user
-        $properties = Property::where('userid', $userId)->get();
+        $properties = Property::where('userid', $userId)
+    ->where('isFail', 0)
+    ->get();
     
         if ($properties->isEmpty()) {
             return response()->json(['status' => 'error', 'message' => 'No properties found for this user']);
