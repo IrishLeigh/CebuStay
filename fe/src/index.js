@@ -19,7 +19,7 @@ root.render(
         <UserProvider>
           <GoogleOAuthProvider clientId="920285881473-smlrcn0ateosaice90avlnun8flk3sgk.apps.googleusercontent.com">
             <AuthProvider>
-              <ReviewsAndRatingsSingleUnit />
+              <App />
             </AuthProvider>
           </GoogleOAuthProvider>
         </UserProvider>

@@ -47,6 +47,10 @@ export default function InteractiveMap() {
   const [option, setOption] = useState(null);
   const [showWelcomeMap, setShowWelcomeMap] = useState(true);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const [showWelcomeMapModal, setShowWelcomeMapModal] = React.useState(false);
+
+  const handleOpenWelcomeMap = () => setShowWelcomeMapModal(true);
+  const handleCloseWelcomeMap = () => setShowWelcomeMapModal(false);
 
   React.useEffect(() => {
     if (selectedCategory === "Where to stay") {
@@ -289,33 +293,35 @@ export default function InteractiveMap() {
           display: "flex",
           flexDirection: "row",
           justifyContent: "center",
+          alignItems: "center",
           position: "absolute",
           top: "1%",
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 500,
-          backgroundColor: "transparent", // Remove white background
+          backgroundColor: "transparent",
           padding: "15px",
+          flexWrap: "wrap", // Allow wrapping on small screens
         }}
       >
         <Chip
           label="Reset Zoom"
           onClick={handleReset}
           icon={<RefreshIcon />}
-          style={{ margin: "5px" }}
+          style={{
+            margin: "5px",
+            fontSize: "0.9rem", // Adjust font size
+          }}
         />
         <Chip
           label="Nearby Locations"
           onClick={myLocation}
           icon={<MyLocationIcon />}
-          style={{ margin: "5px" }}
+          style={{
+            margin: "5px",
+            fontSize: "0.9rem", // Adjust font size
+          }}
         />
-        {/* <Chip
-            label="Instructions"
-            onClick={toggleInstructions}
-            icon={<HelpIcon />}
-            style={{ margin: '5px' }}
-          /> */}
       </div>
     );
   }
@@ -789,24 +795,70 @@ export default function InteractiveMap() {
                     )}
                   </>
                 )}
-              {showWelcomeMap && <WelcomeCebuMap />}
-              {/* Show WelcomeCebuMap in Modal on Small Screens
-              {showWelcomeMap && isSmallScreen ? (
-                <Dialog
-                  open={showWelcomeMap}
-                  onClose={() => setShowWelcomeMap(false)}
-                  maxWidth="md"
-                  fullWidth
-                >
-                  <WelcomeCebuMap />
-                </Dialog>
-              ) : (
-                showWelcomeMap && (
-                  <div className="welcome-map-container">
-                    <WelcomeCebuMap />
-                  </div>
-                )
-              )} */}
+              <div style={{ width: "100%", margin: "5px 10px 5px 0px" }}>
+                {isSmallScreen ? (
+                  <Dialog
+                    open={showWelcomeMapModal}
+                    onClose={handleCloseWelcomeMap}
+                    maxWidth="sm"
+                    fullWidth
+                    PaperProps={{
+                      style: { position: "relative", padding: "10px" }, // Add padding for better appearance
+                    }}
+                  >
+                    {/* Modal Content */}
+                    <div style={{ position: "relative" }}>
+                      {/* Close Button */}
+                      <button
+                        onClick={handleCloseWelcomeMap}
+                        style={{
+                          position: "absolute",
+                          top: "10px",
+                          right: "10px",
+                          background: "none",
+                          border: "none",
+                          fontSize: "20px",
+                          cursor: "pointer",
+                          color: "#555",
+                        }}
+                        aria-label="Close"
+                      >
+                        &times;
+                      </button>
+
+                      {/* Map Component */}
+                      <WelcomeCebuMap />
+                    </div>
+                  </Dialog>
+                ) : (
+                  showWelcomeMap && (
+                    <div className="welcome-map-container">
+                      <WelcomeCebuMap />
+                    </div>
+                  )
+                )}
+
+                {/* Add a button to trigger modal */}
+                {isSmallScreen && (
+                  <button
+                    onClick={handleOpenWelcomeMap}
+                    style={{
+                      position: "absolute",
+                      bottom: "10px",
+                      right: "10px",
+                      zIndex: 1000,
+                      padding: "10px 15px",
+                      border: "none",
+                      backgroundColor: "#007BFF",
+                      color: "#fff",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Open Welcome Map
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </Box>
