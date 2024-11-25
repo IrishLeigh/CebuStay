@@ -29,7 +29,7 @@ const ViewNearby = ({ nearbyLocations, onCardClick }) => {
     >
       {nearbyLocations.length > 0 ? (
         <>
-          <TopRated nearbyLocations={[nearbyLocations]} />
+          <TopRated nearbyLocation={[nearbyLocations]} />
           <CardContent>
             <Typography
               variant="h5"

@@ -9,19 +9,39 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
+const TopRated = ({ nearbyLocation, onClose, onCardClick }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery("(max-width:425px)"); // Check if screen is 425px or less
 
-  console.log("Nearby Locations:", nearbyLocations);
+  console.log("Nearby Locations:", nearbyLocation);
   const [highestRatingLocation, setHighestRatingLocation] = useState({});
+  
+    // Display the first place if available
+    const place = nearbyLocation[0];
+    const propertyid = place.propertyid;
+    
+  const handleView = (e) => {
+    // Construct query params
+    const queryParams = new URLSearchParams({
+      guestCapacity: "", // Default to empty string if null
+      checkin_date: "", // Default to empty string if null
+      checkout_date: "", // Default to empty string if null
+    }).toString();
+
+    console.log("Query Params:", queryParams);
+
+    // Navigate to the property page with query parameters
+    navigate(`/accommodation/property/${propertyid}?${queryParams}`);
+  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     let maxRatingLocation = null;
 
-    // Check if nearbyLocations is structured as an array of arrays
-    nearbyLocations?.forEach((locationArray) => {
+    // Check if nearbyLocation is structured as an array of arrays
+    nearbyLocation?.forEach((locationArray) => {
       locationArray.forEach((location) => {
         const rating = location.totalReviews;
 
@@ -39,19 +59,11 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
 
     // Update the state with the location having the highest rating
     setHighestRatingLocation(maxRatingLocation);
-  }, [nearbyLocations]);
+  }, [nearbyLocation]);
 
   console.log("Highest Rating:", highestRatingLocation);
 
-  const hotel = {
-    name: "Luxury Beach Resort",
-    imageUrl: "/Sumilon.jpg",
-    rating: 4.5,
-    reviewCount: 651,
-    address: "123 Ocean Drive, Paradise City, Island Nation",
-    price: 8000.0,
-    facilities: ["Swimming Pool", "Spa", "Gym"],
-  };
+
 
   // Specific colors for each facility
   const facilityColors = {
@@ -161,7 +173,7 @@ const TopRated = ({ nearbyLocations, onClose, onCardClick }) => {
   return (
     <Card
       sx={styles.card}
-      onClick={onCardClick} // Handle card click
+      onClick={handleView} // Handle card click
     >
       <Box sx={styles.header}>
         <Typography component="div" sx={styles.headerText}>
