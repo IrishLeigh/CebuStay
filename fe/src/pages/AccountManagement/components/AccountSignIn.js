@@ -55,10 +55,10 @@ export default function AccountSignIn({ profile }) {
     const errors = [];
     const passwordRequirements = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
 
-    // Validate current password
-    if (currentPassword !== profilePassword) {
-      errors.push("Invalid current password.");
-    }
+    // // Validate current password
+    // if (currentPassword !== profilePassword) {
+    //   errors.push("Invalid current password.");
+    // }
 
     // Validate new password
     if (newPassword === currentPassword) {
@@ -119,6 +119,10 @@ export default function AccountSignIn({ profile }) {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
+
+
+  console.log ("profile ", profile);
+
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
@@ -254,6 +258,7 @@ export default function AccountSignIn({ profile }) {
                 onClose={handleCloseSnackbar}
                 severity={snackbarSeverity}
                 sx={{ width: "100%" }}
+               
               >
                 {snackbarMessage}
               </Alert>

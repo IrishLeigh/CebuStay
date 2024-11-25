@@ -177,7 +177,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
-      <Grid container spacing={2}>
+      <Grid container >
         <Grid item xs={12} md={6}>
           <div className="account-id-cntr">
             <div className="account-id-title">Personal Information</div>

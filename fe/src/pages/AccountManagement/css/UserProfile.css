@@ -156,8 +156,21 @@
     text-align: center; /* Center-align button text */
   }
 }
+@media (max-width: 768px) {
+  .account-banner-image {
 
+    height: 116%;
+
+  }
+
+}
 @media (max-width: 425px) {
+ 
+  .account-banner-image {
+
+    height: 111%;
+
+  }
   .user-details-container {
     width: 100%; 
     padding: 0; /* Ensure padding is removed */
