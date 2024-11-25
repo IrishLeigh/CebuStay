@@ -227,15 +227,19 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
                 ),
               }}
             >
-             {Object.keys(countryCodesWithPatterns).map((key) => {
-              const countryName = countryCodesWithPatterns[key].name;
-              return (
-                <MenuItem key={key} value={countryName}>
-                  {countryName}
-                </MenuItem>
-              );
-            })}
+              {Object.keys(countryCodesWithPatterns)
+                .map((key) => ({
+                  code: key,
+                  name: countryCodesWithPatterns[key].name,
+                }))
+                .sort((a, b) => a.name.localeCompare(b.name)) // Sort alphabetically by name
+                .map((item) => (
+                  <MenuItem key={item.code} value={item.name}>
+                    {item.name}
+                  </MenuItem>
+                ))}
             </TextField>
+
 
             <TextField
               required
@@ -256,6 +260,9 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
                     {phoneNumberPrefix}
                   </InputAdornment>
                 ),
+                sx: {
+                  paddingLeft: isMobile ? '8px' : '16px', // Adjust left padding to ensure alignment
+                },
                 inputMode: "numeric",
               }}
             />

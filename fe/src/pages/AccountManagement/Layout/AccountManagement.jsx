@@ -3,16 +3,18 @@ import AccountSidebar from '../components/AccountSidebar';
 import BookingHistory from '../components/AccountBookingHistory';
 import UserProfile from '../components/UserProfile';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Grid } from '@mui/material';
 
 const AccountManagement = () => {
-    const [activeItem, setActiveItem] = useState('account');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    const activeItem = searchParams.get('view') || 'account'; // Use query param to determine active item
 
     // Get Token
     useEffect(() => {
@@ -69,7 +71,7 @@ const AccountManagement = () => {
     }, [user]);
 
     const handleItemClick = (item) => {
-        setActiveItem(item);
+        setSearchParams({ view: item }); // Update query param
         setSidebarOpen(false); // Close sidebar on item click
     };
 

@@ -42,7 +42,7 @@ export default function EditRulesPolicies({
   });
   const [policiesData, setPoliciesData] = useState({
     isCancellationPolicy: true,  // true for standard, false for non-refundable
-    isModification: true,  // true for modification, false for fixed plan
+    isModificationPolicy: true,  // true for modification, false for fixed plan
     cancellationDays: '',
     cancellationCharge: '',
     modificationDays: '',
@@ -127,7 +127,7 @@ export default function EditRulesPolicies({
 
     setPoliciesData(prevData => ({
       ...prevData,
-      isModification: value === "modification" ? true : false,  // true if 'modification', false if 'fixed'
+      isModificationPolicy: value === "modification" ? true : false,  // true if 'modification', false if 'fixed'
     }));
   };
 
@@ -376,7 +376,7 @@ export default function EditRulesPolicies({
       return;
     }
   
-    if (policiesData.isModification && (policiesData.modificationDays === "" || policiesData.modificationCharge === "")) {
+    if (policiesData.isModificationPolicy && (policiesData.modificationDays === "" || policiesData.modificationCharge === "")) {
       alert("Please enter both modification days and modification charge.");
       setIsLoading(false);
       return;
@@ -788,8 +788,8 @@ export default function EditRulesPolicies({
                 <Grid item xs={12} md={12}>
                   <Divider sx={{ mt: 1, mb: 1, borderColor: '#6A6A6A', width: '100%' }} />
                   <RadioGroup
-                    name="isModification"
-                    value={policiesData.isModification ? 'modification' : 'fixed'}
+                    name="isModificationPolicy"
+                    value={policiesData.isModificationPolicy ? 'modification' : 'fixed'}
                     onChange={handleModificationChange}
                   >
                     <FormControlLabel
@@ -805,7 +805,7 @@ export default function EditRulesPolicies({
                       label="Fixed Modification Rate Plan"
                       disabled={!isEditing}
                     />
-                     {policiesData.isModification && ( // Open by default
+                     {policiesData.isModificationPolicy && ( // Open by default
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -856,7 +856,7 @@ export default function EditRulesPolicies({
                         </Box>
                       </Box>
                     )}
-                    {!policiesData.isModification && ( // Open if fixed is selected
+                    {!policiesData.isModificationPolicy && ( // Open if fixed is selected
                       <Box sx={{ border: '1px solid #6A6A6A', p: '1.5rem', m: 2, borderRadius: '0.5rem' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>

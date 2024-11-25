@@ -21,7 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu"; // Import the MUI icon
 // import './NavigationBar.css'; // Import the CSS file
 import axios from "axios";
 const pages = ["Home", "Accommodation"];
-const settings = ["Account",  "Your Bookings", "Your Properties","Logout"];
+const settings = ["Account",  "My Bookings", "My Properties","Logout"];
 
 
 function HeaderUser( {isPropertyListed}) {
@@ -126,8 +126,8 @@ function HeaderUser( {isPropertyListed}) {
       navigate("list-property"); // Redirect to the list property page
     }else if (page === "Home") {
       navigate("/");
-    } else if (page === "Your Bookings") {
-      navigate("/account");
+    } else if (page === "My Bookings") {
+      navigate("/account?view=bookings");
 
     } else {
       navigate('/');
@@ -145,14 +145,14 @@ function HeaderUser( {isPropertyListed}) {
     switch (setting) {
       case "Account":
         if (token) {
-          navigate("/account");
+          navigate("/account?view=account");
         }
         break;
       
-        case "Your Bookings":
-        navigate("/account");
+        case "My Bookings":
+        navigate("/account?view=bookings");
         break;
-      case "Your Properties":
+      case "My Properties":
         navigate("/admin/listings");
         break;
       case "Logout":

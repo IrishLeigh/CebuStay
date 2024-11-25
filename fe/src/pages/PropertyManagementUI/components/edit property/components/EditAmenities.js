@@ -343,7 +343,6 @@ export default function EditAmenities({
                     "Sports Facilities",
                     "Restaurant",
                     "Cafe",
-                    "Bar",
 
                   ].map((facility, index) => (
                     <Grid item xs={6} md={4} key={index}>
