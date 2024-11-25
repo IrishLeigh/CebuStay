@@ -25,8 +25,8 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
 
     const oversizedImages = [];
     const newImages = Array.from(imageFiles).map((file) => {
-      // Adjust the size limit to 2MB (2 * 1024 * 1024 bytes)
-      if (file.size > 2 * 1024 * 1024) {
+      // Adjust the size limit to 2MB (10 * 1024 * 1024 bytes)
+      if (file.size > 10 * 1024 * 1024) {
         oversizedImages.push(file.name);
         return null;
       }
@@ -38,7 +38,7 @@ const UploadPhotos = ({ onImagesChange, parentImages, handleNext, handleBack }) 
     });
 
     if (oversizedImages.length > 0) {
-      setSnackbarMessage(`The following image(s) exceed the 2MB size limit: ${oversizedImages.join(", ")}`);
+      setSnackbarMessage(`The following image(s) exceed the 10MB size limit: ${oversizedImages.join(", ")}`);
       setSnackbarOpen(true);
     }
 
