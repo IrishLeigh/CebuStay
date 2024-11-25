@@ -202,6 +202,10 @@ class PropertyController extends CORS
             $unitroomsCollection = collect($unitrooms);
             // $unitbedroom = $unitroomsCollection->where('roomname', 'Bedroom')->first();
             $unitbedroom = $unitrooms->whereIn('roomname', ['Bedroom', 'Bedarea', 'Bedspace'])->first();
+            $unitrooms = $unitrooms->filter(function ($unitroom) {
+                return !in_array($unitroom->roomname, ['Bedspace', 'Bedroom']);
+            });
+
             $propownid = DB::table('property_ownership')->where('propertyid', $request->input('propertyid'))->first();
             if ($propownid->ownershiptype == 'Individual') {
                 $property_ownerdetails = DB::table('property_owner')->where('propertyownershipid', $propownid->propertyownershipid)->first();
