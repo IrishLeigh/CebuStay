@@ -38,6 +38,7 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   const [editedProfile, setEditedProfile] = useState(null); // State to hold edited profile data
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if the screen size is mobile
+  const [initialState, setInitialState] = useState(null);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -53,15 +54,17 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
   useEffect(() => {
     if (profile) {
-      setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
-      setCountry(profile.country);
-      setPhone(profile.cellnumber);
-      const countryCode =
-        Object.keys(countryCodesWithPatterns).find((key) => key === profile.country) || "";
-      setPhoneNumberPrefix(countryCode);
+      const originalState = {
+        birthday: profile.birthday ? formatDate(profile.birthday) : "",
+        country: profile.country,
+        phone: profile.cellnumber,
+      };
+      setInitialState(originalState);
+      setBirthday(originalState.birthday);
+      setCountry(originalState.country);
+      setPhone(originalState.phone);
     }
   }, [profile]);
-
 
   useEffect(() => {
     if (profile) {
@@ -163,13 +166,16 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   };
 
   const handleCancel = () => {
-    if (profile) {
-      setBirthday(profile.birthday ? formatDate(profile.birthday) : "");
-      setCountry(profile.country);
-      setPhone(profile.cellnumber);
-      setIsChanged(false);
+    // Reset the form to its initial state
+    setIsChanged(false); // This should be the first thing you do
+  
+    if (initialState) {
+      setBirthday(initialState.birthday);
+      setCountry(initialState.country);
+      setPhone(initialState.phone || "");
     }
   };
+  
 
   if (!profile) {
     return <CircularProgress />;
