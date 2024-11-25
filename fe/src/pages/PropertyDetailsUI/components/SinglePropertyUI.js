@@ -79,6 +79,17 @@ export default function SinglePropertyUI({ propertyid }) {
     }
   };
 
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 425);
+
+  useEffect(() => {
+    const handleResize = () => setIsSmallScreen(window.innerWidth <= 425);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const marginStyle = isSmallScreen ? "1rem 0 0 0" : "1rem 1rem 0 0";
+
   // Fetch gallery images
   const fetchGalleryImages = async () => {
     const propertyId = propertyid;
@@ -206,7 +217,7 @@ export default function SinglePropertyUI({ propertyid }) {
         </div>
         <Grid container>
           <Grid item xs={12} sm={8}>
-            <div style={{ margin: "1rem 1rem 0 0" }}>
+          <div style={{ margin: marginStyle }}>
               <PropertyOverView propertyinfo={propertyInfo} rating={rating} />
             </div>
           </Grid>

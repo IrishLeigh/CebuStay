@@ -158,6 +158,7 @@ export default function PropertyManagementListing() {
   useEffect(() => {
     const fetchData = async () => {
       if (!userid) return;
+      setLoading(true);
       try {
         const propertyres = await axios.get(
           "http://127.0.0.1:8000/api/user/properties",
@@ -172,6 +173,8 @@ export default function PropertyManagementListing() {
         setData(propertyres.data.userproperties);
       } catch (error) {
         console.error(error);
+      }finally{
+        setLoading(false);
       }
     };
     fetchData();
@@ -604,7 +607,7 @@ export default function PropertyManagementListing() {
                 </tr>
               </thead>
               <tbody>
-                {data.length === 0 ? (
+                {loading ? (
                   <tr>
                     <td
                       colSpan="7"
