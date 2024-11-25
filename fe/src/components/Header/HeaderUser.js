@@ -21,10 +21,9 @@ import MenuIcon from "@mui/icons-material/Menu"; // Import the MUI icon
 // import './NavigationBar.css'; // Import the CSS file
 import axios from "axios";
 const pages = ["Home", "Accommodation"];
-const settings = ["Account",  "My Bookings", "My Properties","Logout"];
+const settings = ["Account", "My Bookings", "My Properties", "Logout"];
 
-
-function HeaderUser( {isPropertyListed}) {
+function HeaderUser({ isPropertyListed }) {
   const [loading, setLoading] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -32,8 +31,7 @@ function HeaderUser( {isPropertyListed}) {
   const [profileImage, setProfileImage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
-  const [user ,setUser] = useState(null);
- 
+  const [user, setUser] = useState(null);
 
   const handleImageError = (e) => {
     // Fallback to another image or initials
@@ -50,13 +48,19 @@ function HeaderUser( {isPropertyListed}) {
     const fetchUserImage = async () => {
       try {
         const jwtToken = token.split("=")[1];
-        const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-          token: token,
-        });
+        const res1 = await axios.post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
+          {
+            token: token,
+          }
+        );
         if (res1.data) {
-          const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
-            params: { userid: res1.data.data.userid },
-          });
+          const res = await axios.get(
+            "https://whitesmoke-shark-473197.hostingersite.com/api/getuserimg",
+            {
+              params: { userid: res1.data.data.userid },
+            }
+          );
           if (res.data) {
             setProfileImage(res.data.src);
           }
@@ -69,20 +73,21 @@ function HeaderUser( {isPropertyListed}) {
     };
     fetchUserImage();
   }, []);
-  
-
 
   useEffect(() => {
     if (token) {
       const fetchUser = async () => {
         try {
-          const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-            token: token,
-          });
+          const res = await axios.post(
+            "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
+            {
+              token: token,
+            }
+          );
           if (res.data.message === "Expired token.") {
             handleLogout();
-            console.log ("Expired token. Automatic Logout");
-          }else {
+            console.log("Expired token. Automatic Logout");
+          } else {
             setUser(res.data);
             localStorage.setItem("email", res.data.data.email);
             localStorage.setItem("userid", res.data.data.userid);
@@ -99,8 +104,7 @@ function HeaderUser( {isPropertyListed}) {
     } else {
       setUser(null);
     }
-  }, [token,isPropertyListed]);
-
+  }, [token, isPropertyListed]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -117,39 +121,32 @@ function HeaderUser( {isPropertyListed}) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  
 
   const handlePageClick = (page) => {
     if (page === "Accommodation") {
       navigate("accommodation"); // Redirect to "accommodation";
     } else if (page === "List your property") {
       navigate("list-property"); // Redirect to the list property page
-    }else if (page === "Home") {
+    } else if (page === "Home") {
       navigate("/");
     } else if (page === "My Bookings") {
       navigate("/account?view=bookings");
-
     } else {
-      navigate('/');
-      
+      navigate("/");
     }
-      
-    
+
     handleCloseNavMenu();
   };
 
   const handleSettings = (setting) => {
-
-
-    
     switch (setting) {
       case "Account":
         if (token) {
           navigate("/account?view=account");
         }
         break;
-      
-        case "My Bookings":
+
+      case "My Bookings":
         navigate("/account?view=bookings");
         break;
       case "My Properties":
@@ -174,22 +171,28 @@ function HeaderUser( {isPropertyListed}) {
     }
     setLoading(true);
     try {
-      console.log ("token FROM HEADER", token);
-      const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-        token: token,
-      });
+      console.log("token FROM HEADER", token);
+      const res1 = await axios.post(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
+        {
+          token: token,
+        }
+      );
       if (res1.data) {
-        const res = await axios.post("http://127.0.0.1:8000/api/logout", {
-          userid: res1.data.data.userid,
-        });
+        const res = await axios.post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/logout",
+          {
+            userid: res1.data.data.userid,
+          }
+        );
         if (res.data) {
           console.log(res.data);
           // Remove the token from local storage
           localStorage.removeItem("auth_token");
-          
+
           // Optionally, reset any user-related state here if applicable
           // e.g., setUser(null); or use a context provider to reset user state
-          
+
           setOpenLogoutModal(false);
           navigate("/login");
         }
@@ -199,27 +202,26 @@ function HeaderUser( {isPropertyListed}) {
     } finally {
       setLoading(false);
       localStorage.removeItem("auth_token");
-          localStorage.removeItem("email");
-          localStorage.removeItem("firsname");
-          localStorage.removeItem("lastname");
-          localStorage.removeItem("userid");
-          setUser(null);
-          
-          // Optionally, reset any user-related state here if applicable
-          // e.g., setUser(null); or use a context provider to reset user state
-          
-          // setOpenLogoutModal(false);
-          navigate("/login");
+      localStorage.removeItem("email");
+      localStorage.removeItem("firsname");
+      localStorage.removeItem("lastname");
+      localStorage.removeItem("userid");
+      setUser(null);
+
+      // Optionally, reset any user-related state here if applicable
+      // e.g., setUser(null); or use a context provider to reset user state
+
+      // setOpenLogoutModal(false);
+      navigate("/login");
     }
   };
-  
 
   const handleCloseLogoutModal = () => {
     setOpenLogoutModal(false);
   };
 
   console.log("IspropertyListed SYA SA HEADER", isPropertyListed);
-console.log ("USER FROM HEADER NI SYA HA", user);
+  console.log("USER FROM HEADER NI SYA HA", user);
   return (
     <>
       <AppBar
@@ -260,137 +262,133 @@ console.log ("USER FROM HEADER NI SYA HA", user);
 
             <Box sx={{ flexGrow: 1 }} />
             {/* Hamburger menu for mobile */}
-              <Box sx={{ display: { xs: "flex", md: "none" } }}>
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                size="large"
+                aria-label="open navigation"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                sx={{ color: "#16B4DD" }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+              >
+                {pages.map((page) => (
+                  <MenuItem key={page} onClick={() => handlePageClick(page)}>
+                    <Typography textAlign="center">{page}</Typography>
+                  </MenuItem>
+                ))}
+                <MenuItem onClick={() => handlePageClick("List your property")}>
+                  <Typography textAlign="center">List your property</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+            {/* Full menu for larger screens */}
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              {pages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={() => handlePageClick(page)}
+                  sx={{ mx: 1, color: "black" }}
+                >
+                  <Typography
+                    sx={{ fontSize: "0.9rem", color: "#16B4DD" }}
+                    fontWeight="bold"
+                  >
+                    {page}
+                  </Typography>
+                </Button>
+              ))}
+              <button className="property-listing">
+                <Link
+                  to="/list-property"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  List your property
+                </Link>
+              </button>
+            </Box>
+            {/* User profile settings */}
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
                 <IconButton
-                  size="large"
-                  aria-label="open navigation"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleOpenNavMenu}
-                  sx={{ color: "#16B4DD" }}
+                  onClick={handleOpenUserMenu}
+                  sx={{
+                    p: 0,
+                    color: "#16B4DD",
+                    //If loading is true, hide the icon, remove this line if not needed
+                    visibility: loading ? "hidden" : "visible",
+                  }}
                 >
-                  <MenuIcon />
+                  <Avatar
+                    src={profileImage}
+                    onError={(e) => handleImageError(e)}
+                  />
                 </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorElNav}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  open={Boolean(anchorElNav)}
-                  onClose={handleCloseNavMenu}
-                >
-                  {pages.map((page) => (
-                    <MenuItem key={page} onClick={() => handlePageClick(page)}>
-                      <Typography textAlign="center">{page}</Typography>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings
+                  .filter((setting) => {
+                    // Filter out "Your Properties" if the user is not a Manager
+                    return !(
+                      setting === "Your Properties" &&
+                      user?.data.role !== "manager"
+                    );
+                  })
+                  .map((setting) => (
+                    <MenuItem
+                      key={setting}
+                      onClick={() => handleSettings(setting)}
+                    >
+                      <Typography textAlign="center">{setting}</Typography>
                     </MenuItem>
                   ))}
-                  <MenuItem onClick={() => handlePageClick("List your property")}>
-                    <Typography textAlign="center">List your property</Typography>
-                  </MenuItem>
-                </Menu>
-              </Box>
-              {/* Full menu for larger screens */}
-              <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                {pages.map((page) => (
-                  <Button
-                    key={page}
-                    onClick={() => handlePageClick(page)}
-                    sx={{ mx: 1, color: "black" }}
-                  >
-                    <Typography
-                      sx={{ fontSize: "0.9rem", color: "#16B4DD" }}
-                      fontWeight="bold"
-                    >
-                      {page}
-                    </Typography>
-                  </Button>
-                ))}
-                <button className="property-listing">
-                  <Link
-                    to="/list-property"
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    List your property
-                  </Link>
-                </button>
-              </Box>
-              {/* User profile settings */}
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
-                  <IconButton
-                    onClick={handleOpenUserMenu}
-                    sx={{
-                      p: 0,
-                      color: "#16B4DD",
-                      //If loading is true, hide the icon, remove this line if not needed
-                      visibility: loading ? "hidden" : "visible",
-                    }}
-                  >
-                    <Avatar
-                      src={profileImage}
-                      onError={(e) => handleImageError(e)}
-                    />
-                  </IconButton>
-
-
-                </Tooltip>
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  {settings
-                    .filter((setting) => {
-                      // Filter out "Your Properties" if the user is not a Manager
-                      return !(setting === "Your Properties" && user?.data.role !== "manager");
-                    })
-                    .map((setting) => (
-                      <MenuItem
-                        key={setting}
-                        onClick={() => handleSettings(setting)}
-                      >
-                        <Typography textAlign="center">{setting}</Typography>
-                      </MenuItem>
-                    ))
-                  }
-                </Menu>
-              </Box>
+              </Menu>
+            </Box>
           </Toolbar>
         </Container>
       </AppBar>
 
       {/* Logout confirmation modal */}
-      <Dialog
-           open={openLogoutModal}
-           onClose={handleCloseLogoutModal}
-        >
-    
-       <DialogTitle>Confirm Logout</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to log out?
-            </DialogContentText>
-          </DialogContent>
+      <Dialog open={openLogoutModal} onClose={handleCloseLogoutModal}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to log out?
+          </DialogContentText>
+        </DialogContent>
 
-          <DialogActions>
+        <DialogActions>
           <Button
             onClick={handleCloseLogoutModal}
             color="primary"
