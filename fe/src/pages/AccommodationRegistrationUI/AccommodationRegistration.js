@@ -162,6 +162,7 @@ export default function AccommodationRegistration({
   const [policiesData, setPoliciesData] = useState({});
   const [unitPricing, setUnitPricing] = useState({});
   const [paymentData, setPaymentData] = useState({});
+  const [paypalAccountData, setPaypaypalAccountData] = useState({});
   const [hostData, setHostData] = useState({});
   const { addressData, mapVal, address, location, location2 } = useData();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); // State for confirmation modal
@@ -811,9 +812,9 @@ export default function AccommodationRegistration({
                                 console.log("Successfully Registered");
                                 // setModalMessage("Successfully Registered");
 
-                                localStorage.removeItem("postalCode");
-                                localStorage.removeItem("street");
-                                localStorage.removeItem("postalCode");
+                                // localStorage.removeItem("postalCode");
+                                // localStorage.removeItem("street");
+                                // localStorage.removeItem("postalCode");
                                 location2(null);
                                 location(null);
                                 // alert("Form submitted successfully!");
@@ -929,9 +930,9 @@ export default function AccommodationRegistration({
                                 console.log("Successfully Registered");
                                 // setModalMessage("Successfully Registered");
 
-                                localStorage.removeItem("postalCode");
-                                localStorage.removeItem("street");
-                                localStorage.removeItem("postalCode");
+                                // localStorage.removeItem("postalCode");
+                                // localStorage.removeItem("street");
+                                // localStorage.removeItem("postalCode");
                                 location2(null);
                                 location(null);
                                 // alert("Form submitted successfully!");
@@ -971,21 +972,21 @@ export default function AccommodationRegistration({
 
   const handleSubmitMulti = async () => {
     // MULTI UNIT SUBMIT
-    console.log("Form submitted successfully!");
+    // console.log("Form submitted successfully!");
     closeModal();
     setIsLoading(true); // Show the loading spinner
-    console.log("User FROM LOCAL STORAGE", userid);
-    console.log("Property Information from parent", propertyInfo);
-    console.log("Property Type", selectedPropertyType);
-    console.log("Multi beds from parent", multiRoomsAndBeds);
-    console.log("Policies from parent:", policiesData);
-    console.log("House Rules from parent:", houseRulesData);
-    console.log("Location", locationDetails);
-    console.log("Images", selectedImages);
-    console.log("Selected Facilities", multiUnitFacilities);
-    console.log("Payment Method", paymentData);
-    console.log("Host Data or Owner", hostData);
-    console.log("Selected term", selectedPropertyType2);
+    // console.log("User FROM LOCAL STORAGE", userid);
+    // console.log("Property Information from parent", propertyInfo);
+    // console.log("Property Type", selectedPropertyType);
+    // console.log("Multi beds from parent", multiRoomsAndBeds);
+    // console.log("Policies from parent:", policiesData);
+    // console.log("House Rules from parent:", houseRulesData);
+    // console.log("Location", locationDetails);
+    // console.log("Images", selectedImages);
+    // console.log("Selected Facilities", multiUnitFacilities);
+    // console.log("Payment Method", paymentData);
+    // console.log("Host Data or Owner", hostData);
+    // console.log("Selected term", selectedPropertyType2);
     try {
       const resPropertid = await axios.post(
         "http://127.0.0.1:8000/api/propertyinfo",
@@ -1362,9 +1363,9 @@ export default function AccommodationRegistration({
                   console.log("Successfully Registered");
                   // setModalMessage("Successfully Registered");
 
-                  localStorage.removeItem("postalCode");
-                  localStorage.removeItem("street");
-                  localStorage.removeItem("postalCode");
+                  // localStorage.removeItem("postalCode");
+                  // localStorage.removeItem("street");
+                  // localStorage.removeItem("postalCode");
                   location2(null);
                   location(null);
                   alert("Form submitted successfully!");
@@ -1465,9 +1466,9 @@ export default function AccommodationRegistration({
 
                   // setModalMessage("Successfully Registered");
 
-                  localStorage.removeItem("postalCode");
-                  localStorage.removeItem("street");
-                  localStorage.removeItem("postalCode");
+                  // localStorage.removeItem("postalCode");
+                  // localStorage.removeItem("street");
+                  // localStorage.removeItem("postalCode");
                   location2(null);
                   location(null);
                   // alert("Form submitted successfully!");
@@ -1510,7 +1511,7 @@ export default function AccommodationRegistration({
         const { paypalmail, paypalphonenumber } = response.data;
 
         // Update only the email and mobile in paypalInfo
-        setPaymentData((prevData) => ({
+        setPaypaypalAccountData((prevData) => ({
           ...prevData,
           paypalInfo: {
             ...prevData.paypalInfo,
@@ -1725,6 +1726,7 @@ export default function AccommodationRegistration({
                   {step === 10 && (
                     <PaymentMethods
                       onPaymentDataChange={handlePaymentDataChange}
+                      parentPayPalData={paypalAccountData}
                       parentPaymentData={paymentData}
                       handleNext={handleNext}
                       handleBack={handleBack}

@@ -70,8 +70,6 @@ function HeaderUser( {isPropertyListed}) {
     fetchUserImage();
   }, []);
   
-
-
   useEffect(() => {
     if (token) {
       const fetchUser = async () => {
@@ -360,7 +358,7 @@ console.log ("USER FROM HEADER NI SYA HA", user);
                   {settings
                     .filter((setting) => {
                       // Filter out "Your Properties" if the user is not a Manager
-                      return !(setting === "Your Properties" && user?.data.role !== "manager");
+                      return !(setting === "My Properties" && user?.data.role !== "manager");
                     })
                     .map((setting) => (
                       <MenuItem

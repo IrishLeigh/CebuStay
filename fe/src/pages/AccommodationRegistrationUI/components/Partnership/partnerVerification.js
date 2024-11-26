@@ -14,6 +14,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
   const [companyData, setCompanyData] = useState({});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
+  const [errorMessage, setErrorMesasge] = useState([]);
   
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -91,11 +92,13 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
       const emptyFields = getEmptyFields(individualData);
       if (emptyFields.length > 0) {
         openSnackbar(`Please fill in the following required information for the individual host: ${emptyFields.join(', ')}.`);
+        setErrorMesasge(emptyFields);
         return;
       }
       const email = individualData.Email || '';
       if (!emailPattern.test(email)) {
         openSnackbar('Invalid email address. Please enter a valid email.');
+        setErrorMesasge('Invalid email address. Please enter a valid email.');
         return;
       }
     }
@@ -114,7 +117,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
           // Check for empty fields in legal representative
           const repEmptyFields = Object.keys(legalRepresentativeFieldLabels).filter(key => !rep[key]);
           if (repEmptyFields.length > 0) {
-            console.log("companydata" ,companyData);
+            // console.log("companydata" ,companyData);
             openSnackbar(`Please fill in the following required information for the legal representative: ${repEmptyFields.map(key => legalRepresentativeFieldLabels[key]).join(', ')}.`);
             return;
           }
@@ -202,7 +205,7 @@ export default function PartnerVerification({ onHostDataChange, parentPartnerDat
                 />
               </RadioGroup> */}
               <Divider sx={{ my: 2 }} />
-              {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange} />}
+              {hostType === 'Individual' && <IndividualHost onDataChange={handleIndividualDataChange}  errorMesasge={errorMessage} prevData={parentPartnerData}/>}
               {hostType === 'Company' && <CompanyHost onDataChange={handleCompanyDataChange} prevData={parentPartnerData} />}
             </Box>
           </Paper>

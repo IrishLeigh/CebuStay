@@ -88,16 +88,17 @@ const Payout = () => {
   };
 
   const isEmailValid = (email) => {
-    return email.endsWith('@gmail.com');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; // General email validation regex
+    return emailRegex.test(email);
   };
   const isPhoneValid = (phone, countryCode) => {
-    console.log("Country Code:", countryCode);  // Check if countryCode is correct
+    // console.log("Country Code:", countryCode);  // Check if countryCode is correct
     const countryData = countryCodesWithPatterns[countryCode]; 
-    console.log("Country Data:", countryData);  // Check if the pattern exists
+    // console.log("Country Data:", countryData);  // Check if the pattern exists
   
     if (countryData && countryData.pattern) {
       const isValid = countryData.pattern.test(phone);
-      console.log("Phone validation result:", isValid);  // Check if the phone number matches the pattern
+      // console.log("Phone validation result:", isValid);  // Check if the phone number matches the pattern
       return isValid;
     }
     return false;

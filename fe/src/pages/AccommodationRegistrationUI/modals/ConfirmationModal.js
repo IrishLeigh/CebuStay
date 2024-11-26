@@ -37,6 +37,7 @@ const ConfirmationModal = ({ isOpen, closeModal, handleSubmit }) => {
             variant="outlined" 
             color="secondary" 
             onClick={closeModal}
+            sx={{backgroundColor: '#6A6A6A', color: '#fff'}}
           >
             Cancel
           </Button>

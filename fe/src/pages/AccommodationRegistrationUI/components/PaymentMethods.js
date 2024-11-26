@@ -17,7 +17,7 @@ import countryCodesWithPatterns from '../../../components/Booking/countryCodes';
 
 
 
-export default function PaymentMethods({ onPaymentDataChange, parentPaymentData, handleNext, handleBack }) {
+export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,parentPayPalData, handleNext, handleBack }) {
   const [paymentData, setPaymentData] = useState({
     selectedPayment: 'Online',
     selectedPayout: 'Paypal',
@@ -37,6 +37,17 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
 
   // Set initial state based on parentPaymentData
   useEffect(() => {
+    if (parentPayPalData) {
+      setPaymentData((prev) => ({
+        ...prev,
+        hasPaypal: "yes",
+        paypalInfo: {
+          email: parentPayPalData.paypalInfo?.email || prev.paypalInfo.email,
+          mobile: parentPayPalData.paypalInfo?.mobile || prev.paypalInfo.mobile,
+          countryCode: parentPayPalData.paypalInfo?.countryCode || prev.paypalInfo.countryCode
+        }
+      }));
+    }
     if (parentPaymentData) {
       setPaymentData((prev) => ({
         ...prev,
@@ -50,8 +61,8 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
         }
       }));
     }
-  }, [parentPaymentData]);
-  const isPaypalInfoAvailable = paymentData.paypalInfo.email || paymentData.paypalInfo.mobile;
+  }, [parentPaymentData, parentPayPalData]);
+  const isPaypalInfoAvailable = parentPayPalData.paypalInfo.email !== '' || parentPayPalData.paypalInfo.mobile  !== '';
 
   // Handle country code change
   const handleCountryCodeChange = (event) => {
@@ -153,6 +164,7 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
   };
 
   console.log("Payment Data HERE:", paymentData);
+  console.log("Parent paypal Data HERE:", parentPayPalData);
 
   return (
     <Container maxWidth="md"  className='centered-container'>
@@ -205,11 +217,8 @@ export default function PaymentMethods({ onPaymentDataChange, parentPaymentData,
 
           </Box>
           
-
           {/* PayPal Account Section */}
           <Typography sx={{ fontSize: "1.125rem" }} mb={2} mt={6} fontWeight="bold">Do you have PayPal Payout Account?</Typography>
-
-           
 
           <RadioGroup
             aria-labelledby="PaypalAccount"

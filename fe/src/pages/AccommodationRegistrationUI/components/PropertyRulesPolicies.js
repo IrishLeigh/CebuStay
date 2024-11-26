@@ -169,10 +169,10 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     if (showTimePicker && (!houseRulesData.quietHoursStart || !houseRulesData.quietHoursEnd)) {
       errors.push("Please specify quiet hours.");
     }
-    //Validate quite hours the start time is before the end time
-    if (showTimePicker && houseRulesData.quietHoursStart > houseRulesData.quietHoursEnd) {
-      errors.push("Quiet hours start time cannot be after quiet hours end time.");
-    }
+    // //Validate quite hours the start time is before the end time
+    // if (showTimePicker && houseRulesData.quietHoursStart > houseRulesData.quietHoursEnd) {
+    //   errors.push("Quiet hours start time cannot be after quiet hours end time.");
+    // }
 
     if (!houseRulesData.customRules) {
       errors.push("Please enter your custom rules.");
