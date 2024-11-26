@@ -69,7 +69,7 @@
 //       const seconds = String(currentDate.getSeconds()).padStart(2, "0");
 //       const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 //       // Send registration request
-//       const res = await axios.post("http://127.0.0.1:8000/api/registeruser", {
+//       const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/registeruser", {
 //         firstname,
 //         lastname,
 //         email,
@@ -385,7 +385,7 @@ const RegistrationUI = () => {
       const seconds = String(currentDate.getSeconds()).padStart(2, "0");
       const account_created = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       // Send registration request
-      const res = await axios.post("http://127.0.0.1:8000/api/registeruser", {
+      const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/registeruser", {
         firstname,
         lastname,
         email,
