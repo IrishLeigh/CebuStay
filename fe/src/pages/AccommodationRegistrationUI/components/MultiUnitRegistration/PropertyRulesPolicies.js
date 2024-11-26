@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Paper, Typography, Grid, Checkbox, Button, Container, TextField, RadioGroup, FormControlLabel, Radio, List, ListItem, Select, MenuItem, ListItemIcon, Divider, useMediaQuery } from "@mui/material";
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import DateRangeIcon from '@mui/icons-material/DateRange';
@@ -26,11 +26,20 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     modificationDays: '',
     modificationCharge: '',
   };
+  const initialHouseRulesData = {
+    checkInFrom: '',
+    checkOutFrom: '',
+    checkOutUntil: '',
+    customRules: '',
+    petsAllowed: false,
+    quietHoursStart: '',
+    quietHoursEnd: '',
+  };
   const [policiesData, setPoliciesData] = useState(initialPoliciesData);
+  const [houseRulesData, setHouseRulesData] = useState(initialHouseRulesData);
   const [error, setError] = useState("");
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [houseRulesData, setHouseRulesData] = useState(parentHouseRules);
-  const topRef = useRef(null); // Create a ref for scrolling to the top
+  const topRef = useRef(null); // Create a reference for the top of the component
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
 
@@ -55,7 +64,23 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
         // Set initial values if parentPoliciesData is not provided
         setPoliciesData(initialPoliciesData);
     }
-}, [parentPoliciesData]);
+
+    if (parentHouseRules) {
+      // Update local state with values from parentHouseRules
+      setHouseRulesData({
+        checkInFrom: parentHouseRules.checkInFrom || initialHouseRulesData.checkInFrom,
+        checkOutFrom: parentHouseRules.checkOutFrom || initialHouseRulesData.checkOutFrom,
+        checkOutUntil: parentHouseRules.checkOutUntil || initialHouseRulesData.checkOutUntil,
+        customRules: parentHouseRules.customRules || initialHouseRulesData.customRules,
+        petsAllowed: parentHouseRules.petsAllowed ?? initialHouseRulesData.petsAllowed,
+        quietHoursStart: parentHouseRules.quietHoursStart || initialHouseRulesData.quietHoursStart,
+        quietHoursEnd: parentHouseRules.quietHoursEnd || initialHouseRulesData.quietHoursEnd,
+      });
+    } else {
+      // Set initial values if parentHouseRules is not provided
+      setHouseRulesData(initialHouseRulesData);
+    }
+}, [parentPoliciesData, parentHouseRules]);
 
 
   const handleDaysChange = (e, key) => {
@@ -136,7 +161,9 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     }
   }
    
-    if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed) {
+    if (!houseRulesData.smokingAllowed && !houseRulesData.petsAllowed && !houseRulesData.partiesAllowed &&
+      !houseRulesData.quietHoursStart && !houseRulesData.quietHoursEnd
+    ) {
       alert("Please select at least one standard rule.");
       return;
     }
@@ -162,7 +189,7 @@ export default function PropertyRulesPolicies({ onPoliciesDataChange, parentPoli
     handleNext(); // Navigate to the next component
   };
 
-  console.log("policiesData", policiesData);
+  console.log("policiesData sa registration", policiesData);
 
   return (
     <div ref={topRef} > 
