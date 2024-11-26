@@ -1,5 +1,5 @@
 .leaflet-container {
-  /* background-color: rgba(255, 255, 255, 0.2); 30% opacity */
+  /* background-color: rgba(255, 255, 255, 0.2); */
   background-color: transparent;
 }
 .city-tooltip {
@@ -29,16 +29,16 @@
 /* InteractiveMap.css */
 
 .map {
-  margin: 0.5rem;
+  margin: 0.5rem; /* You can adjust this margin for other screens if needed */
   display: flex;
   justify-content: center;
   align-items: center;
   /* background-color: #2a2a2e; */
 }
+
 .map-container {
   display: flex;
   align-items: center;
-  padding: 10px;
   width: 100%;
   flex: 1;
   flex-direction: "row";
@@ -135,7 +135,6 @@
 
 /* Media query for 14-inch screens (1366px resolution) */
 
-/* Media query for screens wider than 1440px */
 @media screen and (min-width: 1440px) {
   .map {
     height: 100vh;
@@ -143,6 +142,16 @@
     padding: 0.5rem;
   }
 }
+
+/* Landscape mode for screens wider than 1440px */
+@media screen and (min-width: 1440px) and (orientation: landscape) {
+  .map {
+    height: 100vh;
+    width: 100%;
+    padding: 0.5rem;
+  }
+}
+
 @media screen and (max-width: 1366px) {
   .map {
     width: 100%;
@@ -151,15 +160,33 @@
 
   .map-background {
     height: 100%;
-    /* padding: 0.5rem; */
-    /* transform: rotate(35deg); */
-    /* transform-origin: center center; */
   }
 }
+
+/* Landscape mode for screens between 1366px and 1024px */
+@media screen and (max-width: 1366px) and (orientation: landscape) {
+  .map {
+    width: 100%;
+    height: 100vh;
+  }
+
+  .map-background {
+    height: 100%;
+  }
+}
+
 /* Media query for medium screens (like tablets) */
 @media screen and (max-width: 1024px) {
   .map {
     width: 100%;
+  }
+}
+
+/* Landscape mode for medium screens (tablets) */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  .map {
+    width: 80%; /* Adjust width for landscape tablets */
+    height: 100vh;
   }
 }
 
@@ -174,13 +201,31 @@
   }
 }
 
-@media (max-width: 768px) {
-  .map-container {
-    width: 70vh;
-    /* Add any other styles specific for small screens if needed */
+/* Landscape mode for small screens (phones) */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .map {
+    width: 100%;
+    height: 100vh;
   }
 }
 
+/* Extra small screens (portrait phones and smaller tablets) */
+@media screen and (max-width: 480px) {
+  .map-container {
+    width: 100%;
+    height: 100vh;
+    padding: 0.5rem; /* Smaller padding for compact screens */
+  }
+}
+
+/* Landscape mode for extra small screens (portrait phones and smaller tablets) */
+@media screen and (max-width: 480px) and (orientation: landscape) {
+  .map-container {
+    width: 100%;
+    height: 100vh;
+    padding: 0.5rem; /* Adjust padding for landscape */
+  }
+}
 /* Style for the tooltip */
 .city-tooltip {
   background-color: #ffffff;

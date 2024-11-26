@@ -25,7 +25,14 @@ export default function WelcomeCebuMap() {
             textAlign: "center",
             color: "#F9CC41",
             fontWeight: "bold",
-            fontSize: isSmallScreen ? "0.5rem" : "2.5rem", // Adjust font size based on screen size
+            fontSize: isSmallScreen
+              ? "0.5rem"
+              : {
+                  xs: "1rem", // Default font size for smaller screens
+                  sm: "1rem", // Font size for medium screens
+                  md: "2.5rem", // Larger font size for bigger screens
+                  "@media (orientation: landscape)": "1.2rem", // Adjust font size in landscape mode
+                },
           }}
         >
           Welcome to Cebu Map!
@@ -36,7 +43,14 @@ export default function WelcomeCebuMap() {
             textAlign: "center",
             color: "#FFD700",
             mb: 2,
-            fontSize: isSmallScreen ? "0.5rem" : "1.5rem", // Adjust font size based on screen size
+            fontSize: isSmallScreen
+              ? "0.5rem"
+              : {
+                  xs: "1rem", // Default font size for smaller screens
+                  sm: "0.9rem", // Font size for medium screens
+                  md: "1.5rem", // Larger font size for bigger screens
+                  "@media (orientation: landscape)": "1.2rem", // Adjust font size in landscape mode
+                },
           }}
         >
           How to navigate the map

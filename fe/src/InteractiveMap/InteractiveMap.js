@@ -26,6 +26,7 @@ import StayCard from "./components/StayCard";
 import ClickOutsideComponent from "./components/ClickOutsideComponent";
 import WelcomeCebuMap from "./components/WelcomeCebuMap";
 import { Dialog, IconButton, useMediaQuery, Box } from "@mui/material"; // Import Dialog and useMediaQuery
+import MapIcon from "@mui/icons-material/Map";
 
 export default function InteractiveMap() {
   const [selectedCity, setSelectedCity] = useState(null);
@@ -144,6 +145,7 @@ export default function InteractiveMap() {
     }
     setFilteredLocations(newFilteredLocations);
   }, [selectedCategory, locations, allProperties]);
+
   const myLocation = () => {
     if (!selectedCategory) {
       alert(
@@ -322,6 +324,19 @@ export default function InteractiveMap() {
             fontSize: "0.9rem", // Adjust font size
           }}
         />
+
+        {/* Add the "Open Welcome Map" as a Chip */}
+        {isSmallScreen && (
+          <Chip
+            label="Manual"
+            onClick={handleOpenWelcomeMap}
+            icon={<MapIcon />} // Add the icon here
+            style={{
+              margin: "5px",
+              fontSize: "0.9rem", // Adjust font size
+            }}
+          />
+        )}
       </div>
     );
   }
@@ -552,7 +567,7 @@ export default function InteractiveMap() {
         </div>
         <Box>
           <div className="map-container" ref={mapContainerRef}>
-            <div style={{ width: "60%" }}>
+            <div style={{ width: isSmallScreen ? "100%" : "60%" }}>
               {locations.length > 0 ? (
                 <MapContainer
                   className="map"
@@ -580,9 +595,11 @@ export default function InteractiveMap() {
                   {/* "Where to Stay" */}
                   {selectedCategory === "Where to stay" &&
                     filteredLocations.map((property, index) => {
+                      // Parsing the coordinates (latitude and longitude)
                       const lat = parseFloat(property.coordinates[0]);
                       const lng = parseFloat(property.coordinates[1]);
 
+                      // Check if both latitude and longitude are valid numbers
                       if (!isNaN(lat) && !isNaN(lng)) {
                         return (
                           <Marker
@@ -598,6 +615,7 @@ export default function InteractiveMap() {
                           </Marker>
                         );
                       } else {
+                        // If coordinates are invalid, return null (don't render marker)
                         return null;
                       }
                     })}
@@ -803,7 +821,7 @@ export default function InteractiveMap() {
                     maxWidth="sm"
                     fullWidth
                     PaperProps={{
-                      style: { position: "relative", padding: "10px" }, // Add padding for better appearance
+                      style: { position: "relative" }, // Add padding for better appearance
                     }}
                   >
                     {/* Modal Content */}
@@ -836,27 +854,6 @@ export default function InteractiveMap() {
                       <WelcomeCebuMap />
                     </div>
                   )
-                )}
-
-                {/* Add a button to trigger modal */}
-                {isSmallScreen && (
-                  <button
-                    onClick={handleOpenWelcomeMap}
-                    style={{
-                      position: "absolute",
-                      bottom: "10px",
-                      right: "10px",
-                      zIndex: 1000,
-                      padding: "10px 15px",
-                      border: "none",
-                      backgroundColor: "#007BFF",
-                      color: "#fff",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Open Welcome Map
-                  </button>
                 )}
               </div>
             </div>
