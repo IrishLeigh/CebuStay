@@ -566,8 +566,22 @@ export default function InteractiveMap() {
           </button>
         </div>
         <Box>
-          <div className="map-container" ref={mapContainerRef}>
-            <div style={{ width: isSmallScreen ? "100%" : "60%" }}>
+          <div
+            className="map-container"
+            ref={mapContainerRef}
+            style={{ position: "relative", overflow: "visible" }}
+          >
+            <div
+              style={{
+                width: isSmallScreen ? "100%" : "50%", // Full width for small screens, 60% for larger screens
+                margin: isSmallScreen ? "0" : "5px 10px 5px 0px", // Remove margin for small screens
+                position: isSmallScreen ? "absolute" : "relative", // Absolute positioning for small screens
+                top: 0, // Ensure it stays at the top of its container
+                left: isSmallScreen ? "50%" : "0", // Center the map horizontally on small screens
+                transform: isSmallScreen ? "translateX(-50%)" : "none", // Adjust for centering effect on small screens
+                zIndex: isSmallScreen ? 1 : 0, // Ensure the map is in front on small screens
+              }}
+            >
               {locations.length > 0 ? (
                 <MapContainer
                   className="map"
@@ -813,7 +827,7 @@ export default function InteractiveMap() {
                     )}
                   </>
                 )}
-              <div style={{ width: "100%", margin: "5px 10px 5px 0px" }}>
+              <div style={{ width: "100%" }}>
                 {isSmallScreen ? (
                   <Dialog
                     open={showWelcomeMapModal}
