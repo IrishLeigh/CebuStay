@@ -127,10 +127,14 @@ function BookingGuest({ User, onGuestDetailsChange, PropertyData, errorMessage }
             justifyContent="left"
           >
             <Avatar sx={{ width: 56, height: 56 }}>{getInitial(email)}</Avatar>
-            <div>
-              <Typography variant="body1">You are signed in as</Typography>
-              <Typography variant="h6">{email}</Typography>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              <Typography variant="body1" sx={{ flexBasis: '100%' }}>You are signed in as</Typography>
+              
+              <Typography variant="h6" sx={{ flex: '1 1 auto' }}>
+                {email}
+              </Typography>
             </div>
+
           </Stack>
         </Card>
 

@@ -105,7 +105,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, propertyData2
 
   return (
     <ThemeProvider theme={BookingDetailsTheme}>
-      <Box mt={3} ml={0} >
+      <Box mt={3} ml={0} mb ={3} >
         <Card >
           <Box mb={2}>
             <Typography variant="h6" color="primary" ml={1} display="flex" alignItems="center">
@@ -326,7 +326,7 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, propertyData2
 
         )}
 
-<Card sx={{ p: 3, mt: 3 }}>
+<Card sx={{ p: 3, mt: 3, height: '350px', overflowY: 'auto' }}>
   <Typography variant="h6" color="primary" ml={1} pt={0.5}>
     <CancelIcon sx={{ verticalAlign: 'middle', color: 'primary.main', mr: 1 }} />
     Cancellation Policies
@@ -348,14 +348,14 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, propertyData2
           Free Cancellation: Number of Days Before Check-in
         </Typography>
         <Typography variant="body1">
-          {propertyData2.property_bookingpolicy.cancellationDays}
+          {propertyData2.property_bookingpolicy.cancellationDays} days
         </Typography>
 
         <Typography variant="body1" fontWeight="bold">
           Cancellation Fee (If cancelled after the free period)
         </Typography>
         <Typography variant="body1">
-          ${propertyData2.property_bookingpolicy.CancellationCharge}
+          {propertyData2.property_bookingpolicy.CancellationCharge}
         </Typography>
       </>
     )}
@@ -376,19 +376,20 @@ function BookingDetails({ lengthStay, onPriceChange, PropertyData, propertyData2
           Free Modification: Number of Days Before Check-in
         </Typography>
         <Typography variant="body1">
-          {propertyData2.property_bookingpolicy.modificationDays}
+          {propertyData2.property_bookingpolicy.modificationDays} days
         </Typography>
 
         <Typography variant="body1" fontWeight="bold">
           Modification Fee (If modified after the free period)
         </Typography>
         <Typography variant="body1">
-          ${propertyData2.property_bookingpolicy.modificationCharge}
+          {propertyData2.property_bookingpolicy.modificationCharge}
         </Typography>
       </>
     )}
   </Box>
 </Card>
+
 
 
       </Box>

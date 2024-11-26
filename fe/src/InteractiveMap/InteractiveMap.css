@@ -77,6 +77,18 @@
   white-space: nowrap; /* Prevent the buttons from wrapping to the next line */
   padding-bottom: 5px; /* Optional: Add some padding to the bottom for spacing */
 }
+.map-filter-cntr::-webkit-scrollbar {
+  height: 8px; /* Scrollbar height for horizontal scrolling */
+}
+
+.map-filter-cntr::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray background for the track */
+}
+
+.map-filter-cntr::-webkit-scrollbar-thumb {
+  background: #888; /* Darker gray for the scrollbar thumb */
+  border-radius: 4px; /* Rounded corners */
+}
 
 .map-filter-btn {
   border: none;
