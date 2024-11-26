@@ -103,6 +103,14 @@ export default function RoomDetails({
     if (capacity === "" || capacity < 1 || capacity > 100) {
       errors.push("Guest capacity must be between 1 and 100.");
     }
+    //validate bedspace is 1 to 20 all rooms only
+    if (unitDetailsData.roomDetails.some(room => room.roomType === "Bedspace" && room.quantity >= 10)) {
+      errors.push("Spaces quantity must be between 1 and 10.");
+    }
+     //validate custom rooms is 1 to 20 all rooms only
+     if (unitDetailsData.roomDetails.some(room => !["Bedspace", "Bathroom", "Living Room", "Kitchen"].includes(room.roomType) && room.quantity > 20)) {
+      errors.push("Custom rooms quantity must be between 1 and 20.");
+     }
      // Check if there's at least one "Bedspace" with quantity > 0
   const hasValidBedspace = unitDetailsData.roomDetails.some(room => room.roomType === "Bedspace" && room.quantity > 0);
   if (!hasValidBedspace) {
@@ -219,7 +227,7 @@ export default function RoomDetails({
                     <TextField
                       value={room.quantity}
                       onChange={(e) => handleQuantityChange(index, e.target.value)}
-                      sx={{ width: "2.5rem", textAlign: "center" }}
+                      sx={{ width: "2.8rem", textAlign: "center" }}
                     />
                     <IconButton onClick={() => incrementQuantity(index)}>
                       <AddIcon />

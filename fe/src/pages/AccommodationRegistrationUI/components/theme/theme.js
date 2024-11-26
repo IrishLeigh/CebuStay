@@ -1,4 +1,3 @@
-// theme.js
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -97,6 +96,43 @@ const theme = createTheme({
             '&.Mui-completed .MuiStepConnector-line': {
               borderColor: '#A334CF', // Color for connector line when completed
             },
+          },
+        },
+      },
+    },
+    MuiClockPicker: {
+      styleOverrides: {
+        root: {
+          '& .MuiClock-number': {
+            backgroundColor: 'transparent',
+          },
+          '& .Mui-selected': {
+            backgroundColor: 'transparent',
+            color: '#16B4DD',
+            fontWeight: 'bold',
+          },
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          '& .MuiPickersToolbar-root': {
+            backgroundColor: 'transparent', // Transparent background for the toolbar
+          },
+          '& .MuiTypography-root.Mui-selected': {
+            color: '#16B4DD', // Blue color for selected AM/PM
+            fontWeight: 'bold', // Bold text for selected
+          },
+        },
+      },
+    },
+    MuiPickerStaticWrapper: {
+      styleOverrides: {
+        root: {
+          '& .MuiTypography-root.Mui-selected': {
+            color: '#16B4DD',
+            fontWeight: 'bold',
           },
         },
       },

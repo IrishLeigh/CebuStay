@@ -121,24 +121,32 @@ export default function UnitPricingPerMonth({ onUnitPricingChange, parentUnitPri
                   </p>
                 </div>
 
-                <div style={{ display: "flex", fontSize: "74px", justifyContent: "center", alignItems: "center" }}>
-                  <div>{pesoSign}</div>
-                  <input
-                    id="base_price"
-                    placeholder={`558`}
-                    type="text"
-                    value={basePrice}
-                    onChange={handleChange}
-                    required
-                    style={{
-                      border: "none",
-                      outline: "none",
-                      textAlign: "center",
-                      fontSize: "inherit",
-                      width: isMobile ? "150px" : "350px",
-                    }}
-                  />
-                </div>
+                <div
+              style={{
+                display: "flex",
+                fontSize: isMobile ? "40px" : "74px",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>{pesoSign}</div>
+              <input
+                id="base_price"
+                placeholder={`558`}
+                type="text"
+                value={basePrice}
+                onChange={handleChange}
+                required
+                style={{
+                  border: "none",
+                  outline: "none",
+                  textAlign: "center",
+                  fontSize: "inherit",
+                  width: isMobile ? "150px" : "350px",
+                }}
+              />
+            </div>
+
 
                 <React.Fragment>
                   <Divider>Pricing Details</Divider>
