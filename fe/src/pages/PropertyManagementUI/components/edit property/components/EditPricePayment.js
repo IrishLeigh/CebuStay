@@ -27,7 +27,7 @@ export default function PricePayment({
   isSingleUnit,
   onPricingChange,
   onPaymentChange,
-  onSaveStatusChange
+  onSaveStatusChange,
 }) {
   const pesoSign = "\u20B1";
   const [priceEntered, setPriceEntered] = useState(false);
@@ -43,18 +43,15 @@ export default function PricePayment({
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
- 
+
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [errorMessage, setErrorMessage] = useState([]);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [hasError, setHasError] = useState(false);
- 
- 
-
 
   useEffect(() => {
     console.log("ON MOUNT");
@@ -115,7 +112,9 @@ export default function PricePayment({
 
   const handleCancel = () => {
     if (hasChanges) {
-      const confirmDiscard = window.confirm("You have unsaved changes. Are you sure you want to discard them?");
+      const confirmDiscard = window.confirm(
+        "You have unsaved changes. Are you sure you want to discard them?"
+      );
       if (!confirmDiscard) {
         return; // Exit the function if the user cancels the discard action
       }
@@ -125,15 +124,14 @@ export default function PricePayment({
     setBasePrice(originalData.basePrice);
     setPaymentData(originalData.paymentData);
   };
-  
+
   const handleEditingChange = (editing) => {
     if (editing === true) {
       setIsEditing(editing);
-    }else if (editing === false) {
+    } else if (editing === false) {
       handleCancel();
-      
     }
-   
+
     console.log(`Editing mode changed: ${editing}`); // Log or use this state as needed
   };
 
@@ -149,15 +147,23 @@ export default function PricePayment({
     if (basePrice <= 0) {
       setHasError(true);
       setSnackbarMessage("Price of the unit must be greater than zero");
-      setErrorMessage((prev) => [...prev, "Price of the unit must be greater than zero"]);
+      setErrorMessage((prev) => [
+        ...prev,
+        "Price of the unit must be greater than zero",
+      ]);
       setOpenSnackbar(true);
       return false;
     }
 
     if (basePrice < 558) {
       setHasError(true);
-      setSnackbarMessage("Price of the unit must be greater than or equal to 558 to retain the integrity of the platform");
-      setErrorMessage((prev) => [...prev, "Price of the unit must be greater than 558 to retain the integrity of the platform"]);
+      setSnackbarMessage(
+        "Price of the unit must be greater than or equal to 558 to retain the integrity of the platform"
+      );
+      setErrorMessage((prev) => [
+        ...prev,
+        "Price of the unit must be greater than 558 to retain the integrity of the platform",
+      ]);
       setOpenSnackbar(true);
       return false;
     }
@@ -200,7 +206,7 @@ export default function PricePayment({
     };
     try {
       const res = await axios.post(
-        `http://127.0.0.1:8000/api/updatedpropertypricingpayment-single/${propertyid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updatedpropertypricingpayment-single/${propertyid}`,
         {
           unitPricing: dataToSave.unitPricing,
           paymentData: dataToSave.paymentData,
@@ -224,26 +230,30 @@ export default function PricePayment({
           setHasError(false);
           setSnackbarMessage("Unit pricing saved successfully");
           setOpenSnackbar(true);
-          onSaveStatusChange('Saved');
-          
+          onSaveStatusChange("Saved");
+
           setIsLoading(false);
         }
       }
     } catch (error) {
       console.log("Error saving data:", error);
-      
-    }finally {
+    } finally {
       setIsLoading(false);
     }
     // console.log("Saving data:", dataToSave);
-
   };
-  const handleCloseSnackbar  = () => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
   return (
     <>
-      <TemplateFrameEdit onEditChange={handleEditingChange}  saved ={isSaved}  onSave={handleSave} hasChanges={hasChanges}  cancel={handleCancel}/>
+      <TemplateFrameEdit
+        onEditChange={handleEditingChange}
+        saved={isSaved}
+        onSave={handleSave}
+        hasChanges={hasChanges}
+        cancel={handleCancel}
+      />
       <Paper
         style={{
           width: "auto",
@@ -298,100 +308,98 @@ export default function PricePayment({
         </Typography>
 
         <Grid container spacing={2}>
-         
-            <Grid item xs={12} md={12} >
-              <Box className="centered-container">
-                <Paper
-                  elevation={3}
+          <Grid item xs={12} md={12}>
+            <Box className="centered-container">
+              <Paper
+                elevation={3}
+                sx={{
+                  width: "100%",
+                  padding: 2,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "5px",
+                }}
+              >
+                <Box
+                  component="form"
+                  noValidate
+                  autoComplete="off"
                   sx={{
-                    width: "100%",
+                    width: "auto",
                     padding: 2,
-                    justifyContent: "center",
+                    display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
-                    borderRadius: "5px",
                   }}
                 >
+                  <Typography variant="h6" gutterBottom>
+                    Set your price here!
+                  </Typography>
+                  <Typography variant="body2" gutterBottom>
+                    Including taxes, commission, and charges
+                  </Typography>
                   <Box
-                    component="form"
-                    noValidate
-                    autoComplete="off"
                     sx={{
-                      width: "auto",
-                      padding: 2,
                       display: "flex",
-                      flexDirection: "column",
+                      fontSize: "2rem",
+                      justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
-                    <Typography variant="h6" gutterBottom>
-                      Set your price here!
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      Including taxes, commission, and charges
-                    </Typography>
-                    <Box
+                    <Typography variant="h6">{pesoSign}</Typography>
+                    <TextField
+                      id="base_price"
+                      placeholder="558"
+                      type="text"
+                      value={basePrice}
+                      onChange={handlePriceChange}
+                      disabled={!isEditing}
                       sx={{
-                        display: "flex",
-                        fontSize: "2rem",
-                        justifyContent: "center",
-                        alignItems: "center",
+                        border: "none",
+                        outline: "none",
+                        textAlign: "center",
+                        fontSize: "inherit",
+                        width: "50%",
+                        input: { textAlign: "center" },
                       }}
-                    >
-                      <Typography variant="h6">{pesoSign}</Typography>
-                      <TextField
-                        id="base_price"
-                        placeholder="558"
-                        type="text"
-                        value={basePrice}
-                        onChange={handlePriceChange}
-                        disabled={!isEditing}
-                        sx={{
-                          border: "none",
-                          outline: "none",
-                          textAlign: "center",
-                          fontSize: "inherit",
-                          width: "50%",
-                          input: { textAlign: "center" },
-                        }}
-                      />
-                    </Box>
+                    />
+                  </Box>
 
-                    {priceEntered && (
-                      <>
-                        <Divider sx={{ my: 2 }}>Pricing Details</Divider>
-                        <Box sx={{ textAlign: "center" }}>
-                          <Typography variant="body2">
-                            Commission and charges from CebuStay totaling 18.00%
-                          </Typography>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <CheckIcon />
-                            <Typography variant="body2" sx={{ ml: 1 }}>
-                              Enjoy instant booking confirmations for added
-                              convenience.
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <CheckIcon />
-                            <Typography variant="body2" sx={{ ml: 1 }}>
-                              Let us handle guest payments, saving you time and
-                              effort.
-                            </Typography>
-                          </Box>
-                          <Typography variant="h6" sx={{ mt: 2 }}>
-                            Your total earnings would be (including taxes)
-                          </Typography>
-                          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                            {pesoSign}
-                            {priceUnit.profit}
+                  {priceEntered && (
+                    <>
+                      <Divider sx={{ my: 2 }}>Pricing Details</Divider>
+                      <Box sx={{ textAlign: "center" }}>
+                        <Typography variant="body2">
+                          Commission and charges from CebuStay totaling 18.00%
+                        </Typography>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <CheckIcon />
+                          <Typography variant="body2" sx={{ ml: 1 }}>
+                            Enjoy instant booking confirmations for added
+                            convenience.
                           </Typography>
                         </Box>
-                      </>
-                    )}
-                  </Box>
-                </Paper>
-              </Box>
-            </Grid>
-         
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <CheckIcon />
+                          <Typography variant="body2" sx={{ ml: 1 }}>
+                            Let us handle guest payments, saving you time and
+                            effort.
+                          </Typography>
+                        </Box>
+                        <Typography variant="h6" sx={{ mt: 2 }}>
+                          Your total earnings would be (including taxes)
+                        </Typography>
+                        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                          {pesoSign}
+                          {priceUnit.profit}
+                        </Typography>
+                      </Box>
+                    </>
+                  )}
+                </Box>
+              </Paper>
+            </Box>
+          </Grid>
 
           {/* <Grid item xs={12} md={12} sx={{ padding: "1rem" }}>
             <Box
@@ -489,24 +497,21 @@ export default function PricePayment({
             </Box>
          
           </Grid> */}
-          
-          
         </Grid>
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={6000}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
             onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }} 
+            severity={hasError ? "error" : "success"}
+            sx={{ width: "100%" }}
           >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity={hasError ? "error" : "success"}
-
-              sx={{ width: "100%" }}
-            >
-              {snackbarMessage}
-            </Alert>
-          </Snackbar>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Paper>
       <LoadingModal open={isLoading} />
     </>
