@@ -92,7 +92,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
         <Card
           sx={{
             width: isSmallScreen ? "100%" : "100%",
-            height: "auto", // Adjust height based on content
+            height: "80vh", // Adjust height based on content
             boxShadow: 3,
             position: "relative",
             display: "flex",
@@ -135,6 +135,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between", // Space out content evenly
+              overflowY: "auto",
             }}
           >
             <Typography

@@ -33,6 +33,9 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
     console.log("Using spot's coordinates:", latitude, longitude);
     findNearbyLocations([latitude, longitude]);
   };
+  const preventCloseOnCardClick = (event) => {
+    event.stopPropagation();
+  };
 
   const findNearbyLocations = (userLocation) => {
     if (!allProperties.length) return; // No filtered locations
@@ -98,15 +101,16 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
       ) : (
         <Card
           sx={{
-            width: "100%",
+            width: isSmallScreen ? "100%" : "100%",
+            height: "80vh", // Adjust height based on content
             boxShadow: 3,
             position: "relative",
             display: "flex",
             flexDirection: "column",
-            alignSelf: "center", // Center on all screens
-            flexGrow: 1, // Allow the card to grow based on content
+            alignSelf: isSmallScreen ? "center" : "flex-start",
+            pointerEvents: showNearby ? "none" : "auto", // Disable interaction when showNearby is true
           }}
-          onClick={(event) => event.stopPropagation()} // Prevent closing when clicking inside the card
+          onClick={preventCloseOnCardClick} // Prevent close when clicking inside the card
         >
           <Box
             sx={{
@@ -122,26 +126,39 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
               <CloseIcon sx={{ color: "white" }} />
             </IconButton>
           </Box>
-          <CardMedia
+        <CardMedia
             component="img"
             alt={spot.name}
-            height="auto" // Allow height to adjust based on content
+            height={isSmallScreen ? "60%" : "50%"}
             image={spot.imageUrl}
             title={spot.name}
             sx={{
-              objectFit: "cover", // Ensure image covers the space
-              width: "100%", // Make sure it takes full width
+              objectFit: "cover",
+              width: isSmallScreen ? "100%" : "auto",
+              height: isSmallScreen ? "30%" : "200px",
             }}
           />
 
-          <CardContent sx={{ padding: "1rem", flexGrow: 1 }}>
+          <CardContent
+            sx={{
+              padding: isSmallScreen ? "0.5rem" : "1rem",
+              flexGrow: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between", // Space out content evenly
+              overflowY: "auto",
+            }}
+          >
             {" "}
             {/* Flex grow to allow content to expand */}
             <Typography
               gutterBottom
-              variant="h5"
               component="div"
-              sx={{ fontSize: isSmallScreen ? "1rem" : "1.25rem" }}
+              sx={{
+                fontSize: isSmallScreen ? "0.5rem" : "1.5rem",
+                fontWeight: "bold",
+                overflowWrap: "break-word", // Break long words to prevent overflow
+              }}
             >
               {spot.name.toUpperCase()}
             </Typography>
