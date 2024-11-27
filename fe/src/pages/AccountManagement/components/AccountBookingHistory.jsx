@@ -6,6 +6,8 @@ import Modal from 'react-modal';
 import CancellationAndModification from './CancellationAndModification'; // Import the component
 import axios from 'axios';
 import { CircularProgress, Snackbar, Alert, Box, Typography, Button, } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
+
 import { useNavigate, Link } from 'react-router-dom';
 // Set the app element for accessibility
 Modal.setAppElement('#root');
@@ -80,7 +82,8 @@ export default function BookingHistory({ profile }) {
 
     const [user, setUser] = useState(null);
 
-    const [loading, setLoading] = useState(true); // Initialize loading state
+    const [loading, setLoading] = useState(false); // Initialize loading state
+
     const [viewReviewisOpen, setViewReviewisOpen] = useState(false);
     const [review, setReview] = useState(null);
     // console.log("selectedBooking:", selectedBooking);
@@ -106,6 +109,23 @@ export default function BookingHistory({ profile }) {
             setUser(null);
         }
     }, []);
+
+    
+    function makeTableScrollable() {
+        const tableContainer = document.querySelector('.table-container');
+
+        if (window.innerWidth <= 768) {
+            tableContainer.style.overflowX = 'auto'; // Enable horizontal scrolling
+        } else {
+            tableContainer.style.overflowX = 'unset'; // Remove horizontal scrolling for larger screens
+        }
+    }
+
+    // Call the function on page load
+    window.addEventListener('load', makeTableScrollable);
+
+    // Call the function when the window is resized
+    window.addEventListener('resize', makeTableScrollable);
 
     // Fetch Profile Data
     useEffect(() => {
@@ -411,110 +431,54 @@ export default function BookingHistory({ profile }) {
             </div>
 
             <div className="full-width mt-4">
-                <div className="controls flex items-center mb-4">
+        <div className="controls-container">
+    {/* Buttons Section */}
+    <div className="buttons-group">
+        <button
+            className={`btn ${selectedButton === 'UPCOMING' ? 'active' : ''}`}
+            onClick={() => { setSelectedButton('UPCOMING'); setSelectedBooking(null); }}
+        >
+            CURRENT & UPCOMING
+        </button>
+        <button
+            className={`btn ${selectedButton === 'CANCELLED' ? 'active' : ''}`}
+            onClick={() => { setSelectedButton('CANCELLED'); setSelectedBooking(null); }}
+        >
+            CANCELLED
+        </button>
+        <button
+            className={`btn ${selectedButton === 'COMPLETED' ? 'active' : ''}`}
+            onClick={() => { setSelectedButton('COMPLETED'); setSelectedBooking(null); }}
+        >
+            COMPLETED
+        </button>
+    </div>
 
-                    {/* Buttons Section */}
-                    <div className="buttons flex gap-1rem items-center">
+    {/* Search Input and Dropdown */}
+    <div className="dropdown-container">
+        {showDropdown && (
+            <div className="dropdown-menu">
+                <div className="dropdown-header">Search by</div>
+                <hr />
+                <div className="dropdown-options">
+                    {['Booking ID', 'Name', 'Type'].map((option) => (
                         <button
-                            className={`btn ${selectedButton === 'UPCOMING' ? 'active' : ''}`}
-                            onClick={() => { setSelectedButton('UPCOMING'); setSelectedBooking(null); }}
-                            style={{
-                                backgroundColor: selectedButton === 'UPCOMING' ? '#A334CF' : '#e5e7eb', // Purple for active, light gray for inactive
-                                color: selectedButton === 'UPCOMING' ? '#ffffff' : '#000000', // White text for active, black text for inactive
-                                border: 'none',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '0.375rem', // Rounded corners
-                                cursor: 'pointer',
-                                transition: 'background-color 0.3s, color 0.3s'
+                            key={option}
+                            className={`dropdown-option ${selectedOption === option ? 'active' : ''}`}
+                            onClick={() => {
+                                setSelectedOption(option);
+                                setShowDropdown(false);
                             }}
                         >
-                            CURRENT & UPCOMING
+                            {option}
                         </button>
-                        <button
-                            className={`btn ${selectedButton === 'CANCELLED' ? 'active' : ''}`}
-                            onClick={() => { setSelectedButton('CANCELLED'); setSelectedBooking(null); }}
-                            style={{
-                                backgroundColor: selectedButton === 'CANCELLED' ? '#ef4444' : '#e5e7eb', // Red for active, light gray for inactive
-                                color: selectedButton === 'CANCELLED' ? '#ffffff' : '#000000', // White text for active, black text for inactive
-                                border: 'none',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '0.375rem', // Rounded corners
-                                cursor: 'pointer',
-                                transition: 'background-color 0.3s, color 0.3s'
-                            }}
-                        >
-                            CANCELLED
-                        </button>
-                        <button
-                            className={`btn ${selectedButton === 'COMPLETED' ? 'active' : ''}`}
-                            onClick={() => { setSelectedButton('COMPLETED'); setSelectedBooking(null); }}
-                            style={{
-                                backgroundColor: selectedButton === 'COMPLETED' ? '#84cc16' : '#e5e7eb', // Lime for active, light gray for inactive
-                                color: selectedButton === 'COMPLETED' ? '#ffffff' : '#000000', // White text for active, black text for inactive
-                                border: 'none',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '0.375rem', // Rounded corners
-                                cursor: 'pointer',
-                                transition: 'background-color 0.3s, color 0.3s'
-                            }}
-                        >
-                            COMPLETED
-                        </button>
-                    </div>
-
-                    {/* Search Input and Dropdown */}
-                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem', position: 'relative' }}>
-
-
-                        {/* Dropdown Menu */}
-                        {showDropdown && (
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    top: '3rem', // Adjust this based on the height of your button
-                                    left: '7.3rem',
-                                    backgroundColor: 'white',
-                                    borderWidth: '1px',
-                                    borderRadius: '0.5rem',
-                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                                    zIndex: 10,
-                                    padding: '0.5rem',
-                                    width: '15rem',
-                                }}
-                            >
-                                <div style={{ fontSize: '0.875rem', fontWeight: '700', padding: '0.5rem 0', textAlign: 'left', marginLeft: '0.8rem' }}>
-                                    Search by
-                                </div>
-                                <hr style={{ margin: '0.5rem 0' }} />
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    {['Booking ID', 'Name', 'Type'].map((option) => (
-                                        <button
-                                            key={option}
-                                            onClick={() => {
-                                                setSelectedOption(option);
-                                                setShowDropdown(false);
-                                            }}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                textAlign: 'left',
-                                                backgroundColor: selectedOption === option ? '#16B4DD' : 'white',
-                                                color: selectedOption === option ? 'white' : 'black',
-                                                borderRadius: '0.25rem',
-                                                cursor: 'pointer',
-                                                fontFamily: 'Poppins',
-                                                border: 'none',
-                                                outline: 'none',
-                                            }}
-                                        >
-                                            {option}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
+                    ))}
                 </div>
+            </div>
+        )}
+    </div>
+</div>
+
                 <div
                     style={{
                         position: 'relative',
@@ -523,22 +487,11 @@ export default function BookingHistory({ profile }) {
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                         borderRadius: '0.5rem',
                         overflow: 'hidden',
+                        borderLeft: `10px solid ${getRibbonColor()}`, // Left border as highlight
+
                         textAlign: 'center',
                     }}
                 >
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '0.75rem',
-                            height: '100%',
-                            backgroundColor: getRibbonColor(),
-                            borderTopLeftRadius: '0.5rem',
-                            borderBottomLeftRadius: '0.5rem',
-                        }}
-                    ></div>
-
 
                     {/* Conditional rendering: show booking history table or cancellation/modification component */}
                     {loading ? (
@@ -591,178 +544,81 @@ export default function BookingHistory({ profile }) {
                         </div>
                     ) : (
                         <>
-                            <table
-                                className="table w-full text-left"
-                                style={{
-                                    borderCollapse: 'collapse',
-                                    width: '100%',
-                                    border: '1px solid #dee2e6',
-                                    borderRadius: '0.5rem',
-                                }}
-                            >
-                                <thead>
-                                    <tr style={{ backgroundColor: '#f8f9fa' }}>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Booking ID</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Check In Date</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Name</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Location</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Guest</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Type</th>
-                                        {selectedButton === 'CANCELLED' ? (<>
-
-                                            <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Refund Amount</th>
-                                        </>) : (<>
-                                            <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Amount Paid</th>
-                                        </>)}
-
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Status</th>
-                                        {selectedButton === 'UPCOMING' && <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Pending Payments</th>}
-                                        {selectedButton === 'COMPLETED' && (
-                                            <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Review</th>
-                                        )}
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {fetched && getData().length > 0 ? (
-                                        getData().map((item, rowIndex) => (
-                                            <tr key={item.id} style={{ backgroundColor: '#ffffff' }}>
-                                                {['id', 'checkIn', 'name', 'location', 'guest', 'type', 'amount', 'status'].map((key) => (
-                                                    <td
-                                                        key={key}
-                                                        style={{
-                                                            padding: '0.75rem',
-                                                            borderBottom: '1px solid #dee2e6',
-                                                            verticalAlign: 'middle',
-                                                            cursor: selectedButton === 'UPCOMING' ? 'pointer' : 'default',
-                                                        }}
-                                                        onClick={() => {
-                                                            if (item.status !== 'checkout' && selectedButton === 'UPCOMING') {
-                                                                handleRowClick(item);
-                                                            } else if (item.isCancel !== 'Cancelled' && selectedButton === 'CANCELLED') {
-                                                                handleRowClick(item);
-                                                            }
-                                                        }}
-                                                    >
-                                                        {
-                                                            key === 'status'
-                                                                ? selectedButton === 'COMPLETED'
-                                                                    ? item.book_status // Display book_status when selectedButton is COMPLETED
-                                                                    : selectedButton === 'CANCELLED'
-                                                                        ? item.isCancel // Display isCancel when selectedButton is CANCELLED
-                                                                        : item.isCancel === 'Checked in'
-                                                                            ? item.isCancel // Display 'Checked in' status if item.isCancel equals 'Checked in'
-                                                                            : item.status
-                                                                : key === 'checkIn'
-                                                                    ? formatDate(item[key])
-                                                                    : key === 'amount'
-                                                                        ? selectedButton === 'CANCELLED'
-                                                                            ? item.refund_amount // Display refund amount when cancelled
-                                                                            : item.unit_type === 'Monthly Term'
-                                                                                ? item.amount_paid === 0
-                                                                                    ? '------'
-                                                                                    : item.amount_paid
-                                                                                : item.payment_status === 'Paid'
-                                                                                    ? item.amount
-                                                                                    : item.amount
-                                                                        : item[key]
-                                                        }
-                                                    </td>
-                                                ))}
-                                                {(selectedButton === 'UPCOMING' || selectedButton === 'COMPLETED') && (
-                                                    <td style={{ padding: '0.75rem', borderBottom: '1px solid #dee2e6', textAlign: 'center', verticalAlign: 'middle' }}>
-                                                        {selectedButton === 'UPCOMING' && (
-                                                            <>
-                                                                {item.unit_type === 'Monthly Term' && item.monthly_payment_status === 'Pending' ? (
-                                                                    <div>
 
 
-                                                                        <button
-                                                                            style={{
-                                                                                marginTop: '0.5rem',
-                                                                                background: 'green',
-                                                                                color: 'white',
-                                                                                border: 'none',
-                                                                                borderRadius: '0.25rem',
-                                                                                padding: '0.5rem 1rem',
-                                                                            }}
-                                                                            // onClick={() => handlePayment(item)}
-                                                                            onClick={() => openModal(item)}
-                                                                        >
-                                                                            View Payment
-                                                                        </button>
-                                                                    </div>
-                                                                ) : (
-                                                                    <>
-                                                                        {item.payment_status === 'Paid' ? (
-                                                                            <div>------</div>
-                                                                        ) : (
-                                                                            <div>
+<div className="table-container">
+    <table className="custom-table">
+        <thead>
+            <tr className="table-header">
+                <th>Booking ID</th>
+                <th>Check In Date</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Guest</th>
+                <th>Type</th>
+                {selectedButton === 'CANCELLED' ? (
+                    <th>Refund Amount</th>
+                ) : (
+                    <th>Amount Paid</th>
+                )}
+                <th>Status</th>
+                {selectedButton === 'UPCOMING' && <th>Pending Payments</th>}
+                {selectedButton === 'COMPLETED' && <th>Review</th>}
+            </tr>
+        </thead>
 
-                                                                                <button
-                                                                                    style={{
-                                                                                        marginTop: '0.5rem',
-                                                                                        background: 'green',
-                                                                                        color: 'white',
-                                                                                        border: 'none',
-                                                                                        borderRadius: '0.25rem',
-                                                                                        padding: '0.5rem 1rem',
-                                                                                    }}
-                                                                                    onClick={() => openModal(item)}
-                                                                                >
-                                                                                    View Payment
-                                                                                </button>
-                                                                            </div>
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                            </>
-                                                        )}
+        <tbody>
+            {fetched && getData().length > 0 ? (
+                getData().map((item) => (
+                    <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{formatDate(item.checkIn)}</td>
+                        <td>{item.name}</td>
+                        <td>{item.location}</td>
+                        <td>{item.guest}</td>
+                        <td>{item.type}</td>
+                        <td>
+                            {selectedButton === 'CANCELLED' ? item.refund_amount : item.amount_paid}
+                        </td>
+                        <td>
+                            {selectedButton === 'COMPLETED'
+                                ? item.book_status
+                                : selectedButton === 'CANCELLED'
+                                ? item.isCancel
+                                : item.status}
+                        </td>
+                        {selectedButton === 'UPCOMING' && (
+                            <td>
+                                {item.unit_type === 'Monthly Term' && item.monthly_payment_status === 'Pending' ? (
+                                    <button onClick={() => openModal(item)}>View Payment</button>
+                                ) : (
+                                    <button onClick={() => openModal(item)}>View Payment</button>
+                                )}
+                            </td>
+                        )}
+                        {selectedButton === 'COMPLETED' && (
+                            <td>
+                                <button onClick={() =>
+                                    item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item)
+                                }>
+                                    {item.isreview === 1 ? 'View Review' : 'Add A Review'}
+                                </button>
+                            </td>
+                        )}
+                    </tr>
+                ))
+            ) : (
+                <tr>
+                    <td colSpan={selectedButton === 'COMPLETED' ? 10 : 9} className="no-data">
+                        No data available
+                    </td>
+                </tr>
+            )}
+        </tbody>
+    </table>
+</div>
 
-                                                        {selectedButton === 'COMPLETED' && (
-                                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle' }}>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item)
-                                                                    }
-                                                                    style={{
-                                                                        color: item.isreview === 1 ? 'gray' : 'green',
-                                                                        cursor: 'pointer',
-                                                                        background: 'none',
-                                                                        border: 'none',
-                                                                        fontFamily: 'Poppins',
-                                                                        outline: 'none',
-                                                                        fontSize: '0.875rem',
-                                                                    }}
-                                                                >
-                                                                    {item.isreview === 1 ? 'View Review' : 'Add A Review'}
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                )}
 
-
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td
-                                                colSpan={selectedButton === 'COMPLETED' ? 10 : 9}
-                                                style={{
-                                                    padding: '1rem',
-                                                    textAlign: 'center',
-                                                    fontSize: '0.875rem',
-                                                    borderBottom: 'none',
-                                                    verticalAlign: 'middle',
-                                                }}
-                                            >
-                                                No data available
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
 
 
 
