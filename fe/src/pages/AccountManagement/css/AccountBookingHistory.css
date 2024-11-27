@@ -62,6 +62,13 @@
 
 .items-center {
   align-items: center; /* Center items vertically */
+
+}
+
+.controls{
+align-items: center; /* Center items vertically */
+margin-top: 1rem;
+margin-bottom: 1rem;
 }
 
 .space-x-4 > *:not(template) ~ * {
@@ -84,6 +91,7 @@
   border-radius: 0.5rem; /* 8px rounded corners */
   height: 50px;
   border: 1px solid #ededef;
+  margin-bottom: 0.5rem;
 }
 
 .bg-purple {
@@ -164,4 +172,315 @@
 
 .link:hover {
   text-decoration: underline; /* Underline on hover */
+}
+
+@media (max-width: 640px) {
+  .buttons .btn {
+    margin-bottom: 1rem; /* Add spacing between buttons on smaller screens */
+  }
+}
+
+
+
+
+.buttons {
+  display: flex;
+  justify-content: space-between; /* Space out the buttons horizontally */
+  align-items: center;  /* Vertically align buttons */
+  gap: 1rem; /* Add spacing between buttons */
+  padding: 1rem;
+  flex-wrap: wrap;  /* Allow buttons to wrap to the next line if needed */
+}
+
+
+
+/* Basic styling for the table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  margin-bottom: 20px; /* Add some space at the bottom */
+}
+
+/* Styling for table headers */
+.table thead {
+  background-color: #f8f9fa; /* Light background for headers */
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: bold;
+  font-size: 0.875rem;
+  color: #495057; /* Dark color for text */
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Styling for table rows */
+.table tr {
+  background-color: #ffffff; /* White background for rows */
+}
+
+.table td {
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Responsive table styling for smaller screens */
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+      padding: 0.75rem; /* Slightly reduce padding on smaller screens */
+  }
+
+  .table {
+      border: 0; /* Remove outer border for better mobile view */
+  }
+
+  .table thead {
+      display: none; /* Hide the header on small screens */
+  }
+
+  .table tr {
+      display: block; /* Make each row a block for easier readability */
+      margin-bottom: 1rem; /* Space between rows */
+  }
+
+  .table td {
+      display: block;
+      text-align: right; /* Align text to the right */
+      font-size: 1rem; /* Slightly bigger font size for easier reading */
+      position: relative;
+      padding-left: 50%; /* Add some space for labels */
+  }
+
+  .table td::before {
+      content: attr(data-label); /* Use the "data-label" attribute for each column */
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+      color: #495057;
+      font-size: 0.875rem;
+  }
+
+  .table td:last-child {
+      border-bottom: 0; /* Remove the bottom border on the last column */
+  }
+}
+
+
+
+/* Base styles for the table header */
+thead th {
+  padding: 0.75rem;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 0.875rem;
+  text-align: center;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Media query for small screens */
+@media (max-width: 768px) {
+  /* Stack the table headers vertically and allow scrolling for large tables */
+  table {
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+  }
+
+  thead {
+      display: block; /* Make the thead block to allow scrolling */
+  }
+
+  tbody {
+      display: block;
+      max-height: 400px; /* Limit the height to enable scrolling */
+      overflow-y: auto; /* Enable vertical scrolling for tbody */
+  }
+
+  th {
+      font-size: 0.75rem; /* Reduce font size for mobile */
+      padding: 0.5rem; /* Reduce padding */
+  }
+
+  /* Show/hide specific columns for smaller screens */
+  th:nth-child(n+6), td:nth-child(n+6) {
+      display: none; /* Hide columns starting from 'Type' column */
+  }
+
+  /* If you want to show specific columns or adjust them differently, you can do that with nth-child selectors. */
+}
+
+/* Media query for larger screens (>= 768px, tablets and above) */
+@media (min-width: 768px) {
+  /* On tablets and larger screens, reset the table display to normal */
+  table {
+      display: table;
+  }
+
+  thead {
+      display: table-header-group; /* Default table header behavior */
+  }
+
+  tbody {
+      display: table-row-group;
+  }
+
+  th, td {
+      font-size: 0.875rem; /* Reset font size */
+      padding: 0.75rem;
+  }
+
+  /* Optionally, reset any column hiding for larger screens */
+  th:nth-child(n+6), td:nth-child(n+6) {
+      display: table-cell; /* Show the previously hidden columns */
+  }
+}
+
+/* For extra large screens (>= 1200px), you can set fixed column widths or any specific layout you need */
+@media (min-width: 1200px) {
+  th {
+      font-size: 1rem; /* Larger font size for extra large screens */
+  }
+}
+
+
+/* Base styles for the container */
+.table-container {
+  position: relative;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  text-align: center;
+  padding: 1rem; /* Adjust padding for content */
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
+}
+
+/* Styles for the ribbon */
+.ribbon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.75rem; /* Default width of the ribbon */
+  height: 100%;
+  background-color: #A334CF; /* Replace with your dynamic color if needed */
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+/* Media query for small screens (max-width: 768px) */
+@media (max-width: 768px) {
+  .table-container {
+      padding: 0.75rem; /* Reduce padding on smaller screens */
+  }
+
+  .ribbon {
+      width: 0.5rem; /* Narrow the ribbon for smaller screens */
+  }
+}
+
+/* Media query for larger screens (min-width: 768px) */
+@media (min-width: 768px) {
+  .table-container {
+      padding: 1.5rem; /* Increase padding for medium and large screens */
+  }
+
+  .ribbon {
+      width: 1rem; /* Make the ribbon wider on larger screens */
+  }
+}
+
+/* Extra-large screens (min-width: 1200px) */
+@media (min-width: 1200px) {
+  .table-container {
+      padding: 2rem; /* Further adjust padding for extra-large screens */
+  }
+
+  .ribbon {
+      width: 1.5rem; /* Increase ribbon width for very large screens */
+  }
+}
+
+/* Make the table container responsive */
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Allows horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS devices */
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 0.875rem;
+}
+
+/* Make the table responsive on smaller screens */
+@media (max-width: 768px) {
+  .table {
+    font-size: 0.75rem; /* Reduce font size for better readability on small screens */
+  }
+
+  th, td {
+    padding: 0.5rem; /* Reduce padding on smaller screens */
+  }
+
+  /* Optional: Stack table headers and data in a mobile-friendly way */
+  .table td {
+    display: block;
+    width: 100%;
+    text-align: left; /* Align text to the left for better readability */
+    padding-left: 1rem; /* Add some left padding for better spacing */
+  }
+
+  /* Make sure the container doesn't overflow */
+  .table-container {
+    padding: 0 1rem; /* Add padding for responsiveness */
+  }
+}
+
+/* Adjust layout on even smaller screens (mobile-first approach) */
+@media (max-width: 480px) {
+  .table {
+    font-size: 0.7rem; /* Further reduce font size for very small screens */
+  }
+
+  th, td {
+    padding: 0.3rem; /* Even smaller padding */
+  }
+}
+
+
+.history-close-btn {
+  position: absolute;
+  top: 0.5rem; /* Increased to provide more breathing space */
+  right: 1.5rem; /* Adjusted for consistent placement */
+  width: 40px; /* Slightly larger button */
+  height: 40px;
+  border: none;
+  background-color: transparent;
+  color: red;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  margin: 0.5rem; /* Added margin to prevent sticking with other elements */
+}
+
+.history-close-btn:hover {
+  color: #0056b3; /* Blue color on hover */
+}
+
+.history-close-btn:focus {
+  outline: none; /* Remove focus outline for cleaner design */
 }

@@ -4,6 +4,7 @@ import { MdMenuOpen, MdSearch } from 'react-icons/md';
 import HeaderAccountMgnt from '../../../components/Header/HeaderAccountMgnt';
 import Modal from 'react-modal';
 import CancellationAndModification from './CancellationAndModification'; // Import the component
+import { Table, TableBody, TableCell, TableHead, TableRow, TableContainer } from '@mui/material';
 import axios from 'axios';
 import { CircularProgress, Snackbar, Alert, Box, Typography, Button, } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
@@ -47,6 +48,7 @@ const closeButtonStyles = {
     transition: 'color 0.3s ease',
 };
 
+
 export default function BookingHistory({ profile }) {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
@@ -80,7 +82,7 @@ export default function BookingHistory({ profile }) {
 
     const [user, setUser] = useState(null);
 
-    const [loading, setLoading] = useState(true); // Initialize loading state
+    const [loading, setLoading] = useState(false); // Initialize loading state
     const [viewReviewisOpen, setViewReviewisOpen] = useState(false);
     const [review, setReview] = useState(null);
     // console.log("selectedBooking:", selectedBooking);
@@ -392,7 +394,7 @@ export default function BookingHistory({ profile }) {
 
     return (
 
-        <div className="full-height bg-light" style={{ width: '100%' }}>
+        <div className="full-height" style={{ width: '100%' }}>
             <HeaderAccountMgnt />
             <div
                 style={{
@@ -410,11 +412,11 @@ export default function BookingHistory({ profile }) {
                 <p style={{ fontSize: '0.875rem', textAlign: 'left' }}>Keep track of your bookings with ease!</p>
             </div>
 
-            <div className="full-width mt-4">
-                <div className="controls flex items-center mb-4">
+            <div className="full-width">
+                <div className="controls" style={{alignItems:'center'}}>
 
                     {/* Buttons Section */}
-                    <div className="buttons flex gap-1rem items-center">
+                    <div className="buttons">
                         <button
                             className={`btn ${selectedButton === 'UPCOMING' ? 'active' : ''}`}
                             onClick={() => { setSelectedButton('UPCOMING'); setSelectedBooking(null); }}
@@ -425,7 +427,15 @@ export default function BookingHistory({ profile }) {
                                 padding: '0.5rem 1rem',
                                 borderRadius: '0.375rem', // Rounded corners
                                 cursor: 'pointer',
-                                transition: 'background-color 0.3s, color 0.3s'
+                                transition: 'background-color 0.3s, color 0.3s',
+                                '@media (max-width: 640px)': {
+                                    marginBottom: '1rem' // Add spacing on small screens
+                                },
+                                '@media (max-width: 420px)': {
+                                    marginBottom: '1rem' // Add spacing on small screens
+                                }
+                        
+
                             }}
                         >
                             CURRENT & UPCOMING
@@ -440,7 +450,11 @@ export default function BookingHistory({ profile }) {
                                 padding: '0.5rem 1rem',
                                 borderRadius: '0.375rem', // Rounded corners
                                 cursor: 'pointer',
-                                transition: 'background-color 0.3s, color 0.3s'
+                                transition: 'background-color 0.3s, color 0.3s',
+                                '@media (max-width: 640px)': {
+                                    marginBottom: '1rem' // Add spacing on small screens
+                                }
+                        
                             }}
                         >
                             CANCELLED
@@ -455,7 +469,12 @@ export default function BookingHistory({ profile }) {
                                 padding: '0.5rem 1rem',
                                 borderRadius: '0.375rem', // Rounded corners
                                 cursor: 'pointer',
-                                transition: 'background-color 0.3s, color 0.3s'
+                                transition: 'background-color 0.3s, color 0.3s',
+                                marginBottom: '0', // Default margin-bottom
+                                '@media (max-width: 640px)': {
+                                    marginBottom: '1rem' // Add spacing on small screens
+                                }
+                        
                             }}
                         >
                             COMPLETED
@@ -463,313 +482,221 @@ export default function BookingHistory({ profile }) {
                     </div>
 
                     {/* Search Input and Dropdown */}
-                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem', position: 'relative' }}>
-
-
-                        {/* Dropdown Menu */}
-                        {showDropdown && (
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    top: '3rem', // Adjust this based on the height of your button
-                                    left: '7.3rem',
-                                    backgroundColor: 'white',
-                                    borderWidth: '1px',
-                                    borderRadius: '0.5rem',
-                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                                    zIndex: 10,
-                                    padding: '0.5rem',
-                                    width: '15rem',
-                                }}
-                            >
-                                <div style={{ fontSize: '0.875rem', fontWeight: '700', padding: '0.5rem 0', textAlign: 'left', marginLeft: '0.8rem' }}>
-                                    Search by
-                                </div>
-                                <hr style={{ margin: '0.5rem 0' }} />
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    {['Booking ID', 'Name', 'Type'].map((option) => (
-                                        <button
-                                            key={option}
-                                            onClick={() => {
-                                                setSelectedOption(option);
-                                                setShowDropdown(false);
-                                            }}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                textAlign: 'left',
-                                                backgroundColor: selectedOption === option ? '#16B4DD' : 'white',
-                                                color: selectedOption === option ? 'white' : 'black',
-                                                borderRadius: '0.25rem',
-                                                cursor: 'pointer',
-                                                fontFamily: 'Poppins',
-                                                border: 'none',
-                                                outline: 'none',
-                                            }}
-                                        >
-                                            {option}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    
 
                 </div>
-                <div
-                    style={{
-                        position: 'relative',
-                        width: '100%',
-                        backgroundColor: '#ffffff',
-                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                        borderRadius: '0.5rem',
-                        overflow: 'hidden',
-                        textAlign: 'center',
-                    }}
-                >
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '0.75rem',
-                            height: '100%',
-                            backgroundColor: getRibbonColor(),
-                            borderTopLeftRadius: '0.5rem',
-                            borderBottomLeftRadius: '0.5rem',
-                        }}
-                    ></div>
 
 
-                    {/* Conditional rendering: show booking history table or cancellation/modification component */}
-                    {loading ? (
-                        <div style={{ padding: '2rem', textAlign: 'center' }}>
-                            <span><CircularProgress /></span>
-                        </div>
-                    ) : selectedBooking ? (
+
+                <Box
+      className='table-container'
+      sx={{
+        position: 'relative',
+        width: '100%',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        borderRadius: '0.5rem',
+        overflow: 'hidden',
+        textAlign: 'center',
+        borderLeft: `10px solid ${getRibbonColor()}`, // Left border as highlight
+      }}>
+
+        
+      {loading ? (
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <CircularProgress />
+        </div>
+      ) : selectedBooking ? (
+        <div style={{ position: 'relative' }}>
+          <button
+            className="history-close-btn"
+            onClick={handleBackToHistory}
+          >
+            &times; {/* This renders as an 'X' */}
+          </button>
+    
+          <CancellationAndModification
+            selectedBooking={selectedBooking}
+            onCancelBooking={handleCancelBooking} // Pass function to child component
+            invoiceDetails={{
+              basePrice: selectedBooking.basePrice,
+              extraGuestCost: selectedBooking.extraGuestCost,
+              bookingCharge: selectedBooking.bookingCharge,
+              bookingAmount: selectedBooking.bookingAmount,
+              payableAtCheckIn: selectedBooking.payableAtCheckIn,
+            }}
+            bookingData={{
+              name: selectedBooking.name,
+              location: selectedBooking.location,
+              id: selectedBooking.id,
+            }}
+          />
+        </div>
+      ) : (
+        <div> {/* Fallback content when no booking is selected */} </div>
+      )}
+    
+        
+
+
+      {/* Table Container with scrollable table */}
+      <TableContainer sx={{ maxHeight: 500, overflowX: 'auto' }}>
+        <Table aria-label="Booking Table">
+          <TableHead>
+            <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+              <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Booking ID</TableCell>
+              <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Check In Date</TableCell>
+              <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Name</TableCell>
+              <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Location</TableCell>
+              <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Guest</TableCell>
+              <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Type</TableCell>
+              {selectedButton === 'CANCELLED' ? (
+                <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Refund Amount</TableCell>
+              ) : (
+                <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Amount Paid</TableCell>
+              )}
+              <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Status</TableCell>
+              {selectedButton === 'UPCOMING' && (
+                <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Pending Payments</TableCell>
+              )}
+              {selectedButton === 'COMPLETED' && (
+                <TableCell sx={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Review</TableCell>
+              )}
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {fetched && getData().length > 0 ? (
+              getData().map((item, rowIndex) => (
+                <TableRow key={item.id} sx={{ backgroundColor: '#ffffff' }}>
+                  {['id', 'checkIn', 'name', 'location', 'guest', 'type', 'amount', 'status'].map((key) => (
+                    <TableCell
+                      key={key}
+                      sx={{
+                        padding: '0.75rem',
+                        borderBottom: '1px solid #dee2e6',
+                        verticalAlign: 'middle',
+                        cursor: selectedButton === 'UPCOMING' ? 'pointer' : 'default',
+                      }}
+                      onClick={() => {
+                        if (item.status !== 'checkout' && selectedButton === 'UPCOMING') {
+                          handleRowClick(item);
+                        } else if (item.isCancel !== 'Cancelled' && selectedButton === 'CANCELLED') {
+                          handleRowClick(item);
+                        }
+                      }}
+                    >
+                      {key === 'status'
+                        ? selectedButton === 'COMPLETED'
+                          ? item.book_status // Display book_status when selectedButton is COMPLETED
+                          : selectedButton === 'CANCELLED'
+                          ? item.isCancel // Display isCancel when selectedButton is CANCELLED
+                          : item.isCancel === 'Checked in'
+                          ? item.isCancel // Display 'Checked in' status if item.isCancel equals 'Checked in'
+                          : item.status
+                        : key === 'checkIn'
+                        ? formatDate(item[key])
+                        : key === 'amount'
+                        ? selectedButton === 'CANCELLED'
+                          ? item.refund_amount // Display refund amount when cancelled
+                          : item.unit_type === 'Monthly Term'
+                          ? item.amount_paid === 0
+                            ? '------'
+                            : item.amount_paid
+                          : item.payment_status === 'Paid'
+                          ? item.amount
+                          : item.amount
+                        : item[key]}
+                    </TableCell>
+                  ))}
+                  {(selectedButton === 'UPCOMING' || selectedButton === 'COMPLETED') && (
+                    <TableCell sx={{ padding: '0.75rem', borderBottom: '1px solid #dee2e6', textAlign: 'center', verticalAlign: 'middle' }}>
+                      {selectedButton === 'UPCOMING' && (
                         <div>
+                          {item.unit_type === 'Monthly Term' && item.monthly_payment_status === 'Pending' ? (
                             <button
-                                className="close-button"
-                                onClick={handleBackToHistory}
-                                style={{
-                                    position: 'absolute',
-                                    top: '0.1rem',
-                                    right: '1.8rem',
-                                    width: '30px',
-                                    height: '30px',
-                                    border: 'none',
-                                    backgroundColor: 'transparent',
-                                    color: 'red',
-                                    fontSize: '2rem',
-                                    cursor: 'pointer',
-                                    transition: 'color 0.3s ease',
-                                }}
-                                onMouseOver={(e) => (e.target.style.color = '#0056b3')}
-                                onMouseOut={(e) => (e.target.style.color = '#007bff')}
+                              style={{
+                                marginTop: '0.5rem',
+                                background: 'green',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '0.25rem',
+                                padding: '0.5rem 1rem',
+                              }}
+                              onClick={() => openModal(item)}
                             >
-                                &times; {/* This renders as an 'X' */}
+                              View Payment
                             </button>
-
-                            <CancellationAndModification
-
-                                selectedBooking={selectedBooking}
-                                onCancelBooking={handleCancelBooking} // Pass function to child component
-
-                                invoiceDetails={{
-                                    basePrice: selectedBooking.basePrice,
-                                    extraGuestCost: selectedBooking.extraGuestCost,
-                                    bookingCharge: selectedBooking.bookingCharge,
-                                    bookingAmount: selectedBooking.bookingAmount,
-                                    payableAtCheckIn: selectedBooking.payableAtCheckIn,
-                                }}
-                                bookingData={{
-                                    name: selectedBooking.name,
-                                    location: selectedBooking.location,
-                                    id: selectedBooking.id,
-                                }}
-                            />
-
+                          ) : (
+                            <>
+                              {item.payment_status === 'Paid' ? (
+                                <div>------</div>
+                              ) : (
+                                <div>
+                                  <button
+                                    style={{
+                                      marginTop: '0.5rem',
+                                      background: 'green',
+                                      color: 'white',
+                                      border: 'none',
+                                      borderRadius: '0.25rem',
+                                      padding: '0.5rem 1rem',
+                                    }}
+                                    onClick={() => openModal(item)}
+                                  >
+                                    View Payment
+                                  </button>
+                                </div>
+                              )}
+                            </>
+                          )}
                         </div>
-                    ) : (
-                        <>
-                            <table
-                                className="table w-full text-left"
-                                style={{
-                                    borderCollapse: 'collapse',
-                                    width: '100%',
-                                    border: '1px solid #dee2e6',
-                                    borderRadius: '0.5rem',
-                                }}
-                            >
-                                <thead>
-                                    <tr style={{ backgroundColor: '#f8f9fa' }}>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Booking ID</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Check In Date</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Name</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Location</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Guest</th>
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Type</th>
-                                        {selectedButton === 'CANCELLED' ? (<>
+                      )}
 
-                                            <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Refund Amount</th>
-                                        </>) : (<>
-                                            <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Amount Paid</th>
-                                        </>)}
+                      {selectedButton === 'COMPLETED' && (
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle' }}>
+                          <button
+                            onClick={() => (item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item))}
+                            style={{
+                              color: item.isreview === 1 ? 'gray' : 'green',
+                              cursor: 'pointer',
+                              background: 'none',
+                              border: 'none',
+                              fontFamily: 'Poppins',
+                              outline: 'none',
+                              fontSize: '0.875rem',
+                            }}
+                          >
+                            {item.isreview === 1 ? 'View Review' : 'Add A Review'}
+                          </button>
+                        </div>
+                      )}
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={selectedButton === 'COMPLETED' ? 10 : 9}
+                  sx={{
+                    padding: '1rem',
+                    textAlign: 'center',
+                    fontSize: '1rem',
+                    borderBottom: 'none',
+                    verticalAlign: 'middle',
+                    marginBottom:'1rem'
+                    
+                  }}
+                >
+                  No data available
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
 
-                                        <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Status</th>
-                                        {selectedButton === 'UPCOMING' && <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Pending Payments</th>}
-                                        {selectedButton === 'COMPLETED' && (
-                                            <th style={{ padding: '0.75rem', borderBottom: '2px solid #dee2e6', fontSize: '0.875rem', textAlign: 'center' }}>Review</th>
-                                        )}
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {fetched && getData().length > 0 ? (
-                                        getData().map((item, rowIndex) => (
-                                            <tr key={item.id} style={{ backgroundColor: '#ffffff' }}>
-                                                {['id', 'checkIn', 'name', 'location', 'guest', 'type', 'amount', 'status'].map((key) => (
-                                                    <td
-                                                        key={key}
-                                                        style={{
-                                                            padding: '0.75rem',
-                                                            borderBottom: '1px solid #dee2e6',
-                                                            verticalAlign: 'middle',
-                                                            cursor: selectedButton === 'UPCOMING' ? 'pointer' : 'default',
-                                                        }}
-                                                        onClick={() => {
-                                                            if (item.status !== 'checkout' && selectedButton === 'UPCOMING') {
-                                                                handleRowClick(item);
-                                                            } else if (item.isCancel !== 'Cancelled' && selectedButton === 'CANCELLED') {
-                                                                handleRowClick(item);
-                                                            }
-                                                        }}
-                                                    >
-                                                        {
-                                                            key === 'status'
-                                                                ? selectedButton === 'COMPLETED'
-                                                                    ? item.book_status // Display book_status when selectedButton is COMPLETED
-                                                                    : selectedButton === 'CANCELLED'
-                                                                        ? item.isCancel // Display isCancel when selectedButton is CANCELLED
-                                                                        : item.isCancel === 'Checked in'
-                                                                            ? item.isCancel // Display 'Checked in' status if item.isCancel equals 'Checked in'
-                                                                            : item.status
-                                                                : key === 'checkIn'
-                                                                    ? formatDate(item[key])
-                                                                    : key === 'amount'
-                                                                        ? selectedButton === 'CANCELLED'
-                                                                            ? item.refund_amount // Display refund amount when cancelled
-                                                                            : item.unit_type === 'Monthly Term'
-                                                                                ? item.amount_paid === 0
-                                                                                    ? '------'
-                                                                                    : item.amount_paid
-                                                                                : item.payment_status === 'Paid'
-                                                                                    ? item.amount
-                                                                                    : item.amount
-                                                                        : item[key]
-                                                        }
-                                                    </td>
-                                                ))}
-                                                {(selectedButton === 'UPCOMING' || selectedButton === 'COMPLETED') && (
-                                                    <td style={{ padding: '0.75rem', borderBottom: '1px solid #dee2e6', textAlign: 'center', verticalAlign: 'middle' }}>
-                                                        {selectedButton === 'UPCOMING' && (
-                                                            <>
-                                                                {item.unit_type === 'Monthly Term' && item.monthly_payment_status === 'Pending' ? (
-                                                                    <div>
-
-
-                                                                        <button
-                                                                            style={{
-                                                                                marginTop: '0.5rem',
-                                                                                background: 'green',
-                                                                                color: 'white',
-                                                                                border: 'none',
-                                                                                borderRadius: '0.25rem',
-                                                                                padding: '0.5rem 1rem',
-                                                                            }}
-                                                                            // onClick={() => handlePayment(item)}
-                                                                            onClick={() => openModal(item)}
-                                                                        >
-                                                                            View Payment
-                                                                        </button>
-                                                                    </div>
-                                                                ) : (
-                                                                    <>
-                                                                        {item.payment_status === 'Paid' ? (
-                                                                            <div>------</div>
-                                                                        ) : (
-                                                                            <div>
-
-                                                                                <button
-                                                                                    style={{
-                                                                                        marginTop: '0.5rem',
-                                                                                        background: 'green',
-                                                                                        color: 'white',
-                                                                                        border: 'none',
-                                                                                        borderRadius: '0.25rem',
-                                                                                        padding: '0.5rem 1rem',
-                                                                                    }}
-                                                                                    onClick={() => openModal(item)}
-                                                                                >
-                                                                                    View Payment
-                                                                                </button>
-                                                                            </div>
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                            </>
-                                                        )}
-
-                                                        {selectedButton === 'COMPLETED' && (
-                                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle' }}>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        item.isreview === 1 ? openViewReviewModal(item) : openReviewModal(item)
-                                                                    }
-                                                                    style={{
-                                                                        color: item.isreview === 1 ? 'gray' : 'green',
-                                                                        cursor: 'pointer',
-                                                                        background: 'none',
-                                                                        border: 'none',
-                                                                        fontFamily: 'Poppins',
-                                                                        outline: 'none',
-                                                                        fontSize: '0.875rem',
-                                                                    }}
-                                                                >
-                                                                    {item.isreview === 1 ? 'View Review' : 'Add A Review'}
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                )}
-
-
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td
-                                                colSpan={selectedButton === 'COMPLETED' ? 10 : 9}
-                                                style={{
-                                                    padding: '1rem',
-                                                    textAlign: 'center',
-                                                    fontSize: '0.875rem',
-                                                    borderBottom: 'none',
-                                                    verticalAlign: 'middle',
-                                                }}
-                                            >
-                                                No data available
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-
-
-
-                        </>
-                    )}
-
-                </div>
             </div>
             <Snackbar
                 open={open}
