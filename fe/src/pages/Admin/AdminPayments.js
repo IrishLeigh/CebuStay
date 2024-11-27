@@ -37,7 +37,7 @@ export default function AdminPayments() {
     setLogoutLoading(true);
     const token = localStorage.getItem("admin_token");
     const response2 = await axios.post(
-      "http://127.0.0.1:8000/api/decodetoken",
+      "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
       {
         token: token,
       }
@@ -45,9 +45,12 @@ export default function AdminPayments() {
     if (response2.data) {
       const useradminid = response2.data.data.userid;
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/logoutadmin", {
-          useradminid,
-        });
+        const res = await axios.post(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/logoutadmin",
+          {
+            useradminid,
+          }
+        );
       } catch (error) {
         console.log(error);
       } finally {
@@ -67,14 +70,14 @@ export default function AdminPayments() {
       const token = localStorage.getItem("admin_token");
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/getpayouts"
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getpayouts"
         );
         console.log(response.data);
         setPayoutData(response.data);
         if (response.data) {
           console.log(token);
           const response2 = await axios.post(
-            "http://127.0.0.1:8000/api/decodetoken",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
             {
               token: token,
             }

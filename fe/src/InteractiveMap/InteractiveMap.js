@@ -66,7 +66,7 @@ export default function InteractiveMap() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/getPropertyLocation"
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getPropertyLocation"
         );
         const fetchedLocations = response.data.data.map((property) => ({
           name: property.property_name,
@@ -76,7 +76,7 @@ export default function InteractiveMap() {
           ],
         }));
         const allproperty = await axios.get(
-          "http://127.0.0.1:8000/api/getallpropertiescoord"
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getallpropertiescoord"
         );
         setAllProperties(allproperty.data);
         setLocations(fetchedLocations);

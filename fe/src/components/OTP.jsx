@@ -40,7 +40,7 @@ const OTP = () => {
         return;
       }
 
-      const res = await axios.post("http://127.0.0.1:8000/api/verifytoken", {
+      const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/verifytoken", {
         email: email,
         token: verificationToken
       });
@@ -65,7 +65,7 @@ const OTP = () => {
 
     try {
 
-      const profileResponse = await axios.post("http://127.0.0.1:8000/api/forgotPass", {
+      const profileResponse = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/forgotPass", {
         email: email
       });
       setSend("Verification code resent successfully");
@@ -117,7 +117,7 @@ const OTP = () => {
         return;
       }
 
-      const res = await axios.put("http://127.0.0.1:8000/api/changepass", {
+      const res = await axios.put("https://whitesmoke-shark-473197.hostingersite.com/api/changepass", {
         email: email,
         password: newPassword,
       });
