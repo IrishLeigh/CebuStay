@@ -83,7 +83,7 @@ export default function AccountSignIn({ profile }) {
 
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           old_password: currentPassword,
@@ -120,9 +120,7 @@ export default function AccountSignIn({ profile }) {
     setSnackbarOpen(false);
   };
 
-
-  console.log ("profile ", profile);
-
+  console.log("profile ", profile);
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>
@@ -192,7 +190,10 @@ export default function AccountSignIn({ profile }) {
                 }}
                 InputProps={{
                   startAdornment: !isMobile && (
-                    <InputAdornment position="start" sx={{ marginRight: "1rem" }}>
+                    <InputAdornment
+                      position="start"
+                      sx={{ marginRight: "1rem" }}
+                    >
                       <Lock />
                     </InputAdornment>
                   ),
@@ -208,14 +209,14 @@ export default function AccountSignIn({ profile }) {
                     </InputAdornment>
                   ),
                   sx: {
-                    paddingLeft: isMobile ? '8px' : '16px', // Adjust left padding to ensure alignment
-                  }
+                    paddingLeft: isMobile ? "8px" : "16px", // Adjust left padding to ensure alignment
+                  },
                 }}
               />
             ))}
 
             {isMobile && (
-              <Box sx={{ mb: 2 , ml: 1}}>
+              <Box sx={{ mb: 2, ml: 1 }}>
                 <Typography component="label">
                   <input
                     type="checkbox"
@@ -227,7 +228,13 @@ export default function AccountSignIn({ profile }) {
               </Box>
             )}
 
-            <div style={{ display: "flex", justifyContent: "flex-end",gap: "1rem" }} >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "1rem",
+              }}
+            >
               <button
                 className={`save-btn ${
                   isChanged ? "save-btn-withChanges" : "save-btn-withoutChanges"
@@ -239,7 +246,9 @@ export default function AccountSignIn({ profile }) {
               </button>
               <button
                 className={`cancel-btn ${
-                  isChanged ? "cancel-btn-withChanges" : "cancel-btn-withoutChanges"
+                  isChanged
+                    ? "cancel-btn-withChanges"
+                    : "cancel-btn-withoutChanges"
                 }`}
                 onClick={handleCancel}
                 disabled={!isChanged}
@@ -258,7 +267,6 @@ export default function AccountSignIn({ profile }) {
                 onClose={handleCloseSnackbar}
                 severity={snackbarSeverity}
                 sx={{ width: "100%" }}
-               
               >
                 {snackbarMessage}
               </Alert>

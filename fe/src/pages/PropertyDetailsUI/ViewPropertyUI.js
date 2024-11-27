@@ -11,9 +11,9 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ReservationForm from "./Reservation";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useLocation } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import ImageGallery from "./components/ImageGallery";
 import SinglePropertyUI from "./components/SinglePropertyUI";
 import MultiPropertyUI from "./components/MultiPropertyUI";
@@ -21,8 +21,9 @@ import MultiPropertyUI from "./components/MultiPropertyUI";
 function srcset(image, size, rows = 1, cols = 1) {
   return {
     src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
-    srcSet: `${image}?w=${size * cols}&h=${size * rows
-      }&fit=crop&auto=format&dpr=2 2x`,
+    srcSet: `${image}?w=${size * cols}&h=${
+      size * rows
+    }&fit=crop&auto=format&dpr=2 2x`,
   };
 }
 const AmenitiesFacilitiesServices = ({
@@ -108,7 +109,6 @@ const ReservationSection = ({
   guestCount,
   handleGuestCountChange,
 }) => (
-
   <Paper
     elevation={0}
     style={{ boxShadow: "0 0 0 1px #D4CFCF", padding: "20px" }}
@@ -129,7 +129,7 @@ const ReservationSection = ({
             value={checkInDate}
             onChange={handleCheckInChange}
             minDate={dayjs()}
-          // fullWidth
+            // fullWidth
           />
         </div>
         <div style={{ flex: 1, minWidth: "200px" }}>
@@ -138,7 +138,7 @@ const ReservationSection = ({
             value={checkOutDate}
             onChange={handleCheckOutChange}
             minDate={checkInDate ? checkInDate.add(1, "day") : dayjs()}
-          // fullWidth
+            // fullWidth
           />
         </div>
       </div>
@@ -197,7 +197,9 @@ const PropertyDetails = ({ property }) => (
     </Typography>
     <Typography
       style={{
-        fontSize: "1.1rem", fontWeight: "bold", fontFamily: "Poppins"
+        fontSize: "1.1rem",
+        fontWeight: "bold",
+        fontFamily: "Poppins",
       }}
     >
       {property.property_desc}
@@ -230,16 +232,18 @@ export default function ViewPropertyUI() {
   const [loading, setLoading] = useState(true); // Loading state
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const guestCapacity = searchParams.get('guestCapacity') || null;
-  const checkin_date = searchParams.get('checkin_date') || null;
-  const checkout_date = searchParams.get('checkout_date') || null;
+  const guestCapacity = searchParams.get("guestCapacity") || null;
+  const checkin_date = searchParams.get("checkin_date") || null;
+  const checkout_date = searchParams.get("checkout_date") || null;
   const [onSearchData, setOnSearchData] = useState({});
   //fetchdata for Property ID
   useEffect(() => {
     const fetchData = async () => {
       const propertyId = propertyid; // Replace with the ID of the property you want to fetch
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/getfiles/${propertyId}`);
+        const res = await axios.get(
+          `https://whitesmoke-shark-473197.hostingersite.com/api/getfiles/${propertyId}`
+        );
         if (res.data) {
           // Transform the image data
           const images = res.data.img.map((image, index) => ({
@@ -252,7 +256,7 @@ export default function ViewPropertyUI() {
           // Set the transformed images to state
           setPropertyImages(images);
           const res2 = await axios.get(
-            "http://127.0.0.1:8000/api/getproperty",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/getproperty",
             {
               params: {
                 propertyid: propertyId,
@@ -299,16 +303,20 @@ export default function ViewPropertyUI() {
   //RESERVE NOW LOGIC
   const handleReserveClick = async () => {
     try {
-      const reservationData = await axios.get("http://127.0.0.1:8000/api/getavailableunits", {
-        params: {
-          checkin_date: checkin_date,
-          checkout_date: checkout_date,
-          guest_count: guestCount, // Use guestCount instead of guestCapacity
-          propertyid: propertyid
+      const reservationData = await axios.get(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/getavailableunits",
+        {
+          params: {
+            checkin_date: checkin_date,
+            checkout_date: checkout_date,
+            guest_count: guestCount, // Use guestCount instead of guestCapacity
+            propertyid: propertyid,
+          },
         }
-      });
+      );
 
-      if (reservationData.data.length > 0) { // Use length property to check array length
+      if (reservationData.data.length > 0) {
+        // Use length property to check array length
         setShowReservationForm(true);
       } else {
         alert("NOTHING TO SHOW");
@@ -319,17 +327,17 @@ export default function ViewPropertyUI() {
     }
   };
 
-  console.log ("guestCapactiy", guestCapacity);
+  console.log("guestCapactiy", guestCapacity);
   return (
-    <div style={{ width: "100%"}}>
+    <div style={{ width: "100%" }}>
       <div style={{ backgroundColor: "#F4F7FA" }}>
-        <Container maxWidth="xl" >
+        <Container maxWidth="xl">
           <CssBaseline />
           {/* {loading ? (
             <div>Loading...</div>
           ) : ( */}
-            <div>
-              {/* <div>
+          <div>
+            {/* <div>
                 <div id="image-gallery" style={{ display: "flex", flexWrap: "wrap" }}>
                   <ImageGallery images={propertyImages} />
                 </div>
@@ -379,13 +387,16 @@ export default function ViewPropertyUI() {
                   checkout_date={checkout_date}
                 />
               )} */}
-              {/* {propertyInfo.property_details.property_type === "Home" ? (
+            {/* {propertyInfo.property_details.property_type === "Home" ? (
                 <><SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/></>
               ) : (
                 <><MultiPropertyUI propertyid={propertyid}  onSearchData = {onSearchData}/></>
                 )} */}
-                <SinglePropertyUI propertyid={propertyid} onSearchData = {onSearchData}/>
-            </div>
+            <SinglePropertyUI
+              propertyid={propertyid}
+              onSearchData={onSearchData}
+            />
+          </div>
 
           {/* )} */}
         </Container>
@@ -393,6 +404,3 @@ export default function ViewPropertyUI() {
     </div>
   );
 }
-
-
-

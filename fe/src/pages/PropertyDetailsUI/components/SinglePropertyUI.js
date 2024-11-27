@@ -38,8 +38,6 @@ export default function SinglePropertyUI({ propertyid }) {
   const handleCheckOutChange = (date) => setCheckOutDate(date);
   const handleGuestCountChange = (event) => setGuestCount(event.target.value);
 
- 
-
   useEffect(() => {
     setGuestCount(searchParams.get("guestCapacity") || 0);
     setCheckInDate(dayjs(searchParams.get("checkin_date") || ""));
@@ -51,7 +49,7 @@ export default function SinglePropertyUI({ propertyid }) {
     const propertyId = propertyid; // Use the property ID passed as a prop
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/getfiles/${propertyId}`
+        `https://whitesmoke-shark-473197.hostingersite.com/api/getfiles/${propertyId}`
       );
       if (res.data) {
         const images = res.data.img.map((image, index) => ({
@@ -63,11 +61,14 @@ export default function SinglePropertyUI({ propertyid }) {
         }));
         setPropertyImages(images);
 
-        const res2 = await axios.get("http://127.0.0.1:8000/api/getproperty", {
-          params: {
-            propertyid: propertyId,
-          },
-        });
+        const res2 = await axios.get(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getproperty",
+          {
+            params: {
+              propertyid: propertyId,
+            },
+          }
+        );
         if (res2.data) {
           setPropertyInfo(res2.data);
         }
@@ -95,7 +96,7 @@ export default function SinglePropertyUI({ propertyid }) {
     const propertyId = propertyid;
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/getgalleryimg/${propertyId}`
+        `https://whitesmoke-shark-473197.hostingersite.com/api/getgalleryimg/${propertyId}`
       );
       if (res.data) {
         const gallery = res.data.galleryPhotos.map((image) => ({
@@ -131,8 +132,8 @@ export default function SinglePropertyUI({ propertyid }) {
     );
   }
 
-   // Snackbar close handler
-   const handleCloseSnackbar = () => {
+  // Snackbar close handler
+  const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
 
@@ -142,7 +143,7 @@ export default function SinglePropertyUI({ propertyid }) {
     console.log("Propertyid", propertyid);
     console.log("Checkin Date", checkInDate.format("YYYY-MM-DD"));
     console.log("Checkout Date", checkOutDate.format("YYYY-MM-DD"));
-    
+
     if (!checkInDate || !checkOutDate) {
       setSnackbarMessage("Please select check-in and check-out dates");
       setSnackbarOpen(true);
@@ -154,13 +155,11 @@ export default function SinglePropertyUI({ propertyid }) {
       return;
     }
 
-    if(guestCount > propertyInfo.property_unitdetails.guest_capacity){
+    if (guestCount > propertyInfo.property_unitdetails.guest_capacity) {
       setSnackbarMessage("Number of guests cannot exceed guest capacity");
       setSnackbarOpen(true);
       return;
     }
-
-    
 
     const queryParams = new URLSearchParams({
       guestCount,
@@ -169,12 +168,15 @@ export default function SinglePropertyUI({ propertyid }) {
     }).toString();
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/checkbooking", {
-        checkin_date: checkInDate.format("YYYY-MM-DD"),
-        checkout_date: checkOutDate.format("YYYY-MM-DD"),
-        guest_count: guestCount,
-        propertyid: propertyid,
-      });
+      const res = await axios.post(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/checkbooking",
+        {
+          checkin_date: checkInDate.format("YYYY-MM-DD"),
+          checkout_date: checkOutDate.format("YYYY-MM-DD"),
+          guest_count: guestCount,
+          propertyid: propertyid,
+        }
+      );
 
       if (res.data) {
         console.log("Response", res.data);
@@ -217,7 +219,7 @@ export default function SinglePropertyUI({ propertyid }) {
         </div>
         <Grid container>
           <Grid item xs={12} sm={8}>
-          <div style={{ margin: marginStyle }}>
+            <div style={{ margin: marginStyle }}>
               <PropertyOverView propertyinfo={propertyInfo} rating={rating} />
             </div>
           </Grid>
@@ -265,7 +267,7 @@ export default function SinglePropertyUI({ propertyid }) {
           onClose={handleCloseSnackbar}
           severity="error"
           sx={{ width: "100%" }}
-            variant="filled"
+          variant="filled"
         >
           {snackbarMessage}
         </Alert>
