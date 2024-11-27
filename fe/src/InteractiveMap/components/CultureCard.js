@@ -15,6 +15,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
   const [showNearby, setShowNearby] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:768px)");
+  const isLargeScreen = useMediaQuery("(max-width:1440px)");
 
   const [nearbyLocations, setNearbyLocations] = useState([]);
 
@@ -92,7 +93,7 @@ const CultureCard = ({ culture, allProperties, onClose }) => {
         <Card
           sx={{
             width: isSmallScreen ? "100%" : "100%",
-            height: "80vh", // Adjust height based on content
+            height: "auto", // Adjust height based on content
             boxShadow: 3,
             position: "relative",
             display: "flex",

@@ -18,6 +18,7 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
   const [nearbyLocations, setNearbyLocations] = useState([]);
   const isSmallScreen = useMediaQuery("(max-width:600px)"); // Define breakpoint for small screens
   const isMediumScreen = useMediaQuery("(max-width:768px)"); // Define for medium screens
+  const isLargeScreen = useMediaQuery("(max-width:1440px)"); // Define for large screens
 
   const handleViewNearbyButton = (event) => {
     if (event) {
@@ -102,7 +103,7 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
         <Card
           sx={{
             width: isSmallScreen ? "100%" : "100%",
-            height: "80vh", // Adjust height based on content
+            height: isLargeScreen ? "70vh" : "50vh", // Adjust height based on content
             boxShadow: 3,
             position: "relative",
             display: "flex",
