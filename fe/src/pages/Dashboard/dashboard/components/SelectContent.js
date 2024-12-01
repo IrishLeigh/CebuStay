@@ -42,10 +42,10 @@ export default function SelectContent({ property, onPropertyChange }) {
       setLoading(true);
     }
   }, [property]);
- // Handle the "Add Property" click
- const handleAddPropertyClick = () => {
-  navigate('/list-property'); // Navigate to the /admin route
-};
+  // Handle the "Add Property" click
+  const handleAddPropertyClick = () => {
+    navigate('/list-property'); // Navigate to the /admin route
+  };
   const handleChange = (event) => {
     const propertyId = event.target.value;
     setSelectedProperty(propertyId);
@@ -84,9 +84,16 @@ export default function SelectContent({ property, onPropertyChange }) {
         property.data.map((prop) => (
           <MenuItem key={prop.propertyid} value={prop.propertyid}>
             <ListItemAvatar>
-              <Avatar alt={prop.property_name} src={prop.ownership_logo}>
-                <img src={prop.ownership_logo} alt="Ownership Logo" />
-                <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
+              <Avatar
+                alt={prop.property_name}
+                src={prop.ownership_logo || undefined} // Show ownership_logo if available
+                sx={{
+                  bgcolor: !prop.ownership_logo ? '#3f51b5' : 'transparent', // Background color for initials
+                  color: !prop.ownership_logo ? '#fff' : 'inherit', // Text color for initials
+                  fontSize: '1rem', // Font size for initials
+                }}
+              >
+                {!prop.ownership_logo && prop.property_name.charAt(0).toUpperCase()}
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={prop.property_name} secondary={prop.property_type} />
