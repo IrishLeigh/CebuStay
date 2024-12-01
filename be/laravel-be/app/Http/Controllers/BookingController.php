@@ -845,6 +845,90 @@ class BookingController extends CORS
         return response()->json($formattedBookings);
     }
 
+    public function getAllBookingByPropId(Request $request)
+    {
+        $this->enableCors($request);
+        $propertyid = $request->input('propertyid');
+
+        // Fetch all bookings related to properties of the given user
+        $bookings = Booking::select(
+            'tbl_booking.propertyid',
+            'tbl_booking.bookingid',
+            'tbl_booking.unitid',
+            'tbl_booking.booking_date',
+            'tbl_booking.guestid',
+            'tbl_booking.checkin_date',
+            'tbl_booking.checkout_date',
+            'tbl_booking.total_price',
+            'tbl_booking.status',
+            'tbl_booking.stay_length',
+            'tbl_booking.guest_count',
+            'tbl_booking.special_request',
+            'tbl_booking.type', // Select type from tbl_booking table
+            'tbl_booking.bookerid',
+            'property.property_name', // Select property_name from property table
+            'property.property_type', // Select property_type from property table
+            'property.property_desc', // Select property_desc from property table
+            'property.unit_type', // Select unit_type from property table
+            'tbl_guest.guestname', // Select guestname from tbl_guest table
+            'location.address as property_address', // Select address from location table
+            'monthly_payment.amount_paid',
+                'monthly_payment.userid as payment_userid',
+                'monthly_payment.amount_due',
+                'monthly_payment.due_date',
+                'monthly_payment.status as monthly_payment_status',
+                'tbl_payment.status as payment_status',
+                'tbl_payment.amount as payment_amount',
+                'tbl_payment.refund_amount as refund_amount',
+                'property_pricing.min_price'
+        )
+            ->join('property', 'tbl_booking.propertyid', '=', 'property.propertyid')
+            ->join('tbl_guest', 'tbl_booking.guestid', '=', 'tbl_guest.guestid') // Join tbl_guest table
+            ->join('location', 'tbl_booking.propertyid', '=', 'location.propertyid') // Join location table using propertyid
+            ->leftJoin('monthly_payment', 'tbl_booking.bookingid', '=', 'monthly_payment.bookingid')
+            ->leftJoin('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
+            ->leftJoin('unitdetails', 'property.propertyid', '=', 'unitdetails.propertyid') 
+            ->leftJoin('property_pricing', 'unitdetails.proppricingid', '=', 'property_pricing.proppricingid') 
+            ->where('property.propertyid', $propertyid)
+            ->get();
+
+        // Format the bookings
+        $formattedBookings = $bookings->map(function ($booking) {
+            $booker = Booker::find($booking->bookerid);
+            $payment = Payment::find($booking->pid);
+            return [
+                'bookingid' => $booking->bookingid,
+                'booking_date' => $booking->booking_date,
+                'propertyid' => $booking->propertyid,
+                'unitid' => $booking->unitid,
+                'stay_length' => $booking->stay_length,
+                'special_request' => $booking->special_request,
+                'guest_count' => $booking->guest_count,
+                'property_name' => $booking->property_name,
+                'property_type' => $booking->property_type, // Add property_type
+                'property_desc' => $booking->property_desc, // Add property_desc
+                'unit_type' => $booking->unit_type, // Add unit_type
+                'guestid' => $booking->guestid,
+                'guestname' => $booking->guestname, // Retrieve guestname from the result
+                'checkin_date' => $booking->checkin_date,
+                'checkout_date' => $booking->checkout_date,
+                'total_price' => $booking->total_price,
+                'status' => $booking->status,
+                'type' => $booking->type, // Add type from tbl_booking
+                'booker' => $booker, // Add booker details
+                'property_address' => $booking->property_address, // Add property_address from location
+                'amount_paid' => $booking->amount_paid ?? 0,
+                'min_price' => $booking->min_price ?? 0,
+                'monthly_payment_status' => $booking->monthly_payment_status ?? null,
+                'amount_due' => $booking->amount_due ?? 0,
+                'due_date' => $booking->due_date ?? null,
+                // 'check_type' => $booking->type == 'booking' ? 'checkin' : 'upcoming', // Add check_type based on type
+            ];
+        });
+
+        return response()->json($formattedBookings);
+    }
+
 
 
     public function getAllBookingByBookingId(Request $request)
