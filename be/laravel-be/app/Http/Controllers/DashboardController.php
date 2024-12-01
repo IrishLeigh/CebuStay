@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Payment;
@@ -562,6 +563,17 @@ class DashboardController extends CORS
         return number_format($occupancyRate, 2);
     }
 
+    protected function getFirstImageForProperty($propertyId)
+{
+    // Get the first file associated with the property where unitid is null
+    $firstFile = File::where('propertyid', $propertyId)
+        ->whereNull('unitid')
+        ->first();
+
+    // Return the file URL or null if no file exists
+    return $firstFile ? $firstFile->file_url : null;
+}
+
     public function getUserProperties(Request $request)
     {
         $this->enableCors($request);
@@ -582,9 +594,7 @@ class DashboardController extends CORS
         $propertyList = $properties->map(function ($property) {
             $propertyOwnership = PropertyOwnership::where('propertyid', $property->propertyid)->first();
             // $ownershipType = $propertyOwnership->ownershiptype;
-            $propertyImage = $propertyOwnership ? 
-            $this->getPropertyImageByOwnership($propertyOwnership, $property) : 
-            null;
+            $propertyImage = $this->getFirstImageForProperty($property->propertyid);
     
             return [
                 'propertyid' => $property->propertyid,
