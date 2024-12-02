@@ -5,7 +5,7 @@ import "../css/ImagePreviewModal.css"; // Add your CSS for styling
 
 const ImagePreviewModal = ({ open, onClose, image, onConfirm }) => {
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} style={{ zIndex: 1200 }}>
       <Box className="modal-content">
         <img src={image} alt="Preview" className="modal-image" />
         <Box className="modal-buttons">

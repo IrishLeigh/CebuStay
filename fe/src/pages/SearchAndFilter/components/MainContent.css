@@ -57,6 +57,10 @@
 
 .card:hover {
   box-shadow: 0 14px 28px #25a9e138, 0 10px 10px #25a9e144;
+  transition: 0.5s;
+}
+.card:not(:hover){
+  transition: 0.5s;
 }
 
 .card-img {
@@ -112,10 +116,10 @@
   align-items: center;
 }
 
-.card-img:hover {
+/* .card-img:hover {
   background-color: lightblue;
   box-shadow: rgba(9, 5, 238, 0.25) 0px 13px 47px -5px, rgba(72, 6, 215, 0.3) 0px 8px 16px -8px;
-}
+} */
 
 .card-button:hover {
   border: 1px solid lightblue;

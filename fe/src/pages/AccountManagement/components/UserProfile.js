@@ -9,7 +9,8 @@ import { useNavigate } from "react-router-dom";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import ImagePreviewModal from "./ImagePreviewModal";
 import axios from "axios";
-import { Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { Tooltip, useMediaQuery, useTheme, Backdrop } from "@mui/material";
+import ReactDOM from "react-dom";
 export default function UserProfile({ profile }) {
   const [changeloading, setChangeloading] = useState(false);
   const [logoutloading, setLogoutloading] = useState(false);
@@ -19,7 +20,7 @@ export default function UserProfile({ profile }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // Check if the screen size is mobile
 
   const [profileImage, setProfileImage] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
@@ -95,34 +96,32 @@ export default function UserProfile({ profile }) {
         console.log(res.data);
         localStorage.removeItem("auth_token");
         localStorage.removeItem("auth_token");
-          localStorage.removeItem("email");
-          localStorage.removeItem("firsname");
-          localStorage.removeItem("lastname");
-          localStorage.removeItem("userid");
- 
-          
-          // Optionally, reset any user-related state here if applicable
-          // e.g., setUser(null); or use a context provider to reset user state
-          
-          // setOpenLogoutModal(false);
+        localStorage.removeItem("email");
+        localStorage.removeItem("firsname");
+        localStorage.removeItem("lastname");
+        localStorage.removeItem("userid");
+
+        // Optionally, reset any user-related state here if applicable
+        // e.g., setUser(null); or use a context provider to reset user state
+
+        // setOpenLogoutModal(false);
         setLogoutloading(false);
         navigate("/login");
       }
     } catch (error) {
       console.log(error);
-    }finally{
+    } finally {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("email");
       localStorage.removeItem("firsname");
       localStorage.removeItem("lastname");
       localStorage.removeItem("userid");
 
-          
-          // Optionally, reset any user-related state here if applicable
-          // e.g., setUser(null); or use a context provider to reset user state
-          
-          // setOpenLogoutModal(false);
-          navigate("/login");
+      // Optionally, reset any user-related state here if applicable
+      // e.g., setUser(null); or use a context provider to reset user state
+
+      // setOpenLogoutModal(false);
+      navigate("/login");
     }
   };
 
@@ -226,9 +225,9 @@ export default function UserProfile({ profile }) {
   ) : (
     <>
       <HeaderAccountMgnt />
-  
+
       <div className="edit-profile-cntr">
-       {/* {!isMobile && ( */}
+        {/* {!isMobile && ( */}
         <div className="account-banner-container">
           <img
             src="EditProfileBanner.png"
@@ -236,8 +235,8 @@ export default function UserProfile({ profile }) {
             className="account-banner-image"
           />
         </div>
-       {/* )} */}
-        
+        {/* )} */}
+
         <div className="user-details-container">
           <div className="avatar-details-container">
             <div className="avatar-wrapper">
@@ -302,24 +301,26 @@ export default function UserProfile({ profile }) {
 
       {newProfileImage && (
         <div>
-          {changeloading && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 2000,
-              }}
-            >
-              <CircularProgress />
-            </div>
-          )}
+          {changeloading &&
+            ReactDOM.createPortal(
+              <div
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 2000, // Higher than Material-UI modal
+                }}
+              >
+                <CircularProgress />
+              </div>,
+              document.body // Render directly in the body
+            )}
           <ImagePreviewModal
             open={modalOpen}
             onClose={handleCancelImage}

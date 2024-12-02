@@ -744,7 +744,7 @@ const MainContent = ({
                   marginTop: '5px',
                 }}
               >
-                {'₱ ' + (accommodation.min_price ? accommodation.min_price : 'N/A')} night
+                {'₱ ' + (accommodation.min_price ? accommodation.min_price : 'N/A') + ' per' + (accommodation.unit_type === 'Monthly Term' ? ' month' : ' night')} 
               </span>
             </div>
           </div>
