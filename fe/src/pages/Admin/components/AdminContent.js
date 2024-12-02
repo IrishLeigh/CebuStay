@@ -18,12 +18,13 @@ export default function AdminContent({ payoutData, selectedTab }) {
   const [isSorted, setIsSorted] = useState(false);
   const [sortedData, setSortedData] = useState(payoutData);
   const [loading, setLoading] = useState(false);
-  
+  const [loadingRows, setLoadingRows] = useState({});
+
   const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A'; // Handle cases where date is not available
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateStr).toLocaleDateString('en-US', options);
-};
+  };
 
   useEffect(() => {
     if (selectedTab === "payments") {
@@ -61,7 +62,12 @@ export default function AdminContent({ payoutData, selectedTab }) {
 
   const handlePayout = async (item) => {
     setLoading(true);
-    console.log('item',item);
+    const { payout_id } = item;
+
+    // Set loading state for this row
+    setLoadingRows((prev) => ({ ...prev, [payout_id]: true }));
+
+    console.log('item', item);
     try {
       const payoutData = {
         items: [
@@ -75,54 +81,55 @@ export default function AdminContent({ payoutData, selectedTab }) {
           }
         ]
       };
-  
+
       const response = await axios.post("http://127.0.0.1:8000/api/paypal/payout", payoutData);
-  
+
       console.log(response.data);  // Handle the response data here
-      if(response.data.message === "Payout successful")
-        {
-          console.log("Payout successful na daw");
-          const resCheck = await axios.get(`http://127.0.0.1:8000/api/payouts/batch/${response.data.data.batch_header.payout_batch_id}`);
-          console.log('rescheckdata',resCheck.data);
-          if(resCheck.data.message === "Payout batch details retrieved successfully"){
-            const resStatus = await axios.get(`http://127.0.0.1:8000/api/paypal/check-payout/${resCheck.data.data.items[0].payout_item_id}`);
-            console.log('resstatusdata',resStatus.data);
-            console.log(resStatus.data.data.transaction_status);
-            if(resStatus.data.message === "Payout item details retrieved successfully"){
-              console.log("Payout item details retrieved successfully");
-            }
-            if(resStatus.data.data.transaction_status === "SUCCESS" || resStatus.data.data.transaction_status === "ONHOLD"){
-              const sendPayout = await axios.post(`http://127.0.0.1:8000/api/setPayout`,{
-                payout_id: item.payout_id,
-                batch_id: response.data.data.batch_header.payout_batch_id,
-                item_id: resCheck.data.data.items[0].payout_item_id,
-                status: resStatus.data.data.transaction_status
-              });
-              if(sendPayout.data){
-                window.location.reload();
-              }
-              
-            }else{
-              await axios.post(`http://127.0.0.1:8000/api/paypal/cancel-payout/${resCheck.data.data.items[0].payout_item_id}`)
-              console.log('Result',resStatus.data.data.errors.message);
-            }
-            
+      if (response.data.message === "Payout successful") {
+        console.log("Payout successful na daw");
+        const resCheck = await axios.get(`http://127.0.0.1:8000/api/payouts/batch/${response.data.data.batch_header.payout_batch_id}`);
+        console.log('rescheckdata', resCheck.data);
+        if (resCheck.data.message === "Payout batch details retrieved successfully") {
+          const resStatus = await axios.get(`http://127.0.0.1:8000/api/paypal/check-payout/${resCheck.data.data.items[0].payout_item_id}`);
+          console.log('resstatusdata', resStatus.data);
+          console.log(resStatus.data.data.transaction_status);
+          if (resStatus.data.message === "Payout item details retrieved successfully") {
+            console.log("Payout item details retrieved successfully");
           }
-          
+          if (resStatus.data.data.transaction_status === "SUCCESS" || resStatus.data.data.transaction_status === "ONHOLD") {
+            const sendPayout = await axios.post(`http://127.0.0.1:8000/api/setPayout`, {
+              payout_id: item.payout_id,
+              batch_id: response.data.data.batch_header.payout_batch_id,
+              item_id: resCheck.data.data.items[0].payout_item_id,
+              status: resStatus.data.data.transaction_status
+            });
+            if (sendPayout.data) {
+              window.location.reload();
+            }
+
+          } else {
+            await axios.post(`http://127.0.0.1:8000/api/paypal/cancel-payout/${resCheck.data.data.items[0].payout_item_id}`)
+            console.log('Result', resStatus.data.data.errors.message);
+          }
+
         }
+
+      }
     } catch (error) {
       console.error("Error sending payout:", error);  // Handle error
-    }finally {
+    } finally {
       setLoading(false);
+      setLoadingRows((prev) => ({ ...prev, [payout_id]: false }));
       // window.location.reload();
+
     }
   };
 
   const handleCheckPayout = async (item) => {
-    try{
+    try {
       const res = await axios.get(`http://127.0.0.1:8000/api/paypal/check-payout/${item.payout_id}`);
-      console.log('resdata',res.data);
-    }catch(error){
+      console.log('resdata', res.data);
+    } catch (error) {
       console.log(error);
     }
   }
@@ -204,7 +211,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
                       {data.status}
                     </td>
                     <td>
-                      <button
+                      {/* <button
                         disabled={!canPayout(data.checkout_date) || loading || data.status !== "Pending" || data.paypalmail === null} // Disable if cannot payout
                         onClick={() => handlePayout(data)}
                       >
@@ -213,6 +220,31 @@ export default function AdminContent({ payoutData, selectedTab }) {
                 ) : (
                   "Payout"
                 )}
+                      </button> */}
+                      <button
+                        disabled={
+                          !canPayout(data.checkout_date) ||
+                          loadingRows[data.payout_id] ||
+                          data.status !== "Pending" ||
+                          data.paypalmail === null || loading
+                        }
+                        onClick={() => handlePayout(data)}
+                      >
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "60px", // Match the width of "Payout" text
+                            textAlign: "center",
+                          }}
+                        >
+                          {loadingRows[data.payout_id] ? (
+                            <CircularProgress size={20} color="inherit" />
+                          ) : (
+                            "Payout"
+                          )}
+                        </span>
                       </button>
                     </td>
                   </tr>
