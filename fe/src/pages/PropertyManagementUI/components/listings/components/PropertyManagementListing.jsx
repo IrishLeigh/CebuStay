@@ -21,9 +21,36 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { Button, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+
+
 import { set } from "date-fns";
 
 export default function PropertyManagementListing() {
+
+
+  const getFilteredData = () => {
+    return data
+      .filter((item) => {
+        // Check the selected button and filter accordingly
+        if (selectedButton === "ACTIVE") {
+          return item.status === "Active"; // Only show Active properties
+        } else if (selectedButton === "INACTIVE") {
+          return item.status === "Inactive"; // Only show Inactive properties
+        }
+        return true; // Show all properties for "ALL"
+      })
+      .filter(
+        (item) =>
+          // Include the search logic
+          item.id.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+          item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.type.toLowerCase().includes(searchText.toLowerCase())
+      );
+  };
+
   const [open, setOpen] = React.useState(false);
   const [messeds, setMesseds] = useState("");
   const [sev, setSev] = useState("success");
@@ -47,7 +74,26 @@ export default function PropertyManagementListing() {
 
   const [searchTerm, setSearchTerm] = useState(""); // Stores the search term
   const [selectedOption, setSelectedOption] = useState("Property ID"); // Default selected option
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
+  const totalItems = getFilteredData().length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // Slice the data for current page
+  const currentData = getFilteredData().slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleItemsPerPageChange = (count) => {
+    setItemsPerPage(count);
+    setCurrentPage(1); // Reset to first page when items per page changes
+  };
   //TO DO: uncomment this if local storage does not work
   // const [user, setUser] = useState(null);
   const userid = localStorage.getItem("userid");
@@ -135,25 +181,25 @@ export default function PropertyManagementListing() {
   //     });
   //   };
 
-  const getFilteredData = () => {
-    return data
-      .filter((item) => {
-        // Check the selected button and filter accordingly
-        if (selectedButton === "ACTIVE") {
-          return item.status === "Active"; // Only show Active properties
-        } else if (selectedButton === "INACTIVE") {
-          return item.status === "Inactive"; // Only show Inactive properties
-        }
-        return true; // Show all properties for "ALL"
-      })
-      .filter(
-        (item) =>
-          // Include the search logic
-          item.id.toString().toLowerCase().includes(searchText.toLowerCase()) ||
-          item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          item.type.toLowerCase().includes(searchText.toLowerCase())
-      );
-  };
+  // const getFilteredData = () => {
+  //   return data
+  //     .filter((item) => {
+  //       // Check the selected button and filter accordingly
+  //       if (selectedButton === "ACTIVE") {
+  //         return item.status === "Active"; // Only show Active properties
+  //       } else if (selectedButton === "INACTIVE") {
+  //         return item.status === "Inactive"; // Only show Inactive properties
+  //       }
+  //       return true; // Show all properties for "ALL"
+  //     })
+  //     .filter(
+  //       (item) =>
+  //         // Include the search logic
+  //         item.id.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+  //         item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+  //         item.type.toLowerCase().includes(searchText.toLowerCase())
+  //     );
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -393,387 +439,227 @@ export default function PropertyManagementListing() {
             manage all property details.
           </p>
         </div>
-        {loading && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
-          >
-            <CircularProgress />
-          </div>
-        )}
+        {/* {loading && (
+          // <div
+          //   style={{
+          //     position: "absolute",
+          //     top: 0,
+          //     left: 0,
+          //     right: 0,
+          //     bottom: 0,
+          //     backgroundColor: "rgba(0, 0, 0, 0.5)",
+          //     display: "flex",
+          //     justifyContent: "center",
+          //     alignItems: "center",
+          //     zIndex: 1000,
+          //   }}
+          // >
+          //   <CircularProgress />
+          // </div>
+        )} */}
 
         <div className="full-width mt-4">
-          <div className="controls flex justify-between items-center mb-4">
-            <div
-              className="buttons flex"
-              style={{
-                gap: "1rem",
-                flexWrap: "wrap", // Allows buttons to wrap on smaller screens
-              }}
-            >
-              <Tooltip title="All Properties">
-                <button
-                  className={`btn ${
-                    selectedButton === "ALL" ? "underline" : ""
-                  }`}
-                  onClick={() => setSelectedButton("ALL")}
-                >
-                  ALL
-                </button>
-              </Tooltip>
-              <Tooltip title="Active Properties">
-                <button
-                  className={`btn ${
-                    selectedButton === "ACTIVE" ? "underline" : ""
-                  }`}
-                  onClick={() => setSelectedButton("ACTIVE")}
-                >
-                  ACTIVE
-                </button>
-              </Tooltip>
-              <Tooltip title="Inactive Properties">
-                <button
-                  className={`btn ${
-                    selectedButton === "INACTIVE" ? "underline" : ""
-                  }`}
-                  onClick={() => setSelectedButton("INACTIVE")}
-                >
-                  INACTIVE
-                </button>
-              </Tooltip>
-            </div>
 
-            <div
-              className="search-container"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginLeft: "1rem",
-                position: "relative",
-              }}
-            >
-              <div>
-                <MdSearch
-                  style={{
-                    position: "absolute",
-                    left: "0.5rem",
-                    color: "#5E5E5E",
-                    fontSize: "1.8rem",
-                    marginTop: "0.7rem",
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="Search here"
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)} // Update search term
-                  style={{
-                    padding: "0.5rem 1rem 0.5rem 2.5rem",
-                    borderWidth: "1px",
-                    borderRadius: "0.5rem",
-                    outline: "none",
-                    height: "3rem",
-                    width: "100%",
-                    marginBottom: "-1rem",
-                    border: "none",
-                    boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.2)",
-                  }}
-                />
-              </div>
 
-              <button
-                onClick={() => setShowDropdown(!showDropdown)}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderWidth: "1px",
-                  borderRadius: "0.5rem",
-                  marginLeft: "0.2rem",
-                  height: "3rem",
-                  cursor: "pointer",
-                  marginBottom: "-0.9rem",
-                  backgroundColor: "white",
-                  border: "none",
-                  boxShadow: "0 4px 6px -2px rgba(0, 0, 0, 0.2)",
-                }}
-              >
-                <MdMenuOpen style={{ height: "2rem" }} />
-              </button>
-              {showDropdown && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "3rem",
-                    left: "42%",
-                    backgroundColor: "white",
-                    borderWidth: "1px",
-                    borderRadius: "0.5rem",
-                    boxShadow:
-                      "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                    zIndex: 10,
-                    padding: "0.5rem",
-                    width: "10rem",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: "0.875rem",
-                      fontWeight: "700",
-                      padding: "0.5rem 0",
-                      textAlign: "left",
-                      marginLeft: "0.8rem",
-                    }}
-                  >
-                    Search by
-                  </div>
-                  <hr style={{ margin: "0.5rem 0" }} />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.5rem",
-                    }}
-                  >
-                    {["Property ID", "Property Name", "Type"].map((option) => (
-                      <button
-                        key={option}
-                        onClick={() => {
-                          setSelectedOption(option);
-                          setShowDropdown(false);
-                        }}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          textAlign: "left",
-                          backgroundColor:
-                            selectedOption === option ? "#FCCD6E" : "white",
-                          color: selectedOption === option ? "white" : "black",
-                          borderRadius: "0.25rem",
-                          cursor: "pointer",
-                          fontFamily: "Poppins",
-                          border: "none",
-                          outline: "none",
-                        }}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
+      <div className="control-container">
+  <div className="button-group">
+    <Tooltip title="All Properties">
+      <button
+        className={`button ${selectedButton === "ALL" ? "active" : ""}`}
+        onClick={() => setSelectedButton("ALL")}
+      >
+        ALL
+      </button>
+    </Tooltip>
+    <Tooltip title="Active Properties">
+      <button
+        className={`button ${selectedButton === "ACTIVE" ? "active" : ""}`}
+        onClick={() => setSelectedButton("ACTIVE")}
+      >
+        ACTIVE
+      </button>
+    </Tooltip>
+    <Tooltip title="Inactive Properties">
+      <button
+        className={`button ${selectedButton === "INACTIVE" ? "active" : ""}`}
+        onClick={() => setSelectedButton("INACTIVE")}
+      >
+        INACTIVE
+      </button>
+    </Tooltip>
+  </div>
+</div>
+
+
+
+       <div style={{ position: 'relative', width: '100%', backgroundColor: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', borderRadius: '0.5rem', overflow: 'hidden', textAlign: 'center', overflowX: 'auto' }}>
+      <table style={{ width: '100%', textAlign: 'center', borderCollapse: 'collapse' }}>
+        <thead style={{ backgroundColor: '#f0f0f0', textAlign: 'center' }}>
+          <tr>
+            <th style={{ padding: '0.5rem' }}>Property ID</th>
+            <th style={{ padding: '0.5rem' }}>Property Name</th>
+            <th style={{ padding: '0.5rem' }}>Type</th>
+            <th style={{ padding: '0.5rem' }}>Address</th>
+            <th style={{ padding: '0.5rem' }}>Date Listed</th>
+            <th style={{ padding: '0.5rem' }}>Status</th>
+            <th style={{ padding: '0.5rem' }}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan="7" style={{ textAlign: 'center', padding: '1rem' }}>
+                <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', margin: '2rem', height: '100%' }}>
+                  <CircularProgress />
+                  <p>Retrieving data...</p>
                 </div>
-              )}
-            </div>
-          </div>
+              </td>
+            </tr>
+          ) : currentData.length === 0 ? (
+            <tr>
+              <td colSpan="7" style={{ textAlign: 'center', padding: '1rem' }}>
+                <div style={{ margin: '2rem', fontSize: '1rem', fontWeight: '300' }}>
+                  No data is available.
+                </div>
+              </td>
+            </tr>
+          ) : (
+            currentData.map((item) => (
+              <tr key={item.id} className="table-row">
+                <td className="table-cell" style={{ padding: '0.5rem' }}>{item.id}</td>
+                <td className="table-cell" style={{ padding: '0.5rem' }}>{item.name}</td>
+                <td className="table-cell" style={{ padding: '0.5rem' }}>{item.type}</td>
+                <td className="table-cell" style={{ padding: '0.5rem' }}>{item.address}</td>
+                <td className="table-cell" style={{ padding: '0.5rem' }}>{item.created_at}</td>
+                <td className="table-cell" style={{ padding: '0.5rem', color: item.status === 'Active' ? 'green' : 'red' }}>
+                  {item.status}
+                </td>
+                <td className="table-cell" style={{ padding: '0.5rem' }}>
+                  <Tooltip title={item.status === 'Active' ? 'Edit Disabled' : 'Edit Property'}>
+                    <span>
+                      <MdEdit
+                        onClick={() => item.status === 'Inactive' && handleEdit(item.id)}
+                        style={{
+                          cursor: item.status === 'Active' ? 'not-allowed' : 'pointer',
+                          marginRight: '0.5rem',
+                          color: 'blue',
+                          opacity: item.status === 'Active' ? '0.4' : '1',
+                        }}
+                      />
+                    </span>
+                  </Tooltip>
+                  <Tooltip title={item.status === 'Inactive' ? 'Currently Inactive' : 'Deactivate Property'}>
+                    <span>
+                      <DoDisturbIcon
+                        onClick={() => item.status === 'Active' && handleDelete(item.id)}
+                        style={{
+                          cursor: item.status === 'Inactive' ? 'not-allowed' : 'pointer',
+                          color: 'red',
+                          fontSize: '1.0rem',
+                          opacity: item.status === 'Inactive' ? '0.4' : '1',
+                        }}
+                      />
+                    </span>
+                  </Tooltip>
+                  <Tooltip title={item.status === 'Active' ? 'Currently Active' : 'Activate Property'}>
+                    <RadioButtonCheckedIcon
+                      onClick={() => item.status === 'Inactive' && handleStatus(item.id)}
+                      style={{
+                        cursor: item.status === 'Active' ? 'not-allowed' : 'pointer',
+                        color: item.status === 'Active' ? 'green' : 'red',
+                        marginLeft: '0.5rem',
+                        fontSize: '1.0rem',
+                        opacity: item.status === 'Active' ? '0.4' : '1',
+                      }}
+                    />
+                  </Tooltip>
+                  {item.editable && (
+                    <div>
+                      <button
+                        onClick={() => handleSave(item.id)}
+                        style={{ cursor: 'pointer', marginRight: '0.5rem', color: 'blue' }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        style={{ cursor: 'pointer', color: 'gray' }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
 
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              backgroundColor: "#ffffff",
-              boxShadow:
-                "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-              borderRadius: "0.5rem",
-              overflow: "hidden",
-              textAlign: "center",
-              overflowX: "auto",
-            }}
-          >
-            <table
-              style={{
-                width: "100%",
-                textAlign: "center",
-                borderCollapse: "collapse",
-              }}
-            >
-              <thead
-                style={{ backgroundColor: "#f0f0f0", textAlign: "center" }}
-              >
-                <tr>
-                  <th style={{ padding: "0.5rem" }}>Property ID</th>
-                  <th style={{ padding: "0.5rem" }}>Property Name</th>
-                  <th style={{ padding: "0.5rem" }}>Type</th>
-                  <th style={{ padding: "0.5rem" }}>Address</th>
-                  <th style={{ padding: "0.5rem" }}>Date Listed</th>
-                  <th style={{ padding: "0.5rem" }}>Status</th>
-                  <th style={{ padding: "0.5rem" }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      style={{ textAlign: "center", padding: "1rem" }}
-                    >
-                      <div
-                        className="loading-container"
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          margin: "2rem",
-                          height: "100%",
-                        }}
-                      >
-                        <CircularProgress />
-                        <p>Retrieving data...</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : getFilteredData().length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      style={{ textAlign: "center", padding: "1rem" }}
-                    >
-                      <div
-                        style={{
-                          margin: "2rem",
-                          fontSize: "1rem",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        No data is available.
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  getFilteredData().map((item) => (
-                    <tr key={item.id} className="table-row">
-                      <td className="table-cell" style={{ padding: "0.5rem" }}>
-                        {item.id}
-                      </td>
-                      <td className="table-cell" style={{ padding: "0.5rem" }}>
-                        {item.name}
-                      </td>
-                      <td className="table-cell" style={{ padding: "0.5rem" }}>
-                        {item.type}
-                      </td>
-                      <td className="table-cell" style={{ padding: "0.5rem" }}>
-                        {item.address}
-                      </td>
-                      <td className="table-cell" style={{ padding: "0.5rem" }}>
-                        {item.created_at}
-                      </td>
-                      <td
-                        className="table-cell"
-                        style={{
-                          padding: "0.5rem",
-                          color: item.status === "Active" ? "green" : "red",
-                        }}
-                      >
-                        {item.status}
-                      </td>
-                      <td className="table-cell" style={{ padding: "0.5rem" }}>
-                        <Tooltip
-                          title={
-                            item.status === "Active"
-                              ? "Edit Disabled"
-                              : "Edit Property"
-                          }
-                        >
-                          <span>
-                            <MdEdit
-                              onClick={() =>
-                                item.status === "Inactive" &&
-                                handleEdit(item.id)
-                              }
-                              style={{
-                                cursor:
-                                  item.status === "Active"
-                                    ? "not-allowed"
-                                    : "pointer",
-                                marginRight: "0.5rem",
-                                color: "blue",
-                                opacity: item.status === "Active" ? "0.4" : "1",
-                              }}
-                            />
-                          </span>
-                        </Tooltip>
-                        <Tooltip
-                          title={
-                            item.status === "Inactive"
-                              ? "Currently Inactive"
-                              : "Deactivate Property"
-                          }
-                        >
-                          <span>
-                            <DoDisturbIcon
-                              onClick={() =>
-                                item.status === "Active" &&
-                                handleDelete(item.id)
-                              }
-                              style={{
-                                cursor:
-                                  item.status === "Inactive"
-                                    ? "not-allowed"
-                                    : "pointer",
-                                color: "red",
-                                fontSize: "1.0rem",
-                                opacity:
-                                  item.status === "Inactive" ? "0.4" : "1",
-                              }}
-                            />
-                          </span>
-                        </Tooltip>
-                        <Tooltip
-                          title={
-                            item.status === "Active"
-                              ? "Currently Active"
-                              : "Activate Property"
-                          }
-                        >
-                          <RadioButtonCheckedIcon
-                            onClick={() =>
-                              item.status === "Inactive" &&
-                              handleStatus(item.id)
-                            }
-                            style={{
-                              cursor:
-                                item.status === "Active"
-                                  ? "not-allowed"
-                                  : "pointer",
-                              color: item.status === "Active" ? "green" : "red",
-                              marginLeft: "0.5rem",
-                              fontSize: "1.0rem",
-                              opacity: item.status === "Active" ? "0.4" : "1",
-                            }}
-                          />
-                        </Tooltip>
-                        {item.editable ? (
-                          <div>
-                            <button
-                              onClick={() => handleSave(item.id)}
-                              style={{
-                                cursor: "pointer",
-                                marginRight: "0.5rem",
-                                color: "blue",
-                              }}
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              style={{ cursor: "pointer", color: "gray" }}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : null}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+      </table>
+
+      {/* Pagination Controls */}
+      <div
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '1rem',
+    width: '100%', // Ensures full width
+    boxSizing: 'border-box', // Includes padding in width calculation
+  }}
+>
+  {/* Items Per Page Dropdown */}
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <Select
+      value={itemsPerPage}
+      onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+      size="small"
+      style={{ marginRight: '1rem', borderRadius: '4px' }}
+    >
+      {[5, 10, 15, 20].map((count) => (
+        <MenuItem key={count} value={count}>
+          {count}
+        </MenuItem>
+      ))}
+    </Select>
+  </div>
+
+  {/* Navigation Buttons */}
+  <div style={{ display: 'flex', gap: '0.5rem' }}>
+    <Button
+      onClick={() => handlePageChange(currentPage - 1)}
+      disabled={currentPage === 1}
+      variant="outlined"
+      color="primary"
+      size="small"
+      style={{
+        padding: '0.5rem',
+        border: currentPage === 1 ? '1px solid #d3d3d3' : '1px solid #007bff',
+        backgroundColor: currentPage === 1 ? '#f0f0f0' : 'transparent',
+      }}
+    >
+      <ArrowBackIosNewIcon fontSize="small" />
+    </Button>
+    <Button
+      onClick={() => handlePageChange(currentPage + 1)}
+      disabled={currentPage === totalPages}
+      variant="outlined"
+      color="primary"
+      size="small"
+      style={{
+        padding: '0.5rem',
+        border: currentPage === totalPages ? '1px solid #d3d3d3' : '1px solid #007bff',
+        backgroundColor: currentPage === totalPages ? '#f0f0f0' : 'transparent',
+      }}
+    >
+      <ArrowForwardIosIcon fontSize="small" />
+    </Button>
+  </div>
+</div>
+
+
+
+    </div>
         </div>
 
         {/* Delete Confirmation Modal */}
