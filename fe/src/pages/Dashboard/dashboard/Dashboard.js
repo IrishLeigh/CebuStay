@@ -21,16 +21,14 @@ export default function Dashboard() {
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const [selectedMenuItem, setSelectedMenuItem] = React.useState("mainGrid"); 
-  const [openLogoutModal, setOpenLogoutModal] = React.useState(false); // Logout modal state
   const [token, setToken] = React.useState(localStorage.getItem("auth_token"));
   const dashboardTheme = createTheme(getDashboardTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-  const [openSnackbar, setOpenSnackbar] = React.useState(false); // Snackbar state
   const [user, setUser] = React.useState(null);
   const navigate = useNavigate();
   const [openDrawer, setOpenDrawer] = React.useState(false);
-  
-
+  const [openSnackbar, setOpenSnackbar] = React.useState(false); // Snackbar state
+  const [openLogoutModal, setOpenLogoutModal] = React.useState(false); // Logout 
   React.useEffect(() => {
     const savedMode = localStorage.getItem("themeMode");
     if (savedMode) {

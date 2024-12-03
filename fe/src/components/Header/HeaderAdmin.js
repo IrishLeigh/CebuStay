@@ -75,7 +75,7 @@ function HeaderAdmin({ token, setToken }) {
     handleCloseUserMenu();
   };
 
-  console.log("token from header user:", token);
+  // console.log("token from header user:", token);
   return (
     <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
       <Container maxWidth="xl">
