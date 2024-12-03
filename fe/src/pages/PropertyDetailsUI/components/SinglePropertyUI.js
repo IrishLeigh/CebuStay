@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import ReviewsAndRatingsSingleUnit from "./ReviewsAndRatings/ReviewsUI/ReviewsRatings";
 import { useNavigate, useLocation } from "react-router-dom";
 import Directions from "./Directions";
+import CheckAvailabilityCalendar from "./CheckAvailabilityCalendar";
 
 export default function SinglePropertyUI({ propertyid }) {
   const [propertyImages, setPropertyImages] = useState([]);
@@ -233,6 +234,7 @@ export default function SinglePropertyUI({ propertyid }) {
                 handleGuestCountChange={handleGuestCountChange}
                 propertyinfo={propertyInfo}
               />
+              {/* <CheckAvailabilityCalendar /> */}
             </div>
           </Grid>
         </Grid>

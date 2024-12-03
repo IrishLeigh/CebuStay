@@ -239,9 +239,14 @@ const Payout = () => {
                   style={{ overflowY: 'auto' }}
                 >
                   <option value="">Select country code</option>
-                  {Object.keys(countryCodesWithPatterns).map((code) => (
-                    <option key={code} value={code}>{code}</option>
+                  {Object.keys(countryCodesWithPatterns)
+                  .sort((a, b) => a.localeCompare(b)) // Sort the country codes
+                  .map((code) => (
+                    <option key={code} value={code}>
+                      {code}
+                    </option>
                   ))}
+
                 </select>
               </div>
               <div className="edit-input-group">

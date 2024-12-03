@@ -20,7 +20,7 @@ import { useNavigate, Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu"; // Import the MUI icon
 // import './NavigationBar.css'; // Import the CSS file
 import axios from "axios";
-const pages = ["Home", "Accommodation"];
+const pages = ["Home", "Find Your Stay"];
 const settings = ["Account",  "My Bookings", "My Properties","Logout"];
 
 
@@ -118,7 +118,7 @@ function HeaderUser( {isPropertyListed}) {
   
 
   const handlePageClick = (page) => {
-    if (page === "Accommodation") {
+    if (page === "Find Your Stay") {
       navigate("accommodation"); // Redirect to "accommodation";
     } else if (page === "List your property") {
       navigate("list-property"); // Redirect to the list property page

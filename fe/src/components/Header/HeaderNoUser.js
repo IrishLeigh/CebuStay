@@ -13,14 +13,14 @@ import { useNavigate } from "react-router-dom";
 import "./NavigationBar.css";
 import LoginIcon from "@mui/icons-material/Login";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-const pages = ["Home", "Accommodation"];
+const pages = ["Home", " Find Your Stay"];
 
 function HeaderNoUser() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handlePageClick = (page) => {
-    if (page === "Accommodation") {
+    if (page === "Find Your Stay") {
       navigate("accommodation");
     } else if (page === "Home") {
       navigate("/");

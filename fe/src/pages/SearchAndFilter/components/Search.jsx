@@ -29,17 +29,10 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
         if (endDate === null || guestCapacity === "") {
             setResponse("Please enter guest capacity and select end date");
             setOpen(true);
-            // alert("Please select end date and enter guest capacity");
             return;
         }
         onSearch({ startDate, endDate, guestCapacity: guestCapacity || null });
     };
-
-    // useEffect(() => {
-    //     console.log('onSearch:', onSearch);
-    //     console.log('Suggestions:', suggestions);
-    //     console.log('Show Suggestions:', showSuggestions);
-    // }, [query, suggestions, showSuggestions]);
 
     const fetchSuggestions = async (query) => {
         if (!query) {
@@ -121,7 +114,9 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
                 checkin_date,
                 checkout_date
             };
-            const path = `/accommodation/property/${suggestion.name.propertyid}`;
+            // add the query parameters to the URL
+            const path = `/accommodation/property/${suggestion.name.propertyid}?guestCapacity=${guestCapacity}&checkin_date=${checkin_date}&checkout_date=${checkout_date}`;
+            
             console.log('Navigating to:', path);  // Debugging line
             navigate(path, { state });
         }

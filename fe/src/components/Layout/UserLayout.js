@@ -6,7 +6,7 @@ const UserLayout = ({isPropertyListed}) => {
   
   // Define an array of admin routes where you don't want to show the header
   const adminRoutes = [
-    "/admin/overview",
+    "/admin/dashboard",
     "/admin/listings",
     "/admin/calendar",
     "/admin/guests",

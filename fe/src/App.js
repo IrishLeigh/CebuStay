@@ -73,7 +73,7 @@ function App() {
         .then((res) => {
           if (res.data.message === "Expired token.") {
             handleLogout();
-            console.log ("Expired token. Automatic Logout");
+            // console.log ("Expired token. Automatic Logout");
           }else {
             setUser(res.data);
             localStorage.setItem("email", res.data.data.email);
@@ -90,7 +90,7 @@ function App() {
         });
     } else {
       setUser(null);
-      console.log("No token found");
+      // console.log("No token found");
     }
   }, [token]);
 
@@ -114,7 +114,7 @@ function App() {
       const minutesLeft = Math.floor(timeLeft / 1000 / 60); // Convert milliseconds to minutes
   
       // Log the number of minutes left
-      console.log(`Minutes left before token expiry: ${minutesLeft}`);
+      // console.log(`Minutes left before token expiry: ${minutesLeft}`);
   
       if (currentTime >= expiryTime) {
         handleLogout(); // Expiry time passed, log out immediately
@@ -156,14 +156,14 @@ function App() {
   const handleLogout = async () => {
     const token = localStorage.getItem("auth_token");
     if (!token) {
-      console.log("No token found");
+      // console.log("No token found");
       localStorage.removeItem("auth_token");
       localStorage.setItem("auth_token", "");
       // setOpenLogoutModal(false);
     }
     // setLoading(true);
     try {
-      console.log ("token FROM HEADER", token);
+      // console.log ("token FROM HEADER", token);
       const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
         token: token,
       });
@@ -172,7 +172,7 @@ function App() {
           userid: res1.data.data.userid,
         });
         if (res.data) {
-          console.log(res.data);
+          // console.log(res.data);
           // Remove the token from local storage
           localStorage.removeItem("auth_token");
           localStorage.removeItem("email");
@@ -216,7 +216,7 @@ function App() {
     setPropertyListed(prev => prev + 1);
   };
   
-console.log("IsPropertyListed", isPropertyListed);
+// console.log("IsPropertyListed", isPropertyListed);
 
   return (
     <>
@@ -269,7 +269,7 @@ console.log("IsPropertyListed", isPropertyListed);
               />
 
               {/* Admin Routes */}
-              <Route path="admin/overview" element={<Dashboard />} />
+              <Route path="admin/dashboard" element={<Dashboard />} />
               <Route
                 path="admin/listings"
                 element={<PropertyManagementListingUI />}
