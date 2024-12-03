@@ -76,7 +76,7 @@ export default function AccountSignIn({ profile }) {
   
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/updateProfile/${profile.userid}`,
+        `https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${profile.userid}`,
         {
           userid: profile.userid,
           old_password: currentPassword, // Assuming currentPassword is the old password

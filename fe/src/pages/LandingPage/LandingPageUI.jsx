@@ -36,11 +36,11 @@ const LandingPageUI = () => {
     }
 
     try {
-      const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
+      const res1 = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken", {
         token,
       });
       if (res1.data) {
-        const res = await axios.post("http://127.0.0.1:8000/api/logout", {
+        const res = await axios.post("https://whitesmoke-shark-473197.hostingersite.com/api/logout", {
           userid: res1.data.data.userid,
         });
         if (res.data) {
@@ -61,7 +61,7 @@ const LandingPageUI = () => {
       const fetchUser = async () => {
         try {
           const res = await axios.post(
-            "http://127.0.0.1:8000/api/decodetoken",
+            "https://whitesmoke-shark-473197.hostingersite.com/api/decodetoken",
             { token }
           );
           if (res.data.message === "Expired token.") {
