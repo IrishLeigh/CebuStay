@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import "./NavigationBar.css";
 import LoginIcon from "@mui/icons-material/Login";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-const pages = ["Home", " Find Your Stay"];
+const pages = ["Home", "Find Your Stay"];
 
 function HeaderNoUser() {
   const navigate = useNavigate();
