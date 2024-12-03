@@ -1,43 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import Explore from './components/Explore';
-import Popular from './components/Popular';
-import Hidden from './components/Hidden';
-import Footer from './components/Footer';
-import FooterNew from './components/FooterNew';
-import BasicGrid from './components/Land';
-import InteractiveMap from '../../InteractiveMap/InteractiveMap';
-import LandingCover from './components/LandingCover';
-import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState, useRef } from "react";
+import Explore from "./components/Explore";
+import Popular from "./components/Popular";
+import Hidden from "./components/Hidden";
+import FooterNew from "./components/FooterNew";
+import InteractiveMap from "../../InteractiveMap/InteractiveMap";
+import LandingCover from "./components/LandingCover";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./LandingPageUI.css"; // Import CSS for styling
+
 const LandingPageUI = () => {
   const mapRef = useRef(null);
-  const navigate=useNavigate();
+  const landingCoverRef = useRef(null);
+  const footerRef = useRef(null);
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 768); // Adjust for small screens
+    };
 
-  
-  // const clearLocalStorage = () => {
-  //   localStorage.removeItem("auth_token"); // Remove specific item
-  // };
-
-  // clearLocalStorage(); // Clear token if expired
-  // navigate("/login");
-  // // Function to scroll to the map
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set the initial screen size
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogout = async () => {
     const token = localStorage.getItem("auth_token");
     if (!token) {
       console.log("No token found");
       localStorage.removeItem("auth_token");
-      localStorage.setItem("auth_token", "");
-      // setOpenLogoutModal(false);
+      return;
     }
-    // setLoading(true);
+
     try {
-      console.log ("token FROM HEADER", token);
       const res1 = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-        token: token,
+        token,
       });
       if (res1.data) {
         const res = await axios.post("http://127.0.0.1:8000/api/logout", {
@@ -45,101 +45,87 @@ const LandingPageUI = () => {
         });
         if (res.data) {
           console.log(res.data);
-          // Remove the token from local storage
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("email");
-          localStorage.removeItem("firsname");
-          localStorage.removeItem("lastname");
-          localStorage.removeItem("userid");
+          localStorage.clear();
           setUser(null);
-          
-          // Optionally, reset any user-related state here if applicable
-          // e.g., setUser(null); or use a context provider to reset user state
-          
-          // setOpenLogoutModal(false);
           navigate("/login");
         }
       }
     } catch (error) {
-      console.log(error);
-    } finally {
-      // setLoading(false);
-      console.log("Automatic Logout")
+      console.error(error);
     }
   };
 
-const token = localStorage.getItem("auth_token");
+  const token = localStorage.getItem("auth_token");
   useEffect(() => {
     if (token) {
       const fetchUser = async () => {
         try {
-          const res = await axios.post("http://127.0.0.1:8000/api/decodetoken", {
-            token: token,
-          });
+          const res = await axios.post(
+            "http://127.0.0.1:8000/api/decodetoken",
+            { token }
+          );
           if (res.data.message === "Expired token.") {
             handleLogout();
-            console.log ("Expired token. Automatic Logout");
-          }else {
+          } else {
             setUser(res.data);
             localStorage.setItem("email", res.data.data.email);
             localStorage.setItem("userid", res.data.data.userid);
             localStorage.setItem("firstname", res.data.data.firstname);
             localStorage.setItem("lastname", res.data.data.lastname);
-            //local storage here
           }
-          
-
-          console.log("USER IN LANDING PAGE:", res.data);
         } catch (error) {
-          console.log("Error decoding JWT token:", error);
+          console.error("Error decoding JWT token:", error);
           handleLogout();
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("email");
-          localStorage.removeItem("firsname");
-          localStorage.removeItem("lastname");
-          localStorage.removeItem("userid");
-          setUser(null);
-          
-          // Optionally, reset any user-related state here if applicable
-          // e.g., setUser(null); or use a context provider to reset user state
-          
-          // setOpenLogoutModal(false);
-          navigate("/login");
         }
       };
 
       fetchUser();
-    } else {
-      setUser(null);
-      // localStorage.removeItem("auth_token");
-      // navigate("/login");
     }
-  }, [token]); 
+  }, [token]);
+
+  const scrollToLandingCover = () => {
+    landingCoverRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const scrollToMap = () => {
-    if (mapRef.current) {
-      mapRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    mapRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const scrollToFooter = () => {
+    footerRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-
-
-      < div style ={{ display: "flex", flexDirection: "column", width: "100%" }}>
-        <div>
+    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+      <div ref={landingCoverRef}>
         <LandingCover onSeeMapClick={scrollToMap} />
-        {/* <BasicGrid/> */}
-        <div ref={mapRef}>
-          <InteractiveMap />
+      </div>
+      <div ref={mapRef}>
+        <InteractiveMap />
+      </div>
+      <div ref={footerRef}>
+        <FooterNew />
+      </div>
 
+      {isSmallScreen && (
+        <div className="arrow-buttons">
+          <button
+            className="arrow-up"
+            onClick={scrollToLandingCover}
+            aria-label="Scroll to top"
+          >
+            ↑
+          </button>
+          <button
+            className="arrow-down"
+            onClick={scrollToFooter}
+            aria-label="Scroll to bottom"
+          >
+            ↓
+          </button>
         </div>
-        
-        {/* <Popular /> */}
-        {/* <Hidden /> */}
-        </div>
-        <FooterNew/>
-      </div >
-      
-   
+      )}
+    </div>
   );
 };
 
