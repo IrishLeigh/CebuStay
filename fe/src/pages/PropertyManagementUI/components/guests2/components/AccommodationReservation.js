@@ -578,9 +578,6 @@ export default function AccommodationReservation() {
                           <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
                             Status
                           </th>
-                          <th style={{ padding: "0.5rem", fontSize: "0.9rem" }}>
-                            Actions
-                          </th>
                         </tr>
                       </thead>
 
@@ -714,17 +711,6 @@ export default function AccommodationReservation() {
                                   className="table-cell"
                                 >
                                   {item.status || "N/A"}
-                                </TableCell>
-
-                                {/* Actions */}
-                                <TableCell align="center">
-                                  <MdDelete
-                                    onClick={(e) => {
-                                      e.stopPropagation(); // Prevent row click event
-                                      handleDelete(item.id);
-                                    }}
-                                    style={{ cursor: "pointer", color: "red" }}
-                                  />
                                 </TableCell>
                               </TableRow>
                             ))
