@@ -11,7 +11,7 @@ export default function LandingCover({ onSeeMapClick }) {
           className="landing-cover-button"
           onClick={() => (window.location.href = "accommodation")}
         >
-          Search An Accommodation
+          Find Your Stay
         </button>
         <button className="landing-cover-button2" onClick={onSeeMapClick}>
           <PlayCircleOutlinedIcon

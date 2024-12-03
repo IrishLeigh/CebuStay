@@ -49,7 +49,6 @@ export default function InteractiveMap() {
   const [showWelcomeMap, setShowWelcomeMap] = useState(true);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
   const [showWelcomeMapModal, setShowWelcomeMapModal] = React.useState(false);
-
   const handleOpenWelcomeMap = () => setShowWelcomeMapModal(true);
   const handleCloseWelcomeMap = () => setShowWelcomeMapModal(false);
 
@@ -569,7 +568,7 @@ export default function InteractiveMap() {
           <div
             className="map-container"
             ref={mapContainerRef}
-            style={{ position: "relative", overflow: "visible" }}
+            style={{ position: "relative", overflow: "hidden" }}
           >
             <div
               style={{
@@ -714,7 +713,9 @@ export default function InteractiveMap() {
               )}
             </div>
 
-            <div style={{ width: "40%", margin: "5px 10px 5px 0px" }}>
+            <div
+              style={{ width: "40%", margin: "5px 10px 5px 0px", zIndex: 1 }}
+            >
               {/* "Where to Stay" Card */}
               {selectedProperty && selectedCategory === "Where to stay" && (
                 <>
