@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\File;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\BookingHistory;
+use App\Models\Payout;
 use App\Models\Payment;
 use App\Models\Property;
 use App\Models\UnitDetails;
@@ -276,15 +278,13 @@ class DashboardController extends CORS
     private function getMonthlyRevenue($propertyId)
     {
         // Get the current date and 30 days ago
-        $startDate = Carbon::now()->subDays(30);
-        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subDays(29)->startOfDay(); // Start 29 days ago at the beginning of the day
+        $endDate = Carbon::now()->endOfDay(); // Include the end of today
     
         // Fetch daily revenue for the past 30 days, grouped by day
-        $dailyRevenue = Booking::where('tbl_booking.propertyid', $propertyId)
-            ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-            ->where('tbl_payment.status', 'Paid')
-            ->whereBetween('tbl_payment.created_at', [$startDate, $endDate])
-            ->selectRaw('DATE(tbl_payment.created_at) as date, SUM(tbl_payment.amount) as total')
+        $dailyRevenue = Payout::where('tbl_payout.propertyid', $propertyId)
+            ->whereBetween('tbl_payout.created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(tbl_payout.created_at) as date, SUM(tbl_payout.payout_amount) as total')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
@@ -293,9 +293,14 @@ class DashboardController extends CORS
         $revenueData = [];
         $totalRevenue = 0; // Variable to store the total revenue sum
     
-        // Populate the array with daily revenue, defaulting to 0 if no revenue exists for a day
+        // Generate dates for the last 30 days (including today)
+        $dateRange = collect();
         for ($i = 0; $i < 30; $i++) {
-            $date = Carbon::now()->subDays(30 - $i)->format('Y-m-d');
+            $dateRange->push(Carbon::now()->subDays(29 - $i)->format('Y-m-d'));
+        }
+    
+        // Populate the array with daily revenue, defaulting to 0 if no revenue exists for a day
+        foreach ($dateRange as $date) {
             $revenueForDay = $dailyRevenue->firstWhere('date', $date);
             $dailyTotal = $revenueForDay ? $revenueForDay->total : 0;
             $revenueData[] = $dailyTotal;
@@ -311,6 +316,7 @@ class DashboardController extends CORS
             'totalRevenue' => $totalRevenue
         ];
     }
+    
 
     private function getWeeklyRevenue($propertyId) {
         $startDate = Carbon::now()->startOfWeek();
@@ -323,7 +329,10 @@ class DashboardController extends CORS
     }
 
     private function getTotalBookings($propertyId) {
-        return Booking::where('propertyid', $propertyId)->count();
+        $bookingCount = Booking::where('propertyid', $propertyId)->count();
+        $bookingHistoryCount = BookingHistory::where('propertyid', $propertyId)->count();
+    
+        return $bookingCount + $bookingHistoryCount;
     }
 
     private function getWeeklyBookings($propertyId)
@@ -332,13 +341,28 @@ class DashboardController extends CORS
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
     
-        // Fetch daily bookings for the current week, grouped by day
+        // Fetch daily bookings from Booking for the current week, grouped by day
         $dailyBookings = Booking::where('propertyid', $propertyId)
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
+    
+        // Fetch daily bookings from BookingHistory for the current week, grouped by day
+        $dailyBookingHistory = BookingHistory::where('propertyid', $propertyId)
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+    
+        // Merge daily bookings and booking history
+        $mergedBookings = $dailyBookings->merge($dailyBookingHistory)
+            ->groupBy('date')
+            ->map(function ($group) {
+                return $group->sum('total');
+            });
     
         // Initialize an array for storing daily bookings data
         $bookingData = [];
@@ -347,8 +371,7 @@ class DashboardController extends CORS
         // Populate the array with daily bookings, defaulting to 0 if no bookings exist for a day
         for ($i = 0; $i < 7; $i++) {
             $date = Carbon::now()->startOfWeek()->addDays($i)->format('Y-m-d');
-            $bookingsForDay = $dailyBookings->firstWhere('date', $date);
-            $dailyTotal = $bookingsForDay ? $bookingsForDay->total : 0;
+            $dailyTotal = $mergedBookings[$date] ?? 0; // Use 0 if no data exists for the date
             $bookingData[] = $dailyTotal;
     
             // Add the day's bookings to the total count
@@ -362,6 +385,7 @@ class DashboardController extends CORS
             'bookingData' => $bookingData
         ];
     }
+    
 
     private function getTotalCustomerRating($propertyId) {
         return ReviewsAndRating::where('propertyid', $propertyId)->sum('rating');
@@ -429,31 +453,25 @@ class DashboardController extends CORS
     }
 
     private function getSixMonthProfit($propertyId) {
-        $commissionPercentage = 0.15; // Example: 15% commission
-        $profitsPerMonth = [];
+        $payoutsPerMonth = [];
 
         for ($i = 0; $i < 6; $i++) {
             $monthStart = Carbon::now()->subMonths($i)->startOfMonth();
             $monthEnd = Carbon::now()->subMonths($i)->endOfMonth();
-
-            $monthlyPayments = Booking::where('propertyid', $propertyId)
-                ->join('tbl_payment', 'tbl_booking.bookingid', '=', 'tbl_payment.bookingid')
-                ->where('tbl_payment.status', 'Paid')
-                ->whereBetween('tbl_payment.created_at', [$monthStart, $monthEnd])
-                ->select('tbl_payment.amount')
-                ->get();
-
-            $monthlyProfit = $monthlyPayments->sum(function ($payment) use ($commissionPercentage) {
-                return $payment->amount * (1 - $commissionPercentage);
-            });
-
-            $profitsPerMonth[] = [
+    
+            // Sum the payout amounts for the month
+            $monthlyPayoutSum = Payout::where('propertyid', $propertyId)
+                ->whereBetween('tbl_payout.created_at', [$monthStart, $monthEnd])
+                ->sum('tbl_payout.payout_amount');
+    
+            $payoutsPerMonth[] = [
                 'month' => $monthStart->format('F Y'),
-                'profit' => $monthlyProfit,
+                'profit' => $monthlyPayoutSum,
             ];
         }
-
-        return array_reverse($profitsPerMonth);
+    
+        // Reverse the order to start with the earliest month
+        return array_reverse($payoutsPerMonth);
     }
 
     private function getMonthlyBookingTrends($propertyId) {
