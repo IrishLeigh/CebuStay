@@ -113,21 +113,7 @@
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Blue focus ring */
 }
 
-/* Table styles */
-.table-container {
-  width: 97.5vw; /* Take full width of any screen */
-  background-color: #ffffff; /* White background */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Box shadow */
-  border-radius: 0.5rem; /* 8px rounded corners */
-  overflow: hidden; /* Hide overflow content */
-  align-content: center;
-  margin-top: 1rem;
-}
 
-.table {
-  width: 100%;
-}
 
 .table-header {
   background-color: #f9fafb; /* Light grey background */
@@ -165,3 +151,297 @@
 .link:hover {
   text-decoration: underline; /* Underline on hover */
 }
+
+/* General Styling */
+.controls-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.buttons-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+.btn:hover {
+  background-color: #A0F9FF; /* Background color on hover */
+}
+/* Active State */
+.btn.active {
+  color: #ffffff;
+}
+
+.btn:nth-child(1).active {
+  background-color: #A334CF; /* Purple */
+}
+
+.btn:nth-child(2).active {
+  background-color: #ef4444; /* Red */
+}
+
+.btn:nth-child(3).active {
+  background-color: #84cc16; /* Lime */
+}
+
+/* Default State */
+.btn:not(.active) {
+  background-color: #e5e7eb; /* Light gray */
+  color: #000000;
+}
+
+/* Dropdown Menu */
+.dropdown-container {
+  position: relative;
+  margin-left: 1rem;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 3rem;
+  left: 0;
+  background-color: white;
+  border: 1px solid #d1d5db; /* Light border */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+  padding: 0.5rem;
+  width: 100%; /* Full width for small screens */
+  max-width: 15rem; /* Restrict width for larger screens */
+}
+
+.dropdown-header {
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.5rem 0;
+  text-align: left;
+  margin-left: 0.8rem;
+}
+
+.dropdown-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropdown-option {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-option.active {
+  background-color: #16B4DD; /* Light blue */
+  color: white;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .controls-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
+  .buttons-group {
+      justify-content: flex-start;
+      width: 100%;
+  }
+
+  .dropdown-menu {
+      left: 0; /* Adjust position for small screens */
+      width: calc(100% - 2rem); /* Responsive width */
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+      font-size: 0.875rem; /* Adjust button size for smaller screens */
+      padding: 0.4rem 0.8rem;
+  }
+
+  .dropdown-menu {
+      width: calc(100% - 1rem); /* Narrower width for very small screens */
+  }
+}
+
+/* Ensure the table container has overflow for horizontal scrolling */
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  margin-top: 1rem;
+}
+
+/* Table Styling */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  min-width: 800px; /* Ensure horizontal layout by setting a minimum width */
+  table-layout: auto; /* Allow columns to adjust size based on content */
+}
+
+/* Header Styling */
+.custom-table th {
+  padding: 0.75rem;
+  border-bottom: 2px solid #dee2e6;
+  background-color: #f8f9fa;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap; /* Prevent header text from wrapping */
+  text-transform: uppercase;
+}
+
+/* Table Cell Styling */
+.custom-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center;
+  font-size: 0.875rem;
+  white-space: nowrap; /* Prevent cell content from wrapping */
+}
+
+/* Button Styling */
+.custom-table button {
+  background-color: #28a745; /* Green */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.3s ease;
+}
+
+
+.custom-table button:hover {
+  background-color: #218838;
+}
+
+/* Styling when no data is available */
+.no-data {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  border-bottom: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .custom-table th,
+  .custom-table td {
+    font-size: 0.875rem; /* Reduce font size for tablets */
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {cs
+  .custom-table {
+    min-width: 600px; /* Prevent table from collapsing too much */
+  }
+
+  .custom-table th,
+  .custom-table td {
+    font-size: 0.75rem; /* Smaller font for smaller screens */
+    padding: 0.5rem;
+  }
+
+  .table-container {
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
+
+  .custom-table th,
+  .custom-table td {
+    white-space: nowrap; /* Keep content in a single line */
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-table th,
+  .custom-table td {
+    font-size: 0.7rem; /* Further reduce font size for mobile */
+    padding: 0.4rem;
+  }
+
+  .table-container {
+    overflow-x: auto; /* Allow horizontal scrolling */
+  }
+
+  .custom-table th,
+  .custom-table td {
+    white-space: nowrap; /* Prevent vertical stacking */
+  }
+}
+/* Table Wrapper for Scroll */
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Make the table scrollable horizontally */
+  -webkit-overflow-scrolling: touch; /* Ensure smoother scrolling on mobile */
+  margin-bottom: 1rem; /* Optional: space below the table */
+}
+
+/* Custom Table Styles */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px; /* Ensures table is wide enough to require scrolling */
+}
+
+.custom-table th, .custom-table td {
+  padding: 0.75rem;
+  text-align: center; /* Center align text in both th and td */
+  border: none; /* Remove grid lines (borders) */
+}
+
+.custom-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+/* Adjustments for No Data Row */
+.no-data {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 1rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .custom-table th, .custom-table td {
+      padding: 0.5rem; /* Slightly smaller padding for mobile */
+  }
+
+  .table-scroll-wrapper {
+      -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS devices */
+  }
+
+  .custom-table {
+      min-width: 600px; /* Ensure the table is wide enough for small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-table {
+      min-width: 500px; /* Further adjustments for very small screens */
+  }
+}
+
+

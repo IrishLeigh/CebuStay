@@ -306,6 +306,10 @@
     margin-top: 2rem; /* Reduces margin on small screens */
   }
 }
+
+
+
+
 .buttons {
   display: flex;
   flex-wrap: wrap; /* Allows buttons to wrap into multiple lines */
@@ -329,6 +333,64 @@
   background-color: #0056b3; /* Darker shade on hover */
 }
 
+
+
+
+/* Container for the entire control section */
+.control-container {
+  display: flex;
+  justify-content: flex-start; /* Default: Align buttons to the left */
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+/* Group of buttons */
+.button-group {
+  display: flex;
+  flex-wrap: wrap; /* Ensures buttons wrap on small screens */
+  gap: 1rem; /* Adds spacing between buttons */
+  justify-content: flex-start; /* Default: Align buttons to the left */
+}
+
+/* Individual button styles */
+.button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  background-color: white; /* Default background */
+  color: black; /* Default text color */
+  border: none;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect: Bottom border becomes orange */
+.button:hover {
+  border-bottom: 2px solid orange; /* Hover bottom border color */
+  color: orange; /* Change text color on hover */
+}
+
+/* Active button: Persistent orange bottom border */
+.button.active {
+  border-bottom: 2px solid orange; /* Active bottom border color */
+  color: orange; /* Active text color */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .control-container {
+    justify-content: center; /* Center content on small screens */
+  }
+
+  .button-group {
+    justify-content: center; /* Center buttons on small screens */
+    gap: 0.5rem; /* Reduce gap between buttons */
+  }
+}
+
+
+
 /* Responsive styles */
 @media (max-width: 600px) {
   .buttons {
@@ -341,5 +403,39 @@
     font-size: 1.2rem; /* Increase font size for better readability */
     justify-content: center; /* Center the buttons on small screens */
     padding: 0.75rem; /* Increase padding for touch targets */
+  }
+}
+
+@media (max-width: 320px) {
+  .buttons, .control-container {
+    flex-direction: row; /* Stack buttons vertically */
+    align-items: center; /* Center align buttons */
+    padding: 0.5rem; /* Adjust padding for smaller screens */
+  }
+
+  .btn, .button {
+    width: 100%; /* Make buttons take up the full width */
+    margin: 0.25rem 0; /* Add vertical spacing between buttons */
+    font-size: 1.1rem; /* Adjust font size for better readability */
+    padding: 0.75rem; /* Increase touch target size */
+  }
+
+  .button-group {
+    flex-direction: row; /* Stack buttons vertically */
+    align-items: center; /* Center align buttons */
+    gap: 0.5rem; /* Adjust gap between buttons */
+  }
+}
+
+
+@media (max-width: 600px) {
+  .table-pagination-controls {
+    flex-direction: column;
+    align-items: right;
+  }
+
+  .table-pagination-controls div {
+    width: 100%;
+    text-align: right;
   }
 }
