@@ -296,7 +296,7 @@ export default function InteractiveMap() {
           justifyContent: "center",
           alignItems: "center",
           position: "absolute",
-          top: "1%",
+          top: "10%",
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 500,
