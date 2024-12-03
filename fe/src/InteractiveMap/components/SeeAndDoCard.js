@@ -6,14 +6,17 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import * as turf from "@turf/turf";
-import { List, ListItem, ListItemText } from "@mui/material";
+import { Chip, Divider, List, ListItem, ListItemText } from "@mui/material";
 import IconButton from "@mui/material/IconButton"; // Import IconButton
 import CloseIcon from "@mui/icons-material/Close"; // Import Close icon
 import ViewNearby from "./ViewNearby";
 import useMediaQuery from "@mui/material/useMediaQuery"; // Import useMediaQuery hook
+import InfoIcon from "@mui/icons-material/Info"; // Import InfoIcon for More Info section
 
 const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
   const moreInfo = Array.isArray(spot.more_info) ? spot.more_info : [];
+  const activities = Array.isArray(spot.activities) ? spot.activities : [];
+
   const [showNearby, setShowNearby] = useState(false);
   const [nearbyLocations, setNearbyLocations] = useState([]);
   const isSmallScreen = useMediaQuery("(max-width:600px)"); // Define breakpoint for small screens
@@ -101,116 +104,138 @@ const SeeAndDoCard = ({ spot, allProperties, onClose }) => {
         </div>
       ) : (
         <Card
+        sx={{
+          width: isSmallScreen ? "100%" : "100%",
+          height: isLargeScreen ? "70vh" : "50vh", // Adjust height based on content
+          boxShadow: 3,
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignSelf: isSmallScreen ? "center" : "flex-start",
+          pointerEvents: showNearby ? "none" : "auto", // Disable interaction when showNearby is true
+          borderRadius: "0.8rem",
+        }}
+        onClick={preventCloseOnCardClick} // Prevent close when clicking inside the card
+      >
+        <Box
           sx={{
-            width: isSmallScreen ? "100%" : "100%",
-            height: isLargeScreen ? "70vh" : "50vh", // Adjust height based on content
-            boxShadow: 3,
-            position: "relative",
+            display: "flex",
+            justifyContent: "flex-end",
+            position: "absolute", // Position it absolutely
+            top: 0, // Adjust as needed to position vertically
+            right: ".5rem", // Align it to the right
+            zIndex: 10, // Ensure it’s on top of other elements
+          }}
+        >
+          <IconButton onClick={onClose}>
+            <CloseIcon sx={{ color: "white" }} />
+          </IconButton>
+        </Box>
+
+        <CardMedia
+          component="img"
+          alt={spot.name}
+          height={isSmallScreen ? "60%" : "50%"}
+          image={spot.imageUrl}
+          title={spot.name}
+          sx={{
+            objectFit: "cover",
+            width: isSmallScreen ? "100%" : "auto",
+            height: isSmallScreen ? "30%" : "200px",
+          }}
+        />
+
+        <CardContent
+          sx={{
+            padding: isSmallScreen ? "0.5rem" : "1.5rem",
+            flexGrow: 1,
             display: "flex",
             flexDirection: "column",
-            alignSelf: isSmallScreen ? "center" : "flex-start",
-            pointerEvents: showNearby ? "none" : "auto", // Disable interaction when showNearby is true
+            justifyContent: "space-between", // Space out content evenly
+            overflowY: "auto",
           }}
-          onClick={preventCloseOnCardClick} // Prevent close when clicking inside the card
         >
-          <Box
+          {/* Title */}
+          <Typography
+            variant="h5"
+            component="div"
             sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              position: "absolute", // Position it absolutely
-              top: 0, // Adjust as needed to position vertically
-              right: ".5rem", // Align it to the right
-              zIndex: 10, // Ensure it’s on top of other elements
+              fontWeight: "bold",
+              textAlign: "center",
+              marginBottom: "1rem",
+              color: "#333",
             }}
           >
-            <IconButton onClick={onClose}>
-              <CloseIcon sx={{ color: "white" }} />
-            </IconButton>
-          </Box>
-        <CardMedia
-            component="img"
-            alt={spot.name}
-            height={isSmallScreen ? "60%" : "50%"}
-            image={spot.imageUrl}
-            title={spot.name}
-            sx={{
-              objectFit: "cover",
-              width: isSmallScreen ? "100%" : "auto",
-              height: isSmallScreen ? "30%" : "200px",
-            }}
-          />
+            {spot.name.toUpperCase()}
+          </Typography>
 
-          <CardContent
-            sx={{
-              padding: isSmallScreen ? "0.5rem" : "1rem",
-              flexGrow: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between", // Space out content evenly
-              overflowY: "auto",
-            }}
-          >
-            {" "}
-            {/* Flex grow to allow content to expand */}
-            <Typography
-              gutterBottom
-              component="div"
-              sx={{
-                fontSize: isSmallScreen ? "0.5rem" : "1.5rem",
-                fontWeight: "bold",
-                overflowWrap: "break-word", // Break long words to prevent overflow
-              }}
-            >
-              {spot.name.toUpperCase()}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "0.9rem" : "1rem" }}
-            >
-              {spot.description}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: isSmallScreen ? "0.9rem" : "1rem" }}
-            >
-              {spot.activities}
-            </Typography>
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              More Info:
-            </Typography>
-            <List sx={{ padding: 0 }}>
-              {moreInfo.map((info, index) => (
-                <ListItem key={index}>
-                  <ListItemText primary={info} />
-                </ListItem>
-              ))}
-            </List>
-            <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#16B4DD",
-                  color: "white",
-                  fontSize: isSmallScreen
-                    ? "0.5rem"
-                    : isMediumScreen
-                    ? "0.8rem"
-                    : "1rem",
-                  padding: isSmallScreen
-                    ? "0.4rem 1rem"
-                    : isMediumScreen
-                    ? "0.4rem 1rem"
-                    : "0.4rem 1rem",
-                }}
-                onClick={handleViewNearbyButton}
-              >
-                View Nearby
-              </Button>
+          {/* Description */}
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            {spot.description}
+          </Typography>
+
+          {/* Activities Section */}
+          {activities.length > 0 && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                Activities:
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {activities.map((activity, index) => (
+                  <Chip
+                    key={index}
+                    label={activity}
+                    sx={{
+                      backgroundColor: "#16B4DD",
+                      color: "white",
+                      fontSize: "0.85rem",
+                    }}
+                  />
+                ))}
+              </Box>
             </Box>
-          </CardContent>
-        </Card>
+          )}
+
+          {/* More Info Section */}
+          {moreInfo.length > 0 && (
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                More Info:
+              </Typography>
+              <List>
+                {moreInfo.map((info, index) => (
+                  <React.Fragment key={index}>
+                    <ListItem sx={{ padding: "0.5rem 0", display: "flex", alignItems: "center" }}>
+                      <InfoIcon sx={{ color: "#16B4DD", marginRight: 1 }} />
+                      <ListItemText primary={info} />
+                    </ListItem>
+                    <Divider sx={{ margin: "0.5rem 0" }} />
+                  </React.Fragment>
+                ))}
+              </List>
+            </Box>
+          )}
+
+          {/* Button */}
+          <Box sx={{ mt: 3, textAlign: "center" }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#16B4DD",
+                color: "white",
+                fontSize: "1rem",
+                padding: "0.5rem 2rem",
+                "&:hover": {
+                  backgroundColor: "#138AAA",
+                },
+              }}
+              onClick={handleViewNearbyButton}
+            >
+              View Nearby
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
       )}
     </div>
   );

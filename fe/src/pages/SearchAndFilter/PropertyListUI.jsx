@@ -159,7 +159,7 @@ const PropertyListUI = () => {
         
         setAccommodationList(updatedList);
         setOriginalAccommodationList(updatedList);
-        console.log('Accommodation list with images, amenities, prices, and addresses:', updatedList);
+        // console.log('Accommodation list with images, amenities, prices, and addresses:', updatedList);
       } catch (error) {
         console.error(error);
       }
@@ -178,9 +178,9 @@ const PropertyListUI = () => {
 
   const handleSearchUpdate = ({ guestCapacity, checkin_date, checkout_date }) => {
     setSearchUpdateData({ guestCapacity, checkin_date, checkout_date });
-    console.log("Guest Capacity FROM PROPERTY LIST:", guestCapacity);
-    console.log("Checkin Date  PROPERTY LIST:", checkin_date);
-    console.log("Checkout Date  PROPERTY LIST:", checkout_date);
+    // console.log("Guest Capacity FROM PROPERTY LIST:", guestCapacity);
+    // console.log("Checkin Date  PROPERTY LIST:", checkin_date);
+    // console.log("Checkout Date  PROPERTY LIST:", checkout_date);
   };
 
   return (

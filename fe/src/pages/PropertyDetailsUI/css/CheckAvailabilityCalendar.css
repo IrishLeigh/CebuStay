@@ -1,0 +1,25 @@
+/* Target the entire header cell, assuming class is dynamically generated */
+.fc-col-header-cell {
+  color: #ff6347; /* Tomato color for header text (days of the week) */
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Optional: Hover effect for the header */
+.fc-col-header-cell:hover {
+  color: #16B4DD; /* Change color on hover */
+  cursor: pointer; /* Add pointer cursor */
+}
+
+/* Styling the day numbers (dates) */
+.fc-daygrid-day-number {
+  text-decoration: none; /* Removes underline */
+  color: #2A2A2E; /* Change font color */
+  font-weight: bold; /* Make the font bold */
+}
+
+/* Optional: Hover effect for the dates */
+.fc-daygrid-day-number:hover {
+  color: #16B4DD; /* Change color on hover */
+  cursor: pointer; /* Add pointer cursor */
+}

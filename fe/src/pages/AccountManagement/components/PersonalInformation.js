@@ -59,12 +59,21 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
         country: profile.country,
         phone: profile.cellnumber,
       };
+  
+      // Find the country code based on the country name
+      const countryCode =
+        Object.keys(countryCodesWithPatterns).find(
+          (key) => countryCodesWithPatterns[key].name === profile.country
+        ) || "";
+  
       setInitialState(originalState);
       setBirthday(originalState.birthday);
       setCountry(originalState.country);
       setPhone(originalState.phone);
+      setPhoneNumberPrefix(countryCode); // Set the initial phone number prefix
     }
   }, [profile]);
+  
 
   useEffect(() => {
     if (profile) {
@@ -102,7 +111,21 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
 
   const handleSaveInfo = async (e) => {
     e.preventDefault();
+    //check if the date is valid
+    if (!dayjs(birthday).isValid()) {
+      setSnackbarMessage("Please enter a valid date.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
 
+    // if one field is empty, show error message and return
+    if (!country || !birthday || !phone) {
+      setSnackbarMessage("Please fill in all required fields.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
     let phoneRegex;
     const countryData = countryCodesWithPatterns[phoneNumberPrefix];
     if (countryData) {
@@ -180,6 +203,8 @@ export default function PersonalInformation({ profile, onUpdateProfile }) {
   if (!profile) {
     return <CircularProgress />;
   }
+
+  console.log("Profile:", profile);
 
   return (
     <Paper className="account-cntr" sx={{ borderRadius: "12px" }}>

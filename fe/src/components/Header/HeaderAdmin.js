@@ -15,7 +15,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import './NavigationBar.css'; // Import the CSS file from '../NavigationBar.css';
 import { useNavigate, Link } from 'react-router-dom';
 
-const pages = ['Home', 'Accommodation', 'Contact us', 'About us'];
+const pages = ['Home', 'Find Your Stay', 'Contact us', 'About us'];
 const settings = ['Profile', 'Your Listings','Logout'];
 
 function HeaderAdmin({ token, setToken }) {
@@ -39,7 +39,7 @@ function HeaderAdmin({ token, setToken }) {
   };
 
   const handlePageClick = (page) => {
-    if (page === 'Accommodation') {
+    if (page === 'Find Your Stay') {
       window.location.href = 'accommodation'; // Redirect to accommodation page
     } else if (page === 'Home') {
       navigate('/'); // Client-side navigation

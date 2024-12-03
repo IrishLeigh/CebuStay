@@ -45,7 +45,7 @@ export default function SideMenu({ onLogout, open, onClose }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if the screen size is mobile
 
   const mainListItems = [
-    { text: 'Overview', icon: <HomeRoundedIcon />, path: '/admin/overview' },
+    { text: 'Dashboard', icon: <HomeRoundedIcon />, path: '/admin/dashboard' },
     { text: 'Calendar', icon: <AnalyticsRoundedIcon />, path: '/admin/calendar' },
     { text: 'Your Guests', icon: <PeopleRoundedIcon />, path: '/admin/guests' },
     { text: 'Your Properties', icon: <AssignmentRoundedIcon />, path: '/admin/listings' },

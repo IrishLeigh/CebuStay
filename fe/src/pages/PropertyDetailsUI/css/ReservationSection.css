@@ -37,12 +37,11 @@
 }
 
 .reserve-btn {
-  font-size: 16px;
   font-weight: 100;
   width: 100%;
   color: #fff;
   cursor: pointer;
-  height: 43px;
+  height: 50px;
   text-align: center;
   border: none;
   background-size: 300% 100%;
@@ -50,7 +49,7 @@
   transition: all .4s ease-in-out;
   align-items: center;
   justify-content: center;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   font-size: 1rem;
 
 }
@@ -58,13 +57,14 @@
 .reserve-btn:hover {
   background-position: 100% 0;
   transition: all .4s ease-in-out;
+  background-color: #1092B4;
 }
 
 .reserve-btn:focus {
   outline: none;
 }
 
-.reserve-btn {
+/* .reserve-btn {
   background-image: linear-gradient(
     to right,
     #16B4DD,
@@ -73,5 +73,7 @@
     #a766d6
 
   
-  );
+  ); */
+  .reserve-btn {
+    background-color: #16B4DD;
 }

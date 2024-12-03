@@ -28,7 +28,7 @@ export default function HeaderAccountMgnt() {
   // Update the pagesMobile and pages based on currentView
   const pagesMobile = [
     { name: 'Home', icon: <HomeIcon />, link: '/' },
-    { name: 'Accommodation', icon: <HotelIcon />, link: '/accommodation' },
+    { name: 'Find Your Stay', icon: <HotelIcon />, link: '/accommodation' },
     { name: 'List Property', icon: <AddBusinessIcon />, link: '/list-property' },
     {
       name: currentView === 'account' ? 'My Bookings' : 'Account', // Toggle label based on current view
@@ -39,7 +39,7 @@ export default function HeaderAccountMgnt() {
 
   const pages = [
     { name: 'Home', icon: <HomeIcon />, link: '/' },
-    { name: 'Accommodation', icon: <HotelIcon />, link: '/accommodation' },
+    { name: 'Find Your Stay', icon: <HotelIcon />, link: '/accommodation' },
     { name: 'List Property', icon: <AddBusinessIcon />, link: '/list-property' },
     {
       name: currentView === 'account' ? 'My Bookings' : 'Account',

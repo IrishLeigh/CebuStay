@@ -5,6 +5,7 @@ import BookingGuestDetails from "./BookingGuestDetails";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import countryCodePatterns from "../../components/Booking/countryCodePatterns";
+import { set } from "date-fns";
 
 function BookingDetailsUI() {
   const [price, setPrice] = useState(null);
@@ -193,6 +194,9 @@ const validatePhoneNumber = (countryCode, phoneNumber) => {
             
       
 
+          }else {
+            setSnackbarMessage(res.data.message);
+            setOpenSnackbar(true);
           }
      
       // window.location.href = checkoutUrl;

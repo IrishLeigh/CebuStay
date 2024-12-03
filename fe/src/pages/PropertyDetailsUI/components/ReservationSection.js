@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Paper, TextField, Typography, Snackbar, Alert } from "@mui/material";
+import {
+  Paper,
+  TextField,
+  Typography,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import "../css/ReservationSection.css";
+import CheckAvailabilityCalendar from "./CheckAvailabilityCalendar"; // Adjust the path as needed
 
 export default function ReservationSection({
   checkInDate,
@@ -22,6 +34,7 @@ export default function ReservationSection({
   const [error, setError] = useState("");
   const [notification, setNotification] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false); // State for modal
 
   useEffect(() => {
     if (propertyinfo) {
@@ -40,13 +53,11 @@ export default function ReservationSection({
     }
 
     if (isDaily) {
-      // If isDaily is true, clear errors and notifications and exit
       setError("");
       setNotification("");
       return;
     }
 
-    // Monthly booking logic
     const diffDays = checkOutDate.diff(checkInDate, "day");
 
     if (diffDays < 31) {
@@ -55,7 +66,6 @@ export default function ReservationSection({
       setNotification("");
     } else {
       setError("");
-
       const currentMonths = Math.floor(diffDays / 31);
       const remainingDays = diffDays % 31;
       const monthsToCharge = Math.ceil(diffDays / 31);
@@ -74,16 +84,16 @@ export default function ReservationSection({
     }
   }, [checkInDate, checkOutDate, isDaily]);
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   const formatPrice = (price) => {
     const validPrice = price && !isNaN(price) ? price : 0;
     return new Intl.NumberFormat("en-PH", {
       style: "currency",
       currency: "PHP",
     }).format(validPrice);
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
   };
 
   return (
@@ -156,8 +166,16 @@ export default function ReservationSection({
         className="reserve-btn"
         onClick={handleReserveClick}
         disabled={!!error}
+        style={{ marginTop: "2rem" }}
       >
-        Reserve
+        Reserve Here
+      </button>
+      <button
+        className="reserve-btn"
+        style={{ backgroundColor: "#ADC939", color: "white", cursor: "pointer" }}
+        onClick={() => setOpenModal(true)} // Open modal
+      >
+        Check Availability
       </button>
 
       <Snackbar
@@ -170,6 +188,18 @@ export default function ReservationSection({
           {error}
         </Alert>
       </Snackbar>
+
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="md">
+        <DialogTitle>Check Availability</DialogTitle>
+        <DialogContent>
+          <CheckAvailabilityCalendar />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }
