@@ -75,7 +75,7 @@ const ImagePreviewModal = ({ open, onClose, image, onConfirm }) => {
           />
         </Box>
         <Box className="modal-buttons">
-          <Button variant="contained" color="primary" onClick={handleConfirm}>
+          <Button variant="contained" color="primary" onClick={onConfirm}>
             Save
           </Button>
           <Button variant="outlined" color="secondary" onClick={onClose}>
