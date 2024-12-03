@@ -133,38 +133,7 @@ const CalendarLayout = () => {
                       ))}
                   </Select>
                 </FormControl>
-                {home === false && (
-                  <FormControl>
-                    <InputLabel style={{ minWidth: "10rem" }}>
-                      Unit No
-                    </InputLabel>
-                    <Select
-                      value={selectedUnitType}
-                      onChange={handleUnitTypeChange}
-                      style={{ minWidth: "7rem" }}
-                    // disabled = {!propertyData ? false : true}
-                    >
-                      {propertyData
-                        .filter(
-                          (unit, index, self) =>
-                            index ===
-                            self.findIndex(
-                              (u) =>
-                                u.unitid === unit.unitid &&
-                                u.property_name === selectedProperty
-                            )
-                        ) // Filter to keep only unique units based on unitid within selected property
-                        .filter(
-                          (unit) => unit.property_name === selectedProperty
-                        )
-                        .map((unitType, index) => (
-                          <MenuItem key={index} value={unitType}>
-                            {unitType.unitid}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                )}
+
               </div>
             </Paper>
           
