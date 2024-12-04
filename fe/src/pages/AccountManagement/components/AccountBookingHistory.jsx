@@ -554,7 +554,7 @@ export default function BookingHistory({ profile }) {
                                         <td>{item.guest}</td>
                                         <td>{item.type}</td>
                                         <td>
-                                            {selectedButton === 'CANCELLED' ? item.refund_amount : item.amount_paid}
+                                            {selectedButton === 'CANCELLED' ? item.refund_amount : item.payment_amount}
                                         </td>
                                         <td>
                                             {selectedButton === 'COMPLETED'
@@ -565,10 +565,10 @@ export default function BookingHistory({ profile }) {
                                         </td>
                                         {selectedButton === 'UPCOMING' && (
                                             <td>
-                                                {item.unit_type === 'Monthly Term' && item.monthly_payment_status === 'Pending' ? (
+                                                {item.unit_type === 'Monthly Term' && item.payment_status === 'Pending' ? (
                                                     <button onClick={() => openModal(item)}>View Payment</button>
                                                 ) : (
-                                                    <button onClick={() => openModal(item)}>View Payment</button>
+                                                    '-'
                                                 )}
                                             </td>
                                         )}
