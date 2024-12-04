@@ -40,7 +40,7 @@ export default function Search({ onSearch, accommodations, setAccommodationList 
             return;
         }
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/search?query=${query}`);
+            const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/search?query=${query}`);
             const combinedSuggestions = [
                 ...response.data.locations.map(loc => ({ type: 'Location', name: loc })),
                 ...response.data.properties.map(prop => ({ type: 'Property', name: prop }))

@@ -52,9 +52,12 @@ export default function UserProfile({ profile }) {
     const fetchUserImage = async () => {
       if (!profile) return;
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
-          params: { userid: profile.userid },
-        });
+        const res = await axios.get(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getuserimg",
+          {
+            params: { userid: profile.userid },
+          }
+        );
         if (res.data) {
           setProfileImage(res.data.src);
           console.log("profile:", profile);
@@ -89,9 +92,12 @@ export default function UserProfile({ profile }) {
   const handleLogout = async () => {
     setLogoutloading(true);
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/logout", {
-        userid: profile.userid,
-      });
+      const res = await axios.post(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/logout",
+        {
+          userid: profile.userid,
+        }
+      );
       if (res.data) {
         console.log(res.data);
         localStorage.removeItem("auth_token");
@@ -150,7 +156,7 @@ export default function UserProfile({ profile }) {
       setChangeloading(true);
       setLoading(true);
       const res2 = await axios.post(
-        "http://127.0.0.1:8000/api/updateavatar",
+        "https://whitesmoke-shark-473197.hostingersite.com/api/updateavatar",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -161,7 +167,7 @@ export default function UserProfile({ profile }) {
         res2.data.status === "error"
       ) {
         const res3 = await axios.post(
-          "http://127.0.0.1:8000/api/uploaduserimg",
+          "https://whitesmoke-shark-473197.hostingersite.com/api/uploaduserimg",
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -171,9 +177,12 @@ export default function UserProfile({ profile }) {
         if (res3.data.status === "success") {
           // Update profileImage state with new URL
           setProfileImage(res2.data.file_url);
-          const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
-            params: { userid: profile.userid },
-          });
+          const res = await axios.get(
+            "https://whitesmoke-shark-473197.hostingersite.com/api/getuserimg",
+            {
+              params: { userid: profile.userid },
+            }
+          );
 
           if (res.data) {
             setProfileImage(res.data.src);
@@ -183,9 +192,12 @@ export default function UserProfile({ profile }) {
       } else if (res2.data.status === "success") {
         // Update profileImage state with new URL
         setProfileImage(res2.data.file_url);
-        const res = await axios.get("http://127.0.0.1:8000/api/getuserimg", {
-          params: { userid: profile.userid },
-        });
+        const res = await axios.get(
+          "https://whitesmoke-shark-473197.hostingersite.com/api/getuserimg",
+          {
+            params: { userid: profile.userid },
+          }
+        );
 
         if (res.data) {
           setProfileImage(res.data.src);

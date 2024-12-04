@@ -21,9 +21,9 @@ export default function AdminContent({ payoutData, selectedTab }) {
   const [loadingRows, setLoadingRows] = useState({});
 
   const formatDate = (dateStr) => {
-    if (!dateStr) return 'N/A'; // Handle cases where date is not available
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateStr).toLocaleDateString('en-US', options);
+    if (!dateStr) return "N/A"; // Handle cases where date is not available
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateStr).toLocaleDateString("en-US", options);
   };
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function AdminContent({ payoutData, selectedTab }) {
     // Set loading state for this row
     setLoadingRows((prev) => ({ ...prev, [payout_id]: true }));
 
-    console.log('item', item);
+    console.log("item", item);
     try {
       const payoutData = {
         items: [
@@ -75,64 +75,83 @@ export default function AdminContent({ payoutData, selectedTab }) {
             recipient_type: "EMAIL",
             amount: {
               value: item.payout_amount,
-              currency: "PHP"
+              currency: "PHP",
             },
-            receiver: item.paypalmail
-          }
-        ]
+            receiver: item.paypalmail,
+          },
+        ],
       };
 
-      const response = await axios.post("http://127.0.0.1:8000/api/paypal/payout", payoutData);
+      const response = await axios.post(
+        "https://whitesmoke-shark-473197.hostingersite.com/api/paypal/payout",
+        payoutData
+      );
 
-      console.log(response.data);  // Handle the response data here
+      console.log(response.data); // Handle the response data here
       if (response.data.message === "Payout successful") {
         console.log("Payout successful na daw");
-        const resCheck = await axios.get(`http://127.0.0.1:8000/api/payouts/batch/${response.data.data.batch_header.payout_batch_id}`);
-        console.log('rescheckdata', resCheck.data);
-        if (resCheck.data.message === "Payout batch details retrieved successfully") {
-          const resStatus = await axios.get(`http://127.0.0.1:8000/api/paypal/check-payout/${resCheck.data.data.items[0].payout_item_id}`);
-          console.log('resstatusdata', resStatus.data);
+        const resCheck = await axios.get(
+          `https://whitesmoke-shark-473197.hostingersite.com/api/payouts/batch/${response.data.data.batch_header.payout_batch_id}`
+        );
+        console.log("rescheckdata", resCheck.data);
+        if (
+          resCheck.data.message ===
+          "Payout batch details retrieved successfully"
+        ) {
+          const resStatus = await axios.get(
+            `https://whitesmoke-shark-473197.hostingersite.com/api/paypal/check-payout/${resCheck.data.data.items[0].payout_item_id}`
+          );
+          console.log("resstatusdata", resStatus.data);
           console.log(resStatus.data.data.transaction_status);
-          if (resStatus.data.message === "Payout item details retrieved successfully") {
+          if (
+            resStatus.data.message ===
+            "Payout item details retrieved successfully"
+          ) {
             console.log("Payout item details retrieved successfully");
           }
-          if (resStatus.data.data.transaction_status === "SUCCESS" || resStatus.data.data.transaction_status === "ONHOLD") {
-            const sendPayout = await axios.post(`http://127.0.0.1:8000/api/setPayout`, {
-              payout_id: item.payout_id,
-              batch_id: response.data.data.batch_header.payout_batch_id,
-              item_id: resCheck.data.data.items[0].payout_item_id,
-              status: resStatus.data.data.transaction_status
-            });
+          if (
+            resStatus.data.data.transaction_status === "SUCCESS" ||
+            resStatus.data.data.transaction_status === "ONHOLD"
+          ) {
+            const sendPayout = await axios.post(
+              `https://whitesmoke-shark-473197.hostingersite.com/api/setPayout`,
+              {
+                payout_id: item.payout_id,
+                batch_id: response.data.data.batch_header.payout_batch_id,
+                item_id: resCheck.data.data.items[0].payout_item_id,
+                status: resStatus.data.data.transaction_status,
+              }
+            );
             if (sendPayout.data) {
               window.location.reload();
             }
-
           } else {
-            await axios.post(`http://127.0.0.1:8000/api/paypal/cancel-payout/${resCheck.data.data.items[0].payout_item_id}`)
-            console.log('Result', resStatus.data.data.errors.message);
+            await axios.post(
+              `https://whitesmoke-shark-473197.hostingersite.com/api/paypal/cancel-payout/${resCheck.data.data.items[0].payout_item_id}`
+            );
+            console.log("Result", resStatus.data.data.errors.message);
           }
-
         }
-
       }
     } catch (error) {
-      console.error("Error sending payout:", error);  // Handle error
+      console.error("Error sending payout:", error); // Handle error
     } finally {
       setLoading(false);
       setLoadingRows((prev) => ({ ...prev, [payout_id]: false }));
       // window.location.reload();
-
     }
   };
 
   const handleCheckPayout = async (item) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/api/paypal/check-payout/${item.payout_id}`);
-      console.log('resdata', res.data);
+      const res = await axios.get(
+        `https://whitesmoke-shark-473197.hostingersite.com/api/paypal/check-payout/${item.payout_id}`
+      );
+      console.log("resdata", res.data);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <>
@@ -226,7 +245,8 @@ export default function AdminContent({ payoutData, selectedTab }) {
                           !canPayout(data.checkout_date) ||
                           loadingRows[data.payout_id] ||
                           data.status !== "Pending" ||
-                          data.paypalmail === null || loading
+                          data.paypalmail === null ||
+                          loading
                         }
                         onClick={() => handlePayout(data)}
                       >

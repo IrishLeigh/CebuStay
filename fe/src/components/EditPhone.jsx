@@ -19,7 +19,7 @@ const EditPhone = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/getusers/${user.userid}`);
+        const response = await axios.get(`https://whitesmoke-shark-473197.hostingersite.com/api/getusers/${user.userid}`);
         set_cellphone_number(response.data.cellnumber);
       } catch (error) {
         setError("Error fetching profile data.");
@@ -44,7 +44,7 @@ const EditPhone = () => {
       return;
     }
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/updateProfile/${user.userid}`, {
+      const response = await axios.put(`https://whitesmoke-shark-473197.hostingersite.com/api/updateProfile/${user.userid}`, {
         userid: user.userid, // Assuming userId is defined somewhere in your frontend code
         cellnumber: cellphone_number,
       });
